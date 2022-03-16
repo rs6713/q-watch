@@ -1,0 +1,10 @@
+# Dependencies
+/website/node_modules
+
+# Production/Build
+/website/build
+/design
+
+# Local/Temporary Files
+/website/src/static/
+.env
