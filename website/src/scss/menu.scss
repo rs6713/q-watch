@@ -1,0 +1,85 @@
+@import "./defaults.scss";
+
+#MenuContainer {
+  position: fixed;
+  top: 2em;
+  left: 2em;
+
+  > svg {
+    position: absolute;
+    height: 2em;
+    fill: $FONT_COLOR_LIGHTEST;
+    cursor: pointer;
+  }
+}
+
+#MenuContainer:hover #Menu {
+  translate: transformX(0%) !important;
+  -webkit-transform: translateX(0%) !important;
+}
+
+#Menu:hover {
+  transform: translateX(0%);
+  -webkit-transform: translateX(0%);
+}
+
+#Menu {
+  height: 100%;
+  width: fit-content;
+  background-color: $FONT_COLOR_LIGHTEST;
+  padding: 1em 0em 1em 1.5em;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 0em 1em 0em 1em;
+  box-shadow: 0 10px 1em rgb(0 0 0 / 40%);
+
+  -webkit-transform: translateX(-100%);
+  transform: translateX(-100%);
+
+  transition: 0.25s ease-in-out !important;
+
+  > a > svg {
+    height: 3em;
+    fill: $PRIMARY_COLOR;
+    margin-bottom: 2em;
+  }
+
+  hr {
+    border-color: $FONT_COLOR_LIGHT;
+    border-top: none;
+    margin-right: 1em;
+    margin-top: 2em;
+    margin-bottom: 1em;
+  }
+
+  h3 {
+    color: $FONT_COLOR_LIGHT;
+    font-size: $FONT_SIZE_MED;
+    font-weight: normal;
+    margin-right: 2em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+}
+
+#Menu > a {
+  margin-bottom: 2em;
+
+  div {
+    font-size: $FONT_SIZE_HEADING;
+    font-weight: 500;
+    line-height: 1em;
+    padding: 0.5em 1em 0.5em 0em;
+
+    svg {
+      height: 0.8em;
+      display: inline-block;
+      padding-right: 0.5em;
+      fill: $ACCENT_COLOR3;
+    }
+  }
+  div:hover > svg {
+    fill: $ACCENT_COLOR1;
+  }
+}

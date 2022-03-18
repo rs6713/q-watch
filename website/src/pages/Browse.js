@@ -10,6 +10,7 @@ class Browse extends Component {
     return (
         <div id="Browse" className="page">
           Browse
+          
         </div>
     )
   }

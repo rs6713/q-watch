@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Footer from './components/Footer';
 
 class Movie extends Component {
   constructor(props){
@@ -10,6 +11,7 @@ class Movie extends Component {
     return (
         <div id="Movie" className="page">
           Movie
+          <Footer />
         </div>
     )
   }

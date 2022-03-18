@@ -1,6 +1,27 @@
 @import "scss/defaults.scss";
+@import "scss/footer.scss";
+@import "scss/main.scss";
+@import "scss/menu.scss";
 
 body {
   //color: $FONT_COLOR_DEFAULT;
   background-color: $PRIMARY_COLOR;
+  font-size: $FONT_SIZE_DEFAULT;
+}
+
+a:visited {
+  color: none;
+}
+a:link {
+  text-decoration: none;
+}
+a,
+a:hover,
+a:visited,
+a:active {
+  color: inherit;
+}
+a,
+a:visited {
+  text-decoration: none;
 }

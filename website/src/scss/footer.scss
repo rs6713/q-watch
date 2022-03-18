@@ -1,0 +1,22 @@
+@import "./defaults.scss";
+
+.footer {
+  background-color: $FONT_COLOR_DEFAULT;
+  padding: 1em $SIDE_PAD;
+  height: 4em;
+  box-sizing: border-box;
+  color: $FONT_COLOR_LIGHTEST;
+}
+
+.footer svg {
+  height: 2em;
+  fill: $FONT_COLOR_LIGHTEST;
+  float: left;
+  margin: 0em 2em 0em 0em;
+}
+
+.footer span {
+  padding: 0.5em 0em;
+  float: left;
+  line-height: 1em;
+}

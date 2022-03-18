@@ -5,6 +5,9 @@ import {
   Routes
 } from 'react-router-dom';
 import Main from './pages/Main';
+import Browse from './pages/Browse'
+import Movie from './pages/Movie';
+import Menu from './pages/components/Menu';
 import './App.scss';
 
 class App extends Component {
@@ -18,7 +21,9 @@ class App extends Component {
         <Router basename={process.env.PUBLIC_URL}>
           <Routes>
             <Route exact path='/' element={<Main />} />
+            <Route exact path='/browse' element={<Browse />} />
           </Routes>
+          <Menu />
         </Router>
       </div>
     )
