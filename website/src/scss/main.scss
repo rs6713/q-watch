@@ -21,14 +21,18 @@
   -webkit-filter: blur(15px);
 }
 
-#TitlePage h1 {
-  color: $FONT_COLOR_LIGHTEST;
-  font-size: 8em;
-  font-family: $FONT_LOGO;
+#TitlePage #Title {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -100%);
-  white-space: nowrap;
-  text-shadow: 0 0px 0.15em rgb(0 0 0 / 40%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+  h1 {
+    color: $FONT_COLOR_LIGHTEST;
+    font-size: 9em;
+    font-family: $FONT_LOGO;
+
+    white-space: nowrap;
+    text-shadow: 0 0px 0.15em rgb(0 0 0 / 40%);
+  }
 }

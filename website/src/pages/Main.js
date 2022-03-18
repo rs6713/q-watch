@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Search from '../pages/components/Search';
 import '../App.scss'
 
 class Main extends Component {
@@ -12,9 +13,11 @@ class Main extends Component {
         <div id="Main" className="page">
           <div id="TitlePage">
             <div className="background" />
-            <h1>Q-WATCH</h1>
+            <div id="Title" >
+              <h1>Q-WATCH</h1>
+              <Search placeholder="Query Queer Watches" />
+            </div>
           </div>
-          
         </div>
     )
   }
