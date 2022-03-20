@@ -35,13 +35,16 @@ class Search extends Component {
     super(props)
     this.state = {
       query: "",
-      movies: []
+      movies: [],
+      active: false,
+      resultsactive: false,
     }
   }
   componentDidMount() {
-
     this.getMovies();
+
   }
+
 
   getMovies = () => {
     this.setState({
@@ -49,13 +52,28 @@ class Search extends Component {
     })
   }
 
+  onFocus = () =>{
+    this.setState({active: true})
+    //this.refs.nameInput.getInputDOMNode().focus();
+  }
+
+  onFocusOut = () =>{
+    if (!this.state.resultsactive){
+      this.setState({active: false})
+    }
+  }
+
   render(){
     return (
-      <div className="searchbar">
+      <div className="searchbar" >
         <SearchIcon />
-        <input placeholder={this.props.placeholder} onChange={event => this.setState({query: event.target.value})} />
+        <input onFocus={this.onFocus} placeholder={this.props.placeholder} onChange={event => this.setState({query: event.target.value})} onBlur={this.onFocusOut} />
+        <Link to={"/browse"}><span>Advanced Search</span></Link>
         
-        <div className="searchresults">
+        <div className="searchresults" style={{display: this.state.active ? 'block': 'none'}} 
+        onMouseEnter={()=>{this.setState({resultsactive:true})}}
+        onMouseLeave={()=>{this.setState({resultsactive:false})}}
+        >
           {
             this.state.movies.filter(movie => {
               if(this.state.query === ""){
@@ -66,7 +84,7 @@ class Search extends Component {
               }
               return false;
             }).map((movie) => (
-              <Link to={"/movies/" + movie.id} >
+              <Link to={"/movies/" + movie.id} key={movie.id}>
                 <div className="searchresult">
                   <span>{movie.title}</span>
                   <div>{movie.year} &nbsp;&#9679;&nbsp; {movie.rating}&nbsp;<Scissor /></div>

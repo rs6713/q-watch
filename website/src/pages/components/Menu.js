@@ -14,6 +14,7 @@ class Menu extends Component {
   }
 
   render () {
+
     return (
       <div id="MenuContainer">
         <Hamburger/>

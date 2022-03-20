@@ -3,11 +3,18 @@
 @import "scss/main.scss";
 @import "scss/menu.scss";
 @import "scss/search.scss";
+@import "scss/browse.scss";
+@import "scss/rating.scss";
 
 body {
   //color: $FONT_COLOR_DEFAULT;
   background-color: $PRIMARY_COLOR;
   font-size: $FONT_SIZE_DEFAULT;
+}
+
+.page {
+  /*padding: 1em 5em;*/
+  box-sizing: border-box;
 }
 
 a:visited {

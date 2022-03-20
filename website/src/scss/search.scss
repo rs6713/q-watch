@@ -4,6 +4,17 @@
   display: inline-block;
   position: relative;
 
+  > a > span {
+    color: $FONT_COLOR_LIGHTEST;
+    display: block;
+    margin-top: 1em;
+    text-decoration: underline;
+    position: absolute;
+    width: 100%;
+    font-size: $FONT_SIZE_DEFAULT;
+    font-weight: lighter;
+  }
+
   .searchresults {
     margin-top: 1em;
     position: absolute;

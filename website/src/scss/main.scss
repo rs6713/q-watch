@@ -4,13 +4,29 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-}
 
+  #MovieInfo {
+    position: absolute;
+    bottom: 1em;
+    right: 1em;
+    color: $FONT_COLOR_LIGHTEST;
+
+    h3 {
+      font-size: $FONT_SIZE_DEFAULT;
+      font-weight: lighter;
+      text-align: right;
+      margin-top: 0.25em;
+      margin-bottom: 0em;
+      padding: 0em;
+      cursor: pointer;
+    }
+  }
+}
+/*background-image: url("../static/movie-gifs/imagine-me-and-you-000.gif");*/
 #TitlePage .background {
-  background-image: url("../static/movie-gifs/imagine-me-and-you-000.gif");
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 100%;
+  background-size: cover;
   height: 110%;
   width: 110%;
 

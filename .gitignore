@@ -3,6 +3,8 @@
 
 # Production/Build
 /website/build
+/website/public/movie-gifs/
+/website/public/movie-pictures/
 /design
 
 # Local/Temporary Files
