@@ -1,0 +1,24 @@
+@import "../scss/defaults.scss";
+
+$colors: $ACCENT_COLOR2; //, $ACCENT_COLOR3
+
+.bubbles {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 1em;
+  flex-direction: row;
+  font-size: $FONT_SIZE_DEFAULT;
+
+  .bubble {
+    padding: 1em 2em;
+    color: $FONT_COLOR_LIGHTEST;
+    font-weight: bold;
+    border-radius: 3em;
+  }
+  @for $i from 1 through length($colors) {
+    .bubble:nth-child(#{length($colors)}n + #{$i}) {
+      background-color: nth($colors, $i);
+    }
+  }
+}

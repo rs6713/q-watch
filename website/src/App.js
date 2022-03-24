@@ -22,6 +22,7 @@ class App extends Component {
           <Routes>
             <Route exact path='/' element={<Main />} />
             <Route exact path='/browse' element={<Browse />} />
+            <Route exact path='/movies/:id' element={<Movie />} />
           </Routes>
           <Menu />
         </Router>

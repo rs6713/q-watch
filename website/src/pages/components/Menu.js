@@ -1,20 +1,14 @@
 import React, { Component } from 'react';
 import {ReactComponent as Logo} from '../../static/website/logo.svg';
-import {Link} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import {ReactComponent as Grid} from '../../static/icons/grid.svg'
 import {ReactComponent as World} from '../../static/icons/world2.svg'
 import {ReactComponent as Rank} from '../../static/icons/rank.svg'
 import {ReactComponent as Time} from '../../static/icons/time.svg'
 import {ReactComponent as Hamburger} from '../../static/icons/menu.svg'
 
-class Menu extends Component {
-  constructor(props){
-    super(props)
-
-  }
-
-  render () {
-
+function Menu(){
+  console.log(useLocation().pathname)
     return (
       <div id="MenuContainer">
         <Hamburger/>
@@ -23,7 +17,7 @@ class Menu extends Component {
           <Logo />
           </Link>
 
-          <Link to={"/browse"} className="link">
+          <Link to={"/browse"} className={"link" + (useLocation().pathname == "/browse"? ' active' : ' inactive')}>
             <div>
               <Grid />
               <span>Browse</span>
@@ -52,7 +46,7 @@ class Menu extends Component {
         </div>
       </div>
     )
-  }
+
 }
 
 export default Menu

@@ -4,6 +4,7 @@
   position: fixed;
   top: 2em;
   left: 2em;
+  z-index: 100;
 
   > svg {
     position: absolute;
@@ -63,6 +64,13 @@
   }
 }
 
+#Menu > a.active div svg {
+  fill: $ACCENT_COLOR1;
+}
+#Menu > a.inactive div > svg {
+  fill: $ACCENT_COLOR3;
+}
+
 #Menu > a {
   margin-bottom: 2em;
 
@@ -79,6 +87,7 @@
       fill: $ACCENT_COLOR3;
     }
   }
+
   div:hover > svg {
     fill: $ACCENT_COLOR1;
   }

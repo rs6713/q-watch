@@ -3,6 +3,11 @@ import {Link} from 'react-router-dom';
 import Search from '../pages/components/Search';
 import '../App.scss'
 
+const PHRASES = [
+  "**I will go down with this ship.... (screams in Dido)**",
+  "Come for the lesbians. Stay for the lesbians.",
+]
+
 class Main extends Component {
   constructor(props){
     super(props)

@@ -3,17 +3,141 @@
 #Browse {
   overflow-x: hidden;
   max-height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 
+  .spacer {
+    width: 100%;
+    flex: 1 0;
+  }
+
+  #ControlPanel {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    padding: 2em $SIDE_PAD 1em $SIDE_PAD;
+    box-sizing: border-box;
+
+    #FiltersToggle {
+      padding: 1em 1em;
+    }
+    #Sort,
+    #FiltersToggle {
+      background-color: $FONT_COLOR_LIGHTEST;
+      border-radius: 0.5em;
+      line-height: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      svg {
+        height: 1em;
+        position: relative;
+        top: 0.1em;
+      }
+      div {
+        width: 6em;
+        padding: 1em;
+        svg {
+          float: right;
+        }
+      }
+    }
+    #Sort ul {
+      margin: 0;
+      padding-left: 0;
+      position: absolute;
+      top: 100%;
+      left: -1px;
+      display: none;
+
+      background-color: $FONT_COLOR_LIGHTEST;
+      border-radius: 0em 0em 0.5em 0.5em;
+      overflow: hidden;
+      width: 100%;
+
+      li {
+        word-break: keep-all;
+
+        text-decoration: none;
+        border-top: 1px solid $FONT_COLOR_LIGHT;
+        padding: 1em 1em;
+        list-style-type: none;
+        font-weight: normal;
+      }
+      li:first-child {
+        border-top: none;
+      }
+
+      li:hover {
+        background-color: $FONT_COLOR_LIGHT;
+      }
+      li.active {
+        font-weight: bold;
+      }
+    }
+    #Sort:hover {
+      border-radius: 0.5em 0.5em 0em 0em;
+      ul {
+        display: block;
+
+        border: 1px solid $FONT_COLOR_LIGHT;
+      }
+
+      div svg {
+        transform: rotate(180deg);
+      }
+    }
+
+    #FiltersToggle:hover {
+      background-color: $FONT_COLOR_LIGHT;
+    }
+    #FiltersToggle.active {
+      background-color: $FONT_COLOR_LIGHT;
+      font-weight: bold;
+    }
+
+    #FiltersToggle svg {
+      padding-right: 0.5em;
+    }
+    #Sort svg {
+      height: 0.8em;
+      top: 0.1em;
+      padding-left: 0.5em;
+    }
+
+    #Categories {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      flex: 1 1;
+
+      div {
+        display: inline-block;
+        padding: 0.5em 1em;
+        color: $FONT_COLOR_SUB;
+        cursor: pointer;
+      }
+      div.active {
+        color: $FONT_COLOR_DEFAULT;
+        font-weight: bold;
+      }
+      div:hover {
+        color: $FONT_COLOR_DEFAULT;
+      }
+    }
+  }
+
   #BrowseResults {
-    flex: 1 1;
+    flex: 0 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 3em;
+    gap: 5em;
     align-items: stretch;
     justify-content: space-between;
-    padding: 2em $SIDE_PAD;
+    padding: 1em $SIDE_PAD;
     width: 100vw;
     box-sizing: border-box;
     overflow-y: scroll;
