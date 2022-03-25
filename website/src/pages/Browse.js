@@ -71,7 +71,7 @@ var movies = [
     category: ["Drama"]
   },
   {
-    id: 7,
+    id: 8,
     title: "Ammonite",
     year: "2021",
     rating: 4.7,

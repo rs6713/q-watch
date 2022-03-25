@@ -2,6 +2,28 @@
 
 $colors: $ACCENT_COLOR2; //, $ACCENT_COLOR3
 
+.expandable_bubbles {
+  h2 {
+    font-weight: bold;
+    line-height: 1em;
+    border-top: 1px solid $FONT_COLOR_LIGHT;
+    border-bottom: 1px solid $FONT_COLOR_LIGHT;
+    padding: 0.5em 0em;
+
+    span {
+      font-size: $FONT_SIZE_DEFAULT;
+      font-weight: lighter;
+      float: right;
+      padding-right: 1em;
+    }
+  }
+  svg {
+    float: right;
+    height: 1em;
+    cursor: pointer;
+  }
+}
+
 .bubbles {
   display: flex;
   flex-wrap: wrap;

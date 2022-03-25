@@ -1,0 +1,66 @@
+@import "./defaults.scss";
+
+.source:hover #voter {
+  display: block;
+}
+
+.source {
+  position: relative;
+  img {
+    height: 3em;
+    width: auto;
+  }
+  #votes {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: $FONT_SIZE_DEFAULT;
+    font-weight: bold;
+    background-color: $FONT_COLOR_LIGHT;
+    border-radius: 100%;
+    padding: 0.5em;
+    transform: translateY(-50%) translateX(50%);
+  }
+
+  #voter.active {
+    display: block;
+  }
+
+  #voter {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateY(50%) translateX(-50%);
+    display: none;
+    span {
+      svg {
+        font-size: $FONT_SIZE_DEFAULT;
+        height: 1em;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%);
+      }
+
+      cursor: pointer;
+      width: 2em;
+      position: relative;
+      height: 2em;
+      display: inline-block;
+      border-radius: 100%;
+      background-color: $FONT_COLOR_LIGHT;
+    }
+    span:first-child {
+      margin-right: 0.5em;
+    }
+
+    span:first-child:hover,
+    span:first-child.active {
+      background-color: $ACCENT_DENY;
+    }
+    span:last-child:hover,
+    span:last-child.active {
+      background-color: $ACCENT_AFFIRM;
+    }
+  }
+}

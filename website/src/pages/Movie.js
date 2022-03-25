@@ -3,7 +3,9 @@ import Footer from './components/Footer';
 import Rating from './components/Rating';
 import {formatRuntime} from '../utils.js';
 import Bubbles from './components/Bubbles';
+import ExpandableBubbles from './components/ExpandableBubbles'
 import {sourceDisclaimer} from '../constants'
+import Source from './components/Source';
 
 var movies = [
   {
@@ -77,12 +79,11 @@ var movies = [
     ageRating: 15,
     language: "ENG",
     quote: "A level of sexual gratuity unmatched since Blue is the Warmest Color",
-    sources: [{
-      label: "netflix", 
-      icon: "/sources/netflix.png",
-    }, {label: "popcorntime", icon: "/sources/popcorn-time.jpg"}],
+    sources: [132, 453],
     tags: ["Romance", "Drama", "Period-Piece"],
-    
+    warnings: ["Mental Health", "Bereavement"],
+    representations: ["WLW", "Scientists", "Age Difference"],
+    trailer: "https://www.youtube.com/embed/Yd_nsFJAXV4"
   }
 ]
 
@@ -93,7 +94,8 @@ class Movie extends Component {
     var id = path[path.length-1]
 
     this.state = {
-      movie: movies.filter(m => m.id==id)[0]
+      movie: movies.filter(m => m.id==id)[0],
+      playTrailer: false
     }
 
   }
@@ -101,6 +103,15 @@ class Movie extends Component {
   render () {
     return (
         <div id="Movie" className="page">
+          {
+            this.state.playTrailer && 
+              <div className="cover" onClick={()=>{this.setState({playTrailer: false})}} />
+          }
+          {
+            this.state.playTrailer && this.state.movie.trailer && 
+            <iframe className="trailer" src={this.state.movie.trailer} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            autoPlay={true} allowFullScreen></iframe>
+          }
           <div id="MovieContainer">
             <div id="MovieScreenshots">
               {this.state.movie.screenshots.map((img)=>(
@@ -121,13 +132,26 @@ class Movie extends Component {
               <Bubbles items={this.state.movie.tags} />
               {this.state.movie.sources.length > 0 &&
                 <div id="findMe">
-                  <h3>Find Me On</h3>
-                  <div className="disclaimer">({sourceDisclaimer})</div>
+                  <h2>
+                    Find Me On
+                    {this.state.movie.trailer && <span id="watchTrailer" onClick={()=>{this.setState({playTrailer: true})}}>
+                      Watch Trailer
+                    </span>
+                    }
+                  </h2>
+                  <span className="disclaimer">({sourceDisclaimer})</span>
                   <div>
-                    {this.state.movie.sources.map((source, i) => <img key={i} src={source.icon} alt={source.label} />)}
+                    {this.state.movie.sources.map((source, i) => <Source key={i} id={source.id} />)}
                   </div>
                 </div>
               }
+              {
+                this.state.movie.warnings.length > 0 && <ExpandableBubbles items={this.state.movie.warnings} aside="(Potential for upsetting content/spoilers)" title="Trope/Trigger Warnings" />
+              }
+              {
+                this.state.movie.representations.length > 0 && <ExpandableBubbles items={this.state.movie.representations} title="Representation Matters" expandable={false} />
+              }
+
 
               <div id="quote">
                 "{this.state.movie.quote}"
