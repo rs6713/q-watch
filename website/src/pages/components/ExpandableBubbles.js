@@ -18,9 +18,10 @@ class ExpandableBubbles extends Component {
       <h2>{this.props.title}
       {this.props.expandable !== false && this.state.active && <Minus onClick={()=>{this.setState({active: false})}}/>}
       {this.props.expandable !== false && !this.state.active && <Plus onClick={()=>{this.setState({active: true})}} />}
-      {this.props.aside && !this.state.active && <span>{this.props.aside}</span>}
-      </h2>
+      {this.props.aside && (!this.state.active || !this.props.expandable) && <span>{this.props.aside}</span>}
       
+      </h2>
+      {this.props.subtitle && <p>{this.props.subtitle}</p>}
       {this.state.active && 
         <Bubbles items={this.props.items} />
       }

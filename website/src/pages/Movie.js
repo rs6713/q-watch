@@ -68,7 +68,7 @@ var movies = [
     id: 8,
     title: "Ammonite",
     year: "2021",
-    rating: 4.7,
+    rating: 2.4,
     bio: "Acclaimed paleontologist Mary Anning works alone selling common fossils to tourists to support her ailing mother, but a chance job offer changes her life when a visitor hires her to care for his wife.",
     screenshots: [
       "/movie-pictures/ammonite-000.jpg",

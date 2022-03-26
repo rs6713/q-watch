@@ -1,5 +1,9 @@
 @import "./defaults.scss";
 
+#Filters > div::-webkit-scrollbar {
+  display: none;
+}
+
 #Filters {
   position: fixed;
   top: 50%;
@@ -9,7 +13,35 @@
   box-shadow: 0 0px 1em rgb(0 0 0 / 40%);
   z-index: 50;
   border-radius: 1em;
+  width: 40vw;
+  max-height: 80vh;
+  overflow-y: hidden;
   padding: 1em;
-  width: 40%;
-  max-height: 80%;
+
+  > div {
+    width: calc(40vw);
+    max-height: calc(80vh - 2em);
+    overflow-y: scroll;
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .bubble {
+    cursor: pointer;
+  }
+  div > h2 {
+    font-weight: bold;
+    line-height: 1em;
+    border-top: 1px solid $FONT_COLOR_LIGHT;
+    border-bottom: 1px solid $FONT_COLOR_LIGHT;
+    padding: 0.5em 0em;
+  }
+
+  > svg {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    height: 1.5em;
+  }
 }

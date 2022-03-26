@@ -94,6 +94,7 @@ const filterConfig = {
   filterSections:[
     {
       title: "By Women for Women",
+      subtitle: "Sometimes things are best done yourself.",
       type: "checkbox",
       filters:[
         {
@@ -126,6 +127,7 @@ const filterConfig = {
     },
     {
       title: "Tropes / Trigger Warnings",
+      id: "warnings",
       expandable: true,
       warning: "IMPLIED SPOILERS",
       subtitle: "Early mainstream, queer media was messy at best. Select the tropes you wish to avoid.",
@@ -180,7 +182,9 @@ const filterConfig = {
     },
     {
       title: "Representation Matters",
-      subtitle: "See yourself on the bigscreen. We have tried our best, but if you feel we are missing filters here, please let us know, email us at q-watch.gmail.com.",
+      id: "representation",
+      warning: "See yourself on the bigscreen.",
+      subtitle: "We have tried our best, but if you feel we are missing filters here, please let us know, email us at q-watch.gmail.com.",
       disclaimers: [
         "Unfortunately some options may be missing or extremely broad, due to a lack of representation in the media itself.",
         "Representation here, guarantees presence, but not good representation: see tropes/trigger warnings."
@@ -256,6 +260,7 @@ class Browse extends Component {
       category: null,
       categories: ["All", "Romance", "Drama", "Comedy", "Sci-Fi", "Period-Piece", "Horror", "Cult Classic"],
       filterActive: false,
+      movies: movies
     }
   }
 
@@ -270,13 +275,22 @@ class Browse extends Component {
   }
 
   getMovies () {
+    //TODO Function to fetch movies info from repo
 
   }
+
+
 
   render () {
     return (
         <div id="Browse" className="page">
-          <Filters />
+          {
+            this.state.filterActive && 
+              <div className="cover" onClick={()=>{this.setState({filterActive: false})}} />
+          }
+          {
+            this.state.filterActive && <Filters config={filterConfig} list={movies} action={(mvs)=> {this.setState({movies: mvs})}} />
+          }
           <div id="ControlPanel">
             <div id="Sort">
               <div>Sort <Caret/></div>
@@ -292,7 +306,7 @@ class Browse extends Component {
                 <div className={this.state.category==category? 'active' : ''} onClick={()=>{this.setState({category:category })}} >{category}</div>
               ))}
             </div>
-            <div id="FiltersToggle" onClick={()=>{this.setState({"filterActive": !this.state.filterActive})}} className={!this.state.filterActive? 'active': ''} ><Filter/>Filters</div>
+            <div id="FiltersToggle" onClick={()=>{this.setState({"filterActive": !this.state.filterActive})}} className={this.state.filterActive? 'active': ''} ><Filter/>Filters</div>
           </div>
           <div id="BrowseResults">
             {movies.filter(movie=>(
@@ -304,7 +318,7 @@ class Browse extends Component {
               </div>}
 
             {
-              movies.filter(movie=>(
+              this.state.movies.filter(movie=>(
                 !this.state.category || movie.category.indexOf(this.state.category) != -1
               )).map(movie => (
                 <Link to={'/movies/'+movie.id}>

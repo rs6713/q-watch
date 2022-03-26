@@ -1,7 +1,33 @@
 @import "./defaults.scss";
-.rating div {
+.rating > div {
   flex-wrap: nowrap;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 2%;
+}
+
+.rating {
+  position: relative;
+  cursor: pointer;
+
+  span {
+    display: inline-block;
+  }
+}
+.rating div {
+  z-index: 1;
+}
+
+.rating div.yourvote {
+  position: absolute;
+  top: 0%;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  fill: $PRIMARY_COLOR;
+}
+
+.rating div.yourvote.front {
+  z-index: 5;
 }

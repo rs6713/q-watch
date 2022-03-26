@@ -11,6 +11,19 @@
     width: 100%;
     flex: 1 0;
   }
+  #Filters {
+    z-index: 102;
+  }
+
+  .cover {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    z-index: 101;
+    animation: 0.5s ease-in-out 0s 1 slideInCenter;
+  }
 
   #ControlPanel {
     display: flex;
