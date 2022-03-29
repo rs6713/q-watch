@@ -1,5 +1,8 @@
 # Dependencies
 /website/node_modules
+/google-images-download/
+
+
 
 # Production/Build
 /website/build
@@ -11,3 +14,5 @@
 # Local/Temporary Files
 /website/src/static/
 .env
+database.txt
+.vscode/

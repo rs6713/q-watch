@@ -234,7 +234,7 @@ const filterConfig = {
       ]
     },
     {
-      title: "Not finding what you're looking for?",
+      title: "Can't find what you're looking for?",
       subtitle: "Unfortunately Queer cinema (like most media) can be majority homogeneous. Allowing these options, may help you find more movies for specific demographics/story types",
       type: "checkbox",
       filters:[
