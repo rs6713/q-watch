@@ -11,7 +11,8 @@ function Menu(){
   console.log(useLocation().pathname)
     return (
       <div id="MenuContainer">
-        <Hamburger/>
+        <Hamburger className="hamburger"/>
+        <div className="sidetab" />
         <div id="Menu">
           <Link to={"/"}>
           <Logo />

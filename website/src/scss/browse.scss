@@ -30,7 +30,8 @@
     flex-direction: row;
     align-items: flex-start;
     width: 100%;
-    padding: 2em $SIDE_PAD 1em $SIDE_PAD;
+    padding-top: 1.5em;
+    padding-bottom: 1em;
     box-sizing: border-box;
 
     #FiltersToggle {
@@ -129,7 +130,7 @@
 
       div {
         display: inline-block;
-        padding: 0.5em 1em;
+        padding: 1em 1em;
         color: $FONT_COLOR_SUB;
         cursor: pointer;
       }
@@ -201,6 +202,7 @@
       display: block;
       background-size: cover;
       background-clip: padding-box;
+      background-position-x: center;
       border-radius: 1em 1em 0em 0em;
     }
 
@@ -228,17 +230,78 @@
   }
 }
 
-// @mixin styling($sidepadding) {
-//   // your SCSS here, e.g.
-//   #Browse #BrowseResults {
-//     padding-left: $sidepadding;
-//     padding-right: $sidepadding;
-//   }
-// }
+@mixin tile_styling($screenshot_height, $font_multiplier, $gap, $grid_repeat) {
+  #Browse #BrowseResults {
+    gap: $gap;
+    grid-template-columns: $grid_repeat;
 
-// @media screen and (max-width: 1600px) {
-//   @include styling($Sidepadding: 8em);
-// }
-// @media screen and (min-width: 1200px) {
-//   @include styling($sidepadding: 12em);
-// }
+    .movietile {
+      .screenshot {
+        height: $screenshot_height;
+      }
+
+      .description {
+        font-size: $FONT_SIZE_DEFAULT * $font_multiplier;
+        h3 {
+          font-size: $FONT_SIZE_MED * $font_multiplier;
+        }
+      }
+      .rating {
+        /*width: $screenshot_height - 2em;*/
+        width: $screenshot_height * 0.8;
+      }
+    }
+  }
+}
+
+@include tile_styling(
+  $screenshot_height: 13vw,
+  $font_multiplier: 1,
+  $gap: 3vw,
+  $grid_repeat: repeat(3, 1fr)
+);
+
+@media (max-width: $WIDTH_LARGEST_SCREEN) {
+  @include tile_styling(
+    $screenshot_height: 15vw,
+    $font_multiplier: 1,
+    $gap: 3vw,
+    $grid_repeat: repeat(3, 1fr)
+  );
+}
+
+@media (max-width: $WIDTH_LARGE_SCREEN) {
+  @include tile_styling(
+    $screenshot_height: 20vw,
+    $font_multiplier: 1,
+    $gap: 3vw,
+    $grid_repeat: repeat(3, 1fr)
+  );
+}
+
+@media (max-width: $WIDTH_SMALL_SCREEN) {
+  @include tile_styling(
+    $screenshot_height: 25vw,
+    $font_multiplier: 1,
+    $gap: 6vw,
+    $grid_repeat: repeat(2, 1fr)
+  );
+}
+
+@media (max-width: $WIDTH_TABLET) {
+  @include tile_styling(
+    $screenshot_height: 30vw,
+    $font_multiplier: 0.9,
+    $gap: 3vw,
+    $grid_repeat: repeat(2, 1fr)
+  );
+}
+
+@media (max-width: $WIDTH_MOBILE) {
+  @include tile_styling(
+    $screenshot_height: 50vw,
+    $font_multiplier: 1,
+    $gap: 5vw,
+    $grid_repeat: repeat(1, 1fr)
+  );
+}

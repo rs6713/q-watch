@@ -17,11 +17,24 @@
 #MenuContainer:hover #Menu {
   translate: transformX(0%) !important;
   -webkit-transform: translateX(0%) !important;
+  left: 0em;
 }
 
 #Menu:hover {
   transform: translateX(0%);
   -webkit-transform: translateX(0%);
+  left: 0em;
+}
+.sidetab {
+  position: fixed;
+  left: 0em;
+  top: 40vh;
+  height: 20vh;
+  width: 1em;
+  border-radius: 0em 1em 1em 0em;
+  background-color: $FONT_COLOR_LIGHTEST;
+  box-shadow: 0 0px 0.5em rgb(0 0 0 / 40%);
+  display: none;
 }
 
 #Menu {
@@ -31,7 +44,7 @@
   padding: 1em 0em 1em 1.5em;
   position: fixed;
   top: 0;
-  left: 0;
+  left: -1em;
   border-radius: 0em 1em 0em 1em;
   box-shadow: 0 10px 1em rgb(0 0 0 / 40%);
 

@@ -1,0 +1,43 @@
+@import "../scss/defaults.scss";
+
+@mixin width_styling($side_padding) {
+  // your SCSS here, e.g.
+  #Browse #BrowseResults,
+  .footer,
+  #Browse #ControlPanel {
+    padding-left: $side_padding;
+    padding-right: $side_padding;
+  }
+  #Movie #MovieContainer {
+    margin-left: $side_padding;
+    margin-right: $side_padding;
+  }
+}
+
+@include width_styling($side_padding: 15vw);
+
+@media (max-width: $WIDTH_LARGEST_SCREEN) {
+  @include width_styling($side_padding: 8vw);
+}
+
+@media (max-width: $WIDTH_LARGE_SCREEN) {
+  @include width_styling($side_padding: 3vw);
+  #MenuContainer .hamburger {
+    display: none;
+  }
+  .sidetab {
+    display: block;
+  }
+}
+
+@media (max-width: $WIDTH_SMALL_SCREEN) {
+  @include width_styling($side_padding: 3vw);
+}
+
+@media (max-width: $WIDTH_TABLET) {
+  @include width_styling($side_padding: 3vw);
+}
+
+@media (max-width: $WIDTH_MOBILE) {
+  @include width_styling($side_padding: 5vw);
+}

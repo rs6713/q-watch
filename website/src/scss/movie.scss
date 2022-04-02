@@ -42,7 +42,8 @@
   #MovieContainer {
     flex: 1 1;
     background-color: $FONT_COLOR_LIGHTEST;
-    margin: 0em $SIDE_PAD;
+    margin-top: 0em;
+    margin-bottom: 0em;
     overflow: hidden;
     padding: 5em 2em 1em 2em;
     ::-webkit-scrollbar {
@@ -53,6 +54,10 @@
       overflow-y: scroll;
       width: 44%;
       float: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1em;
       img {
         width: 100%;
       }
