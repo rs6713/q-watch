@@ -91,9 +91,11 @@ def get_characters(conn: Connection, movie_id: int=None) -> pd.DataFrame:
 
 #TODO:  I don't know if I'll use these
 def get_ratings(conn: Connection, movie_id: int=None) -> List[Dict]:
+  # Use this on ui to get ratings average, how many votes
   pass
 
 def get_quotes(conn: Connection, movie_id: int=None) -> List[Dict]:
+  # Use this to get quotes for specific movie
   pass
 
 def get_actor(conn: Connection, id: int) -> Dict:

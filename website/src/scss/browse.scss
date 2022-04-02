@@ -227,3 +227,18 @@
     }
   }
 }
+
+// @mixin styling($sidepadding) {
+//   // your SCSS here, e.g.
+//   #Browse #BrowseResults {
+//     padding-left: $sidepadding;
+//     padding-right: $sidepadding;
+//   }
+// }
+
+// @media screen and (max-width: 1600px) {
+//   @include styling($Sidepadding: 8em);
+// }
+// @media screen and (min-width: 1200px) {
+//   @include styling($sidepadding: 12em);
+// }
