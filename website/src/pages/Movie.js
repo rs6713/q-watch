@@ -113,11 +113,7 @@ class Movie extends Component {
             autoPlay={true} allowFullScreen></iframe>
           }
           <div id="MovieContainer">
-            <div id="MovieScreenshots">
-              {this.state.movie.screenshots.map((img)=>(
-                <img src={img} />
-              ))}
-            </div>
+            
             <div id="MovieContents">
               <Rating score={this.state.movie.rating} rotated={true} />
               <h1>{this.state.movie.title}</h1>
@@ -159,6 +155,11 @@ class Movie extends Component {
               
 
 
+            </div>
+            <div id="MovieScreenshots">
+              {this.state.movie.screenshots.map((img)=>(
+                <img src={img} />
+              ))}
             </div>
           </div>
           <Footer />

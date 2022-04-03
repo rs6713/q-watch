@@ -21,34 +21,80 @@
       cursor: pointer;
     }
   }
+
+  .background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 110%;
+    width: 110%;
+
+    margin: -2%;
+
+    /* Add the blur effect */
+    filter: blur(8px);
+    -webkit-filter: blur(15px);
+  }
+
+  #Title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    h1 {
+      color: $FONT_COLOR_LIGHTEST;
+      font-size: 9em;
+      font-family: $FONT_LOGO;
+
+      white-space: nowrap;
+      text-shadow: 0 0px 0.15em rgb(0 0 0 / 40%);
+    }
+  }
 }
 /*background-image: url("../static/movie-gifs/imagine-me-and-you-000.gif");*/
-#TitlePage .background {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  height: 110%;
-  width: 110%;
 
-  margin: -2%;
-
-  /* Add the blur effect */
-  filter: blur(8px);
-  -webkit-filter: blur(15px);
+@media (max-width: $WIDTH_TABLET) {
+  #TitlePage #Title {
+    position: inherit;
+    width: 100%;
+    top: 0;
+    left: 0;
+    transform: none;
+    h1 {
+      font-size: calc($FONT_SIZE_TITLE * 1.5);
+    }
+  }
 }
 
-#TitlePage #Title {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  h1 {
-    color: $FONT_COLOR_LIGHTEST;
-    font-size: 9em;
-    font-family: $FONT_LOGO;
+@media (max-width: $WIDTH_MOBILE) {
+  #TitlePage {
+    #Title {
+      h1 {
+        font-size: $FONT_SIZE_TITLE;
+      }
+    }
 
-    white-space: nowrap;
-    text-shadow: 0 0px 0.15em rgb(0 0 0 / 40%);
+    .searchbar {
+      input {
+        width: 10.5em;
+      }
+      .searchresult {
+        width: 13.5em;
+
+        div:last-child {
+          right: 1em;
+        }
+        padding-left: 1em;
+        padding-right: 1em;
+        padding-top: 1em;
+      }
+      .searchresults {
+        max-height: 12em;
+      }
+    }
   }
 }

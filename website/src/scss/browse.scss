@@ -130,6 +130,8 @@
 
       div {
         display: inline-block;
+        word-wrap: none;
+        white-space: nowrap;
         padding: 1em 1em;
         color: $FONT_COLOR_SUB;
         cursor: pointer;
@@ -286,6 +288,39 @@
     $gap: 6vw,
     $grid_repeat: repeat(2, 1fr)
   );
+
+  #Browse #ControlPanel {
+    position: relative;
+    display: block;
+    margin-bottom: 2em;
+    width: 100%;
+    #Categories {
+      position: absolute;
+      justify-content: space-between;
+      top: 5em;
+      left: 0;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-x: scroll;
+
+      div:first-child {
+        padding-left: 0;
+      }
+      div:last-child {
+        padding-right: 0;
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    #FiltersToggle {
+      float: right;
+    }
+    #Sort {
+      float: left;
+    }
+  }
 }
 
 @media (max-width: $WIDTH_TABLET) {

@@ -43,6 +43,12 @@ class Main extends Component {
         "title": "Rafiki",
         "id": 5
       },
+      {
+        "gif": 'ammonite-000.gif',
+        "year": 2021,
+        "title": "Ammonite",
+        "id": 8
+      },
     ]
     var randIndex = Math.floor(Math.random()*movies.length);
     this.setState({

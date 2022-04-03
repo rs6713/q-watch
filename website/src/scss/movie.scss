@@ -15,7 +15,7 @@
   display: flex;
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
+  overflow-y: hidden;
   flex-direction: column;
   position: relative;
 
@@ -44,7 +44,7 @@
     background-color: $FONT_COLOR_LIGHTEST;
     margin-top: 0em;
     margin-bottom: 0em;
-    overflow: hidden;
+    overflow-y: hidden;
     padding: 5em 2em 1em 2em;
     ::-webkit-scrollbar {
       display: none;
@@ -71,18 +71,20 @@
       height: 100%;
       position: relative;
 
+      > p {
+        text-align: justify;
+      }
+
       .rating {
         width: 15em;
         fill: $ACCENT_COLOR3;
       }
 
       h1 {
-        font-size: $FONT_SIZE_TITLE;
         margin-top: 0;
         margin-bottom: 0;
       }
       > h2 {
-        font-size: $FONT_SIZE_DEFAULT;
         font-weight: normal;
         margin-bottom: 3em;
       }
@@ -91,7 +93,6 @@
         position: absolute;
         right: 0;
         top: 0;
-        font-size: $FONT_SIZE_HEADING;
         font-weight: bold;
         line-height: 1em;
       }
@@ -111,13 +112,14 @@
           font-weight: lighter;
           position: relative;
           top: -1em;
+          width: 100%;
+          display: block;
+          text-align: justify;
         }
         > div {
           margin-top: 1em;
         }
-        > h2 {
-          font-size: $FONT_SIZE_HEADING;
-        }
+
         #watchTrailer {
           float: right;
           font-size: $FONT_SIZE_DEFAULT;
@@ -142,5 +144,92 @@
         }
       }
     }
+  }
+}
+
+@media (max-width: $WIDTH_LARGE_SCREEN) {
+  #Movie {
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  #Movie #MovieContainer {
+    overflow-y: scroll;
+    overflow-x: visible;
+  }
+  #Movie #MovieContainer #MovieContents {
+    width: 100%;
+    height: auto;
+    overflow-y: hidden;
+    float: none;
+    margin-bottom: 1em;
+  }
+  #Movie #MovieContainer #MovieScreenshots {
+    width: 100%;
+    height: auto;
+    overflow-y: hidden;
+    float: none;
+  }
+}
+
+@mixin content_styling($font_multiplier, $default_font_multiplier) {
+  #Movie #MovieContainer #MovieContents {
+    font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+    h1 {
+      font-size: $FONT_SIZE_TITLE * $font_multiplier;
+    }
+    > h2 {
+      font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+    }
+    > div#aside {
+      font-size: $FONT_SIZE_HEADING * $font_multiplier;
+    }
+    #findMe {
+      #watchTrailer {
+        font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+      }
+      > h2 {
+        font-size: $FONT_SIZE_HEADING * $font_multiplier;
+      }
+
+      .source span {
+        font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+      }
+    }
+    .bubbles {
+      .bubble {
+        font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+      }
+    }
+
+    .expandable_bubbles {
+      h2 {
+        font-size: $FONT_SIZE_HEADING * $font_multiplier;
+      }
+      span {
+        font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+      }
+    }
+  }
+}
+
+@include content_styling($font_multiplier: 1, $default_font_multiplier: 1);
+
+@media (max-width: $WIDTH_TABLET) {
+  @include content_styling(
+    $font_multiplier: 0.9,
+    $default_font_multiplier: 0.9
+  );
+}
+
+@media (max-width: $WIDTH_MOBILE) {
+  @include content_styling(
+    $font_multiplier: 0.8,
+    $default_font_multiplier: 0.9
+  );
+
+  #Movie #MovieContainer {
+    padding-left: 1em;
+    padding-right: 1em;
   }
 }

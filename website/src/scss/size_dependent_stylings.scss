@@ -32,6 +32,11 @@
 
 @media (max-width: $WIDTH_SMALL_SCREEN) {
   @include width_styling($side_padding: 3vw);
+  #Browse #ControlPanel #Categories {
+    width: 94vw;
+    margin-left: 3vw;
+    margin-right: 3vw;
+  }
 }
 
 @media (max-width: $WIDTH_TABLET) {
@@ -40,4 +45,9 @@
 
 @media (max-width: $WIDTH_MOBILE) {
   @include width_styling($side_padding: 5vw);
+  #Browse #ControlPanel #Categories {
+    width: 90vw;
+    margin-left: 5vw;
+    margin-right: 5vw;
+  }
 }

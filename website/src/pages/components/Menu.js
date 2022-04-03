@@ -12,7 +12,7 @@ function Menu(){
     return (
       <div id="MenuContainer">
         <Hamburger className="hamburger"/>
-        <div className="sidetab" />
+        <div className="sidetab"><div/> <div/></div>
         <div id="Menu">
           <Link to={"/"}>
           <Logo />
