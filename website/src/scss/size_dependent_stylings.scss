@@ -18,6 +18,11 @@
 
 @media (max-width: $WIDTH_LARGEST_SCREEN) {
   @include width_styling($side_padding: 8vw);
+  #Movie {
+    #MovieControls {
+      width: 8vw;
+    }
+  }
 }
 
 @media (max-width: $WIDTH_LARGE_SCREEN) {
@@ -27,6 +32,13 @@
   }
   .sidetab {
     display: block;
+  }
+
+  #Movie {
+    #MovieControls {
+      right: 3vw;
+      width: auto;
+    }
   }
 }
 
@@ -49,5 +61,11 @@
     width: 90vw;
     margin-left: 5vw;
     margin-right: 5vw;
+  }
+
+  #Movie {
+    #MovieControls {
+      right: 5vw;
+    }
   }
 }

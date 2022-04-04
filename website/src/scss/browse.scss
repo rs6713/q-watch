@@ -188,7 +188,6 @@
       transform-origin: 0% 0%;
       top: 1em;
       left: 1em;
-      width: 13em;
     }
     .rating div svg {
       fill: $FONT_COLOR_LIGHTEST;
@@ -250,7 +249,8 @@
       }
       .rating {
         /*width: $screenshot_height - 2em;*/
-        width: $screenshot_height * 0.8;
+        width: $screenshot_height * 0.9;
+        top: $screenshot_height * 0.05;
       }
     }
   }

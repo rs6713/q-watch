@@ -288,9 +288,7 @@ class Browse extends Component {
             this.state.filterActive && 
               <div className="cover" onClick={()=>{this.setState({filterActive: false})}} />
           }
-          {
-            this.state.filterActive && <Filters config={filterConfig} list={movies} action={(mvs)=> {this.setState({movies: mvs})}} />
-          }
+          <Filters active={this.state.filterActive? "active": "inactive"} config={filterConfig} list={movies} action={(mvs)=> {this.setState({movies: mvs})}} />
           <div id="ControlPanel">
             <div id="Sort">
               <div>Sort <Caret/></div>

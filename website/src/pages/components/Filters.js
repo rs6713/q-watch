@@ -6,9 +6,10 @@ function Filters(props){
   //<Minus/>
   return (
 
-    <div id="Filters">
-      <div>
+    <div id="Filters" className={props.active}>
       <h1>{props.config.title}</h1>
+      <div>
+      
       {props.config.filterSections.map((filter) => (
         <div>
           

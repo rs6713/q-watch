@@ -17,7 +17,6 @@ class Rating extends Component {
   }
 
   currentVote(idx){
-    console.log("Current Vote", idx)
     if( (idx+1) != this.state.currentVote){
       this.setState({
         currentVote: idx+1,
@@ -27,7 +26,6 @@ class Rating extends Component {
   }
 
   makeVote(){
-    console.log("Makevote", this.state.currentVote)
     if(this.state.currentVote != this.state.voted){
       this.setState({
         voted: this.state.currentVote
@@ -35,7 +33,6 @@ class Rating extends Component {
     }
   }
   setMode(active){
-    console.log("SetMode ", active)
     this.setState({
       active: active
     })
@@ -53,7 +50,7 @@ class Rating extends Component {
             
           </div>)}
         </div>}
-        <div  >
+        <div aria-label={"The current rating is: " + this.props.score} >
           {[...Array(max_score)].map((_, idx) => {
             if (Math.ceil(this.props.score) < (1+idx)){
               return <div key={idx} onMouseOver={() => {this.currentVote(idx)}}><Scissor style={{visibility: 'hidden'}} /></div>

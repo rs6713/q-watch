@@ -16,8 +16,8 @@ class ExpandableBubbles extends Component {
     return (
     <div className="expandable_bubbles">
       <h2>{this.props.title}
-      {this.props.expandable !== false && this.state.active && <Minus onClick={()=>{this.setState({active: false})}}/>}
-      {this.props.expandable !== false && !this.state.active && <Plus onClick={()=>{this.setState({active: true})}} />}
+      {this.props.expandable !== false && this.state.active && <Minus title="" aria-label={"Click to hide " + this.props.title} onClick={()=>{this.setState({active: false})}}/>}
+      {this.props.expandable !== false && !this.state.active && <Plus title="" aria-label={"Click to see " + this.props.title} onClick={()=>{this.setState({active: true})}} />}
       {this.props.aside && (!this.state.active || !this.props.expandable) && <span>{this.props.aside}</span>}
       
       </h2>

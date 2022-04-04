@@ -6,6 +6,8 @@ import Bubbles from './components/Bubbles';
 import ExpandableBubbles from './components/ExpandableBubbles'
 import {sourceDisclaimer} from '../constants'
 import Source from './components/Source';
+import {ReactComponent as ReturnMovie} from '../static/icons/return.svg';
+import {ReactComponent as ShuffleMovie} from '../static/icons/shuffle.svg';
 
 var movies = [
   {
@@ -103,6 +105,11 @@ class Movie extends Component {
   render () {
     return (
         <div id="Movie" className="page">
+          <div id="MovieControls">
+            <ShuffleMovie aria-label="Choose Random Movie" title="Choose random movie." className="ShuffleMovie"/>
+            <ReturnMovie aria-label="Return to Browse" title="Return to Browse" className="ReturnMovie" />
+          </div>
+
           {
             this.state.playTrailer && 
               <div className="cover" onClick={()=>{this.setState({playTrailer: false})}} />

@@ -8,7 +8,6 @@ import {ReactComponent as Time} from '../../static/icons/time.svg'
 import {ReactComponent as Hamburger} from '../../static/icons/menu.svg'
 
 function Menu(){
-  console.log(useLocation().pathname)
     return (
       <div id="MenuContainer">
         <Hamburger className="hamburger"/>

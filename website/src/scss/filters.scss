@@ -4,23 +4,57 @@
   display: none;
 }
 
+#Filters.active {
+  transform: translateX(0);
+}
+
 #Filters {
+  input[type="checkbox"] {
+    accent-color: $ACCENT_COLOR3;
+    cursor: pointer;
+    //color: white;
+  }
+  // input[type="checkbox"] + label::before {
+  //   background-color: white;
+  // }
+  // input[type="checkbox"]:checked + label::after {
+  //   border: 3px solid white;
+  //   background: rgba(0, 0, 0, 0);
+  //   content: "";
+  // }
+
+  .bubbles {
+    .bubble {
+      background-color: $FONT_COLOR_DEFAULT;
+    }
+    .bubble.active {
+      background-color: $ACCENT_COLOR3;
+    }
+  }
+
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  top: 0;
+  right: 0;
+  transform: translateX(110%);
+  transition: 0.5s ease-out !important;
+
   background-color: $FONT_COLOR_LIGHTEST;
   box-shadow: 0 0px 1em rgb(0 0 0 / 40%);
   z-index: 50;
-  border-radius: 1em;
-  width: 40vw;
-  max-height: 80vh;
+  border-radius: 1em 0em 0em 1em;
+  width: 30vw;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow-x: hidden;
   overflow-y: hidden;
   padding: 1em;
+  display: flex;
+  flex-direction: column;
 
   > div {
-    width: calc(40vw);
-    max-height: calc(80vh - 2em);
+    /*max-height: calc(100vh - 2em);*/
+    flex: 1 1;
+
     overflow-y: scroll;
     /* Hide scrollbar for IE, Edge and Firefox */
     -ms-overflow-style: none; /* IE and Edge */
