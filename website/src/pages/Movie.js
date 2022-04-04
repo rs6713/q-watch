@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
 import Footer from './components/Footer';
 import Rating from './components/Rating';
 import {formatRuntime} from '../utils.js';
@@ -106,8 +107,11 @@ class Movie extends Component {
     return (
         <div id="Movie" className="page">
           <div id="MovieControls">
+            
             <ShuffleMovie aria-label="Choose Random Movie" title="Choose random movie." className="ShuffleMovie"/>
-            <ReturnMovie aria-label="Return to Browse" title="Return to Browse" className="ReturnMovie" />
+            <Link to="/browse">
+              <ReturnMovie aria-label="Return to Browse" title="Return to Browse" className="ReturnMovie" />
+            </Link>
           </div>
 
           {
