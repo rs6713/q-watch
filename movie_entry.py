@@ -6,6 +6,6 @@
 
 # def 
 
-from qwatch.gui import main
+from qwatch.gui import MovieWindow
 
-main()
+MovieWindow()
