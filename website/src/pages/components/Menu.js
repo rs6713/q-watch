@@ -10,22 +10,22 @@ import {ReactComponent as Hamburger} from '../../static/icons/menu.svg'
 function Menu(){
     return (
       <div id="MenuContainer">
-        <Hamburger className="hamburger"/>
+        <Hamburger className="hamburger" title="" aria-label="Menu" />
         <div className="sidetab"><div/> <div/></div>
         <div id="Menu">
           <Link to={"/"}>
-          <Logo />
+          <Logo title=""/>
           </Link>
 
           <Link to={"/browse"} className={"link" + (useLocation().pathname == "/browse"? ' active' : ' inactive')}>
             <div>
-              <Grid />
+              <Grid title=""/>
               <span>Browse</span>
             </div>
           </Link>
           <Link to={"/rankings"} className="link">
             <div>
-            <Rank />
+            <Rank title="" />
               <span>Rankings</span>
             </div>
           </Link>
@@ -33,13 +33,13 @@ function Menu(){
           <h3>The State of Lesbian Cinema</h3>
           <Link to={"/visualizations/overtime"} className="link">
             <div>
-              <Time />
+              <Time title="" />
               <span>Over Time</span>
             </div>
           </Link>
           <Link to={"/visualizations/bycountry"} className="link">
             <div>
-              <World />
+              <World title="" />
               <span>By Country</span>
             </div>
           </Link>

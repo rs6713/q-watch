@@ -18,3 +18,4 @@ database.txt
 .vscode/
 .db_config.json
 *.pyc
+IMAGES/

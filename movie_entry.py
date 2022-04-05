@@ -1,7 +1,11 @@
-from googlesearch import search
-import tkinter as tk
-import wikipedia
+# from googlesearch import search
+# import tkinter as tk
+# import wikipedia
 
-search("Google", num_results=100)
+# search("Google", num_results=100)
 
-def 
+# def 
+
+from qwatch.gui import main
+
+main()

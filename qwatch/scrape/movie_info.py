@@ -30,11 +30,29 @@ for idx in range(len(movies)):
 
 movie = movies[4] 
 
+properties = [
+  "Directed by",
+  "Written by",
+  "Based on",
+  "Starring",
+  "Release date",
+  "Running time",
+  "Country",
+  "Language"
+]
 #%%
+def get_wikipedia_info(movie_title):
+  info = {}
 
-summary = wikipedia.summary(movie + " (film)")
-print(summary)
-year = re.findall(r'[0-9]{4}', summary)[0]
+  search_term = movie_title + " (film)"
+  info["summary"] = wikipedia.summary(search_term)
+  info["year"] = re.findall(r'[0-9]{4}', summary)[0]
+  info["url"] = wikipedia.page(search_term).url
+
+  # Entire html page
+  html = wikipedia.page(search_term).html()
+  page = BeautifulSoup(html, 'html.parser')
+
 #%%
 url = wikipedia.page(movie).url
 print(url)
@@ -46,16 +64,7 @@ page = BeautifulSoup(html, 'html.parser')
 # %%
 # p
 # .infobox
-properties = [
-  "Directed by",
-  "Written by",
-  "Based on",
-  "Starring",
-  "Release date",
-  "Running time",
-  "Country",
-  "Language"
-]
+
 
 def get_info(property):
   """ Get information from wikipedia infobox"""

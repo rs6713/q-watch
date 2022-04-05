@@ -23,7 +23,7 @@ class ExpandableBubbles extends Component {
       </h2>
       {this.props.subtitle && <p>{this.props.subtitle}</p>}
       {this.state.active && 
-        <Bubbles items={this.props.items} />
+        <Bubbles items={this.props.items} clickAction={this.props.clickAction} />
       }
     </div>
     )

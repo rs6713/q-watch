@@ -16,6 +16,10 @@
 
 @include width_styling($side_padding: 15vw);
 
+#Filters {
+  width: 32em;
+}
+
 @media (max-width: $WIDTH_LARGEST_SCREEN) {
   @include width_styling($side_padding: 8vw);
   #Movie {
@@ -67,5 +71,10 @@
     #MovieControls {
       right: 5vw;
     }
+  }
+
+  #Filters {
+    width: 100vw;
+    border-radius: 0;
   }
 }

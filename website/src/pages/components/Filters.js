@@ -7,17 +7,18 @@ function Filters(props){
   return (
 
     <div id="Filters" className={props.active}>
-      <h1>{props.config.title}</h1>
+      <h1>{props.config.title} <span>({props.n_matches} Matches)</span></h1>
       <div>
       
       {props.config.filterSections.map((filter) => (
-        <div>
+        <div >
           
           {filter.type=="bubble" && 
             <ExpandableBubbles 
               title={filter.title}
               aside={filter.warning || ""}
-              items={filter.filters.map(f=> f.label)}
+              items={filter.filters}
+              clickAction={filter.clickAction || (()=>{}) }
               expandable={filter.expandable || false}
               subtitle={filter.subtitle}
             />

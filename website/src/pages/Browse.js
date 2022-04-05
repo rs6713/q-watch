@@ -81,12 +81,12 @@ var movies = [
   }
 ]
 const SORT = {
-  "Most Popular": ("views", -1),
-  "Least Popular": ("views", 1),
-  "Highest Rating": ("rating", -1),
-  "Lowest Rating": ("rating", 1),
-  "Most Recent Release": ("year", -1),
-  "Least Recent Release": ("year", 1)
+  //"Most Popular": ("views", -1),
+  //"Least Popular": ("views", 1),
+  "Highest Rating": ["rating", -1],
+  "Lowest Rating": ["rating", 1],
+  "Most Recent Release": ["year", -1],
+  "Least Recent Release": ["year", 1],
 }
 
 const filterConfig = {
@@ -152,31 +152,38 @@ const filterConfig = {
         },
         {
           label: "Suicide",
-          id: "suicide"
+          id: "suicide",
+          descrip: ""
         },
         {
           label: "Conversion Therapy",
-          id: "conversion_therapy"
+          id: "conversion_therapy",
+          descrip: ""
         },
         {
           label: "Hate Crimes",
-          id: "hate_crimes"
+          id: "hate_crimes",
+          descrip: ""
         },
         {
           label: "They don't end up together.",
-          id: "lonely_lesbians"
+          id: "lonely_lesbians",
+          descrip: ""
         },
         {
           label: "Unaccepting Family/Disowning",
-          id: "family_troubles"
+          id: "family_troubles",
+          descrip: ""
         },
         {
           label: "Bi Erasure",
-          id: "bi_erasure"
+          id: "bi_erasure",
+          descrip: ""
         },
         {
           label: "It was just a phase",
-          id: "it_was_a_phase"
+          id: "it_was_a_phase",
+          descrip: ""
         }
       ]
     },
@@ -195,6 +202,11 @@ const filterConfig = {
           label: "Black Love",
           id: "blackLove",
           descrip: "Black characters loving black characters."
+        },
+        {
+          label: "POC Love",
+          id: "pocLove",
+          descrip: "POC characters loving POC characters."
         },
         {
           label: "QTIPOC",
@@ -260,8 +272,10 @@ class Browse extends Component {
       category: null,
       categories: ["All", "Romance", "Drama", "Comedy", "Sci-Fi", "Period-Piece", "Horror", "Cult Classic"],
       filterActive: false,
-      movies: movies
+      movies: movies,
+      sort: Object.keys(SORT)[0]
     }
+    this.all_movies = movies;
   }
 
   componentDidMount(){
@@ -276,10 +290,17 @@ class Browse extends Component {
 
   getMovies () {
     //TODO Function to fetch movies info from repo
+    // all_movies
 
   }
 
-
+  sortMovies(movies){
+    /* Sort Movies by properties.*/
+    let prop = SORT[this.state.sort][0]
+    let order = SORT[this.state.sort][1]
+    
+    return movies.sort((m1, m2) => (m1[prop] > m2[prop] ? order: -1 * order))
+  }
 
   render () {
     return (
@@ -288,13 +309,13 @@ class Browse extends Component {
             this.state.filterActive && 
               <div className="cover" onClick={()=>{this.setState({filterActive: false})}} />
           }
-          <Filters active={this.state.filterActive? "active": "inactive"} config={filterConfig} list={movies} action={(mvs)=> {this.setState({movies: mvs})}} />
+          <Filters active={this.state.filterActive? "active": "inactive"} config={filterConfig} list={this.all_movies} action={(mvs)=> {this.setState({movies: mvs})}} />
           <div id="ControlPanel">
             <div id="Sort">
               <div>Sort <Caret/></div>
               <ul id="SortOptions">
                 {Object.keys(SORT).map(key => (
-                  <li key={key} onClick={()=>{this.setState({'sort': SORT[key]})}}>{key}</li>
+                  <li key={key} className={this.state.sort === key ? 'active' : ''} onClick={()=>{this.setState({'sort': key})}}>{key}</li>
                 ))}
               </ul>
             </div>
@@ -316,7 +337,7 @@ class Browse extends Component {
               </div>}
 
             {
-              this.state.movies.filter(movie=>(
+              this.sortMovies(this.state.movies).filter(movie=>(
                 !this.state.category || movie.category.indexOf(this.state.category) != -1
               )).map(movie => (
                 <Link to={'/movies/'+movie.id}>
