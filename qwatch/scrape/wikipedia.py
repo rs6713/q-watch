@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from IPython.display import display, HTML
 import json
 import pandas as pd
+
 import re
 import requests
 import wikipedia
@@ -29,6 +30,9 @@ def get_infobox_property(page, property):
       return val[0].text
   return ""
 
+def map_value(key, val):
+  return val
+
 def get_movie_details(movie_title):
   info = {}
 
@@ -45,6 +49,9 @@ def get_movie_details(movie_title):
   for prop in properties:
     prop_val = get_infobox_property(page, prop)
     if prop_val:
-      info[prop] = prop_val
+      key = prop.lower().replace(" ", "_")
+
+
+      info[key] = map_value(key, prop_val)
 
   return info

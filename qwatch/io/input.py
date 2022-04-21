@@ -21,6 +21,23 @@ from sqlalchemy.engine import (
 
 SCHEMA = "dbo"
 
+def get_movies_ids(conn: Connection) -> List[Dict]:
+  """ Retrieve Movie title, id list"""
+
+  movie_table = Table("MOVIES", MetaData(), schema=SCHEMA, autoload_with=conn)
+  query = select(
+    movie_table.c.ID,
+    movie_table.c.TITLE
+  )
+
+  columns = conn.execute(query).keys()
+  results = {
+    row._mapping["ID"]: row._mapping["TITLE"]
+    for row in conn.execute(query).fetchall()
+  }
+  return results
+
+
 def get_movies(conn: Connection, filters: Dict=None) -> List[Dict]:
   """Retrieve Movies that match filters."""
   meta = MetaData()
@@ -37,15 +54,17 @@ def _get_movie_properties(conn: Connection, PROPERTY:str, movie_id: str=None) ->
   prop_movie_table = f"MOVIE_{PROPERTY}"
 
   prop_table = Table(prop_table, MetaData(), schema=SCHEMA, autoload_with=conn)
-  prop_movie_table = Table(prop_movie_table, MetaData(), schema=SCHEMA, autoload_with=conn)
 
   if movie_id is None:
     query = prop_table.select()
   else:
+    prop_movie_table = Table(prop_movie_table, MetaData(), schema=SCHEMA, autoload_with=conn)
+
     query = select(
-      prop_table.c.LABEL,
-      prop_table.c.DESCRIP,
-      prop_table.c.ID,
+      *prop_table.c
+      # prop_table.c.LABEL,
+      # prop_table.c.DESCRIP,
+      # prop_table.c.ID,
     ).select_from(prop_movie_table).join(
       prop_table, prop_table.c.ID == prop_movie_table.c[PROPERTY+"_ID"]
     ).where(
