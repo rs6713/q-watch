@@ -46,7 +46,77 @@ def get_movies(conn: Connection, filters: Dict=None) -> List[Dict]:
 def get_movie(conn: Connection, movie_id: int) -> Dict:
   """Retrieve Movie by Id. """
   meta = MetaData()
-  pass
+
+  movie_table = Table("MOVIES", meta, schem=SCHEMA, autoload_with=conn)
+
+  movie_quote_table = Table("MOVIE_QUOTE", meta, schema=SCHEMA, autoload_with=conn)
+
+  movie_intensity_table = Table("MOVIE_INTENSITY", meta, schema=SCHEMA, autoload_with=conn)
+  intensity_table = Table("INTENSITIES", meta, schema=SCHEMA, autoload_with=conn)
+
+  ages_table = Table("AGES", meta, schema=SCHEMA, autoload_with=conn)
+
+  movie_query = select(
+    ages_table.c.LABEL.label("AGE"),
+    movie_table.c.RUNTIME,
+    movie_table.c.AGE_RATING,
+    movie_table.c.LANGUAGE,
+    movie_table.c.SUMMARY, 
+    movie_table.c.BIO,
+    movie_table.c.TITLE,
+    movie_table.c.YEAR
+  ).select_from(movie_table).join(
+    ages_table, ages_table.c.ID == movie_table.c.AGE
+  ).where(
+    movie_table.c.ID == movie_id
+  )
+
+  quote_query = select(
+    movie_quote_table.c.ID,
+    movie_quote_table.c.QUOTE
+  ).select_from(
+    movie_quote_table
+  ).where(
+    movie_quote_table.c.MOVIE_ID==movie_id
+  )
+
+  # genre_query = select(
+  #   genre_table.c.LABEL.label("GENRE")
+  # ).select_from(
+  #   movie_genre_table
+  # ).join(
+  #   genre_table, genre_table.c.ID == movie_genre_table.c.GENRE_ID
+  # ).where(
+  #   movie_genre_table.c.MOVIE_ID == movie_id
+  # )
+  genres = _get_movie_properties(conn, "GENRE", movie_id)
+  representations = _get_movie_properties(conn, "REPRESENTATION", movie_id)
+  tropes = _get_movie_properties(conn, "TROPE_TRIGGER", movie_id)
+
+
+
+  #get_people(conn, movie_id)
+  #get_images(conn, movie_id)
+
+def get_people(conn: Connection, movie_id:int):
+  """Get people associated with movie."""
+  meta = MetaData()
+
+  roles_table = Table("ROLES", meta, schema=SCHEMA, autoload_with=conn)
+  genders_table = Table("GENDERS", meta, schema=SCHEMA, autoload_with=conn)
+  person_role_table = Table("PERSON_ROLE", meta, schema=SCHEMA, autoload_with=conn)
+
+  ethnicities_table = Table("ETHNICITIES", meta, schema=SCHEMA, autoload_with=conn)
+  sexualities_table = Table("SEXUALITIES", meta, schema=SCHEMA, autoload_with=conn)
+  genders_table = Table("")
+
+
+def get_images(conn: Connection, movie_id:int):
+  """Get images associated with movie."""
+  meta = MetaData()
+
+
+
 
 def _get_movie_properties(conn: Connection, PROPERTY:str, movie_id: str=None) -> pd.DataFrame:
   """ Get given properties form a movie"""

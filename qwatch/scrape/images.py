@@ -6,7 +6,7 @@ from google_images_download import google_images_download
 #os.path.join(os.path.abspath(__file__), os.pardir, os.pardir, "images")
 OUTPUT_DIR = os.path.join(pathlib.Path(__file__).parent.parent.parent.absolute(), "IMAGES")
 
-def download(movie_title, limit=5):
+def download_images(movie_title, limit=5):
   """ Download images associated with movie_title to OUTPUT_DIR."""
 
   # Clear existing dir
