@@ -2,7 +2,14 @@ import React from 'react';
 import ExpandableBubbles from './ExpandableBubbles'
 import {ReactComponent as Minus} from '../../static/icons/minus.svg'
 
+
+
 function Filters(props){
+  /*
+  list --> list to filter
+  action --> to call with list
+
+  */
   //<Minus/>
   return (
 

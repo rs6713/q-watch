@@ -77,7 +77,7 @@ var movies = [
     rating: 4.7,
     bio: "An overlooked Geologist discovers there is more to life than fossils. (pussy)",
     screenshot: "/movie-pictures/ammonite-000.jpg",
-    category: ["Drama", "Period-Piece", "Romance"]
+    category: ["Drama", "Period-Piece", "Romance"],
   }
 ]
 const SORT = {
