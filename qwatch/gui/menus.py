@@ -1,13 +1,14 @@
 import tkinter as tk
+from tkinter import ttk
 
 
-class MenuSingleSelector(tk.Menubutton):
+class MenuSingleSelector(ttk.Menubutton):
     def __init__(self, parent, name, options, default=None, var=None, **kwargs):
-        tk.Menubutton.__init__(
+        ttk.Menubutton.__init__(
             self,
             parent,
             text=name,
-            relief=tk.RAISED,
+            # relief=tk.RAISED,
             **kwargs
         )
         menu = tk.Menu(self, tearoff=0)
@@ -48,13 +49,13 @@ class MenuSingleSelector(tk.Menubutton):
         return self.selected_variable.get()
 
 
-class MenuMultiSelector(tk.Menubutton):
+class MenuMultiSelector(ttk.Menubutton):
     def __init__(self, parent, name, options, **kwargs):
-        tk.Menubutton.__init__(
+        ttk.Menubutton.__init__(
             self,
             parent,
             text=name,
-            relief=tk.RAISED,
+            # relief=tk.RAISED,
             **kwargs
         )
         menu = tk.Menu(self, tearoff=0)
@@ -81,10 +82,10 @@ class ChecklistBox(tk.Frame):
     def __init__(self, parent, name, choices, height=100, width=150, **kwargs):
         tk.Frame.__init__(self, parent)
 
-        label = tk.Label(self, text=name)
+        label = ttk.Label(self, text=name)
         label.pack(side="top", fill=tk.X)
 
-        scroll_bar = tk.Scrollbar(self)
+        scroll_bar = ttk.Scrollbar(self)
         scroll_bar.pack(side=tk.RIGHT, fill=tk.Y)
 
         # creating a canvas
@@ -94,18 +95,18 @@ class ChecklistBox(tk.Frame):
         #self.canv.grid(column = 0, row = 0, sticky = 'nsew')
         canv.pack(side="left", fill=tk.Y)
 
-        subFrame = tk.Frame(self)  # relief=tk.GROOVE, bd=1
+        subFrame = ttk.Frame(self)  # relief=tk.GROOVE, bd=1
 
         self.vars = {}
         bg = self.cget("background")
         for i, choice in choices.iterrows():
             var = tk.IntVar()
             self.vars[choice.ID] = var
-            cb = tk.Checkbutton(subFrame, var=var, text=choice.LABEL,
-                                onvalue=1, offvalue=0,
-                                anchor="w", width=20, background=bg,
-                                relief="flat", highlightthickness=0
-                                )
+            cb = ttk.Checkbutton(subFrame, var=var, text=choice.LABEL,
+                                 onvalue=1, offvalue=0,
+                                 width=20,  # background=bg,anchor="w",
+                                 # relief="flat", highlightthickness=0
+                                 )
             cb.pack(side="top", fill="both", anchor="w", expand=True)
 
         canv.create_window(0, 0, window=subFrame, anchor='nw')
@@ -118,6 +119,13 @@ class ChecklistBox(tk.Frame):
         scroll_bar.config(command=canv.yview)
         scroll_bar.lift(subFrame)
         label.lift()
+
+        def _on_mousewheel(event):
+            canv.yview_scroll(int(-1*(event.delta/120)), "units")
+        # Configure canv with scroll wheel
+        self.bind('<Enter>', lambda _: canv.bind_all(
+            "<MouseWheel>", _on_mousewheel))
+        self.bind('<Leave>', lambda _: canv.unbind_all("<MouseWheel>"))
 
     def get_selected_options(self):
         ids = []

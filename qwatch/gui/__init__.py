@@ -2,6 +2,8 @@
 from functools import partial
 import io
 import logging
+from pathlib import Path
+import os
 
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -35,36 +37,6 @@ from qwatch.gui.utils import EditableList
 nlp_model = spacy.load('en_core_web_md')
 
 logger = logging.getLogger(__name__)
-
-# class MovieLoader(tk.Frame):
-#   def __init__(self, parent, **kwargs):
-#     tk.Frame.__init__(self, parent, **kwargs)
-
-#     self.movie_title_entry = tk.Entry(
-#       self.topFrame,
-#       bg="white", fg="black", width=40
-#     )
-#     # Searchbar for Movie
-#     self.search = tk.Button(
-#       self.topFrame,
-#       text="Search Movie",
-#       #height=1, #width=10,
-#       command=partial(self.get_movie_info, limit=3)
-#     )
-#     self.movie_title_entry.pack(side="left", fill="both", expand=True)
-#     self.search.pack(side="right", padx=(5, 0))#fill="x", expand=False
-
-
-#     self.movieSelected = tk.StringVar()
-#     self.movieSelected.set("Select Pre-Existing Movie")
-#     self.movieSelector = tk.OptionMenu(self.movieSelectorContainer, self.movieSelected, *self.movies.values())
-#     self.movieSelector.pack(side="left", expand=True, fill=tk.X)
-#     movieSelectorButton = tk.Button(self.movieSelectorContainer, text="Edit", command=self.edit_movie)
-#     movieSelectorButton.pack(side="right")
-
-#     self.movieSelectorContainer.grid(
-#       column=2, row=0, rowspan=1, columnspan=4
-#     )
 
 
 class MovieWindow():
@@ -121,6 +93,17 @@ class MovieWindow():
         self.root.rowconfigure(0, weight=1)
         self.root.title("Q-Watch Movie Loader")
 
+        # Custom Styling
+        self.root.tk.call(
+            "source",
+            os.path.join(
+                Path(__file__).parent.parent.parent,
+                "Azure-ttk-theme",
+                "azure.tcl"
+            )
+        )
+        self.root.tk.call("set_theme", "light")
+
     def configure_menu(self):
         """ Menu Operations Available."""
         self.menubar = tk.Menu(self.root)
@@ -133,6 +116,7 @@ class MovieWindow():
         self.fileMenu.add_command(label='Exit', command=self.root.destroy)
 
     def open_movie(self):
+        """ Popup window, to select movie from database to load."""
         open_movie_popup = tk.Toplevel(pady=5, padx=5)
         open_movie_popup.wm_title("Open Movie")
 
@@ -144,22 +128,25 @@ class MovieWindow():
         movie_selector.config(width=30)
         movie_selector.pack(side="left", padx=(0, 5), fill=tk.X, expand=True)
 
-        def edit_movie():
+        def select_movie():
+            """ On click, load this movie."""
             selected_movie_id = [
                 k for k, v in self.movies.items() if v == movie_selected.get()]
             if len(selected_movie_id):
                 self.load_movie(movie_id=selected_movie_id[0])
                 open_movie_popup.destroy()
 
-        movie_selector_button = tk.Button(
+        # Button to click to open movie selected from option menu
+        movie_selector_button = ttk.Button(
             open_movie_popup,
             text="Open",
-            command=edit_movie,
+            command=select_movie,
             padx=5, pady=2
         )
         movie_selector_button.pack(side="right")
 
     def check_title_matches(self, title):
+        """ Check that there are no similarly named pre-existing movies."""
         potential_matches = [
             (movie_id, movie_title)
             for movie_id, movie_title in self.movies.items()
@@ -168,10 +155,20 @@ class MovieWindow():
         return potential_matches
 
     def load_movie_warning(self, movies, title):
+        """
+        Popup warning when there is a movie named similar to title typed.
+
+        Params
+        ------
+        movies: 
+            Movies from db that are similar in name.
+        title: str
+            Movie title entered to create-new movie.
+        """
         edit_movie_popup = tk.Toplevel(pady=5, padx=5)
         edit_movie_popup.wm_title("Warning! Movie matches pre-existing movies")
 
-        txt = tk.Label(
+        txt = ttk.Label(
             edit_movie_popup,
             wraplength=300,
             text=f"Similar Movies to '{title}' pre-exist. Either edit or continue to create new"
@@ -179,23 +176,25 @@ class MovieWindow():
         txt.grid(row=0, column=0, columnspan=2, sticky="ew")
 
         for i, (movie_id, movie_title) in enumerate(movies):
-            movie_label = tk.Label(edit_movie_popup, text=movie_title)
+            movie_label = ttk.Label(edit_movie_popup, text=movie_title)
             movie_label.grid(row=i+1, column=0, padx=(0, 5))
 
+            # Button to choose to load pre-existing movie to edit
             def load_movie(movie_id):
                 def func():
                     self.load_movie(movie_id=movie_id)
                     edit_movie_popup.destroy()
                 return func
 
-            movie_button = tk.Button(
+            movie_button = ttk.Button(
                 edit_movie_popup, text="Edit",
                 command=load_movie(movie_id=movie_id)
             )
             movie_label.grid(row=1+i, column=0, sticky=tk.W)
             movie_button.grid(row=1+i, column=1, sticky=tk.E, padx=(5, 0))
 
-        continue_button = tk.Button(
+        # Not concerned by name similarity. Create the new movie
+        continue_button = ttk.Button(
             edit_movie_popup, text="Continue",
             command=partial(self.load_movie, title),
             padx=2, pady=2
@@ -208,13 +207,14 @@ class MovieWindow():
         new_movie_popup.wm_title("Search Movie")
 
         # Movie Title
-        movie_title_entry = tk.Entry(
+        movie_title_entry = ttk.Entry(
             new_movie_popup,
             bg="white", fg="black", width=40
         )
         movie_title_entry.pack(side="left")
 
         def load_movie():
+            """ Check if the entered title matches any pre-existing movies."""
             title = movie_title_entry.get()
 
             title_matches = self.check_title_matches(title)
@@ -224,8 +224,8 @@ class MovieWindow():
                 self.load_movie(movie_title=title)
             new_movie_popup.destroy()
 
-        # Searchbar for Movie
-        search_button = tk.Button(
+        # Search button, to search movie (scrape then load details in UI)
+        search_button = ttk.Button(
             new_movie_popup,
             text="Search",
             command=load_movie,
@@ -233,7 +233,20 @@ class MovieWindow():
         )
         search_button.pack(side="left", padx=(5, 0))
 
-    def load_movie(self, movie_title=None, movie_id=None, movie_year=None, limit=1):
+    def load_movie(self, movie_title: str = None, movie_id: int = None, movie_year: str = None, limit: int = 1) -> None:
+        """
+        Either load movie_id if supplied, or search for movie_title, scraping.
+
+        Params
+        ------
+        movie_title: str
+
+        movie_id: int
+
+        movie_year: str
+
+        limit: int
+        """
         movie_info = {}
 
         if movie_title is not None:
@@ -266,9 +279,9 @@ class MovieWindow():
 
         if "url" in self.current_movie:
             #self.url = tk.Label(self.shortFrame, text="Wiki URL")
-            fr = tk.Frame(self.root)
+            fr = ttk.Frame(self.root)
 
-            self.url = tk.Button(
+            self.url = ttk.Button(
                 fr,
                 text="Wiki URL",
                 width=10, height=1,
@@ -295,14 +308,14 @@ class MovieWindow():
 
     @staticmethod
     def create_list(window, name, items):
-        label = tk.Label(
+        label = ttk.Label(
             window,
             text=name,
-            width=10, height=2
+            width=10  # , height=2
         )
-        scroll_bar = tk.Scrollbar(window)
+        scroll_bar = ttk.Scrollbar(window)
 
-        item_list = tk.Listbox(
+        item_list = ttk.Listbox(
             window, yscrollcommand=scroll_bar.set, width=20, selectmode="multiple")
         for _, item in items.iterrows():
             item_list.insert(tk.END, item.LABEL)
@@ -331,17 +344,17 @@ class MovieWindow():
         # Text Entries for:
         #   Summary, Bio, Opinion,
         ###################################################
-        self.summaryLabel = tk.Label(self.root, text="Summary")
+        self.summaryLabel = ttk.Label(self.root, text="Summary")
         self.summary = scrolledtext.ScrolledText(
             self.root, height=10, width=50,
             wrap=tk.WORD
         )
 
-        self.bioLabel = tk.Label(self.root, text="Bio")
+        self.bioLabel = ttk.Label(self.root, text="Bio")
         self.bio = tk.Text(
             self.root, height=3, width=40
         )
-        self.opinionLabel = tk.Label(self.root, text="My Opinion")
+        self.opinionLabel = ttk.Label(self.root, text="My Opinion")
         self.opinion = tk.Text(
             self.root, height=3, width=40
         )
@@ -380,12 +393,12 @@ class MovieWindow():
         }
         for i, (prop, width) in enumerate(shortProps.items()):
             if i % 3 == 0:
-                self.shortFrames.append(tk.Frame(self.root))
+                self.shortFrames.append(ttk.Frame(self.root))
 
             #setattr(self, prop+"Label", tk.Label(self.shortFrame, text=prop))
             setattr(self, prop+"Label",
-                    tk.LabelFrame(self.shortFrames[int(i//3)], text=prop))
-            setattr(self, prop, tk.Entry(getattr(self, prop+"Label")))
+                    ttk.LabelFrame(self.shortFrames[int(i//3)], text=prop))
+            setattr(self, prop, ttk.Entry(getattr(self, prop+"Label")))
 
             getattr(self, prop+"Label").pack(
                 side="left",
@@ -408,10 +421,10 @@ class MovieWindow():
         )
 
         # Dropdown selectors for movie properties - rating, age
-        dropdown_frame = tk.Frame(self.root)
+        dropdown_frame = ttk.Frame(self.root)
         self.intensity = MenuSingleSelector(
             dropdown_frame, "Intensity", self.intensities)
-        self.intensity.pack(side="left", fill=tk.X, expand=True)
+        self.intensity.pack(side="left", fill=tk.X, expand=True, padx=(0, 5))
 
         self.age = MenuSingleSelector(dropdown_frame, "Age", self.ages)
         self.age.pack(side="left", fill=tk.X, expand=True)
@@ -428,7 +441,7 @@ class MovieWindow():
         # self.movieSelected.set("Select Pre-Existing Movie")
         # self.movieSelector = tk.OptionMenu(self.movieSelectorContainer, self.movieSelected, *self.movies.values())
         # self.movieSelector.pack(side="left", expand=True, fill=tk.X)
-        # movieSelectorButton = tk.Button(self.movieSelectorContainer, text="Edit", command=self.edit_movie)
+        # movieSelectorButton = ttk.Button(self.movieSelectorContainer, text="Edit", command=self.edit_movie)
         # movieSelectorButton.pack(side="right")
 
         # self.movieSelectorContainer.grid(
@@ -473,7 +486,7 @@ class MovieWindow():
         }, options={"ID": source_options.loc[:, ["ID", "LABEL"]]})
 
         self.sourcesFrame.grid(
-            row=1, rowspan=9, columnspan=1, column=10, sticky="ewns"
+            row=1, rowspan=11, columnspan=1, column=10, sticky="ewns", padx=3, pady=3
         )
         #["ID", "LABEL", "URL", "REGION", "COST", "MEMBERSHIP_INCLUDED"]
 
@@ -494,16 +507,16 @@ class MovieWindow():
             "QUOTE": "ENTRY", "CHARACTER_ID": "DROPDOWN"
         }, options={"CHARACTER_ID": quote_options.loc[:, ["ID", "LABEL"]]})
         self.quotesFrame.grid(
-            row=1, rowspan=2, columnspan=1, column=9, sticky="ewns"
+            row=1, rowspan=2, columnspan=1, column=9, sticky="ewns", padx=3, pady=3
         )
         # self.quotesFrame.grid_propagate(False)
 
-        ratings_frame = tk.Frame(self.root, width=RIGHT_WIDTH)
-        lbl = tk.Label(ratings_frame, text="Ratings")
+        ratings_frame = ttk.Frame(self.root, width=RIGHT_WIDTH)
+        lbl = ttk.Label(ratings_frame, text="Ratings")
         lbl.pack(side="top", fill="both", expand=True)
         if self.ratings is not None:
 
-            tk.Label(ratings_frame, text=f"Total Ratings: {self.ratings.shape[0]:,} Average Rating: {self.ratings.RATING.mean():.2f}").pack(
+            ttk.Label(ratings_frame, text=f"Total Ratings: {self.ratings.shape[0]:,} Average Rating: {self.ratings.RATING.mean():.2f}").pack(
                 side="top")
 
             ###############################################
@@ -546,14 +559,14 @@ class MovieWindow():
             next_image = ImageTk.PhotoImage(
                 im
             )
-            ratings_image = tk.Label(ratings_frame, image=next_image)
+            ratings_image = ttk.Label(ratings_frame, image=next_image)
             ratings_image.pack(side="bottom")
 
         else:
-            tk.Label(ratings_frame, text="No ratings available.").pack(
+            ttk.Label(ratings_frame, text="No ratings available.").pack(
                 side="top")
         ratings_frame.grid(column=9, columnspan=1, row=3,
-                           rowspan=7, sticky="ewns")
+                           rowspan=7, sticky="ewns", padx=3, pady=3)
 
         self.root.config(menu=self.menubar)
         self.root.mainloop()

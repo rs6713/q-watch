@@ -9,159 +9,164 @@ from tkinter import ttk
 from tkinter import messagebox, scrolledtext
 from tkinter.font import Font
 
-class ImagePanel(tk.Frame):
-  def __init__(self, parent, images=None, **kwargs):
-    tk.Frame.__init__(
-      self, parent,
-      borderwidth=2,
-      **kwargs
-    )
-    self.images = images or []
-    self.index = 0
-    self.savedImages = {}
 
-    self.controlPanel = tk.Frame(self)
+class ImagePanel(ttk.Frame):
+    def __init__(self, parent, images=None, **kwargs):
+        ttk.Frame.__init__(
+            self, parent,
+            # borderwidth=2,
+            style='Card.TFrame',
+            **kwargs
+        )
+        self.images = images or []
+        self.index = 0
+        self.savedImages = {}
 
-    img_label = tk.Label(
-      self.controlPanel, text="Image Selector",
-      width=10, height=1
-    )
-    img_label.pack(side="top", pady=5, padx=0)
+        self.controlPanel = ttk.Frame(self)
 
-    f = Font(img_label, img_label.cget("font"))
-    f.configure(underline=True)
-    img_label.configure(font=f)
+        img_label = ttk.Label(
+            self.controlPanel, text="Image Selector",
+            width=10,  # height=1
+        )
+        img_label.pack(side="top", pady=5, padx=0)
 
-    prev = tk.Button(
-      self.controlPanel,
-      text="Previous", width=10, height=1,
-      command=self.increment_index(-1)
-    )
-    nextt = tk.Button(
-      self.controlPanel,
-      text="Next", width=10, height=1,
-      command=self.increment_index(1)
-    )
-    delete = tk.Button(
-      self.controlPanel,
-      text="Delete", width=10, height=1,
-      command=self.delete_image
-    )
+        f = Font(img_label, img_label.cget("font"))
+        f.configure(underline=True)
+        img_label.configure(font=f)
 
-    self.imageDescriptor = tk.Frame(self.controlPanel)
-    self.imageDescriptor.pack(side="top", expand=True, fill="both")
+        prev = ttk.Button(
+            self.controlPanel,
+            text="Previous", width=10,  # height=1,
+            command=self.increment_index(-1)
+        )
+        nextt = ttk.Button(
+            self.controlPanel,
+            text="Next", width=10,  # height=1,
+            command=self.increment_index(1)
+        )
+        delete = ttk.Button(
+            self.controlPanel,
+            text="Delete", width=10,  # height=1,
+            command=self.delete_image
+        )
 
-    for widget in [prev, nextt, delete]:#self.controlPanel.winfo_children():
-      widget.pack(side="bottom", padx=0, pady=0)
+        self.imageDescriptor = ttk.Frame(self.controlPanel)
+        self.imageDescriptor.pack(side="top", expand=True, fill="both")
 
-    self.controlPanel.pack(side="left", fill=tk.Y)
+        # self.controlPanel.winfo_children():
+        for widget in [prev, nextt, delete]:
+            widget.pack(side="bottom", padx=5, pady=(0, 5))
 
-    self.imagePanel = tk.Frame(
-      self, #bg="white"
-      highlightbackground="black", highlightthickness=2
-    )
-    self.imagePanel.pack(
-      side="right", expand=True, fill="both",
-      padx=(5, 0), pady=(5, 0)
-    )
-    
-    self.loadImage()
+        self.controlPanel.pack(side="left", fill=tk.Y, padx=(5, 0), pady=5)
 
-  def saveImagePanel(self):
-    if getattr(self, "caption", False):
-      self.savedImages[self.images[self.index]] = {
-        "caption": self.caption.get("1.0", tk.END)
-      }
+        self.imagePanel = ttk.Frame(
+            self,  # bg="white"
+            # highlightbackground="black", highlightthickness=2
+        )
+        self.imagePanel.pack(
+            side="right", expand=True, fill="both",
+            padx=5, pady=5
+        )
 
-  def clearImagePanel(self):
-    for widgets in self.imagePanel.winfo_children():
-        widgets.destroy()
-    for widgets in self.imageDescriptor.winfo_children():
-        widgets.destroy()
-  
-  def loadImages(self, images):
-    self.images = images
-    self.savedImages = {}
-    self.index = 0
+        self.loadImage()
 
-    self.clearImagePanel()
-    self.loadImage()
+    def saveImagePanel(self):
+        if getattr(self, "caption", False):
+            self.savedImages[self.images[self.index]] = {
+                "caption": self.caption.get("1.0", tk.END)
+            }
 
-  def loadImage(self):
+    def clearImagePanel(self):
+        for widgets in self.imagePanel.winfo_children():
+            widgets.destroy()
+        for widgets in self.imageDescriptor.winfo_children():
+            widgets.destroy()
 
-    if len(self.images) == 0:
-      notify = tk.Label(
-        self.imagePanel, text="No Images",
+    def loadImages(self, images):
+        self.images = images
+        self.savedImages = {}
+        self.index = 0
 
-        #height=3, width=10
-      )
-      notify.pack()
-      return
+        self.clearImagePanel()
+        self.loadImage()
 
-    image1 = Image.open(self.images[self.index])
+    def loadImage(self):
 
-    panel_height = self.imagePanel.winfo_height()
-    width, height = image1.size
+        if len(self.images) == 0:
+            notify = ttk.Label(
+                self.imagePanel, text="No Images",
 
-    img_size = tk.Label(
-      self.imageDescriptor, text=f"({width}, {height})"
-    )
-    img_size.pack(side="top")
+                # height=3, width=10
+            )
+            notify.pack()
+            return
 
-    image1 = image1.resize((int(panel_height/height*width), panel_height), Image.ANTIALIAS)
-    next_image = ImageTk.PhotoImage(
-      image1
-    )
+        image1 = Image.open(self.images[self.index])
 
-    movieImage = tk.Label(self.imagePanel, image=next_image)
-    movieImage.image = next_image
+        panel_height = self.imagePanel.winfo_height()
+        width, height = image1.size
 
-    caption = ""
-    if self.images[self.index] in self.savedImages:
-      caption = self.savedImages[self.images[self.index]].get("caption", "")
+        img_size = ttk.Label(
+            self.imageDescriptor, text=f"({width}, {height})"
+        )
+        img_size.pack(side="top")
 
-    self.caption = tk.Text(
-      self.imagePanel,
-      height=3, width=10
-    )
-    if caption:
-      self.caption.insert("1.0", caption)
+        image1 = image1.resize(
+            (int(panel_height/height*width), panel_height), Image.ANTIALIAS)
+        next_image = ImageTk.PhotoImage(
+            image1
+        )
 
-    movieImage.pack(side="left")
-    self.caption.pack(side="right", fill="both", expand=True)
+        movieImage = ttk.Label(self.imagePanel, image=next_image)
+        movieImage.image = next_image
 
-  def delete_image(self):
-    #TODO Remove image from dir
+        caption = ""
+        if self.images[self.index] in self.savedImages:
+            caption = self.savedImages[self.images[self.index]].get(
+                "caption", "")
 
-    if len(self.images) == 0:
-      return
+        self.caption = tk.Text(
+            self.imagePanel,
+            height=3, width=10
+        )
+        if caption:
+            self.caption.insert("1.0", caption)
 
-    del self.images[self.index]
+        movieImage.pack(side="left")
+        self.caption.pack(side="right", fill="both", expand=True)
 
-    if self.index == len(self.images):
-      self.index -= 1
+    def delete_image(self):
+        # TODO Remove image from dir
 
-    self.clearImagePanel()
-    if len(self.images) > 0:
-      self.loadImage()
-    else:
-      notify = tk.Label(
-        self.imagePanel, text="No Images"
-      )
-      notify.pack(side="right")
+        if len(self.images) == 0:
+            return
 
-  def increment_index(self, increment):
-    def func():
-      self.saveImagePanel()
+        del self.images[self.index]
 
-      if len(self.images) == 0:
-        return
+        if self.index == len(self.images):
+            self.index -= 1
 
-      if increment < 0 and self.index == 0:
-        self.index = len(self.images) - 1
-      else:
-        self.index = (self.index + increment) % len(self.images)
-      
-      self.clearImagePanel()
-      self.loadImage()
-    return func
+        self.clearImagePanel()
+        if len(self.images) > 0:
+            self.loadImage()
+        else:
+            notify = ttk.Label(
+                self.imagePanel, text="No Images"
+            )
+            notify.pack(side="right")
+
+    def increment_index(self, increment):
+        def func():
+            self.saveImagePanel()
+
+            if len(self.images) == 0:
+                return
+
+            if increment < 0 and self.index == 0:
+                self.index = len(self.images) - 1
+            else:
+                self.index = (self.index + increment) % len(self.images)
+
+            self.clearImagePanel()
+            self.loadImage()
+        return func

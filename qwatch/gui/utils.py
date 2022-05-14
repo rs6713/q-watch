@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image, ImageTk
 import tkinter as tk
+from tkinter import ttk
 
 from qwatch.gui.menus import MenuSingleSelector
 
@@ -19,13 +20,13 @@ BIN_IMG = Image.open(os.path.join(
 logger = logging.getLogger(__name__)
 
 
-class EditableList(tk.Frame):
+class EditableList(ttk.Frame):
     def __init__(self, parent: tk.Frame, name: str,  width: int, items: pd.DataFrame = None, item_map: dict = None, options: dict = None):
         """
         Editable List - With deletable and editable items
 
         """
-        tk.Frame.__init__(
+        ttk.Frame.__init__(
             self, parent,   # height=height  # , width=width, height=height,
         )
 
@@ -35,32 +36,33 @@ class EditableList(tk.Frame):
         self.canv_width = width
         self.items = self.process_items(items)
 
-        label_frame = tk.Frame(self)
-        label = tk.Label(label_frame, text=name)
+        label_frame = ttk.Frame(self)
+        label = ttk.Label(label_frame, text=name)
         label.pack(side="left", fill=tk.X, expand=True)
 
-        btn = tk.Button(
+        btn = ttk.Button(
             label_frame, text="New",
-            command=self.add_item, padx=5, pady=2
+            command=self.add_item,  # , padx=5, pady=2
+            style='Accent.TButton'
         ).pack(side="right")
-        label_frame.pack(side="top", fill=tk.X)
+        label_frame.pack(side="top", fill=tk.X, pady=(0, 5))
 
         ################################################
         # Quotes Subframe
         # Canvas with scroll, place subframe inside canvas
         ################################################
-        self.scroll_bar = tk.Scrollbar(self)
+        self.scroll_bar = ttk.Scrollbar(self)
         self.scroll_bar.pack(side=tk.RIGHT, fill=tk.Y)
 
         # creating a canvas
-        self.canv = tk.Canvas(self, width=self.canv_width)
-        self.canv.config(relief='flat', bd=2, width=self.canv_width)
-        self.canv.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        self.canv = tk.Canvas(self)  # , width=self.canv_width
+        # self.canv.config(relief='flat', bd=2)  # width=self.canv_width
+        self.canv.pack(side=tk.LEFT, fill=tk.BOTH, expand=1, padx=(0, 5))
 
-        #self.canvas = Canvas(self, width = self.app_sizex, height = self.app_sizey, scrollregion=(0,0,x,y))
+        # self.canvas = Canvas(self, width = self.app_sizex, height = self.app_sizey, scrollregion=(0,0,x,y))
 
         # Will contain quotes
-        self.canv_subframe = tk.Frame(self.canv, width=self.canv_width)
+        self.canv_subframe = tk.Frame(self.canv)  # , width=self.canv_width
 
         # Load original quotes list
         self.update_list()
@@ -72,13 +74,21 @@ class EditableList(tk.Frame):
 
         self.canv.config(
             yscrollcommand=self.scroll_bar.set,
-            scrollregion=(0, 0, self.canv_width,
+            scrollregion=(0, 0, self.canv_subframe.winfo_width(),  # self.canv_width,
                           self.canv_subframe.winfo_height())
         )
 
         self.scroll_bar.config(command=self.canv.yview)
         self.scroll_bar.lift(self.canv_subframe)
         label.lift()
+
+        # Scrollwheel handling
+        def _on_mousewheel(event):
+            self.canv.yview_scroll(int(-1*(event.delta/120)), "units")
+        # Configure canv with scroll wheel
+        self.bind('<Enter>', lambda _: self.canv.bind_all(
+            "<MouseWheel>", _on_mousewheel))
+        self.bind('<Leave>', lambda _: self.canv.unbind_all("<MouseWheel>"))
 
     def resize_window(self, event):
         """On resize of canvas, ensure subframe matches width."""
@@ -185,11 +195,14 @@ class EditableList(tk.Frame):
 
         # Load up all items into canvas
         for idx, item in self.items.iterrows():
-            item_frame = tk.Frame(self.canv_subframe,
-                                  borderwidth=1, width=self.canv_width)
+            item_frame = ttk.Frame(
+                self.canv_subframe,
+                # width=self.canv_width,
+                style='Card.TFrame',
+            )
 
             IMG_HEIGHT = 10
-            btn = tk.Button(
+            btn = ttk.Button(
                 item_frame,
                 text="Remove",
                 compound=tk.RIGHT,
@@ -200,35 +213,36 @@ class EditableList(tk.Frame):
                 # ),
                 # padx=2, pady=2
             )
-            btn.pack(side=tk.TOP, anchor="e", padx=(5, 0))
+            btn.pack(side=tk.TOP, anchor="e", padx=5, pady=5)
 
             for col, entry_type in self.item_map.items():
                 if entry_type == "BOOLEAN":
-                    tk.Checkbutton(
-                        item_frame, text=col, variable=item[col]
-                    ).pack(side=tk.TOP, anchor="w", padx=(0, 5))
+                    ttk.Checkbutton(
+                        item_frame, text=col, variable=item[col],
+                        style='Switch.TCheckbutton'
+                    ).pack(side=tk.TOP, anchor="w", padx=5, pady=(0, 5))
 
                 if entry_type in ["ENTRY", "NUM_ENTRY"]:
-                    entry_frame = tk.Frame(item_frame, width=self.canv_width)
-                    tk.Label(entry_frame, text=col).pack(
+                    entry_frame = ttk.Frame(item_frame, width=self.canv_width)
+                    ttk.Label(entry_frame, text=col).pack(
                         side="left", padx=(0, 5))
-                    tk.Entry(entry_frame, textvariable=item[col]).pack(
+                    ttk.Entry(entry_frame, textvariable=item[col]).pack(
                         side="right", fill=tk.X, expand=True
                     )
                     entry_frame.pack(
-                        side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5)
+                        side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5), padx=5
                     )
 
                 if entry_type == "DROPDOWN":
                     MenuSingleSelector(
                         item_frame, col, self.options[col], var=item[col]
-                    ).pack(side=tk.TOP, anchor="w", padx=(0, 5))
+                    ).pack(side=tk.TOP, anchor="w", padx=5, pady=(0, 5))
 
             item_frame.pack(
                 side="top", fill=tk.X, expand=True, pady=10
             )
-            item_frame.config(highlightbackground="black",
-                              highlightcolor="red", highlightthickness=2)
+            # item_frame.config(highlightbackground="black",
+            #                   highlightcolor="red", highlightthickness=2)
 
         # Resize canvas scrollable window
         self.update_idletasks()
