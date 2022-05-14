@@ -166,7 +166,7 @@ def get_people(conn: Connection, movie_id: int):
         "SEXUALITIES", meta, schema=SCHEMA, autoload_with=conn)
     genders_table = Table("GENDERS", meta, schema=SCHEMA, autoload_with=conn)
     transgender_table = Table(
-        "TRANSGENDER", meta, schema=SCHEMA, autoload_with=conn)
+        "TRANSGENDERS", meta, schema=SCHEMA, autoload_with=conn)
     careers_table = Table("CAREERS", meta, schema=SCHEMA, autoload_with=conn)
 
     people_table = Table("PEOPLE", meta, schema=SCHEMA, autoload_with=conn)

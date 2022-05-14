@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class EditableList(ttk.Frame):
-    def __init__(self, parent: tk.Frame, name: str,  width: int, items: pd.DataFrame = None, item_map: dict = None, options: dict = None):
+    def __init__(self, parent: tk.Frame, name: str, items: pd.DataFrame = None, item_map: dict = None, options: dict = None):
         """
         Editable List - With deletable and editable items
 
@@ -33,7 +33,7 @@ class EditableList(ttk.Frame):
         self.name = name
         self.item_map = item_map
         self.options = options
-        self.canv_width = width
+
         self.items = self.process_items(items)
 
         label_frame = ttk.Frame(self)
@@ -223,7 +223,7 @@ class EditableList(ttk.Frame):
                     ).pack(side=tk.TOP, anchor="w", padx=5, pady=(0, 5))
 
                 if entry_type in ["ENTRY", "NUM_ENTRY"]:
-                    entry_frame = ttk.Frame(item_frame, width=self.canv_width)
+                    entry_frame = ttk.Frame(item_frame)
                     ttk.Label(entry_frame, text=col).pack(
                         side="left", padx=(0, 5))
                     ttk.Entry(entry_frame, textvariable=item[col]).pack(
@@ -249,7 +249,7 @@ class EditableList(ttk.Frame):
         self.canv.config(
             scrollregion=(
                 0, 0,
-                self.canv_width,
+                self.canv_subframe.winfo_width(),
                 self.canv_subframe.winfo_height()
             )
         )

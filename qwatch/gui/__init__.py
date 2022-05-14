@@ -31,7 +31,7 @@ from qwatch.scrape.images import download_images
 from qwatch.scrape.wikipedia import get_movie_details
 from qwatch.gui.images import ImagePanel
 from qwatch.gui.menus import MenuMultiSelector, MenuSingleSelector, ChecklistBox
-from qwatch.gui.people import PeoplePanel
+from qwatch.gui.people import PeopleManagementPanel
 from qwatch.gui.utils import EditableList
 
 nlp_model = spacy.load('en_core_web_md')
@@ -284,7 +284,6 @@ class MovieWindow():
             self.url = ttk.Button(
                 fr,
                 text="Wiki URL",
-                width=10, height=1,
                 command=lambda: webbrowser.open_new(self.current_movie["url"])
             )
             self.url.pack(side="left")
@@ -307,24 +306,6 @@ class MovieWindow():
             self.imagePanel.loadImages(self.current_movie["images"])
 
     @staticmethod
-    def create_list(window, name, items):
-        label = ttk.Label(
-            window,
-            text=name,
-            width=10  # , height=2
-        )
-        scroll_bar = ttk.Scrollbar(window)
-
-        item_list = ttk.Listbox(
-            window, yscrollcommand=scroll_bar.set, width=20, selectmode="multiple")
-        for _, item in items.iterrows():
-            item_list.insert(tk.END, item.LABEL)
-
-        scroll_bar.config(command=item_list.yview)
-
-        return label, item_list, scroll_bar
-
-    @staticmethod
     def alert(err_type, msg):
         if err_type == "warning":
             messagebox.showinfo('Movie Submission Warning', msg)
@@ -344,42 +325,51 @@ class MovieWindow():
         # Text Entries for:
         #   Summary, Bio, Opinion,
         ###################################################
-        self.summaryLabel = ttk.Label(self.root, text="Summary")
+        movie_text = ttk.Frame(self.root)
+        self.summaryLabel = ttk.Label(movie_text, text="Summary")
         self.summary = scrolledtext.ScrolledText(
-            self.root, height=10, width=50,
+            movie_text,  # height=10,  # width=50,
             wrap=tk.WORD
         )
 
-        self.bioLabel = ttk.Label(self.root, text="Bio")
+        self.bioLabel = ttk.Label(movie_text, text="Bio")
         self.bio = tk.Text(
-            self.root, height=3, width=40
+            movie_text, height=2,  # width=40
         )
-        self.opinionLabel = ttk.Label(self.root, text="My Opinion")
+
+        self.summaryLabel.pack(side=tk.TOP, pady=(0, 5), expand=1, fill=tk.X)
+        self.summary.pack(side=tk.TOP, pady=(0, 5), expand=1, fill=tk.X)
+        self.bioLabel.pack(side=tk.TOP, pady=(0, 5), expand=1, fill=tk.X)
+        self.bio.pack(side=tk.TOP, expand=1, fill=tk.X)
+
+        # self.summaryLabel.grid(
+        #     row=1, column=0, columnspan=2, padx=5, pady=5)
+        # self.summary.grid(row=2, column=0, columnspan=2, padx=5, sticky="ewns")
+
+        # self.bioLabel.grid(row=3, column=0, columnspan=2, sticky=tk.W, padx=5)
+        # self.bio.grid(row=4, column=0, columnspan=2, padx=5, sticky="ew")
+
+        movie_text.grid(row=0, column=0, columnspan=2, padx=5,
+                        pady=5, rowspan=3, sticky="ewns")
+
+        ######################################################
+        # Movie Details section
+        # ROW 3-> 7, COL 0 -> 2
+        ######################################################
+        movie_little_details_frame = ttk.Frame(self.root)
+
+        # Opinion label
+        self.opinionLabel = ttk.Label(
+            movie_little_details_frame, text="My Opinion")
         self.opinion = tk.Text(
-            self.root, height=3, width=40
+            movie_little_details_frame, height=3,
         )
-        self.opinion.grid(row=6, column=0, columnspan=2, padx=5, sticky="ew")
-        self.opinionLabel.grid(
-            row=5, column=0, columnspan=2, sticky=tk.W, padx=5)
+        self.opinionLabel.pack(side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
+        self.opinion.pack(side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
 
-        self.summaryLabel.grid(
-            row=1, column=0, columnspan=2, sticky=tk.W, padx=5)
-        self.summary.grid(row=2, column=0, columnspan=2, padx=5, sticky="ewns")
-
-        self.bioLabel.grid(row=3, column=0, columnspan=2, sticky=tk.W, padx=5)
-        self.bio.grid(row=4, column=0, columnspan=2, padx=5, sticky="ew")
-
-        self.root.update()
-        summaryHeight = self.summary.winfo_height()
-        self.representations_container = ChecklistBox(
-            self.root, "Representations", self.representations, height=summaryHeight, width=150
-        )
-        self.tropes_container = ChecklistBox(
-            self.root, "Tropes", self.tropes, height=summaryHeight, width=150
-        )
-        self.genres_container = ChecklistBox(
-            self.root, "Genres", self.genres, height=summaryHeight, width=150
-        )
+        #grid(row=4, column=0, columnspan=2, padx=5, sticky="ew")
+        # self.opinionLabel.grid(
+        #     row=3, column=0, columnspan=2, sticky=tk.W, padx=5
 
         self.shortFrames = []
         shortProps = {
@@ -393,7 +383,7 @@ class MovieWindow():
         }
         for i, (prop, width) in enumerate(shortProps.items()):
             if i % 3 == 0:
-                self.shortFrames.append(ttk.Frame(self.root))
+                self.shortFrames.append(ttk.Frame(movie_little_details_frame))
 
             #setattr(self, prop+"Label", tk.Label(self.shortFrame, text=prop))
             setattr(self, prop+"Label",
@@ -414,14 +404,17 @@ class MovieWindow():
                 pady=1, padx=1
             )
 
-        self.imagePanel = ImagePanel(self.root)
-        self.imagePanel.grid(
-            column=3, row=3, columnspan=6, rowspan=7,
-            sticky="ewns"
-        )
+        ###################################################
+        # Little details frame
+        ###################################################
+
+        for i, frame in enumerate(self.shortFrames):
+            # frame.grid(row=5+i, column=0, columnspan=2,
+            #            rowspan=1, sticky="ew", padx=5)
+            frame.pack(side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
 
         # Dropdown selectors for movie properties - rating, age
-        dropdown_frame = ttk.Frame(self.root)
+        dropdown_frame = ttk.Frame(movie_little_details_frame)
         self.intensity = MenuSingleSelector(
             dropdown_frame, "Intensity", self.intensities)
         self.intensity.pack(side="left", fill=tk.X, expand=True, padx=(0, 5))
@@ -429,42 +422,49 @@ class MovieWindow():
         self.age = MenuSingleSelector(dropdown_frame, "Age", self.ages)
         self.age.pack(side="left", fill=tk.X, expand=True)
 
-        dropdown_frame.grid(
-            column=0, columnspan=2, rowspan=1, row=9, padx=5, sticky="ew"
+        # dropdown_frame.grid(
+        #     column=0, columnspan=2, rowspan=1, row=9, padx=5, sticky="ew"
+        # )
+        dropdown_frame.pack(side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
+
+        movie_little_details_frame.grid(
+            column=0, columnspan=2, row=3, rowspan=4
         )
 
-        # ###############################
-        # # Menu to Edit Existing Movie
-        # ###############################
-        # self.movieSelectorContainer = tk.Frame(self.root)
-        # self.movieSelected = tk.StringVar()
-        # self.movieSelected.set("Select Pre-Existing Movie")
-        # self.movieSelector = tk.OptionMenu(self.movieSelectorContainer, self.movieSelected, *self.movies.values())
-        # self.movieSelector.pack(side="left", expand=True, fill=tk.X)
-        # movieSelectorButton = ttk.Button(self.movieSelectorContainer, text="Edit", command=self.edit_movie)
-        # movieSelectorButton.pack(side="right")
+        #####################################################
+        # COLUMN 2 --> Checkbox lists, image selector
+        #####################################################
+        self.representations_container = ChecklistBox(
+            self.root, "Representations", self.representations,
+            # height=summaryHeight, #width=150
+        )
+        self.tropes_container = ChecklistBox(
+            self.root, "Tropes", self.tropes,  # height=summaryHeight, width=150
+        )
+        self.genres_container = ChecklistBox(
+            self.root, "Genres", self.genres,  # height=summaryHeight, width=150
+        )
 
-        # self.movieSelectorContainer.grid(
-        #   column=2, row=0, rowspan=1, columnspan=4
-        # )
+        self.genres_container.grid(
+            column=2, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5, padx=(0, 3))
+        self.tropes_container.grid(
+            column=3, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5, padx=(0, 3))
+        self.representations_container.grid(
+            column=4, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5)
 
-        # Place interactive elements in root
-
-        for i, frame in enumerate(self.shortFrames):
-            frame.grid(row=7+i, column=0, columnspan=2,
-                       rowspan=1, sticky="ew", padx=5)
-
-        self.genres_container.grid(column=5, row=1, rowspan=2)
-        self.tropes_container.grid(column=6, row=1, rowspan=2)
-        self.representations_container.grid(column=7, row=1, rowspan=2)
+        self.imagePanel = ImagePanel(self.root)
+        self.imagePanel.grid(
+            column=2, row=3, columnspan=3, rowspan=4,
+            sticky="ewns"
+        )
 
         ##############################################################
         # CharacterFrame for People/Characters/Relationships in Movie
         ##############################################################
 
-        self.personFrame = PeoplePanel(self.root)
+        self.personFrame = PeopleManagementPanel(self.root)
         self.personFrame.grid(
-            column=0, row=10, columnspan=10, rowspan=2,
+            column=0, row=7, columnspan=8, rowspan=3,
             sticky="ewns"
         )
 
@@ -478,7 +478,7 @@ class MovieWindow():
             axis=1
         )
 
-        self.sourcesFrame = EditableList(self.root, "Sources", 400, items=self.movie_sources, item_map={
+        self.sourcesFrame = EditableList(self.root, "Sources", items=self.movie_sources, item_map={
             "ID": "DROPDOWN",
             "URL": "ENTRY",
             "COST": "NUM_ENTRY",
@@ -486,14 +486,13 @@ class MovieWindow():
         }, options={"ID": source_options.loc[:, ["ID", "LABEL"]]})
 
         self.sourcesFrame.grid(
-            row=1, rowspan=11, columnspan=1, column=10, sticky="ewns", padx=3, pady=3
+            row=0, rowspan=10, columnspan=2, column=8, sticky="ewns", padx=3, pady=3
         )
         #["ID", "LABEL", "URL", "REGION", "COST", "MEMBERSHIP_INCLUDED"]
 
         ##############################################################
         # Frame for Quotes, ratings
         ##############################################################
-        RIGHT_WIDTH = 500
 
         quote_options = self.characters.loc[:, [
             "FIRST_NAME", "LAST_NAME", "CHARACTER_ID"]].copy()
@@ -503,19 +502,18 @@ class MovieWindow():
         )
         quote_options.rename(columns={"CHARACTER_ID": "ID"}, inplace=True)
 
-        self.quotesFrame = EditableList(self.root, "Quotes", RIGHT_WIDTH, items=self.quotes, item_map={
+        self.quotesFrame = EditableList(self.root, "Quotes", items=self.quotes, item_map={
             "QUOTE": "ENTRY", "CHARACTER_ID": "DROPDOWN"
         }, options={"CHARACTER_ID": quote_options.loc[:, ["ID", "LABEL"]]})
         self.quotesFrame.grid(
-            row=1, rowspan=2, columnspan=1, column=9, sticky="ewns", padx=3, pady=3
+            row=0, rowspan=3, columnspan=3, column=5, sticky="ewns", padx=3, pady=3
         )
         # self.quotesFrame.grid_propagate(False)
 
-        ratings_frame = ttk.Frame(self.root, width=RIGHT_WIDTH)
+        ratings_frame = ttk.Frame(self.root)
         lbl = ttk.Label(ratings_frame, text="Ratings")
         lbl.pack(side="top", fill="both", expand=True)
         if self.ratings is not None:
-
             ttk.Label(ratings_frame, text=f"Total Ratings: {self.ratings.shape[0]:,} Average Rating: {self.ratings.RATING.mean():.2f}").pack(
                 side="top")
 
@@ -553,7 +551,8 @@ class MovieWindow():
 
             width, height = im.size
 
-            IMG_WIDTH = RIGHT_WIDTH - 10
+            self.root.update_idletasks()
+            IMG_WIDTH = self.quotesFrame.winfo_width()
             im = im.resize(
                 (IMG_WIDTH, int(IMG_WIDTH/width*height)), Image.ANTIALIAS)
             next_image = ImageTk.PhotoImage(
@@ -565,8 +564,8 @@ class MovieWindow():
         else:
             ttk.Label(ratings_frame, text="No ratings available.").pack(
                 side="top")
-        ratings_frame.grid(column=9, columnspan=1, row=3,
-                           rowspan=7, sticky="ewns", padx=3, pady=3)
+        ratings_frame.grid(column=5, columnspan=3, row=3,
+                           rowspan=4, sticky="ewns", padx=3, pady=3)
 
         self.root.config(menu=self.menubar)
         self.root.mainloop()

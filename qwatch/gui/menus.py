@@ -50,7 +50,7 @@ class MenuSingleSelector(ttk.Menubutton):
 
 
 class MenuMultiSelector(ttk.Menubutton):
-    def __init__(self, parent, name, options, **kwargs):
+    def __init__(self, parent, name, options, default=None, **kwargs):
         ttk.Menubutton.__init__(
             self,
             parent,
@@ -65,7 +65,9 @@ class MenuMultiSelector(ttk.Menubutton):
 
         self.options = {}
         for _, option in options.iterrows():
-            var = tk.IntVar()
+            var = tk.IntVar(value=0) if (
+                default is None or option.ID not in default) else tk.IntVar(value=1)
+
             label = f"{option.LABEL} - {option.SUB_LABEL or 'NULL'}" if "SUB_LABEL" in option.index else option.LABEL
             self.menu.add_checkbutton(label=label, variable=var)
             options[option.ID] = var
@@ -83,7 +85,7 @@ class ChecklistBox(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         label = ttk.Label(self, text=name)
-        label.pack(side="top", fill=tk.X)
+        label.pack(side="top", fill=tk.X, pady=(0, 5))
 
         scroll_bar = ttk.Scrollbar(self)
         scroll_bar.pack(side=tk.RIGHT, fill=tk.Y)
