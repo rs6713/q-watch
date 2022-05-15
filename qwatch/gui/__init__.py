@@ -14,7 +14,7 @@ import sqlalchemy
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox, scrolledtext
-from tkinter.font import Font
+from tkinter.font import Font, nametofont
 
 import webbrowser
 
@@ -29,6 +29,7 @@ from qwatch.io.input import (
 )
 from qwatch.scrape.images import download_images
 from qwatch.scrape.wikipedia import get_movie_details
+from qwatch.gui.defaults import DEFAULTS
 from qwatch.gui.images import ImagePanel
 from qwatch.gui.menus import MenuMultiSelector, MenuSingleSelector, ChecklistBox
 from qwatch.gui.people import PeopleManagementPanel
@@ -103,6 +104,13 @@ class MovieWindow():
             )
         )
         self.root.tk.call("set_theme", "light")
+
+        self.defaultFont = nametofont("TkDefaultFont")
+        self.defaultFont.configure(
+            family=DEFAULTS["FONT_FAMILY"],
+            size=DEFAULTS["FONT_SIZE"],
+            weight=DEFAULTS["FONT_WEIGHT"],
+        )
 
     def configure_menu(self):
         """ Menu Operations Available."""

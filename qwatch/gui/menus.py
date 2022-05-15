@@ -45,8 +45,10 @@ class MenuSingleSelector(ttk.Menubutton):
         self.configure(text=self.labels[self.selected_variable.get()])
 
     def get_selected_option(self):
-
-        return self.selected_variable.get()
+        if self.selected_variable.get() in self.labels.keys():
+            return self.selected_variable.get()
+        else:
+            return None
 
 
 class MenuMultiSelector(ttk.Menubutton):
@@ -70,7 +72,7 @@ class MenuMultiSelector(ttk.Menubutton):
 
             label = f"{option.LABEL} - {option.SUB_LABEL or 'NULL'}" if "SUB_LABEL" in option.index else option.LABEL
             self.menu.add_checkbutton(label=label, variable=var)
-            options[option.ID] = var
+            self.options[option.ID] = var
 
     def get_selected_options(self):
 

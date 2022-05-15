@@ -16,11 +16,204 @@ from qwatch.io.input import (
     _get_movie_properties,
 )
 
+from qwatch.gui.defaults import DEFAULTS
 from qwatch.gui.menus import MenuMultiSelector, MenuSingleSelector
 
 
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+
+class RelationshipPage(ttk.Frame):
+    def __init__(self, parent: ttk.Frame, relationships: pd.DataFrame = None, characters: List[Dict] = None):
+        """Page to add relationships between characters."""
+        ttk.Frame.__init__(self, parent)
+
+        self.relationships = self.process_relationships(
+            relationships) if relationships is not None else []
+        self.characters = self.process_characters(
+            characters) if characters is not None else []
+
+        self.get_relationship_properties()
+
+        ##################################################################
+        # Header to Control adding of new relationships
+        ##################################################################
+        relationshipHeader = ttk.Frame(self)
+        relationshipHeader.pack(side="top", padx=5, pady=5, fill=tk.X)
+
+        ttk.Label(relationshipHeader, text="Add Character Relationships").pack(
+            side="left", padx=(0, 10))
+        ttk.Button(relationshipHeader, text="+", command=lambda: self.add_relationship()).pack(
+            side="left", pady=5, padx=5
+        )
+
+        relationshipHeader.pack(side="top", padx=5, pady=5, fill=tk.X)
+        relationshipContent = ttk.Frame(self)
+
+        self.scrollBar = ttk.Scrollbar(relationshipContent)
+        self.scrollBar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.canv = tk.Canvas(relationshipContent)
+        self.canv.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
+        self.relationshipContainer = ttk.Frame(self.canv)
+        self.relationshipContainer.pack(
+            side="top", fill=tk.X, expand=True, anchor="nw"
+        )
+
+        for relationship in self.relationships:
+            self.add_relationship(relationship)
+
+        self.canv.create_window(
+            (0, 0), window=self.relationshipContainer, anchor="nw", tags="my_frame"
+        )
+        self.canv.bind('<Configure>', self.resize_window)
+        parent.update_idletasks()
+        self.canv.config(
+            yscrollcommand=self.scrollBar.set,
+            scrollregion=(0, 0, self.relationshipContainer.winfo_width(),
+                          self.relationshipContainer.winfo_height())
+        )
+        self.scrollBar.config(command=self.canv.yview)
+        # self.scrollBar.lift(self.relationshipContainer)
+
+        # Scrollwheel handling
+        def _on_mousewheel(event):
+            self.canv.yview_scroll(int(-1*(event.delta/120)), "units")
+        # Configure canv with scroll wheel
+        self.bind('<Enter>', lambda _: self.canv.bind_all(
+            "<MouseWheel>", _on_mousewheel))
+        self.bind('<Leave>', lambda _: self.canv.unbind_all("<MouseWheel>"))
+
+        relationshipContent.pack(
+            side="top", fill="both", expand=True, anchor="nw"
+        )
+
+    def resize_window(self, event):
+        """On resize of canvas, ensure subframe matches width."""
+        self.canv.itemconfigure("my_frame", width=event.width)
+        self.relationshipContainer.configure(
+            width=event.width
+        )  # self.canv.winfo_width()
+
+    def process_relationships(self, relationships: List[Dict]) -> List[Dict]:
+        """Convert relationships to variables for interaction."""
+        return [
+            {
+                "ID": r["ID"],
+                "CHARACTER_ID1": tk.IntVar(value=r["CHARACTER_ID1"]),
+                "CHARACTER_ID2": tk.IntVar(value=r["CHARACTER_ID2"]),
+                "RELATIONSHIP_ID": tk.IntVar(value=r["RELATIONSHIP_ID"]),
+                "EXPLICIT": tk.IntVar(value=r["EXPLICIT"])
+            }
+            for r in relationships
+        ]
+
+    def process_characters(self, characters: List[Dict]) -> pd.DataFrame:
+        """Transform characters list dict into form intakable by MenuSingleSelector"""
+        return pd.DataFrame([
+            {"LABEL": c["FIRST_NAME"] + " " + c["LAST_NAME"], "ID": c["ID"]}
+            for c in characters
+        ])
+
+    def update_contents(self, people):
+        if "characters" in people:
+            self.characters = self.process_characters(people["characters"])
+
+        self.refresh_ui()
+
+    def delete_relationship(self, idd):
+        logger.debug(f"Deleting relationship {idd}")
+        self.relationships = [
+            r for r in self.relationships if r["ID"] != idd
+        ]
+        self.refresh_ui()
+
+    def refresh_ui(self):
+        for widget in self.relationshipContainer.winfo_children():
+            widget.destroy()
+
+        for relationship in self.relationships:
+            self.add_relationship(relationship)
+
+    def get_contents(self):
+        """ TODO: Get relationships for external db storing."""
+        pass
+
+    def add_relationship(self, relationship=None):
+        if relationship is None:
+            relationship = {
+                "ID": uuid.uuid4().int & (1 << 64)-1,
+                "CHARACTER_ID1": tk.IntVar(),
+                "CHARACTER_ID2": tk.IntVar(),
+                "RELATIONSHIP_ID": tk.IntVar(),
+                "EXPLICIT": tk.IntVar(1)  # True in the majority of cases
+            }
+            self.relationships.append(relationship)
+
+        relationshipContainerFrame = ttk.Frame(
+            self.relationshipContainer
+        )
+        relationshipFrame = ttk.Frame(relationshipContainerFrame)
+
+        ####################################################
+        # Relationship Statement
+        ####################################################
+        r_statement = ttk.Frame(relationshipFrame)
+        MenuSingleSelector(
+            r_statement, "Character 1", self.characters, var=relationship["CHARACTER_ID1"]
+        ).pack(side="left")
+        ttk.Label(r_statement, text=" is the ").pack(side="left")
+        MenuSingleSelector(
+            r_statement, "Relationship Type", self.OPTIONS["relationships"], var=relationship["RELATIONSHIP_ID"]
+        ).pack(side="left")
+        ttk.Label(r_statement, text=" of ").pack(side="left")
+        MenuSingleSelector(
+            r_statement, "Character 2", self.characters, var=relationship["CHARACTER_ID2"]
+        ).pack(side="left")
+        r_statement.grid(row=0, column=0, pady=(0, 5), sticky=tk.W)
+
+        ##############################################
+        # Relationship Qualifiers
+        ##############################################
+        e_statement = ttk.Frame(relationshipFrame)
+        ttk.Checkbutton(
+            e_statement, text="Explicit Relationship?", variable=relationship["EXPLICIT"],
+            style='Switch.TCheckbutton'
+        ).pack(side="left")
+        e_statement.grid(row=1, column=0, padx=5, pady=(0, 5), sticky=tk.W)
+
+        relationshipFrame.pack(side="left")
+
+        ################################################
+        # Command Panel
+        ################################################
+        ttk.Button(
+            relationshipContainerFrame, text="Remove", command=partial(self.delete_relationship, relationship["ID"])
+        ).pack(side=tk.RIGHT, anchor="ne", padx=(20, 0))
+
+        relationshipContainerFrame.pack(side=tk.TOP, expand=1, fill=tk.X,
+                                        padx=(5, 20), anchor="nw")
+
+        # Resize canvas scrollable window
+        self.update_idletasks()
+        self.canv.config(
+            scrollregion=(
+                0, 0,
+                self.relationshipContainer.winfo_width(),
+                self.relationshipContainer.winfo_height()
+            )
+        )
+
+    def get_relationship_properties(self):
+        """ Retrieve relationship mappings from db."""
+        engine = _create_engine()
+        with engine.connect() as conn:
+            relationships = _get_movie_properties(conn, "RELATIONSHIP")
+
+            self.OPTIONS = {
+                "relationships": relationships,
+            }
 
 
 class PersonPage(ttk.Frame):
@@ -48,6 +241,7 @@ class PersonPage(ttk.Frame):
         else:
             self.people = [] if people.get(
                 "people", None) is None else people["people"]
+            self.actors = None
 
         self.update_people = update_people
         self.is_character = is_character
@@ -55,7 +249,6 @@ class PersonPage(ttk.Frame):
         self.get_people_properties()
 
         personHeader = ttk.Frame(self)
-        personHeader.pack(side="top", padx=5, pady=5, fill=tk.X)
 
         if is_character:
             lbl = "Insert Characters in movie"
@@ -64,14 +257,16 @@ class PersonPage(ttk.Frame):
 
         ttk.Label(personHeader, text=lbl).pack(
             side="left", padx=(0, 10))
-        ttk.Button(personHeader, text="+", command=lambda: CreatePerson(self.save_person, is_character=self.is_character, options=self.OPTIONS)).pack(
+        ttk.Button(personHeader, text="+", command=lambda: CreatePerson(self.save_person, is_character=self.is_character, options=self.OPTIONS, actors=self.actors)).pack(
             side="left", pady=5, padx=5
         )
+
+        personHeader.pack(side="top", padx=5, pady=5, fill=tk.X)
 
         self.personContainer = ttk.Frame(self)
 
         self.personContainer.pack(
-            side="top", fill="both", expand=True
+            side="top", fill="both", expand=True, anchor="nw"
         )
 
         for person in self.people:
@@ -122,43 +317,88 @@ class PersonPage(ttk.Frame):
     def add_person_ui(self, person):
         """Add person to ui"""
         logger.debug(f"Adding person to UI in {__class__}: {person}")
-        print(person)
+
         personFrame = ttk.Frame(self.personContainer)
         # Name
-        ttk.Label(personFrame, text=f"{person['FIRST_NAME']} {person['LAST_NAME']}").grid(
-            row=0, column=0, padx=5, pady=(0, 2))
+        descriptors = [f"{person['FIRST_NAME']} {person['LAST_NAME']}"]
+
         if not self.is_character:
-            #
-            ttk.Label(personFrame, text=self.get_options(
-                person, "ROLES")).grid(row=1, column=0, padx=5, pady=(0, 5))
+            descriptors.append(person["DOB"] or "[DOB UNKNOWN]")
+            descriptors.append(self.get_options(person, "ROLES"))
+        else:
+            descriptors.append(self.get_options(person, 'CAREER'))
+            descriptors.append(
+                'Main' if person["MAIN"] else 'Side Character')
+
+        lbl = ttk.Label(personFrame, text=" \u2022 ".join(descriptors))
+        lbl.config(font=(
+            DEFAULTS["FONT_FAMILY"],
+            int(DEFAULTS["FONT_SIZE"]),
+            "bold"
+        ))
+        lbl.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="w")
+
+        identities = []
+        for identity in ["SEXUALITIES", "GENDERS", "TRANSGENDER", "ETHNICITIES", "DISABILITIES"]:
+            identities.append(self.get_options(person, identity))
+        if self.is_character:
+            identities.append((person["HAIR_COLOR"] or "[HAIR_COLOR UNKNOWN]"))
+        ttk.Label(personFrame, text=" \u2022 ".join(identities)).grid(
+            row=1, column=0, padx=5, pady=(0, 5), sticky="w"
+        )
+
+        if self.is_character:
+            if person.get("ACTOR", None) is not None:
+
+                actor = [a for a in self.actors if a["ID"]
+                         == person["ACTOR"]][0]
+                actor = f"{actor['FIRST_NAME']} {actor['LAST_NAME']}"
+            else:
+                actor = "[ACTOR UNKNOWN]"
+
+            ttk.Label(personFrame, text=f"Played by: {actor}").grid(
+                row=2, column=0, padx=5, pady=(0, 5), sticky="w"
+            )
+
+        ttk.Label(personFrame, text=person["BIO"]).grid(
+            row=3, column=0, padx=5, pady=5, sticky="w"
+        )
 
         ################################################
         # Command Panel
         ################################################
         ttk.Button(
             personFrame, text="Remove", command=partial(self.delete_person, person["ID"])
-        ).grid(column=3, padx=(20, 0), sticky=tk.E, row=0)
+        ).grid(column=2, padx=(50, 0), pady=(0, 5), sticky=tk.E, row=0)
 
         ttk.Button(
-            personFrame, text="Edit", command=lambda: CreatePerson(self.save_person, is_character=self.is_character, person=person, options=self.OPTIONS)
-        ).grid(column=3, padx=(20, 0), sticky=tk.E, row=1)
+            personFrame, text="Edit", command=lambda: CreatePerson(self.save_person, is_character=self.is_character, person=person, options=self.OPTIONS, actors=self.actors)
+        ).grid(column=2, padx=(50, 0), sticky=tk.E, row=1)
+
+        personFrame.pack(side=tk.TOP, expand=1, fill=tk.X,
+                         padx=(5, 20), anchor="w")
 
     def update_contents(self, people):
-        if self.is_character and "people" in people:
+        logger.debug("Updating contents")
+        if self.is_character and "people" in people.keys():
+            logger.debug(f"There are {len(people['people'])} actors")
             self.actors = [] if people.get(
                 "people", None) is None else people["people"]
 
-    def get_options(self, person: Dict, option: str):
-
-        if isinstance(person[option], list):
+    def get_options(self, person: Dict, option: str, OPTIONS: pd.DataFrame = None):
+        if OPTIONS is None:
+            OPTIONS = self.OPTIONS[option]
+        if person[option] is None or (isinstance(person[option], list) and len(person[option]) == 0):
+            return f'[{option} UNKNOWN]'
+        elif isinstance(person[option], list):
             return ", ".join([
                 f"{row.LABEL} - {row.SUB_LABEL or 'NULL'}" if "SUB_LABEL" in row.index else row.LABEL
-                for _, row in self.OPTIONS[option].iterrows()
+                for _, row in OPTIONS.iterrows()
                 if row.ID in person[option]
             ])
         else:
-            row = self.OPTIONS[option][self.OPTIONS[option].ID ==
-                                       person[option]].iloc[0, :]
+            row = OPTIONS[OPTIONS.ID ==
+                          person[option]].iloc[0, :]
             return f"{row.LABEL} - {row.SUB_LABEL or 'NULL'}" if "SUB_LABEL" in row.index else row.LABEL
 
     def get_people_properties(self):
@@ -237,9 +477,9 @@ class CreatePerson(tk.Toplevel):
                 "ROLES": self.role_menu.get_selected_options(),
             }
 
-        # Temporary unique identifier
+        # Temporary unique identifier, approximate, non-zero risk of collision
         if "ID" not in self.person:
-            self.person["ID"] = str(uuid.uuid4())
+            self.person["ID"] = uuid.uuid4().int & (1 << 64)-1
 
         self.save_action(self.person)
         self.destroy()
@@ -317,7 +557,7 @@ class CreatePerson(tk.Toplevel):
         # Transgender, Role
         #########################################################
         level2 = ttk.Frame(self)
-        if len(self.actors):
+        if self.is_character and len(self.actors):
             actors = pd.DataFrame([])
             actors.loc[:, "LABEL"] = [
                 f'{a["FIRST_NAME"]} {a["LAST_NAME"]}' for a in self.actors]
@@ -330,7 +570,7 @@ class CreatePerson(tk.Toplevel):
             )
 
         self.transgender_menu = MenuSingleSelector(
-            level2, "Transgender", self.OPTIONS["TRANSGENDER"], default=self.person.get("TRANSGENDER", None)
+            level2, "Trans Status", self.OPTIONS["TRANSGENDER"], default=self.person.get("TRANSGENDER", None)
         )
         self.transgender_menu.pack(
             side="left", fill=tk.X, expand=True, padx=(0, 5))
@@ -413,7 +653,10 @@ class PeopleManagementPanel(ttk.Frame):
             self.notebook, self.update_people_overview, is_character=True, people=self.people_overview)
 
         # TODO: Own classes
-        self.relationshipPage = ttk.Frame(self.notebook)
+        self.relationshipPage = RelationshipPage(
+            self.notebook, relationships=self.people_overview[
+                "relationships"], characters=self.people_overview["characters"]
+        )
         self.actionPage = ttk.Frame(self.notebook)
 
         self.notebook.add(self.personPage, text="Personnel")
@@ -432,10 +675,13 @@ class PeopleManagementPanel(ttk.Frame):
         Called to subpages, to update their contents with new people.
         Depending on which properties have been updated.
         """
-        if "people" in people:
+        logger.debug(f"Update People Qualities: {people.keys()}")
+
+        if "people" in people.keys():
+            logger.debug("Updating character page contents")
             self.characterPage.update_contents(people)
             # TODO update relationships options
 
-        if "characters" in people:
+        if "characters" in people.keys():
             # TODO Update relationships/actions options
             logger.debug("Update relationships/actions")
