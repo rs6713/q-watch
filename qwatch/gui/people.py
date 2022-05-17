@@ -1,6 +1,6 @@
 from functools import partial
 import logging
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Union
 import uuid
 
 import pandas as pd
@@ -21,6 +21,200 @@ from qwatch.gui.menus import MenuMultiSelector, MenuSingleSelector
 
 
 logger = logging.getLogger(__name__)
+
+
+class ActionsPage(ttk.Frame):
+    def __init__(self, parent: ttk.Frame, character_actions: pd.DataFrame = None, characters: List[Dict] = None):
+        """Page to add relationships between characters."""
+        ttk.Frame.__init__(self, parent)
+
+        self.character_actions = self.process_character_actions(
+            character_actions) if character_actions is not None else []
+        self.characters = self.process_characters(
+            characters) if characters is not None else []
+
+        self.get_action_properties()
+
+        ##################################################################
+        # Header to Control adding of new relationships
+        ##################################################################
+        actionsHeader = ttk.Frame(self)
+        actionsHeader.pack(side="top", padx=5, pady=5, fill=tk.X)
+
+        ttk.Label(actionsHeader, text="Add Character Actions").pack(
+            side="left", padx=(0, 10))
+        ttk.Button(actionsHeader, text="+", command=lambda: self.add_character_action()).pack(
+            side="left", pady=5, padx=5
+        )
+
+        actionsHeader.pack(side="top", padx=5, pady=5, fill=tk.X)
+        actionsContent = ttk.Frame(self)
+
+        self.scrollBar = ttk.Scrollbar(actionsContent)
+        self.scrollBar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.canv = tk.Canvas(actionsContent)
+        self.canv.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
+        self.actionsContainer = ttk.Frame(self.canv)
+        self.actionsContainer.pack(
+            side="top", fill=tk.X, expand=True, anchor="nw"
+        )
+
+        for character_action in self.character_actions:
+            self.add_character_action(character_action)
+
+        self.canv.create_window(
+            (0, 0), window=self.actionsContainer, anchor="nw", tags="my_frame"
+        )
+        self.canv.bind('<Configure>', self.resize_window)
+        parent.update_idletasks()
+        self.canv.config(
+            yscrollcommand=self.scrollBar.set,
+            scrollregion=(0, 0, self.actionsContainer.winfo_width(),
+                          self.actionsContainer.winfo_height())
+        )
+        self.scrollBar.config(command=self.canv.yview)
+        # self.scrollBar.lift(self.relationshipContainer)
+
+        # Scrollwheel handling
+        def _on_mousewheel(event):
+            self.canv.yview_scroll(int(-1*(event.delta/120)), "units")
+        # Configure canv with scroll wheel
+        self.bind('<Enter>', lambda _: self.canv.bind_all(
+            "<MouseWheel>", _on_mousewheel))
+        self.bind('<Leave>', lambda _: self.canv.unbind_all("<MouseWheel>"))
+
+        actionsContent.pack(
+            side="top", fill="both", expand=True, anchor="nw"
+        )
+
+    def resize_window(self, event) -> None:
+        """On resize of canvas, ensure subframe matches width."""
+        self.canv.itemconfigure("my_frame", width=event.width)
+        self.actionsContainer.configure(
+            width=event.width
+        )  # self.canv.winfo_width()
+
+    def process_character_actions(self, character_actions: List[Dict]) -> List[Dict]:
+        """Convert character_actions to variables for interaction."""
+        return [
+            {
+                "CHARACTER_ID": tk.IntVar(value=ca["CHARACTER_ID"]),
+                "ACTION_IDS": ca["ACTION_IDS"],
+            }
+            for ca in character_actions
+        ]
+
+    def process_characters(self, characters: List[Dict]) -> pd.DataFrame:
+        """Transform characters list dict into form intakable by MenuSingleSelector"""
+        return pd.DataFrame([
+            {"LABEL": c["FIRST_NAME"] + " " + c["LAST_NAME"], "ID": c["ID"]}
+            for c in characters
+        ])
+
+    def update_contents(self, people: Dict) -> None:
+        if "characters" in people:
+            self.characters = self.process_characters(people["characters"])
+
+            # Only keep character actions associated with existing characters
+            self.character_actions = [
+                r for r in self.character_actions
+                if r["CHARACTER_ID"].get() in [c["ID"] for c in self.characters]
+            ]
+
+        self.refresh_ui()
+
+    def delete_character_action(self, idd: int) -> None:
+        logger.debug(f"Deleting character action {idd}")
+        self.character_actions = [
+            ca for ca in self.character_actions if ca["CHARACTER_ID"] != idd
+        ]
+        self.refresh_ui()
+
+    def refresh_ui(self):
+        for widget in self.actionsContainer.winfo_children():
+            widget.destroy()
+
+        for character_action in self.character_actions:
+            self.add_character_action(character_action)
+
+    def get_contents(self) -> List[Dict[str, Union[int, List]]]:
+        """ Get character actions for external db storing."""
+        character_actions = [
+            {
+                "CHARACTER_ID": ca["CHARACTER_ID"].get(),
+                "ACTION_IDS": ca["ACTIONS_MENU"].get_selected_options(),
+            }
+            for ca in self.character_actions
+            if len(ca["ACTIONS_MENU"].get_selected_options())
+        ]
+        logger.debug("Character Actions: %s", character_actions)
+
+        return character_actions
+
+    def add_character_action(self, character_action=None):
+        if character_action is None:
+            character_action = {
+                "CHARACTER_ID": tk.IntVar(),
+                "ACTION_IDS": []
+            }
+            self.character_actions.append(character_action)
+
+        actionsContainerFrame = ttk.Frame(
+            self.actionsContainer
+        )
+        actionsFrame = ttk.Frame(actionsContainerFrame)
+
+        ####################################################
+        # Actions Statement
+        ####################################################
+        a_statement = ttk.Frame(actionsFrame)
+        MenuSingleSelector(
+            a_statement, "Character", self.characters, var=character_action["CHARACTER_ID"]
+        ).pack(side="left")
+        ttk.Label(a_statement, text=" does ").pack(side="left")
+        descrip = tk.StringVar(value="")
+        actions = MenuMultiSelector(
+            a_statement, "Actions", self.OPTIONS["actions"], default=character_action["ACTION_IDS"], descrip_var=descrip
+        )
+        actions.pack(side="left")
+        ttk.Label(a_statement, textvariable=descrip).pack(side="left")
+        a_statement.grid(row=0, column=0, pady=(0, 5), sticky=tk.W)
+
+        actionsFrame.pack(side="left")
+
+        character_action["ACTIONS_MENU"] = actions
+
+        ################################################
+        # Command Panel
+        ################################################
+        ttk.Button(
+            actionsContainerFrame, text="Remove", command=partial(self.delete_character_action, character_action["CHARACTER_ID"])
+        ).pack(side=tk.RIGHT, anchor="ne", padx=(20, 0))
+
+        actionsContainerFrame.pack(side=tk.TOP, expand=1, fill=tk.X,
+                                   padx=(5, 20), anchor="nw")
+
+        # Resize canvas scrollable window
+        self.update_idletasks()
+        self.canv.config(
+            scrollregion=(
+                0, 0,
+                self.actionsContainer.winfo_width(),
+                self.actionsContainer.winfo_height()
+            )
+        )
+
+    def get_action_properties(self):
+        """ Retrieve action mappings from db."""
+        engine = _create_engine()
+        with engine.connect() as conn:
+            actions = _get_movie_properties(conn, "ACTION")
+
+            self.OPTIONS = {
+                "actions": actions,
+            }
 
 
 class RelationshipPage(ttk.Frame):
@@ -138,7 +332,20 @@ class RelationshipPage(ttk.Frame):
 
     def get_contents(self):
         """ TODO: Get relationships for external db storing."""
-        pass
+        relationships = [
+            {
+                "CHARACTER_ID1": r["CHARACTER_ID1"].get(),
+                "CHARACTER_ID2": r["CHARACTER_ID2"].get(),
+                "RELATIONSHIP_ID": r["RELATIONSHIP_ID"].get(),
+                "EXPLICIT": r["EXPLICIT"].get(),
+                "ID": r["ID"]
+            }
+            for r in self.relationships
+            if r["CHARACTER_ID1"] != 0 and r["CHARACTER_ID2"] != 0 and r["RELATIONSHIP_ID"] != 0
+        ]
+        logger.debug("Character Relationships: %s", relationships)
+
+        return relationships
 
     def add_relationship(self, relationship=None):
         if relationship is None:
@@ -147,7 +354,7 @@ class RelationshipPage(ttk.Frame):
                 "CHARACTER_ID1": tk.IntVar(),
                 "CHARACTER_ID2": tk.IntVar(),
                 "RELATIONSHIP_ID": tk.IntVar(),
-                "EXPLICIT": tk.IntVar(1)  # True in the majority of cases
+                "EXPLICIT": tk.IntVar(value=1)  # True in the majority of cases
             }
             self.relationships.append(relationship)
 
@@ -269,8 +476,56 @@ class PersonPage(ttk.Frame):
             side="top", fill="both", expand=True, anchor="nw"
         )
 
+        personContent = ttk.Frame(self)
+
+        self.scrollBar = ttk.Scrollbar(personContent)
+        self.scrollBar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.canv = tk.Canvas(personContent)
+        self.canv.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
+        self.personContainer = ttk.Frame(self.canv)
+        self.personContainer.pack(
+            side="top", fill=tk.X, expand=True, anchor="nw"
+        )
+
         for person in self.people:
             self.add_person_ui(person)
+
+        self.canv.create_window(
+            (0, 0), window=self.personContainer, anchor="nw", tags="my_frame"
+        )
+        self.canv.bind('<Configure>', self.resize_window)
+        parent.update_idletasks()
+        self.canv.config(
+            yscrollcommand=self.scrollBar.set,
+            scrollregion=(0, 0, self.personContainer.winfo_width(),
+                          self.personContainer.winfo_height())
+        )
+        self.scrollBar.config(command=self.canv.yview)
+
+        # Scrollwheel handling
+        def _on_mousewheel(event):
+            self.canv.yview_scroll(int(-1*(event.delta/120)), "units")
+        # Configure canv with scroll wheel
+        self.bind('<Enter>', lambda _: self.canv.bind_all(
+            "<MouseWheel>", _on_mousewheel))
+        self.bind('<Leave>', lambda _: self.canv.unbind_all("<MouseWheel>"))
+
+        personContent.pack(
+            side="top", fill="both", expand=True, anchor="nw"
+        )
+
+    def get_contents(self):
+        """ Get people for external db storing."""
+        return self.people
+
+    def resize_window(self, event):
+        """On resize of canvas, ensure subframe matches width."""
+        self.canv.itemconfigure("my_frame", width=event.width)
+        self.personContainer.configure(
+            width=event.width
+        )
 
     def refresh_ui(self):
         for widget in self.personContainer.winfo_children():
@@ -279,12 +534,12 @@ class PersonPage(ttk.Frame):
         for person in self.people:
             self.add_person_ui(person)
 
-    def delete_person(self, person):
+    def delete_person(self, person_id):
         """ Delete person from list."""
-        logger.debug(f"Deleting person in {__class__}: {person}")
+        logger.debug(f"Deleting person in {__class__}: {person_id}")
 
         self.people = [
-            p for p in self.people if p["ID"] != person["ID"]
+            p for p in self.people if p["ID"] != person_id
         ]
 
         self.refresh_ui()
@@ -378,6 +633,16 @@ class PersonPage(ttk.Frame):
         personFrame.pack(side=tk.TOP, expand=1, fill=tk.X,
                          padx=(5, 20), anchor="w")
 
+        # Resize canvas scrollable window
+        self.update_idletasks()
+        self.canv.config(
+            scrollregion=(
+                0, 0,
+                self.personContainer.winfo_width(),
+                self.personContainer.winfo_height()
+            )
+        )
+
     def update_contents(self, people):
         logger.debug("Updating contents")
         if self.is_character and "people" in people.keys():
@@ -468,7 +733,7 @@ class CreatePerson(tk.Toplevel):
                 "CAREER": self.career_menu.get_selected_option(),
                 "HAIR_COLOR": self.hair_color.get(),
                 "MAIN": self.main.get(),
-                "ACTOR": self.actor_menu.get_selected_option(),
+                "ACTOR": self.actor_menu.get_selected_option() if hasattr(self, "actor_menu") else None,
             }
         else:
             self.person = {
@@ -639,11 +904,13 @@ class PeopleManagementPanel(ttk.Frame):
     def __init__(self, parent, people_overview=None):
         tk.Frame.__init__(self, parent)
 
+        people_overview = {} if people_overview is None else people_overview
+
         self.people_overview = {
-            "characters": [],
-            "people": [],
-            "relationships": [],
-            "actions": []
+            "characters": people_overview.get("characters", []),
+            "people": people_overview.get("people", []),
+            "relationships": people_overview.get("relationships", []),
+            "character_actions": people_overview.get("character_actions", [])
         } if people_overview is None else people_overview
 
         self.notebook = ttk.Notebook(self, height=300)
@@ -657,7 +924,10 @@ class PeopleManagementPanel(ttk.Frame):
             self.notebook, relationships=self.people_overview[
                 "relationships"], characters=self.people_overview["characters"]
         )
-        self.actionPage = ttk.Frame(self.notebook)
+        self.actionPage = ActionsPage(
+            self.notebook, characters=self.people_overview["characters"],
+            character_actions=self.people_overview["character_actions"]
+        )
 
         self.notebook.add(self.personPage, text="Personnel")
         self.notebook.add(self.characterPage, text="Characters")
@@ -666,9 +936,14 @@ class PeopleManagementPanel(ttk.Frame):
 
         self.notebook.pack(expand=1, fill="both")
 
-    def get_items(self) -> None:
+    def get_items(self) -> Dict:
         """ Get all characters/people/actions/relationships in movie self.people_overview."""
-        pass
+        return {
+            "characters": self.characterPage.get_contents(),
+            "people": self.personPage.get_contents(),
+            "relationships": self.relationshipPage.get_contents(),
+            "character_actions": self.actionPage.get_contents()
+        }
 
     def update_people_overview(self, people: Dict) -> None:
         """

@@ -1,9 +1,12 @@
+from typing import Dict, List
+
+import pandas as pd
 import tkinter as tk
 from tkinter import ttk
 
 
 class MenuSingleSelector(ttk.Menubutton):
-    def __init__(self, parent, name, options, default=None, var=None, **kwargs):
+    def __init__(self, parent: ttk.Frame, name: str, options: pd.DataFrame, default: int = None, var: tk.Variable = None, **kwargs):
         ttk.Menubutton.__init__(
             self,
             parent,
@@ -52,7 +55,7 @@ class MenuSingleSelector(ttk.Menubutton):
 
 
 class MenuMultiSelector(ttk.Menubutton):
-    def __init__(self, parent, name, options, default=None, **kwargs):
+    def __init__(self, parent, name, options, default: List[int] = None, descrip_var=None, **kwargs):
         ttk.Menubutton.__init__(
             self,
             parent,
@@ -65,13 +68,28 @@ class MenuMultiSelector(ttk.Menubutton):
         self.configure(menu=menu)
         self.menu = menu
 
+        def get_label(option):
+            return f"{option.LABEL} - {option.SUB_LABEL or 'NULL'}" if "SUB_LABEL" in option.index else option.LABEL
+
+        def update_description():
+            if descrip_var is not None:
+
+                labels = [
+                    get_label(options.set_index("ID").loc[option_id])
+                    for option_id, checked in self.options.items()
+                    if checked.get()
+                ]
+                descrip_var.set(
+                    "(" + ", ".join(labels) + ")"
+                )
+
         self.options = {}
         for _, option in options.iterrows():
             var = tk.IntVar(value=0) if (
                 default is None or option.ID not in default) else tk.IntVar(value=1)
 
-            label = f"{option.LABEL} - {option.SUB_LABEL or 'NULL'}" if "SUB_LABEL" in option.index else option.LABEL
-            self.menu.add_checkbutton(label=label, variable=var)
+            self.menu.add_checkbutton(label=get_label(
+                option), variable=var, command=update_description)
             self.options[option.ID] = var
 
     def get_selected_options(self):

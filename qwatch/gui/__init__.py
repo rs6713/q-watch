@@ -337,16 +337,16 @@ class MovieWindow():
         self.summaryLabel = ttk.Label(movie_text, text="Summary")
         self.summary = scrolledtext.ScrolledText(
             movie_text,  # height=10,  # width=50,
-            wrap=tk.WORD
+            wrap=tk.WORD, height=10
         )
 
         self.bioLabel = ttk.Label(movie_text, text="Bio")
         self.bio = tk.Text(
-            movie_text, height=2,  # width=40
+            movie_text, height=3,  # width=40
         )
 
         self.summaryLabel.pack(side=tk.TOP, pady=(0, 5), expand=1, fill=tk.X)
-        self.summary.pack(side=tk.TOP, pady=(0, 5), expand=1, fill=tk.X)
+        self.summary.pack(side=tk.TOP, pady=(0, 5), expand=1, fill=tk.BOTH)
         self.bioLabel.pack(side=tk.TOP, pady=(0, 5), expand=1, fill=tk.X)
         self.bio.pack(side=tk.TOP, expand=1, fill=tk.X)
 
@@ -358,7 +358,7 @@ class MovieWindow():
         # self.bio.grid(row=4, column=0, columnspan=2, padx=5, sticky="ew")
 
         movie_text.grid(row=0, column=0, columnspan=2, padx=5,
-                        pady=5, rowspan=3, sticky="ewns")
+                        pady=(0, 5), rowspan=3, sticky="ewns")
 
         ######################################################
         # Movie Details section
@@ -387,7 +387,8 @@ class MovieWindow():
             "age": 3,
             "language": 3,
             "country": 3,
-            "running_time": 3
+            "running_time": 3,
+            "trailer": 5,
         }
         for i, (prop, width) in enumerate(shortProps.items()):
             if i % 3 == 0:
@@ -402,7 +403,7 @@ class MovieWindow():
                 side="left",
                 fill=tk.X,  # fill horizontally
                 expand=True,
-                pady=1, padx=1
+                pady=1, padx=((0, 5) if not (i % 3 == 2) and (i != (len(shortProps.keys())-1)) else 0)
             )
             #setattr(self, prop, tk.Entry(self.shortFrame, height=1, width=width))
             getattr(self, prop).pack(
@@ -436,7 +437,7 @@ class MovieWindow():
         dropdown_frame.pack(side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
 
         movie_little_details_frame.grid(
-            column=0, columnspan=2, row=3, rowspan=4
+            column=0, columnspan=2, row=3, rowspan=4, sticky="ewns", padx=5
         )
 
         #####################################################
