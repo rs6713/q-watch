@@ -2,6 +2,7 @@ from functools import partial
 import logging
 import pathlib
 import os
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -18,6 +19,70 @@ BIN_IMG = Image.open(os.path.join(
 ))
 
 logger = logging.getLogger(__name__)
+
+
+def get_options(df_in: pd.DataFrame, id_col: str, label_cols: List[str], sep: str = " ") -> pd.DataFrame:
+    df = df_in.copy()
+    df.loc[:, "LABEL"] = df.apply(
+        lambda row: sep.join([str(row[c]) for c in label_cols]),
+        axis=1
+    )
+    df.rename(columns={id_col: "ID"}, inplace=True)
+    return df.loc[:, ["LABEL", "ID"]]
+
+
+class TextExtension(ttk.Frame):
+    """Extends Frame.  Intended as a container for a Text field.  Better related data handling
+    and has Y scrollbar."""
+
+    def __init__(self, parent, textvariable=None, *args, **kwargs):
+
+        super(TextExtension, self).__init__(parent)
+
+        self._y_scrollbar = tk.Scrollbar(self, orient=tk.VERTICAL)
+
+        self._text_widget = tk.Text(
+            self, yscrollcommand=self._y_scrollbar.set, *args, **kwargs)
+        self._text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
+        self._y_scrollbar.config(command=self._text_widget.yview)
+        self._y_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Fill widget with contents of var
+        # Setup trace, so when text modified, var is updated.
+        if textvariable is not None:
+            if not (isinstance(textvariable, tk.Variable)):
+                raise TypeError("tkinter.Variable type expected, " +
+                                str(type(textvariable)) + " given.".format(type(textvariable)))
+            self._text_variable = textvariable
+            self.var_modified()
+            self._text_trace = self._text_widget.bind(
+                '<<Modified>>', self.text_modified)
+            self._var_trace = textvariable.trace("w", self.var_modified)
+
+    def text_modified(self, *args):
+        """If variable exists, update text variable."""
+        if self._text_variable is not None:
+            # Delete trace, to stop looping, by updating text, as var updated
+            self._text_variable.trace_vdelete("w", self._var_trace)
+            self._text_variable.set(self._text_widget.get(1.0, tk.END))
+            self._var_trace = self._text_variable.trace(
+                "w", self.var_modified)
+            self._text_widget.edit_modified(False)
+
+    def var_modified(self, *args):
+        """Update text when contents of variable changes."""
+        self.set_text(self._text_variable.get())
+        self._text_widget.edit_modified(False)
+
+    # def unhook(self):
+    #     if self._text_variable is not None:
+    #         self._text_variable.trace_vdelete("w", self._var_trace)
+
+    def set_text(self, _value):
+        self._text_widget.delete(1.0, tk.END)
+        if (_value is not None):
+            self._text_widget.insert(tk.END, _value)
 
 
 class EditableList(ttk.Frame):
@@ -40,7 +105,7 @@ class EditableList(ttk.Frame):
         label = ttk.Label(label_frame, text=name)
         label.pack(side="left", fill=tk.X, expand=True)
 
-        btn = ttk.Button(
+        ttk.Button(
             label_frame, text="New",
             command=self.add_item,  # , padx=5, pady=2
             style='Accent.TButton'
@@ -183,6 +248,11 @@ class EditableList(ttk.Frame):
             for _, item in self.items.iterrows()
         ], columns=self.items.columns, index=self.items.index)
 
+    def load(self, items=None, options=None) -> None:
+        self.items = self.process_items(items)
+        self.options = options
+        self.update_list()
+
     def update_list(self) -> None:
         """ Remove all widgets from subframe, then reload """
         # Delete items in canvas
@@ -201,8 +271,7 @@ class EditableList(ttk.Frame):
                 style='Card.TFrame',
             )
 
-            IMG_HEIGHT = 10
-            btn = ttk.Button(
+            ttk.Button(
                 item_frame,
                 text="Remove",
                 compound=tk.RIGHT,
@@ -212,8 +281,7 @@ class EditableList(ttk.Frame):
                 #         (int(IMG_HEIGHT / BIN_IMG.size[1]*BIN_IMG.size[0]), int(IMG_HEIGHT)))
                 # ),
                 # padx=2, pady=2
-            )
-            btn.pack(side=tk.TOP, anchor="e", padx=5, pady=5)
+            ).pack(side=tk.TOP, anchor="e", padx=5, pady=5)
 
             for col, entry_type in self.item_map.items():
                 if entry_type == "BOOLEAN":

@@ -82,7 +82,7 @@ class ImagePanel(ttk.Frame):
         for widgets in self.imageDescriptor.winfo_children():
             widgets.destroy()
 
-    def loadImages(self, images):
+    def load(self, images):
         self.images = images
         self.savedImages = {}
         self.index = 0

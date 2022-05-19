@@ -89,6 +89,14 @@ class ActionsPage(ttk.Frame):
             side="top", fill="both", expand=True, anchor="nw"
         )
 
+    def load(self, characters=None, character_actions=None):
+        self.character_actions = self.process_character_actions(
+            character_actions) if character_actions is not None else []
+        self.characters = self.process_characters(
+            characters) if characters is not None else []
+
+        self.refresh_ui()
+
     def resize_window(self, event) -> None:
         """On resize of canvas, ensure subframe matches width."""
         self.canv.itemconfigure("my_frame", width=event.width)
@@ -282,6 +290,13 @@ class RelationshipPage(ttk.Frame):
         relationshipContent.pack(
             side="top", fill="both", expand=True, anchor="nw"
         )
+
+    def load(self, characters=None, relationships=None):
+        self.relationships = self.process_relationships(
+            relationships) if relationships is not None else []
+        self.characters = self.process_characters(
+            characters) if characters is not None else []
+        self.refresh_ui()
 
     def resize_window(self, event):
         """On resize of canvas, ensure subframe matches width."""
@@ -526,6 +541,16 @@ class PersonPage(ttk.Frame):
         self.personContainer.configure(
             width=event.width
         )
+
+    def load(self, people=None, characters=None):
+        if self.is_character:
+            self.people = [] if characters is None else characters
+            self.actors = [] if people is None else people
+
+        else:
+            self.people = [] if people is None else people
+            self.actors = None
+        self.refresh_ui()
 
     def refresh_ui(self):
         for widget in self.personContainer.winfo_children():
@@ -902,16 +927,17 @@ class CreatePerson(tk.Toplevel):
 
 class PeopleManagementPanel(ttk.Frame):
     def __init__(self, parent, people_overview=None):
-        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent, update_external_people: Callable=None)
 
         people_overview = {} if people_overview is None else people_overview
-
         self.people_overview = {
             "characters": people_overview.get("characters", []),
             "people": people_overview.get("people", []),
             "relationships": people_overview.get("relationships", []),
             "character_actions": people_overview.get("character_actions", [])
-        } if people_overview is None else people_overview
+        }
+
+        self.update_external_people = update_external_people
 
         self.notebook = ttk.Notebook(self, height=300)
         self.personPage = PersonPage(
@@ -960,3 +986,14 @@ class PeopleManagementPanel(ttk.Frame):
         if "characters" in people.keys():
             # TODO Update relationships/actions options
             logger.debug("Update relationships/actions")
+            self.relationshipPage.update_contents(people)
+            self.actionPage.update_contents(people)
+
+        if self.update_external_people is not None:
+            self.update_external_people(people)
+
+      def load(self, people=None, characters=None, relationships=None, character_actions=None):
+        self.characterPage.load(people=people, characters=characters)
+        self.personPage.load(people=people)
+        self.relationshipsPage.load(characters=characters, relationships=relationships)
+        self.actionPage.load(characters=characters, character_actions=character_actions)
