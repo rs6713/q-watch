@@ -19,7 +19,7 @@ class RatingsFrame(ttk.Frame):
         self.contents = ttk.Frame(self)
         self.contents.pack(side="top", fill=tk.BOTH, expand=True)
 
-        self.set(ratings)
+        self.load(ratings)
 
     def load(self, ratings):
         # Delete items in contents

@@ -1,8 +1,11 @@
+import logging
 from typing import Dict, List
 
 import pandas as pd
 import tkinter as tk
 from tkinter import ttk
+
+logger = logging.getLogger(__name__)
 
 
 class MenuSingleSelector(ttk.Menubutton):
@@ -104,6 +107,8 @@ class ChecklistBox(tk.Frame):
     def __init__(self, parent, name, choices, height=100, width=150, **kwargs):
         tk.Frame.__init__(self, parent)
 
+        self.name = name
+
         label = ttk.Label(self, text=name)
         label.pack(side="top", fill=tk.X, pady=(0, 5))
 
@@ -156,3 +161,15 @@ class ChecklistBox(tk.Frame):
             if value:
                 ids.append(idd)
         return ids
+
+    def load(self, ids: pd.DataFrame = None):
+        if ids is None:
+            return
+
+        for idd in ids.ID.values:
+            if idd in self.vars.keys():
+                self.vars[idd].set(1)
+            else:
+                logger.warning(
+                    f"Item {idd} does not exist in {self.name} Checklistbox"
+                )

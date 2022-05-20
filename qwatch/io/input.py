@@ -132,14 +132,14 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
     #images_dict = get_images(conn, movie_id)
 
     return {
-        "movie": movie,
-        "genres": genres,
-        "sources": sources,
-        "tropes": tropes,
-        "representations": representations,
-        "quotes": quotes,
-        "ratings": ratings,
-        "qualities": qualities,
+        **movie,
+        "GENRES": genres,
+        "SOURCES": sources,
+        "TROPES": tropes,
+        "REPRESENTATIONS": representations,
+        "QUOTES": quotes,
+        "RATINGS": ratings,
+        "QUALITIES": qualities,
         **characters_people_dict,
         # **images_dict
     }
@@ -329,9 +329,9 @@ def get_people(conn: Connection, movie_id: int):
     ], columns=conn.execute(relationship_query).keys())
 
     return {
-        "characters": characters,
-        "people": people,
-        "character_relationships": relationships
+        "CHARACTERS": characters,
+        "PEOPLE": people,
+        "RELATIONSHIPS": relationships
     }
 
 

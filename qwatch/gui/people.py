@@ -926,8 +926,8 @@ class CreatePerson(tk.Toplevel):
 
 
 class PeopleManagementPanel(ttk.Frame):
-    def __init__(self, parent, people_overview=None):
-        tk.Frame.__init__(self, parent, update_external_people: Callable=None)
+    def __init__(self, parent, people_overview=None, update_external_people: Callable = None):
+        tk.Frame.__init__(self, parent)
 
         people_overview = {} if people_overview is None else people_overview
         self.people_overview = {
@@ -992,8 +992,11 @@ class PeopleManagementPanel(ttk.Frame):
         if self.update_external_people is not None:
             self.update_external_people(people)
 
-      def load(self, people=None, characters=None, relationships=None, character_actions=None):
+    def load(self, people=None, characters=None, relationships=None, character_actions=None):
+        """Load movie attributes to people manager."""
         self.characterPage.load(people=people, characters=characters)
         self.personPage.load(people=people)
-        self.relationshipsPage.load(characters=characters, relationships=relationships)
-        self.actionPage.load(characters=characters, character_actions=character_actions)
+        self.relationshipPage.load(
+            characters=characters, relationships=relationships)
+        self.actionPage.load(characters=characters,
+                             character_actions=character_actions)

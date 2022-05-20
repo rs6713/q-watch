@@ -74,7 +74,7 @@ class MovieSelector(tk.Toplevel):
             self,
             text="Open",
             command=select_movie,
-            padx=5, pady=2
+            style='Accent.TButton'
         )
         movie_selector_button.pack(side="right")
 
@@ -118,7 +118,6 @@ class MovieSearch(tk.Toplevel):
             self,
             text="Search",
             command=check_movie,
-            padx=5, pady=2
         )
         search_button.pack(side="left", padx=(5, 0))
 
@@ -137,7 +136,7 @@ class MovieSearch(tk.Toplevel):
         with engine.connect() as conn:
             self.movies = get_movies_ids(conn)
 
-    def load_movie_warning(self, movie_matches: List[Tuple(int, str)], title: str):
+    def load_movie_warning(self, movie_matches: List[Tuple[int, str]], title: str):
         """
         Popup warning when there is a movie named similar to title typed.
 
@@ -185,21 +184,21 @@ class MovieSearch(tk.Toplevel):
         continue_button = ttk.Button(
             edit_movie_popup, text="Continue",
             command=load_new_movie,
-            padx=2, pady=2
+            style='Accent.TButton'
         )
         continue_button.grid(column=1, sticky=tk.E, row=len(movie_matches)+1)
 
 
 class MovieWindow():
     detail_categories = [
-        "box_office",
-        "budget",
-        "year",
-        "age",
-        "language",
-        "country",
-        "running_time",
-        "trailer",
+        "BOX_OFFICE",
+        "BUDGET",
+        "YEAR",
+        "AGE",
+        "LANGUAGE",
+        "COUNTRY",
+        "RUNNING_TIME",
+        "TRAILER",
     ]
 
     def get_movie_properties(self):
@@ -269,6 +268,7 @@ class MovieWindow():
         limit: int
         """
         if movie_title is not None:
+            logger.info("Loading New Movie: %s", movie_title)
             # Get movie images
             image_dirs = download_images(movie_title, limit=limit)[
                 0][movie_title]
@@ -277,13 +277,14 @@ class MovieWindow():
             movie_information = scrape_movie_information(movie_title)
 
             movie = {
-                "title": movie_title,
-                "images": image_dirs,
+                "TITLE": movie_title,
+                "IMAGES": image_dirs,
                 **movie_information
             }
 
         # Load movie to edit
         elif movie_id is not None:
+            logger.info("Loading Existing Movie %d", movie_id)
             engine = _create_engine()
             with engine.connect() as conn:
                 movie = get_movie(conn, movie_id)
@@ -296,33 +297,43 @@ class MovieWindow():
     def update_contents(self, movie):
         """ Update contents of UI with self.movie."""
 
+        logger.info(f"Updating Movie Contents \n{movie}")
+
         for k in self.movie.keys():
             if k in movie:
                 self.movie[k].set(movie[k])
             else:
-                self.movie[k].set(None)
+                if isinstance(self.movie[k], tk.StringVar):
+                    self.movie[k].set("")
+                else:
+                    self.movie[k].set(None)
+
+        for menu in ["GENRES", "TROPES", "REPRESENTATIONS"]:
+            self.datastore[menu].load(
+                movie.get(menu, None)
+            )
 
         # Images, People, sources, quotes, ratings
-        self.datastore["sources"].load(
-            items=movie.get("sources", None)
+        self.datastore["SOURCES"].load(
+            items=movie.get("SOURCES", None)
         )
 
-        characters = movie.get("characters", pd.DataFrame([]))
-        self.datastore["quotes"].load(
-            items=movie.get("quotes", None),
+        characters = movie.get("CHARACTERS", pd.DataFrame([]))
+        self.datastore["QUOTES"].load(
+            items=movie.get("QUOTES", None),
             options={
                 "CHARACTER_ID": get_options(
                     characters, "CHARACTER_ID", ["FIRST_NAME", "LAST_NAME"]
                 )
             }
         )
-        self.datastore["images"].load(movie.get("images", []))
-        self.ratings_frame.load(movie.get("ratings", None))
-        self.datastore["people"].load(
-            people=movie.get("people", None),
-            characters=movie.get("characters", None),
-            relationships=movie.get("relationships", None),
-            character_actions=movie.get("character_actions", None)
+        self.datastore["IMAGES"].load(movie.get("IMAGES", []))
+        self.ratings_frame.load(movie.get("RATINGS", None))
+        self.datastore["PEOPLE"].load(
+            people=movie.get("PEOPLE", None),
+            characters=movie.get("CHARACTERS", None),
+            relationships=movie.get("RELATIONSHIPS", None),
+            character_actions=movie.get("CHARACTER_ACTIONS", None)
         )
 
     def __init__(self):
@@ -331,18 +342,18 @@ class MovieWindow():
         self.configure_menu()
 
         self.movie = {
-            "age": tk.IntVar(),
-            "intensity": tk.IntVar(),
-            "summary": tk.StringVar(),
-            "bio": tk.StringVar(),
-            "opinion": tk.StringVar(),
-            "box_office": tk.StringVar(),
-            "budget": tk.StringVar(),
-            "year": tk.StringVar(),
-            "running_time": tk.StringVar(),
-            "language": tk.StringVar(),
-            "country": tk.StringVar(),
-            "trailer": tk.StringVar(),
+            "AGE": tk.IntVar(),
+            "INTENSITY": tk.IntVar(),
+            "SUMMARY": tk.StringVar(),
+            "BIO": tk.StringVar(),
+            "OPINION": tk.StringVar(),
+            "BOX_OFFICE": tk.StringVar(),
+            "BUDGET": tk.StringVar(),
+            "YEAR": tk.StringVar(),
+            "RUNNING_TIME": tk.StringVar(),
+            "LANGUAGE": tk.StringVar(),
+            "COUNTRY": tk.StringVar(),
+            "TRAILER": tk.StringVar(),
         }
         self.datastore = {}  # Hold panels/widgets from which can fetch entered data
 
@@ -356,13 +367,13 @@ class MovieWindow():
         TextExtension(
             describeFrame,  # height=10,  # width=50,
             height=10,  # wrap=tk.WORD,
-            textvariable=self.movie["summary"],
+            textvariable=self.movie["SUMMARY"],
         ).pack(
             side=tk.TOP, pady=(0, 5), expand=1, fill=tk.BOTH)
         ttk.Label(describeFrame, text="Bio").pack(
             side=tk.TOP, pady=(0, 5), expand=1, fill=tk.X)
         TextExtension(
-            describeFrame, height=3, textvariable=self.movie["bio"]
+            describeFrame, height=3, textvariable=self.movie["BIO"]
         ).pack(side=tk.TOP, expand=1, fill=tk.X)
 
         describeFrame.grid(row=0, column=0, columnspan=2, padx=5,
@@ -380,7 +391,7 @@ class MovieWindow():
         ttk.Label(detailsFrame, text="My Opinion").pack(
             side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
         TextExtension(
-            detailsFrame, height=3, textvariable=self.movie["opinion"]
+            detailsFrame, height=3, textvariable=self.movie["OPINION"]
         ).pack(side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
 
         # Rows of details
@@ -409,11 +420,11 @@ class MovieWindow():
         ################################################################
         dropdownFrame = ttk.Frame(detailsFrame)
         MenuSingleSelector(
-            dropdownFrame, "Intensity", self.intensities, var=self.movie["intensity"]
+            dropdownFrame, "Intensity", self.intensities, var=self.movie["INTENSITY"]
         ).pack(side="left", fill=tk.X, expand=True, padx=(0, 5))
 
         MenuSingleSelector(
-            dropdownFrame, "Age", self.ages, var=self.movie["age"]
+            dropdownFrame, "Age", self.ages, var=self.movie["AGE"]
         ).pack(side="left", fill=tk.X, expand=True)
 
         dropdownFrame.pack(side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
@@ -425,32 +436,32 @@ class MovieWindow():
         #####################################################
         # COLUMN 2 --> Checkbox lists, image selector
         #####################################################
-        self.datastore["representations"] = ChecklistBox(
+        self.datastore["REPRESENTATIONS"] = ChecklistBox(
             self.root, "Representations", self.representations,
         )
-        self.datastore["tropes"] = ChecklistBox(
+        self.datastore["TROPES"] = ChecklistBox(
             self.root, "Tropes", self.tropes,
         )
-        self.datastore["genres"] = ChecklistBox(
+        self.datastore["GENRES"] = ChecklistBox(
             self.root, "Genres", self.genres,
         )
-        self.datastore["genres"].grid(
+        self.datastore["GENRES"].grid(
             column=2, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5, padx=(0, 3))
-        self.datastore["tropes"].grid(
+        self.datastore["TROPES"].grid(
             column=3, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5, padx=(0, 3))
-        self.datastore["representations"].grid(
+        self.datastore["REPRESENTATIONS"].grid(
             column=4, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5)
 
-        self.datastore["images"] = ImagePanel(self.root)
-        self.datastore["images"].grid(
+        self.datastore["IMAGES"] = ImagePanel(self.root)
+        self.datastore["IMAGES"].grid(
             column=2, row=3, columnspan=3, rowspan=4,
             sticky="ewns"
         )
         ##############################################################
         # CharacterFrame for People/Characters/Relationships in Movie
         ##############################################################
-        self.datastore["people"] = PeopleManagementPanel(self.root)
-        self.datastore["people"].grid(
+        self.datastore["PEOPLE"] = PeopleManagementPanel(self.root)
+        self.datastore["PEOPLE"].grid(
             column=0, row=7, columnspan=8, rowspan=3,
             sticky="ewns"
         )
@@ -458,11 +469,11 @@ class MovieWindow():
         #############################################################
         # Frame for Sources, and their votes
         #############################################################
-        self.datastore["sources"] = EditableList(
+        self.datastore["SOURCES"] = EditableList(
             self.root, "Sources",
             item_map={
                 "ID": "DROPDOWN",
-                "URL": "ENTRY",
+                # "URL": "ENTRY",
                 "COST": "NUM_ENTRY",
                 "MEMBERSHIP_INCLUDED": "BOOLEAN",
             },
@@ -470,14 +481,14 @@ class MovieWindow():
                 self.sources, "ID", ["LABEL", "REGION"], sep=" - ")}
         )
 
-        self.datastore["sources"].grid(
+        self.datastore["SOURCES"].grid(
             row=0, rowspan=10, columnspan=2, column=8, sticky="ewns", padx=3, pady=3
         )
 
         ##############################################################
         # Frame for Quotes, ratings
         ##############################################################
-        self.datastore["quotes"] = EditableList(
+        self.datastore["QUOTES"] = EditableList(
             self.root,
             "Quotes",
             # items=self.movie["quotes"],
@@ -488,7 +499,7 @@ class MovieWindow():
             # options={"CHARACTER_ID": get_options(
             #    self.movie["characters"], "CHARACTER_ID", ["FIRST_NAME", "LAST_NAME"])}
         )
-        self.datastore["quotes"].grid(
+        self.datastore["QUOTES"].grid(
             row=0, rowspan=3, columnspan=3, column=5, sticky="ewns", padx=3, pady=3
         )
 

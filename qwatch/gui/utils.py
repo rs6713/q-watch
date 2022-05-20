@@ -214,18 +214,19 @@ class EditableList(ttk.Frame):
             "NUM_ENTRY": tk.StringVar,
         }
 
-        for col in self.items.columns:
-            if col not in self.item_map:
-                new_item += [None]  # e.g. id (generated later)
-            else:
-                new_item += [item_var_map[self.item_map[col]]()]
+        for col in self.item_map.keys():
+            new_item += [item_var_map[self.item_map[col]]()]
 
         # Add item to items, and update visuals.
-        self.items = self.items.append(
-            pd.Series(new_item, index=self.items.columns),
-            ignore_index=True
-        )
-
+        if self.items is None:
+            self.items = pd.DataFrame(
+                [new_item], columns=list(self.item_map.keys()))
+        else:
+            self.items = self.items.append(
+                pd.Series(new_item, index=list(self.item_map.keys())),
+                ignore_index=True
+            )
+        logger.debug(self.items)
         self.update_list()
 
     def delete_item(self, item_index: int) -> None:
@@ -239,6 +240,9 @@ class EditableList(ttk.Frame):
 
     def get_items(self) -> pd.DataFrame:
         """ Items Pandas DataFrame need to transform variables back to raw values."""
+        if self.items is None:
+            return None
+
         # TODO: Perform data validity checks based on entry type
         return pd.DataFrame([
             [
@@ -264,6 +268,7 @@ class EditableList(ttk.Frame):
             return
 
         # Load up all items into canvas
+        logger.debug(self.items)
         for idx, item in self.items.iterrows():
             item_frame = ttk.Frame(
                 self.canv_subframe,
