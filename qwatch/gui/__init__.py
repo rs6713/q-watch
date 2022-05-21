@@ -7,6 +7,7 @@ import os
 from typing import Callable, Dict, List, Tuple
 
 from matplotlib import pyplot as plt
+import numpy as np
 import pandas as pd
 from PIL import Image, ImageTk
 import seaborn as sns
@@ -211,15 +212,16 @@ class MovieWindow():
             self.movies = get_movies_ids(conn)
             self.ages = _get_movie_properties(conn, "AGE", None)
             self.intensities = _get_movie_properties(conn, "INTENSITY", None)
-            self.sources = _get_movie_properties(conn, "SOURCE", None, addit_props=[
-                "COST", "MEMBERSHIP_INCLUDED"
-            ])
+            self.sources = _get_movie_properties(conn, "SOURCE", None)
 
     def configure_root(self):
         """ Configure properties of app window."""
         self.root = tk.Tk()
-        self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(0, weight=1)
+        #self.root.grid(row = 0,column = 0, sticky = "nsew")
+
+        for i in np.arange(10):
+            self.root.columnconfigure(i, weight=1)
+            self.root.rowconfigure(i, weight=1)
         self.root.title("Q-Watch Movie Loader")
 
         # Custom Styling
@@ -291,6 +293,17 @@ class MovieWindow():
 
         self.update_contents(movie)
 
+    def update_external(self, characters=None, **kws):
+        """Update global attrs in people management."""
+        if characters is not None:
+            self.datastore["QUOTES"].load(
+                options={
+                    "CHARACTER_ID": get_options(
+                        characters, "ID", ["FIRST_NAME", "LAST_NAME"]
+                    )
+                }
+            )
+
     def save_movie(self):
         pass
 
@@ -323,7 +336,7 @@ class MovieWindow():
             items=movie.get("QUOTES", None),
             options={
                 "CHARACTER_ID": get_options(
-                    characters, "CHARACTER_ID", ["FIRST_NAME", "LAST_NAME"]
+                    characters, "ID", ["FIRST_NAME", "LAST_NAME"]
                 )
             }
         )
@@ -342,6 +355,7 @@ class MovieWindow():
         self.configure_menu()
 
         self.movie = {
+            "TITLE": tk.StringVar(),
             "AGE": tk.IntVar(),
             "INTENSITY": tk.IntVar(),
             "SUMMARY": tk.StringVar(),
@@ -362,11 +376,13 @@ class MovieWindow():
         #   Summary, Bio, Opinion
         ###################################################
         describeFrame = ttk.Frame(self.root)
+        ttk.Entry(describeFrame, textvariable=self.movie["TITLE"]).pack(
+            side=tk.TOP, pady=5, expand=1, fill=tk.X)
         ttk.Label(describeFrame, text="Summary").pack(
             side=tk.TOP, pady=(0, 5), expand=1, fill=tk.X)
         TextExtension(
             describeFrame,  # height=10,  # width=50,
-            height=10,  # wrap=tk.WORD,
+            height=4,  # wrap=tk.WORD,
             textvariable=self.movie["SUMMARY"],
         ).pack(
             side=tk.TOP, pady=(0, 5), expand=1, fill=tk.BOTH)
@@ -377,7 +393,7 @@ class MovieWindow():
         ).pack(side=tk.TOP, expand=1, fill=tk.X)
 
         describeFrame.grid(row=0, column=0, columnspan=2, padx=5,
-                           pady=(0, 5), rowspan=3, sticky="ewns")
+                           pady=(0, 5), rowspan=3, sticky="nsew")
 
         ######################################################
         # Movie Details section
@@ -391,7 +407,7 @@ class MovieWindow():
         ttk.Label(detailsFrame, text="My Opinion").pack(
             side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
         TextExtension(
-            detailsFrame, height=3, textvariable=self.movie["OPINION"]
+            detailsFrame, height=2, textvariable=self.movie["OPINION"]
         ).pack(side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
 
         # Rows of details
@@ -430,7 +446,7 @@ class MovieWindow():
         dropdownFrame.pack(side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
 
         detailsFrame.grid(
-            column=0, columnspan=2, row=3, rowspan=4, sticky="ewns", padx=5
+            column=0, columnspan=2, row=3, rowspan=4, sticky="nsew", padx=5
         )
 
         #####################################################
@@ -454,16 +470,18 @@ class MovieWindow():
 
         self.datastore["IMAGES"] = ImagePanel(self.root)
         self.datastore["IMAGES"].grid(
-            column=2, row=3, columnspan=3, rowspan=4,
-            sticky="ewns"
+            column=2, row=3, columnspan=6, rowspan=4,
+            sticky="nsew"
         )
         ##############################################################
         # CharacterFrame for People/Characters/Relationships in Movie
         ##############################################################
-        self.datastore["PEOPLE"] = PeopleManagementPanel(self.root)
+        self.datastore["PEOPLE"] = PeopleManagementPanel(
+            self.root, update_external=self.update_external
+        )
         self.datastore["PEOPLE"].grid(
             column=0, row=7, columnspan=8, rowspan=3,
-            sticky="ewns"
+            sticky="nsew"
         )
 
         #############################################################
@@ -473,7 +491,7 @@ class MovieWindow():
             self.root, "Sources",
             item_map={
                 "ID": "DROPDOWN",
-                # "URL": "ENTRY",
+                "URL": "ENTRY",
                 "COST": "NUM_ENTRY",
                 "MEMBERSHIP_INCLUDED": "BOOLEAN",
             },
@@ -482,7 +500,7 @@ class MovieWindow():
         )
 
         self.datastore["SOURCES"].grid(
-            row=0, rowspan=10, columnspan=2, column=8, sticky="ewns", padx=3, pady=3
+            row=0, rowspan=7, columnspan=2, column=8, sticky="nsew", padx=3, pady=3
         )
 
         ##############################################################
@@ -495,18 +513,16 @@ class MovieWindow():
             item_map={
                 "QUOTE": "ENTRY", "CHARACTER_ID": "DROPDOWN"
             },
-            options={"CHARACTER_ID": pd.DataFrame([])}
-            # options={"CHARACTER_ID": get_options(
-            #    self.movie["characters"], "CHARACTER_ID", ["FIRST_NAME", "LAST_NAME"])}
+            options={"CHARACTER_ID": pd.DataFrame([])},
         )
         self.datastore["QUOTES"].grid(
-            row=0, rowspan=3, columnspan=3, column=5, sticky="ewns", padx=3, pady=3
+            row=0, rowspan=3, columnspan=3, column=5, sticky="nsew", padx=3, pady=3
         )
 
-        self.ratings_frame = RatingsFrame(self.root)  # , self.movie["ratings"]
+        self.ratings_frame = RatingsFrame(self.root)
 
-        self.ratings_frame.grid(column=5, columnspan=3, row=3,
-                                rowspan=4, sticky="ewns", padx=3, pady=3)
+        self.ratings_frame.grid(column=8, columnspan=2, row=7,
+                                rowspan=3, sticky="nsew", padx=3, pady=3)
 
         self.root.config(menu=self.menubar)
         self.root.mainloop()

@@ -253,8 +253,10 @@ class EditableList(ttk.Frame):
         ], columns=self.items.columns, index=self.items.index)
 
     def load(self, items=None, options=None) -> None:
-        self.items = self.process_items(items)
-        self.options = options
+        if items is not None:
+            self.items = self.process_items(items)
+        if options is not None:
+            self.options = options
         self.update_list()
 
     def update_list(self) -> None:

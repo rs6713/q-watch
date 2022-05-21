@@ -105,6 +105,7 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
         for row in conn.execute(quote_query).fetchall()
     ], columns=["ID", "QUOTE", "CHARACTER_ID"]
     )
+    #quotes.CHARACTER_ID.fillna(0, inplace=True)
 
     # All ratings made against movie
     ratings_query = select(
@@ -174,6 +175,9 @@ def get_people(conn: Connection, movie_id: int):
         "CHARACTERS", meta, schema=SCHEMA, autoload_with=conn)
     character_relationship_table = Table(
         "CHARACTER_RELATIONSHIPS", meta, schema=SCHEMA, autoload_with=conn)
+    character_action_table = Table(
+        "CHARACTER_ACTIONS", meta, schema=SCHEMA, autoload_with=conn
+    )
 
     def get_agg_ethnicity(is_character=False):
 
@@ -234,7 +238,7 @@ def get_people(conn: Connection, movie_id: int):
     agg_role = get_agg_role()
 
     character_query = select(
-        character_table.c.CHARACTER_ID,
+        character_table.c.CHARACTER_ID.label("ID"),
         character_table.c.ACTOR_ID,
         character_table.c.FIRST_NAME,
         character_table.c.LAST_NAME,
@@ -248,6 +252,7 @@ def get_people(conn: Connection, movie_id: int):
         agg_disability_character.c.DISABILITY,
         agg_ethnicity_character.c.ETHNICITY,
         character_table.c.CAREER,
+        character_table.c.BIO,
     ).select_from(character_table).join(
         agg_disability_character, agg_disability_character.c.PERSON_ID == character_table.c.CHARACTER_ID, isouter=True
     ).join(
@@ -271,10 +276,11 @@ def get_people(conn: Connection, movie_id: int):
 
     person_query = select(
         people_table.c.ID,
+        people_table.c.BIO,
         people_table.c.FIRST_NAME,
         people_table.c.LAST_NAME,
         people_table.c.DOB,
-        people_table.c.DESCRIP,
+        # people_table.c.DESCRIP,
         people_table.c.GENDER,  # genders_table.c.LABEL.label("GENDER"),
         # sexualities_table.c.LABEL.label("SEXUALITY"),
         people_table.c.SEXUALITY,
@@ -311,6 +317,15 @@ def get_people(conn: Connection, movie_id: int):
         row._mapping for row in conn.execute(person_query).fetchall()
     ], columns=conn.execute(person_query).keys())
 
+    for col in ["ROLE", "DISABILITY", "ETHNICITY"]:
+        people.loc[:, col] = people.loc[:, col].apply(
+            lambda s: s if s is None else [int(_) for _ in s.split(",")]
+        )
+    for col in ["DISABILITY", "ETHNICITY"]:
+        characters.loc[:, col] = characters.loc[:, col].apply(
+            lambda s: s if s is None else [int(_) for _ in s.split(",")]
+        )
+
     relationship_query = select(
         character_relationship_table.c.CHARACTER_ID1,
         character_relationship_table.c.CHARACTER_ID2,
@@ -319,19 +334,32 @@ def get_people(conn: Connection, movie_id: int):
     ).where(
         and_(
             character_relationship_table.c.CHARACTER_ID1.in_(
-                characters.CHARACTER_ID),
+                characters.ID),
             character_relationship_table.c.CHARACTER_ID2.in_(
-                characters.CHARACTER_ID)
+                characters.ID)
         )
     )
     relationships = pd.DataFrame([
         row._mapping for row in conn.execute(relationship_query).fetchall()
     ], columns=conn.execute(relationship_query).keys())
 
+    actions_query = select(
+        character_action_table.c.CHARACTER_ID,
+        character_action_table.c.ACTION_ID
+    ).where(
+        character_action_table.c.CHARACTER_ID.in_(characters.ID)
+    )
+    character_actions = pd.DataFrame([
+        row._mapping for row in conn.execute(actions_query).fetchall()
+    ], columns=conn.execute(actions_query).keys())
+    character_actions = character_actions.groupby(
+        "CHARACTER_ID").ACTION_ID.apply(list).reset_index()
+
     return {
         "CHARACTERS": characters,
         "PEOPLE": people,
-        "RELATIONSHIPS": relationships
+        "RELATIONSHIPS": relationships,
+        "CHARACTER_ACTIONS": character_actions,
     }
 
 

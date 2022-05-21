@@ -1,4 +1,5 @@
 import io
+import logging
 
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -6,12 +7,15 @@ from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import ttk
 
+logger = logging.getLogger(__name__)
+
 
 class RatingsFrame(ttk.Frame):
 
     def __init__(self, parent: ttk.Frame, ratings: pd.DataFrame = None) -> None:
-
-        ttk.Frame.__init__(self, parent)
+        s = ttk.Style()
+        s.configure('My.TFrame', background='red')
+        ttk.Frame.__init__(self, parent, style="My.TFrame")
 
         lbl = ttk.Label(self, text="Ratings")
         lbl.pack(side="top", fill=tk.X, expand=True)
@@ -62,13 +66,21 @@ class RatingsFrame(ttk.Frame):
             width, height = im.size
 
             self.update_idletasks()
-            IMG_WIDTH = self.winfo_width()
+            IMG_WIDTH = self.contents.winfo_width()
+
+            logger.info(
+                f"Ratings winfo width {IMG_WIDTH} ORIGINAL {width}"
+            )
+            IMG_WIDTH = int(IMG_WIDTH)
+
             im = im.resize(
                 (IMG_WIDTH, int(IMG_WIDTH/width*height)), Image.ANTIALIAS)
-            next_image = ImageTk.PhotoImage(
+
+            # Self to stop image being garbage collected
+            self.next_image = ImageTk.PhotoImage(
                 im
             )
-            ratings_image = ttk.Label(self.contents, image=next_image)
+            ratings_image = tk.Label(self.contents, image=self.next_image)
             ratings_image.pack(side="bottom")
 
         else:
