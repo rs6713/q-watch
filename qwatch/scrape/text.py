@@ -9,16 +9,21 @@ import wikipedia
 from googlesearch import search
 import urllib
 
-properties = [
-    "Directed by",
-    "Written by",
+infobox_properties = [
     "Based on",
-    "Starring",
     "Release date",
     "Running time",
     "Country",
     "Language"
 ]
+
+CONFIG = {
+    "MAX_CHARACTERS": 5
+}
+
+#    "Starring",
+# "Directed by",
+# "Written by",
 
 
 def get_infobox_property(page, property):
@@ -37,23 +42,28 @@ def map_value(key, val):
 
 
 def scrape_movie_information(movie_title):
-    info = {}
+    movie = {}
 
     search_term = movie_title + " (film)"
-    info["summary"] = wikipedia.summary(search_term)
-    info["year"] = re.findall(r'[0-9]{4}', info["summary"])[0]
-    info["url"] = wikipedia.page(search_term).url
+    movie["SUMMARY"] = wikipedia.summary(search_term)
+    movie["YEAR"] = re.findall(r'[0-9]{4}', movie["summary"])[0]
+    movie["WIKI_URL"] = wikipedia.page(search_term).url
 
     # Entire html page
     html = wikipedia.page(search_term).html()
     page = BeautifulSoup(html, 'html.parser')
 
     # Get Movie Properties from infobox
-    for prop in properties:
+    for prop in infobox_properties:
         prop_val = get_infobox_property(page, prop)
         if prop_val:
-            key = prop.lower().replace(" ", "_")
+            key = prop.upper().replace(" ", "_")
+            movie[key] = map_value(key, prop_val)
 
-            info[key] = map_value(key, prop_val)
+    # Get list of characters
+    characters = page.find("span", {
+                           "class": "mw-headline", "id": "Cast"}).parent.find_next_sibling("ul").findAll("li")
 
-    return info
+    [c.text for c in characters]
+
+    return movie

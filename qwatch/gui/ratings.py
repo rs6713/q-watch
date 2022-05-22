@@ -13,9 +13,7 @@ logger = logging.getLogger(__name__)
 class RatingsFrame(ttk.Frame):
 
     def __init__(self, parent: ttk.Frame, ratings: pd.DataFrame = None) -> None:
-        s = ttk.Style()
-        s.configure('My.TFrame', background='red')
-        ttk.Frame.__init__(self, parent, style="My.TFrame")
+        ttk.Frame.__init__(self, parent)
 
         lbl = ttk.Label(self, text="Ratings")
         lbl.pack(side="top", fill=tk.X, expand=True)

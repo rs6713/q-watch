@@ -89,7 +89,7 @@ class MovieSelector(tk.Toplevel):
 class MovieSearch(tk.Toplevel):
     def __init__(self, load_movie: Callable):
         """Pop up Window to search for new movie."""
-        tk.Toplevel(self, pady=5, padx=5)
+        tk.Toplevel.__init__(self, pady=5, padx=5)
         self.wm_title("Search Movie")
 
         self.get_available_movies()
@@ -97,8 +97,7 @@ class MovieSearch(tk.Toplevel):
 
         # Movie Title
         movie_title_entry = ttk.Entry(
-            self,
-            bg="white", fg="black", width=40
+            self, width=40
         )
         movie_title_entry.pack(side="left")
 
@@ -274,13 +273,16 @@ class MovieWindow():
             # Get movie images
             image_dirs = download_images(movie_title, limit=limit)[
                 0][movie_title]
+            images = pd.DataFrame([{
+                "FILENAME": img
+            } for img in image_dirs])
 
             # Get Wikipedia scraped movie information
             movie_information = scrape_movie_information(movie_title)
 
             movie = {
                 "TITLE": movie_title,
-                "IMAGES": image_dirs,
+                "IMAGES": images,
                 **movie_information
             }
 
@@ -340,7 +342,7 @@ class MovieWindow():
                 )
             }
         )
-        self.datastore["IMAGES"].load(movie.get("IMAGES", []))
+        self.datastore["IMAGES"].load(images=movie.get("IMAGES", None))
         self.ratings_frame.load(movie.get("RATINGS", None))
         self.datastore["PEOPLE"].load(
             people=movie.get("PEOPLE", None),
@@ -412,8 +414,9 @@ class MovieWindow():
 
         # Rows of details
         f = None
+        n_items_row = 4
         for i, detail in enumerate(self.detail_categories):
-            if i % 3 == 0:
+            if i % n_items_row == 0:
                 f = ttk.Frame(detailsFrame)
                 f.pack(side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5))
 
@@ -428,7 +431,7 @@ class MovieWindow():
                 side="left",
                 fill=tk.X,
                 expand=True,
-                pady=1, padx=((0, 5) if not (i % 3 == 2) and (i != (len(self.detail_categories)-1)) else 0)
+                pady=1, padx=((0, 5) if not (i % n_items_row == (n_items_row - 1)) and (i != (len(self.detail_categories)-1)) else 0)
             )
 
         ################################################################

@@ -937,7 +937,7 @@ class PeopleManagementPanel(ttk.Frame):
 
         self.update_external = update_external
 
-        self.notebook = ttk.Notebook(self, height=300)
+        self.notebook = ttk.Notebook(self, height=200)
         self.personPage = PersonPage(
             self.notebook, self.update_people_overview, is_character=False, people=people)
         self.characterPage = PersonPage(

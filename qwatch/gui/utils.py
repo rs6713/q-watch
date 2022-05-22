@@ -22,6 +22,9 @@ logger = logging.getLogger(__name__)
 
 
 def get_options(df_in: pd.DataFrame, id_col: str, label_cols: List[str], sep: str = " ") -> pd.DataFrame:
+    if df_in.empty:
+        return pd.DataFrame([], columns=[id_col, *label_cols])
+
     df = df_in.copy()
     df.loc[:, "LABEL"] = df.apply(
         lambda row: sep.join([str(row[c]) for c in label_cols]),

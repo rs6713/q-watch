@@ -59,6 +59,9 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
 
     movie_quote_table = Table(
         "MOVIE_QUOTE", meta, schema=SCHEMA, autoload_with=conn)
+    movie_image_table = Table(
+        "MOVIE_IMAGES", meta, schema=SCHEMA, autoload_with=conn
+    )
 
     # intensity_table = Table(
     #     "INTENSITYS", meta, schema=SCHEMA, autoload_with=conn)
@@ -107,6 +110,22 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
     )
     #quotes.CHARACTER_ID.fillna(0, inplace=True)
 
+    # List of all images in movie
+    image_query = select(
+        movie_image_table.c.ID,
+        movie_image_table.c.FILENAME,
+        movie_image_table.c.CAPTION
+    ).select_from(
+        movie_image_table
+    ).where(
+        movie_image_table.c.MOVIE_ID == movie_id
+    )
+    images = pd.DataFrame([
+        row._mapping
+        for row in conn.execute(image_query).fetchall()
+    ], columns=["ID", "FILENAME", "CAPTION"]
+    )
+
     # All ratings made against movie
     ratings_query = select(
         ratings_table.c.DATE,
@@ -141,6 +160,7 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
         "QUOTES": quotes,
         "RATINGS": ratings,
         "QUALITIES": qualities,
+        "IMAGES": images,
         **characters_people_dict,
         # **images_dict
     }

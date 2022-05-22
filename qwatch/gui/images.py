@@ -1,5 +1,8 @@
 """ Functionality to edit images."""
 from functools import partial
+import logging
+import os
+from pathlib import Path
 from typing import List, Dict
 
 from IPython.display import display
@@ -13,6 +16,8 @@ from tkinter.font import Font
 
 from qwatch.gui.utils import TextExtension
 
+logger = logging.getLogger(__name__)
+
 
 class ImagePanel(ttk.Frame):
     def __init__(self, parent: ttk.Frame, images: pd.DataFrame = None, **kwargs):
@@ -21,7 +26,7 @@ class ImagePanel(ttk.Frame):
             style='Card.TFrame',
             **kwargs
         )
-        self.images = self.process_images(images) if images is not None else []
+        self.images = self.process_images(images)
         self.index = 0
 
         ###############################################
@@ -73,10 +78,13 @@ class ImagePanel(ttk.Frame):
     def process_images(self, images: pd.DataFrame):
         """Convert Images to usable form."""
 
+        if images is None:
+            return []
+
         return [
             {
-                "ID": image["FILENAME"],
-                "DIR": image["DIR"],
+                "ID": image.get("ID", 0),
+                "FILENAME": image["FILENAME"],
                 "CAPTION": tk.StringVar(value=image.get("CAPTION", ""))
             }
             for image in images.to_dict("records")
@@ -89,7 +97,7 @@ class ImagePanel(ttk.Frame):
         for widgets in self.imageDescriptor.winfo_children():
             widgets.destroy()
 
-    def load(self, images: pd.DataFrame):
+    def load(self, images: pd.DataFrame = None):
         self.images = self.process_images(images)
         self.index = 0
 
@@ -109,7 +117,22 @@ class ImagePanel(ttk.Frame):
             ).pack()
             return
 
-        image1 = Image.open(self.images[self.index]["FILENAME"])
+        # Image is stored in db, src/static/movie-picutres
+        if self.images[self.index]["ID"] != 0:
+            image_path = os.path.join(
+                Path(__name__).parent.parent.parent,
+                "website", "src", "static", "movie-pictures",
+                self.images[self.index]["FILENAME"]
+            )
+        # image is freshly scraped
+        else:
+            image_path = self.images[self.index]["FILENAME"]
+        logger.debug(
+            f"Trying to load image: {image_path}"
+        )
+        image1 = Image.open(
+            image_path
+        )
 
         panel_height = self.imagePanel.winfo_height()
         width, height = image1.size
