@@ -29,8 +29,8 @@ from qwatch.io.input import (
     _get_movie_properties,
     get_movie
 )
-from qwatch.scrape.images import download_images
-from qwatch.scrape.wikipedia import scrape_movie_information
+from qwatch.scrape.images import scrape_movie_images
+from qwatch.scrape import scrape_movie_information
 from qwatch.gui.defaults import DEFAULTS
 from qwatch.gui.images import ImagePanel
 from qwatch.gui.menus import MenuMultiSelector, MenuSingleSelector, ChecklistBox
@@ -142,7 +142,7 @@ class MovieSearch(tk.Toplevel):
 
         Params
         ------
-        movies: 
+        movies:
             Movies from db that are similar in name.
         title: str
             Movie title entered to create-new movie.
@@ -194,10 +194,10 @@ class MovieWindow():
         "BOX_OFFICE",
         "BUDGET",
         "YEAR",
-        "AGE",
+        "CERTIFICATE",
         "LANGUAGE",
         "COUNTRY",
-        "RUNNING_TIME",
+        "RUNTIME",
         "TRAILER",
     ]
 
@@ -209,6 +209,7 @@ class MovieWindow():
             self.tropes = get_tropes(conn)
             self.genres = get_genres(conn)
             self.movies = get_movies_ids(conn)
+            self.types = _get_movie_properties(conn, "TYPE", None)
             self.ages = _get_movie_properties(conn, "AGE", None)
             self.intensities = _get_movie_properties(conn, "INTENSITY", None)
             self.sources = _get_movie_properties(conn, "SOURCE", None)
@@ -216,7 +217,7 @@ class MovieWindow():
     def configure_root(self):
         """ Configure properties of app window."""
         self.root = tk.Tk()
-        #self.root.grid(row = 0,column = 0, sticky = "nsew")
+        # self.root.grid(row = 0,column = 0, sticky = "nsew")
 
         for i in np.arange(10):
             self.root.columnconfigure(i, weight=1)
@@ -252,7 +253,17 @@ class MovieWindow():
             label='Open', command=partial(MovieSelector, self.load_movie))
         self.fileMenu.add_command(label='Save', command=self.save_movie)
         self.fileMenu.add_separator()
+        self.fileMenu.add_command(label="New", command=self.refresh)
+        self.fileMenu.add_separator()
         self.fileMenu.add_command(label='Exit', command=self.root.destroy)
+
+    def refresh(self):
+        """Refresh UI."""
+        logger.info("Refreshing UI")
+        self.update_contents({
+            "SOURCES": pd.DataFrame([]),
+            "QUOTES": pd.DataFrame([]),
+        })
 
     def load_movie(self, movie_title: str = None, movie_id: int = None, movie_year: str = None, limit: int = 1) -> None:
         """
@@ -271,8 +282,7 @@ class MovieWindow():
         if movie_title is not None:
             logger.info("Loading New Movie: %s", movie_title)
             # Get movie images
-            image_dirs = download_images(movie_title, limit=limit)[
-                0][movie_title]
+            image_dirs = scrape_movie_images(movie_title, limit=limit)
             images = pd.DataFrame([{
                 "FILENAME": img
             } for img in image_dirs])
@@ -309,7 +319,7 @@ class MovieWindow():
     def save_movie(self):
         pass
 
-    def update_contents(self, movie):
+    def update_contents(self, movie: Dict) -> None:
         """ Update contents of UI with self.movie."""
 
         logger.info(f"Updating Movie Contents \n{movie}")
@@ -323,7 +333,7 @@ class MovieWindow():
                 else:
                     self.movie[k].set(None)
 
-        for menu in ["GENRES", "TROPES", "REPRESENTATIONS"]:
+        for menu in ["GENRES", "TROPES", "REPRESENTATIONS", "TYPES"]:
             self.datastore[menu].load(
                 movie.get(menu, None)
             )
@@ -366,10 +376,11 @@ class MovieWindow():
             "BOX_OFFICE": tk.StringVar(),
             "BUDGET": tk.StringVar(),
             "YEAR": tk.StringVar(),
-            "RUNNING_TIME": tk.StringVar(),
+            "RUNTIME": tk.StringVar(),
             "LANGUAGE": tk.StringVar(),
             "COUNTRY": tk.StringVar(),
             "TRAILER": tk.StringVar(),
+            "CERTIFICATE": tk.StringVar()
         }
         self.datastore = {}  # Hold panels/widgets from which can fetch entered data
 
@@ -455,21 +466,40 @@ class MovieWindow():
         #####################################################
         # COLUMN 2 --> Checkbox lists, image selector
         #####################################################
+        checklist_container = ttk.Frame(self.root)
+        checklist_container.grid(
+            column=2, row=0, columnspan=6, rowspan=3, sticky="nsew", pady=5, padx=5)
+
         self.datastore["REPRESENTATIONS"] = ChecklistBox(
-            self.root, "Representations", self.representations,
+            checklist_container, "Representations", self.representations,
         )
         self.datastore["TROPES"] = ChecklistBox(
-            self.root, "Tropes", self.tropes,
+            checklist_container, "Tropes", self.tropes,
         )
         self.datastore["GENRES"] = ChecklistBox(
-            self.root, "Genres", self.genres,
+            checklist_container, "Genres", self.genres,
         )
-        self.datastore["GENRES"].grid(
-            column=2, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5, padx=(0, 3))
-        self.datastore["TROPES"].grid(
-            column=3, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5, padx=(0, 3))
-        self.datastore["REPRESENTATIONS"].grid(
-            column=4, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5)
+        self.datastore["TYPES"] = ChecklistBox(
+            checklist_container, "Types", self.types,
+        )
+        self.datastore["GENRES"].pack(
+            side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
+        )
+        self.datastore["TROPES"].pack(
+            side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
+        )
+        self.datastore["REPRESENTATIONS"].pack(
+            side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
+        )
+        self.datastore["TYPES"].pack(
+            side="left", expand=1, fill=tk.BOTH
+        )
+        # self.datastore["GENRES"].grid(
+        #     column=2, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5, padx=(0, 3))
+        # self.datastore["TROPES"].grid(
+        #     column=3, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5, padx=(0, 3))
+        # self.datastore["REPRESENTATIONS"].grid(
+        #     column=4, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5)
 
         self.datastore["IMAGES"] = ImagePanel(self.root)
         self.datastore["IMAGES"].grid(
@@ -490,8 +520,9 @@ class MovieWindow():
         #############################################################
         # Frame for Sources, and their votes
         #############################################################
+        self.notebook = ttk.Notebook(self.root)
         self.datastore["SOURCES"] = EditableList(
-            self.root, "Sources",
+            self.notebook, "Sources",
             item_map={
                 "ID": "DROPDOWN",
                 "URL": "ENTRY",
@@ -502,15 +533,15 @@ class MovieWindow():
                 self.sources, "ID", ["LABEL", "REGION"], sep=" - ")}
         )
 
-        self.datastore["SOURCES"].grid(
-            row=0, rowspan=7, columnspan=2, column=8, sticky="nsew", padx=3, pady=3
-        )
+        # self.datastore["SOURCES"].grid(
+        #     row=0, rowspan=7, columnspan=2, column=8, sticky="nsew", padx=3, pady=3
+        # )
 
         ##############################################################
         # Frame for Quotes, ratings
         ##############################################################
         self.datastore["QUOTES"] = EditableList(
-            self.root,
+            self.notebook,
             "Quotes",
             # items=self.movie["quotes"],
             item_map={
@@ -518,9 +549,16 @@ class MovieWindow():
             },
             options={"CHARACTER_ID": pd.DataFrame([])},
         )
-        self.datastore["QUOTES"].grid(
-            row=0, rowspan=3, columnspan=3, column=5, sticky="nsew", padx=3, pady=3
+
+        self.notebook.add(self.datastore["QUOTES"], text="Quotes")
+        self.notebook.add(self.datastore["SOURCES"], text="Sources")
+        self.notebook.grid(
+            row=0, rowspan=7, columnspan=2, column=8, sticky="nsew", padx=3, pady=3
         )
+
+        # self.datastore["QUOTES"].grid(
+        #     row=0, rowspan=3, columnspan=3, column=5, sticky="nsew", padx=3, pady=3
+        # )
 
         self.ratings_frame = RatingsFrame(self.root)
 

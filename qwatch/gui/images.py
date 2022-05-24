@@ -13,6 +13,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox, scrolledtext
 from tkinter.font import Font
+from tkinter import filedialog as fd
 
 from qwatch.gui.utils import TextExtension
 
@@ -59,6 +60,11 @@ class ImagePanel(ttk.Frame):
             command=self.delete_image
         ).pack(side="bottom", padx=5, pady=(0, 5))
 
+        ttk.Button(
+            self.controlPanel, text="Upload", width=10, style="Accent.TButton",
+            command=self.select_image
+        ).pack(side="bottom", padx=5, pady=(0, 5))
+
         self.imageDescriptor = ttk.Frame(self.controlPanel)
         self.imageDescriptor.pack(side="top", expand=True, fill="both")
 
@@ -74,6 +80,29 @@ class ImagePanel(ttk.Frame):
         )
 
         self.load_image()
+
+    def select_image(self):
+        """Manually upload images into UI."""
+        filetypes = (
+            ('PNG', '*.png'),
+            ('JPEG', '*.jpg'),
+            ('BMP', '*.bmp')
+        )
+
+        filenames = fd.askopenfilenames(
+            title='Select Movie Images',
+            initialdir='/',
+            filetypes=filetypes)
+
+        new_images = pd.DataFrame([
+            {"FILENAME": f}
+            for f in filenames
+        ])
+
+        self.images = [
+            *self.images,
+            *self.process_images(new_images)
+        ]
 
     def process_images(self, images: pd.DataFrame):
         """Convert Images to usable form."""

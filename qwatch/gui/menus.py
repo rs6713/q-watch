@@ -104,7 +104,7 @@ class MenuMultiSelector(ttk.Menubutton):
 
 
 class ChecklistBox(tk.Frame):
-    def __init__(self, parent, name, choices, height=100, width=150, **kwargs):
+    def __init__(self, parent, name, choices, height=100, width=110, **kwargs):
         tk.Frame.__init__(self, parent)
 
         self.name = name
@@ -163,7 +163,10 @@ class ChecklistBox(tk.Frame):
         return ids
 
     def load(self, ids: pd.DataFrame = None):
+        # Refresh checklist
         if ids is None:
+            for idd in self.vars.keys():
+                self.vars[idd].set(0)
             return
 
         for idd in ids.ID.values:

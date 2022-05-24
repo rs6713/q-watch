@@ -45,6 +45,85 @@ def get_movies_ids(conn: Connection) -> List[Dict]:
     return results
 
 
+def get_label(conn: Connection, table_name: str, idd: str) -> int:
+    """ Retrieve id for element in table"""
+    table = Table(table_name, MetaData(), schema=SCHEMA, autoload_with=conn)
+
+    query = select(
+        table.c.LABEL
+    ).where(
+        table.c.ID == idd
+    )
+
+    return conn.execute(query).fetchall()[0]._mapping["LABEL"]
+
+
+def get_id(conn: Connection, table_name: str, label: str) -> int:
+    """ Retrieve id for element in table"""
+    table = Table(table_name, MetaData(), schema=SCHEMA, autoload_with=conn)
+
+    query = select(
+        table.c.ID
+    ).where(
+        table.c.LABEL == label
+    )
+
+    return conn.execute(query).fetchall()[0]._mapping["ID"]
+
+
+def get_person_if_exists(conn: Connection, **actor_props) -> Dict:
+    """ Retrieve Actor Firstname, last name, id list"""
+
+    actor_table = Table("PEOPLE", MetaData(),
+                        schema=SCHEMA, autoload_with=conn)
+
+    query = select(
+        *actor_table.c,
+    ).select_from(
+        actor_table
+    ).where(
+        and_(
+            *[
+                actor_table.c[prop] == val
+                for prop, val in actor_props.items()
+            ]
+        )
+    )
+
+    results = pd.DataFrame([
+        row._mapping
+        for row in conn.execute(query).fetchall()
+    ], columns=conn.execute(query).keys())
+
+    person = results.to_dict("records")
+
+    if len(person):
+        return person[0]
+    else:
+        return {}
+
+
+def get_actor_ids(conn: Connection) -> pd.DataFrame:
+    """ Retrieve Actor Firstname, last name, id list"""
+
+    actor_table = Table("PEOPLE", MetaData(),
+                        schema=SCHEMA, autoload_with=conn)
+
+    query = select(
+        actor_table.c.ID,
+        actor_table.c.FIRST_NAME,
+        actor_table.c.LAST_NAME
+    ).select_from(
+        actor_table
+    )
+
+    results = pd.DataFrame([
+        row._mapping
+        for row in conn.execute(query).fetchall()
+    ], columns=["ID", "FIRST_NAME", "LAST_NAME"])
+    return results
+
+
 def get_movies(conn: Connection, filters: Dict = None) -> List[Dict]:
     """Retrieve Movies that match filters."""
     meta = MetaData()
@@ -74,7 +153,7 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
         # ages_table.c.LABEL.label("AGE"),
         movie_table.c.AGE,
         movie_table.c.RUNTIME,
-        movie_table.c.AGE_RATING,
+        movie_table.c.CERTIFICATE,
         movie_table.c.LANGUAGE,
         movie_table.c.SUMMARY,
         movie_table.c.BIO,
@@ -138,6 +217,7 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
     ], columns=["DATE", "RATING"])
 
     # Get all genre, representations, tropes matched on movie_id
+    types = _get_movie_properties(conn, "TYPE", movie_id)
     genres = _get_movie_properties(conn, "GENRE", movie_id)
     representations = _get_movie_properties(
         conn, "REPRESENTATION", movie_id, addit_props=["MAIN"])
@@ -153,6 +233,7 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
 
     return {
         **movie,
+        "TYPES": types,
         "GENRES": genres,
         "SOURCES": sources,
         "TROPES": tropes,

@@ -1,6 +1,6 @@
 from functools import partial
 import logging
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List, Optional, Union
 import uuid
 
 import pandas as pd
@@ -14,6 +14,7 @@ from qwatch.io.input import (
     get_genres,
     get_movies_ids,
     _get_movie_properties,
+    get_id
 )
 
 from qwatch.gui.defaults import DEFAULTS
@@ -24,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 class ActionsPage(ttk.Frame):
-    def __init__(self, parent: ttk.Frame, character_actions: pd.DataFrame = None, characters: pd.DataFrame = None):
+    def __init__(self, parent: ttk.Frame, character_actions: pd.DataFrame = None, characters: pd.DataFrame = None) -> None:
         """Page to add relationships between characters."""
         ttk.Frame.__init__(self, parent)
 
@@ -104,7 +105,7 @@ class ActionsPage(ttk.Frame):
             width=event.width
         )  # self.canv.winfo_width()
 
-    def process_character_actions(self, character_actions: pd.DataFrame([])) -> List[Dict]:
+    def process_character_actions(self, character_actions: pd.DataFrame) -> List[Dict]:
         """Convert character_actions to variables for interaction."""
         return [
             {
@@ -114,7 +115,7 @@ class ActionsPage(ttk.Frame):
             for ca in character_actions.to_dict("records")
         ]
 
-    def process_characters(self, characters: List[Dict]) -> pd.DataFrame:
+    def process_characters(self, characters: pd.DataFrame) -> pd.DataFrame:
         """Transform characters list dict into form intakable by MenuSingleSelector"""
         return pd.DataFrame([
             {"LABEL": c["FIRST_NAME"] + " " + c["LAST_NAME"], "ID": c["ID"]}
@@ -142,7 +143,7 @@ class ActionsPage(ttk.Frame):
         ]
         self.refresh_ui()
 
-    def refresh_ui(self):
+    def refresh_ui(self) -> None:
         for widget in self.actionsContainer.winfo_children():
             widget.destroy()
 
@@ -163,7 +164,7 @@ class ActionsPage(ttk.Frame):
 
         return character_actions
 
-    def add_character_action(self, character_action=None):
+    def add_character_action(self, character_action: Dict = None) -> None:
         if character_action is None:
             character_action = {
                 "CHARACTER_ID": tk.IntVar(),
@@ -216,7 +217,7 @@ class ActionsPage(ttk.Frame):
             )
         )
 
-    def get_action_properties(self):
+    def get_action_properties(self) -> None:
         """ Retrieve action mappings from db."""
         engine = _create_engine()
         with engine.connect() as conn:
@@ -228,7 +229,7 @@ class ActionsPage(ttk.Frame):
 
 
 class RelationshipPage(ttk.Frame):
-    def __init__(self, parent: ttk.Frame, relationships: pd.DataFrame = None, characters: pd.DataFrame = None):
+    def __init__(self, parent: ttk.Frame, relationships: pd.DataFrame = None, characters: pd.DataFrame = None) -> None:
         """Page to add relationships between characters."""
         ttk.Frame.__init__(self, parent)
 
@@ -293,14 +294,14 @@ class RelationshipPage(ttk.Frame):
             side="top", fill="both", expand=True, anchor="nw"
         )
 
-    def load(self, characters=None, relationships=None):
+    def load(self, characters: pd.DataFrame = None, relationships: pd.DataFrame = None) -> None:
         self.relationships = self.process_relationships(
             relationships) if relationships is not None else []
         self.characters = self.process_characters(
-            characters) if characters is not None else []
+            characters) if characters is not None else pd.DataFrame([])
         self.refresh_ui()
 
-    def resize_window(self, event):
+    def resize_window(self, event) -> None:
         """On resize of canvas, ensure subframe matches width."""
         self.canv.itemconfigure("my_frame", width=event.width)
         self.relationshipContainer.configure(
@@ -327,27 +328,27 @@ class RelationshipPage(ttk.Frame):
             for c in characters.to_dict("records")
         ])
 
-    def update_contents(self, characters=None):
+    def update_contents(self, characters: pd.DataFrame = None) -> pd.DataFrame:
         if characters is not None:
             self.characters = self.process_characters(characters)
 
         self.refresh_ui()
 
-    def delete_relationship(self, idd):
+    def delete_relationship(self, idd: int) -> None:
         logger.debug(f"Deleting relationship {idd}")
         self.relationships = [
             r for r in self.relationships if r["ID"] != idd
         ]
         self.refresh_ui()
 
-    def refresh_ui(self):
+    def refresh_ui(self) -> None:
         for widget in self.relationshipContainer.winfo_children():
             widget.destroy()
 
         for relationship in self.relationships:
             self.add_relationship(relationship)
 
-    def get_contents(self):
+    def get_contents(self) -> None:
         """ TODO: Get relationships for external db storing."""
         relationships = pd.DataFrame([
             {
@@ -364,7 +365,7 @@ class RelationshipPage(ttk.Frame):
 
         return relationships
 
-    def add_relationship(self, relationship: Dict = None):
+    def add_relationship(self, relationship: Dict = None) -> None:
         if relationship is None:
             relationship = {
                 "ID": uuid.uuid4().int & (1 << 64)-1,
@@ -429,7 +430,7 @@ class RelationshipPage(ttk.Frame):
             )
         )
 
-    def get_relationship_properties(self):
+    def get_relationship_properties(self) -> None:
         """ Retrieve relationship mappings from db."""
         engine = _create_engine()
         with engine.connect() as conn:
@@ -441,7 +442,7 @@ class RelationshipPage(ttk.Frame):
 
 
 class PersonPage(ttk.Frame):
-    def __init__(self, parent: ttk.Frame, update_people: Callable, is_character: bool = False, people: pd.DataFrame = None, characters: pd.DataFrame = None):
+    def __init__(self, parent: ttk.Frame, update_people: Callable, is_character: bool = False, people: pd.DataFrame = None, characters: pd.DataFrame = None) -> None:
         """
         Page to manage people (actors, writer etc) associated with the film.
 
@@ -451,24 +452,23 @@ class PersonPage(ttk.Frame):
         """
         ttk.Frame.__init__(self, parent)
 
+        self.get_people_properties()
+
         if is_character:
             self.people = [] if characters is None else characters.to_dict(
                 "records")
-            self.actors = [] if people is None else people.to_dict("records")
+            self.actors = [] if people is None else [
+                a
+                for a in people.to_dict("records")
+                if self.actor_id in a.get("ROLE", [])
+            ]
 
-            # TODO Get actors only
-            # else [
-            #       p for p in people["people"]
-            #       if "ACTOR" in p["ROLES"]
-            #     ]
         else:
             self.people = [] if people is None else people.to_dict("records")
             self.actors = None
 
         self.update_people = update_people
         self.is_character = is_character
-
-        self.get_people_properties()
 
         personHeader = ttk.Frame(self)
 
@@ -531,39 +531,43 @@ class PersonPage(ttk.Frame):
             side="top", fill="both", expand=True, anchor="nw"
         )
 
-    def get_contents(self):
+    def get_contents(self) -> Optional[pd.DataFrame]:
         """ Get people for external db storing."""
         if self.people is None:
             return None
 
         return pd.DataFrame(self.people)
 
-    def resize_window(self, event):
+    def resize_window(self, event) -> None:
         """On resize of canvas, ensure subframe matches width."""
         self.canv.itemconfigure("my_frame", width=event.width)
         self.personContainer.configure(
             width=event.width
         )
 
-    def load(self, people: pd.DataFrame = None, characters: pd.DataFrame = None):
+    def load(self, people: pd.DataFrame = None, characters: pd.DataFrame = None) -> None:
         if self.is_character:
             self.people = [] if characters is None else characters.to_dict(
                 "records")
-            self.actors = [] if people is None else people.to_dict("records")
+            self.actors = [] if people is None else [
+                a
+                for a in people.to_dict("records")
+                if self.actor_id in a.get("ROLE", [])
+            ]
 
         else:
             self.people = [] if people is None else people.to_dict("records")
             self.actors = None
         self.refresh_ui()
 
-    def refresh_ui(self):
+    def refresh_ui(self) -> None:
         for widget in self.personContainer.winfo_children():
             widget.destroy()
 
         for person in self.people:
             self.add_person_ui(person)
 
-    def delete_person(self, person_id: int):
+    def delete_person(self, person_id: int) -> None:
         """ Delete person from list."""
         logger.debug(f"Deleting person in {__class__}: {person_id}")
 
@@ -577,7 +581,7 @@ class PersonPage(ttk.Frame):
         prop = "characters" if self.is_character else "people"
         self.update_people({prop: self.people})
 
-    def save_person(self, person):
+    def save_person(self, person: Dict) -> None:
         logger.debug(f"Saving person in {__class__}: {person}")
 
         # Pre-existing person, edited
@@ -598,21 +602,27 @@ class PersonPage(ttk.Frame):
         prop = "characters" if self.is_character else "people"
         self.update_people(**{prop: pd.DataFrame(self.people)})
 
-    def add_person_ui(self, person):
+    def add_person_ui(self, person: Dict) -> None:
         """Add person to ui"""
         logger.debug(f"Adding person to UI in {__class__}: {person}")
 
         personFrame = ttk.Frame(self.personContainer)
         # Name
-        descriptors = [f"{person['FIRST_NAME']} {person['LAST_NAME']}"]
+        descriptors = [
+            f"{person.get('FIRST_NAME', '[FIRST NAME UNKNOWN]')} {person.get('LAST_NAME', '[LAST_NAME UNKNOWN]')}"]
 
         if not self.is_character:
-            descriptors.append(person["DOB"] or "[DOB UNKNOWN]")
+            descriptors.append(person.get("DOB", "") or "[DOB UNKNOWN]")
             descriptors.append(self.get_options(person, "ROLE"))
         else:
             descriptors.append(self.get_options(person, 'CAREER'))
-            descriptors.append(
-                'Main' if person["MAIN"] else 'Side Character')
+
+            if person.get("MAIN", None) is not None:
+                descriptors.append(
+                    'Main' if person["MAIN"] else 'Side Character'
+                )
+            else:
+                descriptors.append("[MAIN UNKNOWN]")
 
         lbl = ttk.Label(personFrame, text=" \u2022 ".join(descriptors))
         lbl.config(font=(
@@ -626,7 +636,8 @@ class PersonPage(ttk.Frame):
         for identity in ["SEXUALITY", "GENDER", "TRANSGENDER", "ETHNICITY", "DISABILITY"]:
             identities.append(self.get_options(person, identity))
         if self.is_character:
-            identities.append((person["HAIR_COLOR"] or "[HAIR_COLOR UNKNOWN]"))
+            identities.append((person.get("HAIR_COLOR", "")
+                              or "[HAIR_COLOR UNKNOWN]"))
         ttk.Label(personFrame, text=" \u2022 ".join(identities)).grid(
             row=1, column=0, padx=5, pady=(0, 5), sticky="w"
         )
@@ -644,7 +655,7 @@ class PersonPage(ttk.Frame):
                 row=2, column=0, padx=5, pady=(0, 5), sticky="w"
             )
 
-        ttk.Label(personFrame, text=person["BIO"]).grid(
+        ttk.Label(personFrame, text=person.get("BIO", "")).grid(
             row=3, column=0, padx=5, pady=5, sticky="w"
         )
 
@@ -672,21 +683,24 @@ class PersonPage(ttk.Frame):
             )
         )
 
-    def update_contents(self, people: pd.DataFrame = None, characters: pd.DataFrame = None):
+    def update_contents(self, people: pd.DataFrame = None, characters: pd.DataFrame = None) -> None:
         logger.debug("Updating contents")
         if self.is_character and people is not None:
             logger.debug(f"There are {len(people.to_dict('records'))} actors")
             self.actors = people.to_dict("records")
 
-    def get_options(self, person: Dict, option: str, OPTIONS: pd.DataFrame = None):
-        logger.info(f"Getting options: {option}. {person[option]}")
+    def get_options(self, person: Dict, option: str, OPTIONS: pd.DataFrame = None) -> str:
+        logger.info(
+            "Getting options: %s.",
+            option
+        )
 
         # Get Options from
         if OPTIONS is None:
             OPTIONS = self.OPTIONS[option]
 
         # Person Characteristic is unspecified
-        if person[option] is None or (isinstance(person[option], list) and len(person[option]) == 0):
+        if option not in person or person[option] is None or (isinstance(person[option], list) and len(person[option]) == 0):
             return f'[{option} UNKNOWN]'
         # Person characteristic is an id list
         elif isinstance(person[option], list):
@@ -700,7 +714,7 @@ class PersonPage(ttk.Frame):
             row = OPTIONS[OPTIONS.ID == person[option]].iloc[0, :]
             return f"{row.LABEL} - {row.SUB_LABEL or 'NULL'}" if "SUB_LABEL" in row.index else row.LABEL
 
-    def get_people_properties(self):
+    def get_people_properties(self) -> None:
         """ Retrieve person mappings from db."""
         engine = _create_engine()
         with engine.connect() as conn:
@@ -721,9 +735,11 @@ class PersonPage(ttk.Frame):
                 "TRANSGENDER": transgenders,
             }
 
+            self.actor_id = get_id(conn, "ROLES", "Actor")
+
 
 class CreatePerson(tk.Toplevel):
-    def __init__(self, save_action, is_character: bool, person: Dict = None, actors: List[Dict] = None, options: Dict = None):
+    def __init__(self, save_action, is_character: bool, person: Dict = None, actors: List[Dict] = None, options: Dict = None) -> None:
         tk.Toplevel.__init__(self, pady=5, padx=5)
         self.wm_title(
             f"Create {'Person' if not is_character else 'Character'}")
@@ -740,7 +756,7 @@ class CreatePerson(tk.Toplevel):
 
         self.create_ui()
 
-    def validate_contents(self):
+    def validate_contents(self) -> bool:
         return True
 
     def save(self) -> None:
@@ -909,7 +925,7 @@ class CreatePerson(tk.Toplevel):
             self, text="Cancel", width=10, command=lambda: self.destroy())
         exit_button.grid(column=3, padx=(20, 0), sticky=tk.E, row=1)
 
-    def get_people_properties(self):
+    def get_people_properties(self) -> None:
         """ Retrieve person traits from db."""
         engine = _create_engine()
         with engine.connect() as conn:
@@ -932,7 +948,7 @@ class CreatePerson(tk.Toplevel):
 
 
 class PeopleManagementPanel(ttk.Frame):
-    def __init__(self, parent, people: pd.DataFrame = None, characters: pd.DataFrame = None, character_actions: pd.DataFrame = None, relationships: pd.DataFrame = None, update_external: Callable = None):
+    def __init__(self, parent, people: pd.DataFrame = None, characters: pd.DataFrame = None, character_actions: pd.DataFrame = None, relationships: pd.DataFrame = None, update_external: Callable = None) -> None:
         ttk.Frame.__init__(self, parent)
 
         self.update_external = update_external
@@ -994,7 +1010,7 @@ class PeopleManagementPanel(ttk.Frame):
                     characters=characters
                 )
 
-    def load(self, people=None, characters=None, relationships=None, character_actions=None):
+    def load(self, people: pd.DataFrame = None, characters: pd.DataFrame = None, relationships: pd.DataFrame = None, character_actions: pd.DataFrame = None) -> None:
         """Load movie attributes to people manager."""
         self.characterPage.load(people=people, characters=characters)
         self.personPage.load(people=people)
