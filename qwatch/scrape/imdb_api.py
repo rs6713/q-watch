@@ -15,7 +15,7 @@ from IPython.display import display, HTML
 import numpy as np
 import pandas as pd
 
-from qwatch.io.input import get_actor_ids, get_person_if_exists, get_id
+from qwatch.io.input import get_person_if_exists, get_id
 from qwatch.io import _create_engine
 
 genre_mappings = {
@@ -87,6 +87,7 @@ def scrape_imdb_movie(movie_title: str) -> Dict:
         uuid.uuid4().int & (1 << 64)-1
         for _ in np.arange(MAX_WRITER)
     ]
+    logger.debug(f"Raw writers: \n {movie['writer']}")
     writers = [
         {
             "ID": ids[i],
@@ -94,6 +95,7 @@ def scrape_imdb_movie(movie_title: str) -> Dict:
             "LAST_NAME": writer["name"].split(" ")[-1]
         }
         for i, writer in enumerate(movie["writer"][:MAX_WRITER])
+        if writer.get("name", False)
     ]
     logger.debug(f"Writers:\n{writers}")
     # Directors
@@ -101,6 +103,7 @@ def scrape_imdb_movie(movie_title: str) -> Dict:
         uuid.uuid4().int & (1 << 64)-1
         for _ in np.arange(MAX_DIRECTOR)
     ]
+    logger.debug(f"Raw directors: \n {movie['director']}")
     directors = [
         {
             "ID": ids[i],
@@ -108,6 +111,7 @@ def scrape_imdb_movie(movie_title: str) -> Dict:
             "LAST_NAME": director["name"].split(" ")[-1]
         }
         for i, director in enumerate(movie["director"][:MAX_DIRECTOR])
+        if director.get("name", False)
     ]
     logger.debug(f"Directors:\n{directors}")
 
@@ -122,8 +126,9 @@ def scrape_imdb_movie(movie_title: str) -> Dict:
                 **get_person_if_exists(conn, FIRST_NAME=actor["FIRST_NAME"], LAST_NAME=actor["LAST_NAME"]),
                 "ROLE": [
                     get_id(conn, "ROLES", "Actor"),
-                    *([] if actor not in writers else [get_id(conn, "ROLES", "Writer")]),
-                    *([] if actor not in directors else [get_id(conn, "ROLES", "Director")])
+                    *([] if (actor["FIRST_NAME"]+actor["LAST_NAME"] not in [a["FIRST_NAME"] +
+                      a["LAST_NAME"] for a in writers]) else [get_id(conn, "ROLES", "Writer")]),
+                    *([] if (actor["FIRST_NAME"]+actor["LAST_NAME"] not in [a["FIRST_NAME"]+a["LAST_NAME"] for a in directors]) else [get_id(conn, "ROLES", "Director")])
                 ]
             }
             for actor in actors
@@ -135,11 +140,11 @@ def scrape_imdb_movie(movie_title: str) -> Dict:
                 **get_person_if_exists(conn, FIRST_NAME=writer["FIRST_NAME"], LAST_NAME=writer["LAST_NAME"]),
                 "ROLE": [
                     get_id(conn, "ROLES", "Writer"),
-                    *([] if writer not in directors else [get_id(conn, "ROLES", "Director")])
+                    *([] if (writer["FIRST_NAME"]+writer["LAST_NAME"] not in [a["FIRST_NAME"]+a["LAST_NAME"] for a in directors]) else [get_id(conn, "ROLES", "Director")])
                 ]
             }
             for writer in writers
-            if writer not in actors
+            if (writer["FIRST_NAME"]+writer["LAST_NAME"] not in [a["FIRST_NAME"]+a["LAST_NAME"] for a in actors])
         ]
         people += [
             {
@@ -150,7 +155,7 @@ def scrape_imdb_movie(movie_title: str) -> Dict:
                 ]
             }
             for director in directors
-            if director not in actors and director not in writers
+            if (director["FIRST_NAME"]+director["LAST_NAME"] not in [a["FIRST_NAME"]+a["LAST_NAME"] for a in actors]) and (director["FIRST_NAME"]+director["LAST_NAME"] not in [a["FIRST_NAME"]+a["LAST_NAME"] for a in writers])
         ]
         ids = [
             uuid.uuid4().int & (1 << 64)-1

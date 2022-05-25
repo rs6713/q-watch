@@ -103,24 +103,21 @@ def get_person_if_exists(conn: Connection, **actor_props) -> Dict:
         return {}
 
 
-def get_actor_ids(conn: Connection) -> pd.DataFrame:
+def get_actors(conn: Connection) -> pd.DataFrame:
     """ Retrieve Actor Firstname, last name, id list"""
 
     actor_table = Table("PEOPLE", MetaData(),
                         schema=SCHEMA, autoload_with=conn)
-
     query = select(
-        actor_table.c.ID,
-        actor_table.c.FIRST_NAME,
-        actor_table.c.LAST_NAME
+        *actor_table.c
     ).select_from(
         actor_table
-    )
+    ).order_by(actor_table.c.FIRST_NAME.desc(), actor_table.c.LAST_NAME.desc())
 
     results = pd.DataFrame([
         row._mapping
         for row in conn.execute(query).fetchall()
-    ], columns=["ID", "FIRST_NAME", "LAST_NAME"])
+    ], columns=conn.execute(query).keys())
     return results
 
 

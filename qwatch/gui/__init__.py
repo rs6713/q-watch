@@ -247,13 +247,14 @@ class MovieWindow():
         self.menubar = tk.Menu(self.root)
         self.fileMenu = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label='File', menu=self.fileMenu)
+        self.fileMenu.add_command(label="New", command=self.refresh)
+        self.fileMenu.add_separator()
         self.fileMenu.add_command(
-            label='New', command=partial(MovieSearch, self.load_movie))
+            label='Search', command=partial(MovieSearch, self.load_movie))
         self.fileMenu.add_command(
             label='Open', command=partial(MovieSelector, self.load_movie))
-        self.fileMenu.add_command(label='Save', command=self.save_movie)
         self.fileMenu.add_separator()
-        self.fileMenu.add_command(label="New", command=self.refresh)
+        self.fileMenu.add_command(label='Save', command=self.save_movie)
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label='Exit', command=self.root.destroy)
 
@@ -367,6 +368,7 @@ class MovieWindow():
         self.configure_menu()
 
         self.movie = {
+            "ID": tk.IntVar(),
             "TITLE": tk.StringVar(),
             "AGE": tk.IntVar(),
             "INTENSITY": tk.IntVar(),

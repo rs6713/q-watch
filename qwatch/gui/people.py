@@ -14,7 +14,8 @@ from qwatch.io.input import (
     get_genres,
     get_movies_ids,
     _get_movie_properties,
-    get_id
+    get_id,
+    get_actors,
 )
 
 from qwatch.gui.defaults import DEFAULTS
@@ -479,9 +480,12 @@ class PersonPage(ttk.Frame):
 
         ttk.Label(personHeader, text=lbl).pack(
             side="left", padx=(0, 10))
-        ttk.Button(personHeader, text="+", command=lambda: CreatePerson(self.save_person, is_character=self.is_character, options=self.OPTIONS, actors=self.actors)).pack(
+        ttk.Button(personHeader, text="+ New", command=lambda: CreatePerson(self.save_person, is_character=self.is_character, options=self.OPTIONS, actors=self.actors)).pack(
             side="left", pady=5, padx=5
         )
+        if not self.is_character:
+            ttk.Button(personHeader, text="+ Existing",
+                       command=lambda: AddPerson(self.save_person)).pack(side="left", pady=5)
 
         personHeader.pack(side="top", padx=5, pady=5, fill=tk.X)
 
@@ -738,8 +742,53 @@ class PersonPage(ttk.Frame):
             self.actor_id = get_id(conn, "ROLES", "Actor")
 
 
+class AddPerson(tk.Toplevel):
+    def __init__(self, save_action: Callable) -> None:
+        tk.Toplevel.__init__(self, pady=5, padx=5)
+        self.wm_title(
+            "Add Existing Actor"
+        )
+
+        engine = _create_engine()
+        with engine.connect() as conn:
+            actors = get_actors(conn)
+
+        actor_options = [
+            f"{actor['FIRST_NAME']} {actor['LAST_NAME']}"
+            for actor in actors.to_dict("records")
+        ]
+
+        actor_selected = tk.StringVar()
+        actor_selected.set("Select Actor")
+        actor_selector = tk.OptionMenu(
+            self, actor_selected, *actor_options
+        )
+        actor_selector.config(width=30)
+        actor_selector.pack(side="left", padx=(0, 5), fill=tk.X, expand=True)
+
+        def select_actor():
+            """ On click, load this movie."""
+            selected_actor = [
+                actor
+                for actor in actors.to_dict("records")
+                if f"{actor['FIRST_NAME']} {actor['LAST_NAME']}" == actor_selected.get()
+            ]
+            if len(selected_actor):
+                save_action(selected_actor[0])
+                self.destroy()
+
+        # Button to click to open movie selected from option menu
+        actor_selector_button = ttk.Button(
+            self,
+            text="Open",
+            command=select_actor,
+            style='Accent.TButton'
+        )
+        actor_selector_button.pack(side="right")
+
+
 class CreatePerson(tk.Toplevel):
-    def __init__(self, save_action, is_character: bool, person: Dict = None, actors: List[Dict] = None, options: Dict = None) -> None:
+    def __init__(self, save_action: Callable, is_character: bool, person: Dict = None, actors: List[Dict] = None, options: Dict = None) -> None:
         tk.Toplevel.__init__(self, pady=5, padx=5)
         self.wm_title(
             f"Create {'Person' if not is_character else 'Character'}")
