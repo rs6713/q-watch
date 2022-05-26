@@ -13,22 +13,112 @@ import os
 from IPython.display import display
 from imdb import Cinemagoer
 import uuid
-from qwatch.io.input import get_actor_ids, get_actor_if_exists, get_id
+from qwatch.io.input import get_id
 from qwatch.io import _create_engine
-
+from selenium import webdriver
 
 ia = Cinemagoer()
 
-movies = ia.search_movie("saving face")
+movies = ia.search_movie("the miseducation of cameron post")
+print(movies[0].movieID)
 movie = ia.get_movie(movies[0].movieID)
 
+# %%
+print(movies[0].movieID)
+url = f"https://www.imdb.com/title/tt{movies[0].movieID}"
+#site = requests.get()
+# browser = webdriver.PhantomJS()
+# browser.get(url)
+
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+# executable_path param is not needed if you updated PATH
+browser = webdriver.Chrome(
+    options=options, executable_path='E:/Projects/scraping/chromedriver_new.exe')
+browser.get(url)
+html = browser.page_source
+
+# html = browser.page_source#site.text
+soup = BeautifulSoup(html, "html.parser")
+# %%
+
+
+# %%
+box_office_box = soup.find("div", {"data-testid": "title-boxoffice-section"}).find_all(
+    "li"
+) if soup.find("div", {"data-testid": "title-boxoffice-section"}) is not None else []
+box_offices = [
+    b.find("div").text
+    for b in box_office_box
+    if b.find("span").text in ["Gross worldwide", "Cumulative Worldwide Gross"]
+]
+print("box office", box_offices)
+
+budget = [
+    b.find("div").text
+    for b in box_office_box
+    if b.find("span").text in ["Budget"]
+]
+print("budget", budget)
+
+# %%
+# price = soup.find("div", text="Prime Video")
+# prime = soup.select('div:-soup-contains("Prime Video")')
+# price = None if not len(prime) else prime.find_next_sibling("div").text
+# print(price)
+
+taglines = soup.find("li", {"data-testid": "storyline-taglines"}).find(
+    "div").text if soup.find("li", {"data-testid": "storyline-taglines"}) is not None else None
+print("Taglines: ", taglines)
+
+prime = [
+    d.find_next_sibling("div").text
+    for d in soup.select('div:-soup-contains("Watch on Prime Video")') if hasattr(d, "find_next_sibling") and d.find_next_sibling("div") is not None
+]
+prime_prices = [
+    p for p in prime
+    if "rent/buy" in p
+]
+print(prime_prices)
+
+netflix = "Netflix" in soup.find(
+    "li", {"data-testid": "title-details-companies"}).text
+print("Netflix? ", netflix)
+
+#TODO: Trailer
+# TODO: Click on more watch options
+
+
+# %%
+MAX_QUOTES = 10
+site = requests.get(f"https://www.imdb.com/title/tt{movies[0].movieID}/quotes")
+soup = BeautifulSoup(site.text, "html.parser")
+quotes = soup.find("div", id="quotes_content").find_all(
+    "div", {"class": "quote"})
+quotes = [
+    list(zip(
+        [par.text.split(":", 1)[0][1:] for par in quote.find_all(
+            "p") if len(par.text.split(":")) > 1],
+        [par.text.split(":", 1)[1][1:] for par in quote.find_all(
+            "p") if len(par.text.split(":")) > 1]
+    ))
+    for quote in quotes[:MAX_QUOTES]
+]
+print(quotes)
+
+
+# %%
 genre_mappings = {
     "History": "Period-Piece",
     "Horror": "Horror/Thriller",
     "Thriller": "Horror/Thriller",
+    "Sci-Fi": "Sci-Fi/Fantasy",
+    "Action": "Action/Adventure",
+    "Adventure": "Action/Adventure"
 }
 
 info = {
+    "IMDB_ID": movie["imdbID"],
     "SUMMARY": movie.get("plot outline", None),
     "CERTIFICATE": ",".join(movie["certificates"]),
     "LANGUAGE": ", ".join([lc.upper() for lc in movie["language codes"]]),
@@ -40,11 +130,13 @@ info = {
     "BOX_OFFICE": movie.get("box office", {}).get("Cumulative Worldwide Gross", None),
     "RUNNING_TIME": movie.get("runtimes", [None])[0],
     "YEAR": movie.get("year", None),
-    "TITLE": movie.get("original title", None),
+    "TITLE": movie["title"],
+    "ORIGINAL_TITLE": movie.get("original title", None),
     "COUNTRY": movie.get("countries", [None])[0],
 }
 
 imgdbID = movie.get("imdbID", None)
+print(imgdbID)
 
 display(info)
 
