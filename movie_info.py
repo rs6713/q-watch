@@ -17,9 +17,23 @@ from qwatch.io.input import get_id
 from qwatch.io import _create_engine
 from selenium import webdriver
 
+# %%
+from qwatch.scrape.imdb_api import IMDBScraper
+
+scraper = IMDBScraper()
+
+# %%
+res = scraper.scrape("but im a cheerleader")
+
+# %%
+for k, v in res.items():
+    print(k)
+    print(v)
+# %%
+
 ia = Cinemagoer()
 
-movies = ia.search_movie("the miseducation of cameron post")
+movies = ia.search_movie("blue is the warmest color")
 print(movies[0].movieID)
 movie = ia.get_movie(movies[0].movieID)
 
@@ -60,6 +74,19 @@ budget = [
     if b.find("span").text in ["Budget"]
 ]
 print("budget", budget)
+
+# %%
+prime = [
+    d.find_next_sibling("div").text
+    for d in soup.select('div:-soup-contains("Watch on Prime Video")') if hasattr(d, "find_next_sibling") and d.find_next_sibling("div") is not None
+]
+prime_costs = [
+    {"COST": float(re.findall(r'(?<=GBP)[0-9\.]+', p)[0])} if "rent/buy" in p
+    else {"MEMBERSHIP_INCLUDED": True, "COST": None}
+    for p in prime
+    if "rent/buy" in p or p == "included with Prime"
+]
+prime_costs
 
 # %%
 # price = soup.find("div", text="Prime Video")
