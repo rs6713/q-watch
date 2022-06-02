@@ -26,12 +26,13 @@ def scrape_movie_information(movie_title: str, year: int = None, open_urls=False
     movie_query = '+'.join(movie_title.split(' ')) + \
         (('+' + str(year)) if year else '')
     yt_url = f"https://www.youtube.com/results?search_query={movie_query}+trailer"
+    yt_full_url = f"https://www.youtube.com/results?search_query={movie_query}+full+movie"
     gsearch_url = f"https://www.google.com/search?q={movie_query}"
 
     urls = [
-        yt_url, gsearch_url, gsearch_url+"&tbm=isch",
-        *wiki_information["URLS"],
-        *imdb_information["URLS"]
+        yt_url, yt_full_url, gsearch_url, gsearch_url+"&tbm=isch",
+        *wiki_information.get("URLS", []),
+        *imdb_information.get("URLS", []),
     ]
 
     if open_urls and len(urls):

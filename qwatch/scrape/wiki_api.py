@@ -1,4 +1,5 @@
 """Scrape movie information from wikipedia."""
+import logging
 from typing import Dict
 
 from bs4 import BeautifulSoup
@@ -12,9 +13,7 @@ import wikipedia
 from googlesearch import search
 import urllib
 
-
-def map_value(key, val):
-    return val
+logger = logging.getLogger(__name__)
 
 
 class WIKIScraper(object):
@@ -32,7 +31,7 @@ class WIKIScraper(object):
             "Country",
             "Language"
         ]
-        #    "Starring",
+        # "Starring",
         # "Directed by",
         # "Written by",
         self.wiki_url = None
@@ -42,9 +41,11 @@ class WIKIScraper(object):
 
         search_term = movie_title + \
             ("" if year is None else f" {year}") + " (film)"
-        page = wikipedia.page(search_term)
 
-        if not page:
+        try:
+            page = wikipedia.page(search_term)
+        # Throw PageError when no match found
+        except Exception as _:
             return
 
         self.wiki_url = page.url
@@ -59,6 +60,10 @@ class WIKIScraper(object):
         self.search(movie_title, year)
 
         if self.wiki_url is None:
+            logger.warning(
+                "No matches were found in Wiki for: %s, %s",
+                movie_title, str(year)
+            )
             return {}
 
         return {
@@ -90,32 +95,3 @@ class WIKIScraper(object):
             if len(val) > 0:
                 return val[0].text
         return ""
-
-
-# def scrape_wikipedia_movie(movie_title: str) -> Dict:
-#     """Search movie title on wikipedia."""
-#     movie = {}
-
-#     search_term = movie_title + " (film)"
-#     movie["SUMMARY"] = wikipedia.summary(search_term)
-#     movie["YEAR"] = re.findall(r'[0-9]{4}', movie["summary"])[0]
-#     movie["WIKI_URL"] = wikipedia.page(search_term).url
-
-#     # Entire html page
-#     html = wikipedia.page(search_term).html()
-#     page = BeautifulSoup(html, 'html.parser')
-
-#     # Get Movie Properties from infobox
-#     for prop in infobox_properties:
-#         prop_val = get_infobox_property(page, prop)
-#         if prop_val:
-#             key = prop.upper().replace(" ", "_")
-#             movie[NAME_MAP.get(key, key)] = map_value(key, prop_val)
-
-#     # Get list of characters
-#     # characters = page.find("span", {
-#     #                        "class": "mw-headline", "id": "Cast"}).parent.find_next_sibling("ul").findAll("li")
-
-#     # [c.text for c in characters]
-
-#     return movie
