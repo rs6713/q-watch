@@ -29,6 +29,11 @@ logger = logging.getLogger(__name__)
 
 
 class ImdbScraper(object):
+    MAX_QUOTES = 10
+    MAX_CAST = 5
+    MAX_WRITER = 3
+    MAX_DIRECTOR = 3
+
     def __init__(self, movie_title: str):
 
         movies = ia.search_movie(movie_title)
@@ -58,8 +63,6 @@ class ImdbScraper(object):
                 f"https://www.imdb.com/title/tt{self.movie_id}/quotes"
             )
             self.quotes_soup = BeautifulSoup(site.text, "html.parser")
-
-            self.MAX_QUOTES = 10
 
     def get_genres(self):
         # Convert imdb genres to ids
@@ -131,6 +134,7 @@ class ImdbScraper(object):
         }
 
     def get_quotes(self):
+        """ Get quotes from imdb quotes page. Try match back to recorded characters."""
         character_names = {
             F'{c["FIRST_NAME"]} {c["LAST_NAME"]}': c["ID"]
             for c in self.characters
@@ -152,47 +156,188 @@ class ImdbScraper(object):
         if not len(quotes):
             return []
 
-        quotes= [
+        quotes = [
           {
             **quote,
             "CHARACTER_ID": character_names[[name for name in character_names.keys() if quote["CHARACTER_ID"] in name][0]] if any([name for name in character_names.keys() if quote["CHARACTER_ID"] in name]) else None
           }
           for quote in quotes
         ]
-        return quotes
+        return pd.DataFrame(quotes)
 
     def get_sources(self):
-        prime_container= soup.select(
+        prime_container = soup.select(
             'div:-soup-contains("Watch on Prime Video")')
         prime=[
             d.find_next_sibling("div").text
             for d in prime_container if hasattr(d, "find_next_sibling") and d.find_next_sibling("div") is not None
         ]
-        prime_prices= [
-            p for p in prime
-            if "rent/buy" in p
+        prime_costs= [
+            {"COST": float(re.findall(r'(?<=GBP)[0-9\.]+', p)[0])} if "rent/buy" in p
+            else {"MEMBERSHIP_INCLUDED": True, "COST": None}
+            for p in prime
+            if "rent/buy" in p or p == "included with Prime"
         ]
-        logger.debug(f"Prime Prices: {prime_prices}")
+        logger.debug(f"Prime Prices: {prime_costs}")
 
-        netflix= "Netflix" in soup.find(
+        netflix = "Netflix" in soup.find(
             "li", {"data-testid": "title-details-companies"}).text
         logger.debug("Available on netflix? %s", str(netflix))
 
+        if len(prime_costs) == 0 and not netflix:
+            return None
+
+        # Get source details for amazon/netflix
         engine=_create_engine()
         with engine.connect() as conn:
+            all_sources=_get_movie_properties(
+                conn, "SOURCE", None, ["COST", "MEMBERSHIP_INCLUDED"])
 
+
+        sources=pd.DataFrame([], columns = all_sources.columns)
+
+        if netflix:
+            netflix_source=all_sources[
+                (all_sources.LABEL == "Netflix") & (all_sources.REGION == "UK")
+            ].iloc[0, : ]
+            netflix_source.COST= 0.0
+            netflix_souce.MEMBERSHIP_INCLUDED= True
+            sources= pd.concat([sources, netflix_source], axis=0)
+
+        if len(prime_costs):
+            prime_source= all_sources[
+                (all_sources.LABEL == "Amazon Prime") & (
+                    all_sources.REGION == "UK")
+            ].iloc[0, : ]
+            for prime in prime_costs:
+                if prime.get("COST", False):
+                    prime_source.COST= prime["COST"]
+                if prime.get("MEMBERSHIP_INCLUDED", False):
+                    prime_source.MEMBERSHIP_INCLUDED= True
+            sources= pd.concat([sources, prime_source], axis=0)
+        return sources
 
     def get_people(self):
-        pass
+        """Get the actors, characters, writers, directors."""
+        cast = movie["cast"]
+
+        # Actors
+        ids = [
+            uuid.uuid4().int & (1 << 64)-1
+            for _ in np.arange(self.MAX_CAST)
+        ]
+        actors = [
+            {
+                "ID": ids[i],
+                "FIRST_NAME": " ".join(cast["name"].split(" ")[:-1]),
+                "LAST_NAME": cast["name"].split(" ")[-1]
+            }
+            for i, cast in enumerate(movie["cast"][:self.MAX_CAST])
+        ]
+        logger.debug(f"Actors: \n{actors}")
+        # Writers
+        ids = [
+            uuid.uuid4().int & (1 << 64)-1
+            for _ in np.arange(self.MAX_WRITER)
+        ]
+        logger.debug(f"Raw writers: \n {movie['writer']}")
+        writers = [
+            {
+                "ID": ids[i],
+                "FIRST_NAME": " ".join(writer["name"].split(" ")[:-1]),
+                "LAST_NAME": writer["name"].split(" ")[-1]
+            }
+            for i, writer in enumerate(movie["writer"][:self.MAX_WRITER])
+            if writer.get("name", False)
+        ]
+        logger.debug(f"Writers:\n{writers}")
+        # Directors
+        ids = [
+            uuid.uuid4().int & (1 << 64)-1
+            for _ in np.arange(self.MAX_DIRECTOR)
+        ]
+        logger.debug(f"Raw directors: \n {movie['director']}")
+        directors = [
+            {
+                "ID": ids[i],
+                "FIRST_NAME": " ".join(director["name"].split(" ")[:-1]),
+                "LAST_NAME": director["name"].split(" ")[-1]
+            }
+            for i, director in enumerate(movie["director"][:self.MAX_DIRECTOR])
+            if director.get("name", False)
+        ]
+        logger.debug(f"Directors:\n{directors}")
+
+        ###############################################################
+        # Check if person exists in db, if so load their information
+        ###############################################################
+        engine = _create_engine()
+        with engine.connect() as conn:
+            people = [
+                {
+                    **actor,
+                    **get_person_if_exists(conn, FIRST_NAME=actor["FIRST_NAME"], LAST_NAME=actor["LAST_NAME"]),
+                    "ROLE": [
+                        get_id(conn, "ROLES", "Actor"),
+                        *([] if (actor["FIRST_NAME"]+actor["LAST_NAME"] not in [a["FIRST_NAME"] +
+                          a["LAST_NAME"] for a in writers]) else [get_id(conn, "ROLES", "Writer")]),
+                        *([] if (actor["FIRST_NAME"]+actor["LAST_NAME"] not in [a["FIRST_NAME"]+a["LAST_NAME"] for a in directors]) else [get_id(conn, "ROLES", "Director")])
+                    ]
+                }
+                for actor in actors
+            ]
+            logger.debug(f"Actors: \n{people}")
+            people += [
+                {
+                    **writer,
+                    **get_person_if_exists(conn, FIRST_NAME=writer["FIRST_NAME"], LAST_NAME=writer["LAST_NAME"]),
+                    "ROLE": [
+                        get_id(conn, "ROLES", "Writer"),
+                        *([] if (writer["FIRST_NAME"]+writer["LAST_NAME"] not in [a["FIRST_NAME"]+a["LAST_NAME"] for a in directors]) else [get_id(conn, "ROLES", "Director")])
+                    ]
+                }
+                for writer in writers
+                if (writer["FIRST_NAME"]+writer["LAST_NAME"] not in [a["FIRST_NAME"]+a["LAST_NAME"] for a in actors])
+            ]
+            people += [
+                {
+                    **director,
+                    **get_person_if_exists(conn, FIRST_NAME=director["FIRST_NAME"], LAST_NAME=director["LAST_NAME"]),
+                    "ROLE": [
+                        get_id(conn, "ROLES", "Director"),
+                    ]
+                }
+                for director in directors
+                if (director["FIRST_NAME"]+director["LAST_NAME"] not in [a["FIRST_NAME"]+a["LAST_NAME"] for a in actors]) and (director["FIRST_NAME"]+director["LAST_NAME"] not in [a["FIRST_NAME"]+a["LAST_NAME"] for a in writers])
+            ]
+            ids = [
+                uuid.uuid4().int & (1 << 64)-1
+                for _ in np.arange(self.MAX_CAST)
+            ]
+            characters = [
+                {
+                    "ID": ids[i],
+                    "FIRST_NAME": " ".join(cast.currentRole["name"].split(" ")[:-1]),
+                    "LAST_NAME": cast.currentRole["name"].split(" ")[-1],
+                    "ACTOR_ID": people[i]["ID"]
+                }
+                for i, cast in enumerate(movie["cast"][:self.MAX_CAST])
+            ]
+            logger.debug(f"Characters:\n{characters}")
+
+        return {
+            "CHARACTERS": pd.DataFrame(characters),
+            "PEOPLE": pd.DataFrame(people),
+        }
 
 
 def get_imdb_movie(movie_id):
     # Get movie imdb page
-    url=f"https://www.imdb.com/title/tt{movie_id}"
-    options=webdriver.ChromeOptions()
+    url = f"https://www.imdb.com/title/tt{movie_id}"
+    options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     # executable_path param is not needed if you updated PATH
-    browser=webdriver.Chrome(
+    browser= webdriver.Chrome(
         options = options, executable_path = 'E:/Projects/scraping/chromedriver_new.exe')
     browser.get(url)
     html=browser.page_source
@@ -214,14 +359,14 @@ def get_imdb_movie(movie_id):
     ]
     logger.debug(f"Box office: {box_offices}")
 
-    budget= [
+    budget = [
         b.find("div").text
         for b in box_office_box
         if b.find("span").text in ["Budget"]
     ]
     logger.debug(f"Budget: {budget}")
 
-    taglines= (
+    taglines = (
         soup.find("li", {"data-testid": "storyline-taglines"}).find("div").text
         if soup.find("li", {"data-testid": "storyline-taglines"}) is not None else None
     )
@@ -234,13 +379,13 @@ def get_imdb_movie(movie_id):
         d.find_next_sibling("div").text
         for d in soup.select('div:-soup-contains("Watch on Prime Video")') if hasattr(d, "find_next_sibling") and d.find_next_sibling("div") is not None
     ]
-    prime_prices= [
+    prime_prices = [
         p for p in prime
         if "rent/buy" in p
     ]
     logger.debug(f"Prime Prices: {prime_prices}")
 
-    netflix= "Netflix" in soup.find(
+    netflix = "Netflix" in soup.find(
         "li", {"data-testid": "title-details-companies"}).text
     logger.debug("Available on netflix? %s", str(netflix))
 
@@ -320,7 +465,7 @@ def scrape_imdb_movie(movie_title: str) -> Dict:
         uuid.uuid4().int & (1 << 64)-1
         for _ in np.arange(MAX_CAST)
     ]
-    actors= [
+    actors = [
         {
             "ID": ids[i],
             "FIRST_NAME": " ".join(cast["name"].split(" ")[:-1]),
@@ -330,12 +475,12 @@ def scrape_imdb_movie(movie_title: str) -> Dict:
     ]
     logger.debug(f"Actors: \n{actors}")
     # Writers
-    ids= [
+    ids = [
         uuid.uuid4().int & (1 << 64)-1
         for _ in np.arange(MAX_WRITER)
     ]
     logger.debug(f"Raw writers: \n {movie['writer']}")
-    writers= [
+    writers = [
         {
             "ID": ids[i],
             "FIRST_NAME": " ".join(writer["name"].split(" ")[:-1]),
@@ -346,12 +491,12 @@ def scrape_imdb_movie(movie_title: str) -> Dict:
     ]
     logger.debug(f"Writers:\n{writers}")
     # Directors
-    ids= [
+    ids = [
         uuid.uuid4().int & (1 << 64)-1
         for _ in np.arange(MAX_DIRECTOR)
     ]
     logger.debug(f"Raw directors: \n {movie['director']}")
-    directors= [
+    directors = [
         {
             "ID": ids[i],
             "FIRST_NAME": " ".join(director["name"].split(" ")[:-1]),
@@ -365,9 +510,9 @@ def scrape_imdb_movie(movie_title: str) -> Dict:
     ###############################################################
     # Check if person exists in db, if so load their information
     ###############################################################
-    engine= _create_engine()
+    engine = _create_engine()
     with engine.connect() as conn:
-        people= [
+        people = [
             {
                 **actor,
                 **get_person_if_exists(conn, FIRST_NAME=actor["FIRST_NAME"], LAST_NAME=actor["LAST_NAME"]),
