@@ -12,14 +12,15 @@ OUTPUT_DIR = os.path.join(pathlib.Path(
     __file__).parent.parent.parent.absolute(), "IMAGES")
 
 
-def scrape_movie_images(movie_title: str, limit: int = 5) -> List[str]:
+def scrape_movie_images(movie_title: str, movie_year: int = None, limit: int = 5) -> List[str]:
     """ Download images associated with movie_title to OUTPUT_DIR."""
+    search_term = f"{movie_title}{' ' + str(movie_year) if movie_year is not None else ''} film"
 
     # Clear existing dir
     if not os.path.exists(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
     else:
-        movie_path = os.path.join(OUTPUT_DIR, movie_title)
+        movie_path = os.path.join(OUTPUT_DIR, search_term)
         if os.path.exists(movie_path):
             for filename in os.listdir(movie_path):
                 file_path = os.path.join(movie_path, filename)
@@ -34,9 +35,10 @@ def scrape_movie_images(movie_title: str, limit: int = 5) -> List[str]:
     logger.debug(
         "Downloading %d images for movie: %s", limit, movie_title
     )
+
     config = dict(
         limit=limit,
-        keywords=movie_title,
+        keywords=search_term,
         # image_directory,
         output_directory=OUTPUT_DIR,
         print_urls=True,
@@ -47,7 +49,7 @@ def scrape_movie_images(movie_title: str, limit: int = 5) -> List[str]:
     response = google_images_download.googleimagesdownload()
     absolute_image_paths = response.download(config)
 
-    return absolute_image_paths[0][movie_title]
+    return absolute_image_paths[0][search_term]
 
 # from PIL import Image
 # for filename in absolute_image_paths[0][query]:

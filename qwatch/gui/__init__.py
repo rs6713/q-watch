@@ -99,18 +99,27 @@ class MovieSearch(tk.Toplevel):
         movie_title_entry = ttk.Entry(
             self, width=40
         )
-        movie_title_entry.pack(side="left")
+        movie_title_entry.grid(row=0, column=0, sticky="w",
+                               padx=0, columnspan=2)
+
+        ttk.Label(self, text="Year").grid(
+            column=0, row=1, sticky="w", padx=(0, 5))
+        year_entry = ttk.Entry(self)
+        year_entry.grid(
+            row=1, column=1, sticky="ew"
+        )
 
         def check_movie():
             """ Check if the entered title matches any pre-existing movies."""
             title = movie_title_entry.get()
+            year = int(year_entry.get()) if year_entry.get() else None
 
-            title_matches = self.check_title_matches(title)
+            title_matches = self.check_title_matches(title, year)
             if len(title_matches) > 0:
-                self.load_movie_warning(title_matches, title)
+                self.load_movie_warning(title_matches, title, year)
             else:
                 # Load movie
-                self.load_movie(movie_title=title)
+                self.load_movie(movie_title=title, movie_year=year)
             self.destroy()
 
         # Search button, to search movie (scrape then load details in UI)
@@ -119,14 +128,14 @@ class MovieSearch(tk.Toplevel):
             text="Search",
             command=check_movie,
         )
-        search_button.pack(side="left", padx=(5, 0))
+        search_button.grid(column=3, row=0, padx=(5, 0))
 
-    def check_title_matches(self, title: str):
+    def check_title_matches(self, title: str, year: int = None):
         """ Check that there are no similarly named pre-existing movies."""
         potential_matches = [
             (movie_id, movie_title)
-            for movie_id, movie_title in self.movies.items()
-            if nlp_model(movie_title).similarity(nlp_model(title)) > 0.9
+            for movie_id, (movie_title, movie_year) in self.movies.items()
+            if nlp_model(movie_title).similarity(nlp_model(title)) > 0.9 and (year is None or movie_year == year)
         ]
         return potential_matches
 
@@ -134,9 +143,9 @@ class MovieSearch(tk.Toplevel):
         """ Getting possible movie properties """
         engine = _create_engine()
         with engine.connect() as conn:
-            self.movies = get_movies_ids(conn)
+            self.movies = get_movies_ids(conn, with_year=True)
 
-    def load_movie_warning(self, movie_matches: List[Tuple[int, str]], title: str):
+    def load_movie_warning(self, movie_matches: List[Tuple[int, str]], title: str, year: int = None):
         """
         Popup warning when there is a movie named similar to title typed.
 
@@ -146,6 +155,8 @@ class MovieSearch(tk.Toplevel):
             Movies from db that are similar in name.
         title: str
             Movie title entered to create-new movie.
+        year: int
+            Moive year if specified
         """
         edit_movie_popup = tk.Toplevel(pady=5, padx=5)
         edit_movie_popup.wm_title(
@@ -154,7 +165,7 @@ class MovieSearch(tk.Toplevel):
         txt = ttk.Label(
             edit_movie_popup,
             wraplength=300,
-            text=f"Similar Movies to '{title}' pre-exist. Either edit or continue to create new"
+            text=f"Similar Movies to '{title}'{('for year ' + str(year)) if year is not None else ''} pre-exist. Either edit or continue to create new"
         )
         txt.grid(row=0, column=0, columnspan=2, sticky="ew")
 
@@ -177,7 +188,7 @@ class MovieSearch(tk.Toplevel):
             movie_button.grid(row=1+i, column=1, sticky=tk.E, padx=(5, 0))
 
         def load_new_movie():
-            self.load_movie(movie_title=title)
+            self.load_movie(movie_title=title, movie_year=year)
             edit_movie_popup.destroy()
 
         # Not concerned by name similarity. Create the new movie
@@ -187,6 +198,21 @@ class MovieSearch(tk.Toplevel):
             style='Accent.TButton'
         )
         continue_button.grid(column=1, sticky=tk.E, row=len(movie_matches)+1)
+
+
+class OptionsMenu(tk.Toplevel):
+    def __init__(self, options: Dict):
+        """Pop up Window to search for new movie."""
+        tk.Toplevel.__init__(self, pady=5, padx=5)
+
+        for i, (option, var) in enumerate(options.items()):
+            ttk.Label(self, text=option).grid(
+                row=i, padx=(0, 5), column=0, sticky="w")
+            ttk.Entry(
+                self,
+                textvariable=var,
+                width=10
+            ).grid(row=i, column=1)
 
 
 class MovieWindow():
@@ -256,6 +282,8 @@ class MovieWindow():
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label='Save', command=self.save_movie)
         self.fileMenu.add_separator()
+        self.fileMenu.add_command(
+            label='Options', command=partial(OptionsMenu, self.OPTIONS))
         self.fileMenu.add_command(label='Exit', command=self.root.destroy)
 
     def refresh(self):
@@ -283,13 +311,16 @@ class MovieWindow():
         if movie_title is not None:
             logger.info("Loading New Movie: %s", movie_title)
             # Get movie images
-            image_dirs = scrape_movie_images(movie_title, limit=limit)
+            image_dirs = scrape_movie_images(
+                movie_title, movie_year=movie_year, limit=int(self.OPTIONS["NUM_IMAGES_SCRAPE"].get()))
             images = pd.DataFrame([{
                 "FILENAME": img
             } for img in image_dirs])
 
             # Get Wikipedia scraped movie information
-            movie_information = scrape_movie_information(movie_title)
+            movie_information = scrape_movie_information(
+                movie_title, movie_year, options=self.OPTIONS
+            )
 
             movie = {
                 "TITLE": movie_title,
@@ -365,6 +396,14 @@ class MovieWindow():
     def __init__(self):
         self.get_movie_properties()
         self.configure_root()
+
+        self.OPTIONS = {
+            "NUM_IMAGES_SCRAPE": tk.StringVar(value="5"),
+            "NUM_CAST_SCRAPE": tk.StringVar(value="8"),
+            "NUM_WRITER_SCRAPE": tk.StringVar(value="5"),
+            "NUM_DIRECTOR_SCRAPE": tk.StringVar(value="3"),
+            "NUM_QUOTES_SCRAPE": tk.StringVar(value="10")
+        }
         self.configure_menu()
 
         self.movie = {
@@ -549,6 +588,7 @@ class MovieWindow():
             item_map={
                 "QUOTE": "ENTRY", "CHARACTER_ID": "DROPDOWN"
             },
+            group="QUOTE_ID",
             options={"CHARACTER_ID": pd.DataFrame([])},
         )
 

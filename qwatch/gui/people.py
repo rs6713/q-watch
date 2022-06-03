@@ -628,6 +628,8 @@ class PersonPage(ttk.Frame):
             else:
                 descriptors.append("[MAIN UNKNOWN]")
 
+        logger.debug(descriptors)
+
         lbl = ttk.Label(personFrame, text=" \u2022 ".join(descriptors))
         lbl.config(font=(
             DEFAULTS["FONT_FAMILY"],

@@ -22,7 +22,7 @@ from qwatch.scrape import IMDBScraper, WIKIScraper
 from qwatch.scrape import scrape_movie_information
 
 # %%
-scrape_movie_information("but im a cheerleader", 1999, True)
+scrape_movie_information("ponyboi", 2019, False)
 
 # %%
 s = WIKIScraper()

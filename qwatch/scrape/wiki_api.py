@@ -17,9 +17,8 @@ logger = logging.getLogger(__name__)
 
 
 class WIKIScraper(object):
-    MAX_CHARACTERS = 5
 
-    def __init__(self):
+    def __init__(self, options=None):
         self.NAME_MAP = {
             "RUNNING_TIME": "RUNTIME"
         }

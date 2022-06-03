@@ -10,13 +10,13 @@ from qwatch.scrape.wiki_api import WIKIScraper
 logger = logging.getLogger(__name__)
 
 
-def scrape_movie_information(movie_title: str, year: int = None, open_urls=False) -> Dict:
+def scrape_movie_information(movie_title: str, year: str = None, open_urls=False, options=None) -> Dict:
     """Scrape information about movie."""
-    imdb_scraper = IMDBScraper()
-    wiki_scraper = WIKIScraper()
+    imdb_scraper = IMDBScraper(options=options)
+    wiki_scraper = WIKIScraper(options=options)
 
     logger.info(
-        "Scraping Information for movie [%s] Year:%d", movie_title, str(year))
+        "Scraping Information for movie [%s] Year:%s", movie_title, str(year))
     imdb_information = imdb_scraper.scrape(movie_title, year)
     wiki_information = wiki_scraper.scrape(movie_title, year)
 

@@ -27,19 +27,21 @@ from sqlalchemy.sql.expression import cast
 SCHEMA = "dbo"
 
 
-def get_movies_ids(conn: Connection) -> List[Dict]:
+def get_movies_ids(conn: Connection, with_year=False) -> List[Dict]:
     """ Retrieve Movie title, id list"""
 
     movie_table = Table("MOVIES", MetaData(),
                         schema=SCHEMA, autoload_with=conn)
     query = select(
         movie_table.c.ID,
-        movie_table.c.TITLE
+        movie_table.c.TITLE,
+        movie_table.c.YEAR,
     )
 
-    columns = conn.execute(query).keys()
     results = {
-        row._mapping["ID"]: row._mapping["TITLE"]
+        row._mapping["ID"]: (
+            (row._mapping["TITLE"], row._mapping["YEAR"])
+            if with_year else row._mapping["TITLE"])
         for row in conn.execute(query).fetchall()
     }
     return results

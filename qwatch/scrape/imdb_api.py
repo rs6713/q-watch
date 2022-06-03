@@ -46,12 +46,16 @@ def get_last_name(name: str):
 
 
 class IMDBScraper(object):
-    MAX_QUOTES = 10
-    MAX_CAST = 5
-    MAX_WRITER = 3
-    MAX_DIRECTOR = 3
+    NUM_QUOTES_SCRAPE = 10
+    NUM_CAST_SCRAPE = 5
+    NUM_WRITER_SCRAPE = 3
+    NUM_DIRECTOR_SCRAPE = 3
 
-    def __init__(self):
+    def __init__(self, options=None):
+        if options is not None:
+            for option, var in options.items():
+                setattr(self, option, int(var.get()))
+
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
         # executable_path param is not needed if you updated PATH
@@ -198,13 +202,13 @@ class IMDBScraper(object):
                 "CHARACTER_ID": par.text.split(":", 1)[0][1:],
                 "QUOTE": par.text.split(":", 1)[1][1:],
             }
-            for i, quote in enumerate(quotes[:self.MAX_QUOTES])
+            for i, quote in enumerate(quotes[:self.NUM_QUOTES_SCRAPE])
             for par in quote.find_all("p")
             if len(par.text.split(":")) > 1
         ]
         logger.debug("Found %d quotes", len(quotes))
         if not len(quotes):
-            return []
+            return None
 
         quotes = [
             {
@@ -216,6 +220,9 @@ class IMDBScraper(object):
         return pd.DataFrame(quotes)
 
     def get_sources(self):
+        bfi_source = len(self.movie_soup.select(
+            'div:-soup-contains("Watch on BFI Player")')) > 0
+
         prime_container = self.movie_soup.select(
             'div:-soup-contains("Watch on Prime Video")')
         prime = [
@@ -234,7 +241,7 @@ class IMDBScraper(object):
             "li", {"data-testid": "title-details-companies"}).text
         logger.debug("Available on netflix? %s", str(netflix))
 
-        if len(prime_costs) == 0 and not netflix:
+        if len(prime_costs) == 0 and not netflix and not bfi_source:
             return None
 
         # Get source details for amazon/netflix
@@ -244,6 +251,17 @@ class IMDBScraper(object):
                 conn, "SOURCE", None, ["COST", "MEMBERSHIP_INCLUDED"])
 
         sources = pd.DataFrame([], columns=all_sources.columns)
+
+        logger.info(f"BFI Source: {bfi_source}")
+        if bfi_source:
+            bfi_source = all_sources[
+                (all_sources.LABEL == "British Film Institute") & (
+                    all_sources.REGION == "UK")
+            ].iloc[0, :]
+            bfi_source.COST = 0.0
+            bfi_source.MEMBERSHIP_INCLUDED = True
+            sources = pd.concat(
+                [sources, bfi_source.to_frame().T], axis=0, ignore_index=True)
 
         if netflix:
             netflix_source = all_sources[
@@ -276,12 +294,13 @@ class IMDBScraper(object):
         """
         def override(member):
             plot = self.movie_properties.get("plot outline", "")
-
+            if "name" not in member.currentRole:
+                return False
             return get_first_name(member.currentRole["name"]) in plot
 
         return [
             member for i, member in enumerate(cast)
-            if i < self.MAX_CAST or override(member)
+            if i < self.NUM_CAST_SCRAPE or override(member)
         ]
 
     def get_people(self):
@@ -291,8 +310,8 @@ class IMDBScraper(object):
         with engine.connect() as conn:
             role_members = {
                 get_id(conn, "ROLES", "Actor"): self.clip_cast(self.movie_properties["cast"]),
-                get_id(conn, "ROLES", "Director"): self.movie_properties["writer"][: self.MAX_WRITER],
-                get_id(conn, "ROLES", "Writer"): self.movie_properties["director"][: self.MAX_DIRECTOR]
+                get_id(conn, "ROLES", "Director"): self.movie_properties["writer"][: self.NUM_WRITER_SCRAPE],
+                get_id(conn, "ROLES", "Writer"): self.movie_properties["director"][: self.NUM_DIRECTOR_SCRAPE]
             }
             actor_id = get_id(conn, "ROLES", "Actor")
 

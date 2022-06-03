@@ -3,6 +3,7 @@ import logging
 import pathlib
 import os
 from typing import List
+import uuid
 
 import numpy as np
 import pandas as pd
@@ -89,10 +90,11 @@ class TextExtension(ttk.Frame):
 
 
 class EditableList(ttk.Frame):
-    def __init__(self, parent: tk.Frame, name: str, items: pd.DataFrame = None, item_map: dict = None, options: dict = None):
+    def __init__(self, parent: tk.Frame, name: str, items: pd.DataFrame = None, item_map: dict = None, options: dict = None, group: str = None):
         """
         Editable List - With deletable and editable items
 
+        group - editable items are grouped into cohesive groups this way
         """
         ttk.Frame.__init__(
             self, parent,   # height=height  # , width=width, height=height,
@@ -101,6 +103,7 @@ class EditableList(ttk.Frame):
         self.name = name
         self.item_map = item_map
         self.options = options
+        self.group = group
 
         self.items = self.process_items(items)
 
@@ -207,7 +210,7 @@ class EditableList(ttk.Frame):
             for _, item in items.iterrows()
         ], columns=items.columns, index=items.index)
 
-    def add_item(self) -> None:
+    def add_item(self, group=None) -> None:
         """ Note: Button next to label to add an item."""
         new_item = []
         item_var_map = {
@@ -221,23 +224,53 @@ class EditableList(ttk.Frame):
             new_item += [item_var_map[self.item_map[col]]()]
 
         # Add item to items, and update visuals.
+
         if self.items is None:
-            self.items = pd.DataFrame(
-                [new_item], columns=list(self.item_map.keys()))
+            if self.group is not None:
+                new_id = uuid.uuid4().int & (1 << 64)-1
+                self.items = pd.DataFrame(
+                    [[*new_item, (group or new_id)]],
+                    columns=[*list(self.item_map.keys()), self.group]
+                )
+            else:
+                self.items = pd.DataFrame(
+                    [new_item], columns=list(self.item_map.keys()))
         else:
-            self.items = self.items.append(
-                pd.Series(new_item, index=list(self.item_map.keys())),
-                ignore_index=True
-            )
+            if self.group is not None:
+                new_id = uuid.uuid4().int & (1 << 64)-1
+                self.items = self.items.append(
+                    pd.Series(
+                        [*new_item, (group or new_id)],
+                        index=[*list(self.item_map.keys()), self.group]
+                    ),
+                    ignore_index=True
+                )
+            else:
+                self.items = self.items.append(
+                    pd.Series(new_item, index=list(self.item_map.keys())),
+                    ignore_index=True
+                )
         logger.debug(self.items)
         self.update_list()
 
-    def delete_item(self, item_index: int) -> None:
+    def delete_item(self, item_index: int = None, group=None) -> None:
         """
         Save altered list, Delete item from items, and update canvas
         """
-        logger.debug("Deleting: %d", item_index)
-        self.items = self.items.drop(index=item_index)
+        if item_index is None and group is None:
+            logger.warning(
+                "Cannot delete unspecified item"
+            )
+            return
+
+        if group is not None:
+            logger.debug("Deleting item group: %s", str(group))
+            self.items = self.items[
+                self.items[self.group] != group
+            ]
+        else:
+            logger.debug("Deleting: %d", item_index)
+            self.items = self.items.drop(index=item_index)
 
         self.update_list()
 
@@ -272,56 +305,85 @@ class EditableList(ttk.Frame):
         if self.items is None:
             return
 
+        items = self.items.copy()
+        if self.group is None:
+            items.loc[:, "GROUPING_COL"] = "GROUP"
+
         # Load up all items into canvas
         logger.debug(self.items)
-        for idx, item in self.items.iterrows():
-            item_frame = ttk.Frame(
-                self.canv_subframe,
-                # width=self.canv_width,
-                style='Card.TFrame',
+        for grp, item_group in items.groupby(self.group or "GROUPING_COL"):
+            group_frame = ttk.Frame(
+                self.canv_subframe, style="Card.TFrame"
             )
+            if self.group is not None:
 
-            ttk.Button(
-                item_frame,
-                text="Remove",
-                compound=tk.RIGHT,
-                command=partial(self.delete_item, item_index=idx),
-                # image=ImageTk.PhotoImage(
-                #     BIN_IMG.resize(
-                #         (int(IMG_HEIGHT / BIN_IMG.size[1]*BIN_IMG.size[0]), int(IMG_HEIGHT)))
-                # ),
-                # padx=2, pady=2
-            ).pack(side=tk.TOP, anchor="e", padx=5, pady=5)
+                command_frame = ttk.Frame(group_frame)
+                ttk.Button(
+                    command_frame,
+                    text="New",
+                    compound=tk.RIGHT,
+                    command=partial(
+                        self.add_item, group=grp)
+                ).pack(side="right")
+                ttk.Button(
+                    command_frame,
+                    text="Remove",
+                    compound=tk.RIGHT,
+                    command=partial(self.delete_item, group=grp)
+                ).pack(side="right", padx=(0, 5))
+                command_frame.pack(side="top", anchor="e")
 
-            for col, entry_type in self.item_map.items():
-                if entry_type == "BOOLEAN":
-                    ttk.Checkbutton(
-                        item_frame, text=col, variable=item[col],
-                        style='Switch.TCheckbutton'
-                    ).pack(side=tk.TOP, anchor="w", padx=5, pady=(0, 5))
+            for idx, item in item_group.iterrows():
+                item_frame = ttk.Frame(
+                    group_frame
+                    # self.canv_subframe,
+                    # width=self.canv_width,
+                    # style='Card.TFrame',
+                )
 
-                if entry_type in ["ENTRY", "NUM_ENTRY"]:
-                    entry_frame = ttk.Frame(item_frame)
-                    ttk.Label(entry_frame, text=col).pack(
-                        side="left", padx=(0, 5))
-                    ttk.Entry(entry_frame, textvariable=item[col]).pack(
-                        side="right", fill=tk.X, expand=True
-                    )
-                    entry_frame.pack(
-                        side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5), padx=5
-                    )
+                ttk.Button(
+                    item_frame,
+                    text="Remove",
+                    compound=tk.RIGHT,
+                    command=partial(self.delete_item, item_index=idx),
+                    # image=ImageTk.PhotoImage(
+                    #     BIN_IMG.resize(
+                    #         (int(IMG_HEIGHT / BIN_IMG.size[1]*BIN_IMG.size[0]), int(IMG_HEIGHT)))
+                    # ),
+                    # padx=2, pady=2
+                ).pack(side=tk.TOP, anchor="e", padx=5, pady=5)
 
-                if entry_type == "DROPDOWN":
-                    MenuSingleSelector(
-                        item_frame, col, self.options[col], var=item[col]
-                    ).pack(side=tk.TOP, anchor="w", padx=5, pady=(0, 5))
+                for col, entry_type in self.item_map.items():
+                    if entry_type == "BOOLEAN":
+                        ttk.Checkbutton(
+                            item_frame, text=col, variable=item[col],
+                            style='Switch.TCheckbutton'
+                        ).pack(side=tk.TOP, anchor="w", padx=5, pady=(0, 5))
 
-            item_frame.pack(
+                    if entry_type in ["ENTRY", "NUM_ENTRY"]:
+                        entry_frame = ttk.Frame(item_frame)
+                        ttk.Label(entry_frame, text=col).pack(
+                            side="left", padx=(0, 5))
+                        ttk.Entry(entry_frame, textvariable=item[col]).pack(
+                            side="right", fill=tk.X, expand=True
+                        )
+                        entry_frame.pack(
+                            side=tk.TOP, expand=1, fill=tk.X, pady=(0, 5), padx=5
+                        )
+
+                    if entry_type == "DROPDOWN":
+                        MenuSingleSelector(
+                            item_frame, col, self.options[col], var=item[col]
+                        ).pack(side=tk.TOP, anchor="w", padx=5, pady=(0, 5))
+
+                item_frame.pack(
+                    side="top", fill=tk.X, expand=True, pady=2
+                )
+                # item_frame.config(highlightbackground="black",
+                #                   highlightcolor="red", highlightthickness=2)
+            group_frame.pack(
                 side="top", fill=tk.X, expand=True, pady=10
             )
-            # item_frame.config(highlightbackground="black",
-            #                   highlightcolor="red", highlightthickness=2)
-
         # Resize canvas scrollable window
         self.update_idletasks()
         self.canv.config(
