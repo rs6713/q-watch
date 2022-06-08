@@ -29,6 +29,7 @@ from qwatch.io.input import (
     _get_movie_properties,
     get_movie
 )
+from qwatch.io.output import save_movie
 from qwatch.scrape.images import scrape_movie_images
 from qwatch.scrape import scrape_movie_information
 from qwatch.gui.defaults import DEFAULTS
@@ -349,7 +350,26 @@ class MovieWindow():
             )
 
     def save_movie(self):
-        pass
+        """ Create movie object and save."""
+        movie = {
+            prop: self.movie[prop].get()
+            for prop in self.movie.keys()
+        }
+
+        for menu in ["GENRES", "TROPE_TRIGGERS", "REPRESENTATIONS", "TYPES"]:
+            movie[menu] = self.datastore[menu].get_selected_options()
+
+        for lst in ["SOURCES", "QUOTES", "IMAGES"]:
+            movie[lst] = self.datastore[lst].get_items()
+
+        movie = {
+            **movie,
+            **self.datastore["PEOPLE"].get_items()
+        }
+
+        engine = _create_engine()
+        with engine.connect() as conn:
+            save_movie(conn, movie)
 
     def update_contents(self, movie: Dict) -> None:
         """ Update contents of UI with self.movie."""
@@ -365,7 +385,7 @@ class MovieWindow():
                 else:
                     self.movie[k].set(None)
 
-        for menu in ["GENRES", "TROPES", "REPRESENTATIONS", "TYPES"]:
+        for menu in ["GENRES", "TROPE_TRIGGERS", "REPRESENTATIONS", "TYPES"]:
             self.datastore[menu].load(
                 movie.get(menu, None)
             )
@@ -513,20 +533,22 @@ class MovieWindow():
 
         self.datastore["REPRESENTATIONS"] = ChecklistBox(
             checklist_container, "Representations", self.representations,
+            radio="MAIN", id_name="REPRESENTATION_ID"
         )
-        self.datastore["TROPES"] = ChecklistBox(
-            checklist_container, "Tropes", self.tropes,
+        self.datastore["TROPE_TRIGGERS"] = ChecklistBox(
+            checklist_container, "Tropes", self.tropes, id_name="TROPE_TRIGGER_ID"
         )
         self.datastore["GENRES"] = ChecklistBox(
-            checklist_container, "Genres", self.genres,
+            checklist_container, "Genres", self.genres, id_name="GENRE_ID"
         )
         self.datastore["TYPES"] = ChecklistBox(
             checklist_container, "Types", self.types,
+            radio="EXPLICIT", id_name="TYPE_ID"
         )
         self.datastore["GENRES"].pack(
             side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
         )
-        self.datastore["TROPES"].pack(
+        self.datastore["TROPE_TRIGGERS"].pack(
             side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
         )
         self.datastore["REPRESENTATIONS"].pack(

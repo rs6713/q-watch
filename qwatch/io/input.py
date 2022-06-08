@@ -216,7 +216,8 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
     ], columns=["DATE", "RATING"])
 
     # Get all genre, representations, tropes matched on movie_id
-    types = _get_movie_properties(conn, "TYPE", movie_id)
+    types = _get_movie_properties(
+        conn, "TYPE", movie_id, addit_props=["EXPLICIT"])
     genres = _get_movie_properties(conn, "GENRE", movie_id)
     representations = _get_movie_properties(
         conn, "REPRESENTATION", movie_id, addit_props=["MAIN"])
@@ -235,7 +236,7 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
         "TYPES": types,
         "GENRES": genres,
         "SOURCES": sources,
-        "TROPES": tropes,
+        "TROPE_TRIGGERS": tropes,
         "REPRESENTATIONS": representations,
         "QUOTES": quotes,
         "RATINGS": ratings,

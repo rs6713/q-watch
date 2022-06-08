@@ -104,10 +104,20 @@ class MenuMultiSelector(ttk.Menubutton):
 
 
 class ChecklistBox(tk.Frame):
-    def __init__(self, parent, name, choices, height=100, width=110, **kwargs):
+    def __init__(self, parent, name, choices, radio: str = None, height=100, width=110, id_name=None, **kwargs):
+        """
+        List of checked options
+
+        Params
+        ------
+        radio: str
+            Additional check
+        """
         tk.Frame.__init__(self, parent)
 
         self.name = name
+        self.radio = radio
+        self.id_name = id_name
 
         label = ttk.Label(self, text=name)
         label.pack(side="top", fill=tk.X, pady=(0, 5))
@@ -125,16 +135,30 @@ class ChecklistBox(tk.Frame):
         subFrame = ttk.Frame(self)  # relief=tk.GROOVE, bd=1
 
         self.vars = {}
+        self.radio_vars = {}
         bg = self.cget("background")
         for i, choice in choices.iterrows():
             var = tk.IntVar()
+            radio_var = tk.IntVar()
             self.vars[choice.ID] = var
-            cb = ttk.Checkbutton(subFrame, var=var, text=choice.LABEL,
-                                 onvalue=1, offvalue=0,
-                                 width=20,  # background=bg,anchor="w",
-                                 # relief="flat", highlightthickness=0
-                                 )
-            cb.pack(side="top", fill="both", anchor="w", expand=True)
+
+            ttk.Checkbutton(
+                subFrame,
+                var=var,
+                text=choice.LABEL,
+                onvalue=1, offvalue=0,
+                width=20,
+            ).pack(side="top", fill="both", anchor="w", expand=True)
+            if self.radio is not None:
+                self.radio_vars[choice.ID] = radio_var
+
+                ttk.Checkbutton(
+                    subFrame,
+                    var=radio_var,
+                    text=radio,
+                    onvalue=1, offvalue=0,
+                    width=20,
+                ).pack(side="top", fill="both", anchor="w", expand=True, padx=(5, 0))
 
         canv.create_window(0, 0, window=subFrame, anchor='nw')
         parent.update_idletasks()
@@ -157,9 +181,12 @@ class ChecklistBox(tk.Frame):
     def get_selected_options(self):
         ids = []
         for idd, checked in self.vars.items():
-            value = checked.get()
-            if value:
-                ids.append(idd)
+            if checked.get():
+                d = {
+                    self.id_name: idd,
+                    **({} if self.radio is None else {self.radio: self.radio_vars[idd].get()})
+                }
+                ids.append(d)
         return ids
 
     def load(self, ids: pd.DataFrame = None):
@@ -176,3 +203,8 @@ class ChecklistBox(tk.Frame):
                 logger.warning(
                     f"Item {idd} does not exist in {self.name} Checklistbox"
                 )
+            if self.radio is not None:
+                if idd in self.radio_vars.keys():
+                    self.radio_vars[idd].set(
+                        ids[ids.ID == idd].iloc[0, :][self.radio]
+                    )
