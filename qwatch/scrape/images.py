@@ -14,7 +14,7 @@ OUTPUT_DIR = os.path.join(pathlib.Path(
 
 def scrape_movie_images(movie_title: str, movie_year: int = None, limit: int = 5) -> List[str]:
     """ Download images associated with movie_title to OUTPUT_DIR."""
-    search_term = f"{movie_title}{' ' + str(movie_year) if movie_year is not None else ''} film"
+    search_term = f"{movie_title}{' ' + str(movie_year) if movie_year is not None else ''}"
 
     # Clear existing dir
     if not os.path.exists(OUTPUT_DIR):

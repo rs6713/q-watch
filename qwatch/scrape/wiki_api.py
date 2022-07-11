@@ -71,8 +71,19 @@ class WIKIScraper(object):
             "URLS": [
                 self.wiki_url
             ],
-            **self.get_movie_infobox_properties()
+            **self.get_movie_infobox_properties(),
+            "PEOPLE": self.get_people()
         }
+
+    def get_people(self):
+        try:
+            return [person.text.lower().split(" as ") for person in self.page.find("span", {"class": "mw-headline", "id": "Cast"}).parent.find_next_sibling(
+                "ul"
+            ).find_all("li")]
+        except Exception as e:
+            logger.warning(e)
+            logger.warning("No characters found in wiki page")
+            return None
 
     def get_movie_infobox_properties(self):
         movie = {}

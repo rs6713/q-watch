@@ -134,10 +134,18 @@ class ImagePanel(ttk.Frame):
         self.load_image()
 
     def get_items(self) -> pd.DataFrame:
-        return pd.DataFrame([{
+        items = pd.DataFrame([{
             **img,
             "CAPTION": img["CAPTION"].get()
-        } for img in self.images])
+        } for img in self.images
+            if img["CAPTION"].get()
+        ])
+        if items.shape[0] != len(self.images):
+            logger.warning(
+                "%d/%d images could not be saved due to lack of captions",
+                len(self.images)-items.shape[0], len(self.images)
+            )
+        return items
 
     def load_image(self):
         if len(self.images) == 0:
@@ -163,7 +171,7 @@ class ImagePanel(ttk.Frame):
             image_path
         )
 
-        panel_height = self.imagePanel.winfo_height()
+        panel_height = self.imagePanel.winfo_height() - 10
         width, height = image1.size
 
         img_size = ttk.Label(

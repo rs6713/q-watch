@@ -250,7 +250,6 @@ class EditableList(ttk.Frame):
                     pd.Series(new_item, index=list(self.item_map.keys())),
                     ignore_index=True
                 )
-        logger.debug(self.items)
         self.update_list()
 
     def delete_item(self, item_index: int = None, group=None) -> None:
@@ -310,7 +309,6 @@ class EditableList(ttk.Frame):
             items.loc[:, "GROUPING_COL"] = "GROUP"
 
         # Load up all items into canvas
-        logger.debug(self.items)
         for grp, item_group in items.groupby(self.group or "GROUPING_COL"):
             group_frame = ttk.Frame(
                 self.canv_subframe, style="Card.TFrame"

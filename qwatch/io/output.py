@@ -1,6 +1,8 @@
 """ Functions to save data to SQL Server."""
 import datetime
 import logging
+import os
+import shutil
 from typing import Dict, List
 
 import pandas as pd
@@ -58,7 +60,34 @@ def save_movie(conn: Connection, movie: Dict) -> None:
     #############################################
     # Images
     ############################################
+    img_dir = os.path.join(
+        Path(__name__).parent.parent.parent,
+        "website", "src", "static", "movie-pictures")
+    img_dst = MOVIE["TITLE"].lower().replace(
+        " ", "-") + "_" + str(MOVIE["YEAR"])
+    existing_img_n = len([
+        f for f in listdir(img_dir)
+        if f.contains(img_dst)
+    ])
     for image in movie["IMAGES"]:
+        try:
+            if image["ID"] is None or not image["ID"]:
+                ext = image["FILENAME"].split(".")[1]
+                dst = os.path.join(
+                    img_dir,
+                    img_dst + f"-{existing_img_n:03d}.{ext}"
+                )
+                shutil.copyfile(image["FILENAME"], dst)
+                image["FILENAME"] = img_dst + f"-{existing_img_n:03d}.{ext}"
+                existing_img_n += 1
+        except Exception as e:
+            logger.warning(
+                "Failed to copy over image: %s",
+                image["FILENAME"]
+            )
+            continue
+        # Hard reset image ID as won't exist anymore
+        image["ID"] = None
         add_entry(conn, "MOVIE_IMAGES", MOVIE_ID=movie_id, **image)
 
     ################################################
@@ -84,6 +113,7 @@ def save_movie(conn: Connection, movie: Dict) -> None:
     #############################################
     # People, Characters, Actions, Relationships
     #############################################
+    # TODO More complex update of PERSON, properties, don't delete, recreate
     person_id_mappings = {}
     for person in movie["PEOPLE"]:
         orig_person_id = person["ID"]
@@ -130,7 +160,7 @@ def remove_entry(conn: Connection, table_name: str, return_prop=None, **properti
         query = select(table.c[return_prop]).where(
             and_(
                 *[
-                    table.c[key] == val if not instance(
+                    table.c[key] == val if not isinstance(
                         val, list) else table.c[key].isin(val)
                     for key, val in properties.items()
                 ]
@@ -138,12 +168,12 @@ def remove_entry(conn: Connection, table_name: str, return_prop=None, **properti
         )
         results = pd.DataFrame([
             _._mapping for _ in conn.execute(query).fetchall()
-        ], columns=conn.execute(character_query).keys())[return_prop].values
+        ], columns=conn.execute(query).keys())[return_prop].values
 
     delete(table).where(
         and_(
             *[
-                table.c[key] == val if not instance(
+                table.c[key] == val if not isinstance(
                     val, list) else table.c[key].isin(val)
                 for key, val in properties.items()
             ]
@@ -179,7 +209,8 @@ def add_entry(conn: Connection, table_name: str, ID: int = None, **properties) -
 
     properties = {k: v for k, v in properties.items() if k in columns}
 
-    if ID is not None:
+    # ID should not be equal to 0
+    if ID is not None and ID:
         logger.info("Inserting entry to %s", table_name)
         conn.execute(update(table).where(table.c.ID == id).values(properties))
         return ID

@@ -209,11 +209,19 @@ class OptionsMenu(tk.Toplevel):
         for i, (option, var) in enumerate(options.items()):
             ttk.Label(self, text=option).grid(
                 row=i, padx=(0, 5), column=0, sticky="w")
-            ttk.Entry(
-                self,
-                textvariable=var,
-                width=10
-            ).grid(row=i, column=1)
+            if not isinstance(var, tk.IntVar):
+                ttk.Entry(
+                    self,
+                    textvariable=var,
+                    width=10
+                ).grid(row=i, column=1)
+            else:
+                ttk.Checkbutton(
+                    self,
+                    var=var,
+                    text=option,
+                    onvalue=1, offvalue=0, width=10
+                ).grid(row=i, column=1)
 
 
 class MovieWindow():
@@ -320,7 +328,8 @@ class MovieWindow():
 
             # Get Wikipedia scraped movie information
             movie_information = scrape_movie_information(
-                movie_title, movie_year, options=self.OPTIONS
+                movie_title, movie_year, options=self.OPTIONS, open_urls=self.OPTIONS.get(
+                    "OPEN_URLS")
             )
 
             movie = {
@@ -422,7 +431,8 @@ class MovieWindow():
             "NUM_CAST_SCRAPE": tk.StringVar(value="8"),
             "NUM_WRITER_SCRAPE": tk.StringVar(value="5"),
             "NUM_DIRECTOR_SCRAPE": tk.StringVar(value="3"),
-            "NUM_QUOTES_SCRAPE": tk.StringVar(value="10")
+            "NUM_QUOTES_SCRAPE": tk.StringVar(value="10"),
+            "OPEN_URLS": tk.IntVar(value=1),
         }
         self.configure_menu()
 

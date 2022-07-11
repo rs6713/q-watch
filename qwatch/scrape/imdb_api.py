@@ -19,6 +19,7 @@ from selenium import webdriver
 
 from qwatch.io.input import get_person_if_exists, get_id, _get_movie_properties
 from qwatch.io import _create_engine
+from qwatch.utils import get_first_name, get_last_name
 
 genre_mappings = {
     "History": "Period-Piece",
@@ -27,22 +28,6 @@ genre_mappings = {
 }
 
 logger = logging.getLogger(__name__)
-
-
-def get_first_name(name: str):
-
-    if len(name.split(" ")) == 1:
-        return name
-
-    return " ".join(name.split(" ")[:-1])
-
-
-def get_last_name(name: str):
-
-    if len(name.split(" ")) == 1:
-        return ""
-
-    return name.split(" ")[-1]
 
 
 class IMDBScraper(object):

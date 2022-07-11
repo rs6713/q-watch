@@ -139,7 +139,7 @@ class ChecklistBox(tk.Frame):
         bg = self.cget("background")
         for i, choice in choices.iterrows():
             var = tk.IntVar()
-            radio_var = tk.IntVar()
+            radio_var = tk.IntVar(value=1)
             self.vars[choice.ID] = var
 
             ttk.Checkbutton(
@@ -158,7 +158,7 @@ class ChecklistBox(tk.Frame):
                     text=radio,
                     onvalue=1, offvalue=0,
                     width=20,
-                ).pack(side="top", fill="both", anchor="w", expand=True, padx=(5, 0))
+                ).pack(side="top", fill="both", anchor="w", expand=True, padx=(10, 0))
 
         canv.create_window(0, 0, window=subFrame, anchor='nw')
         parent.update_idletasks()

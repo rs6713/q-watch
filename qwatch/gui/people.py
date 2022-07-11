@@ -583,7 +583,8 @@ class PersonPage(ttk.Frame):
 
         # Update People lists for other people management pages
         prop = "characters" if self.is_character else "people"
-        self.update_people({prop: self.people})
+
+        self.update_people(**{prop: pd.DataFrame(self.people)})
 
     def save_person(self, person: Dict) -> None:
         logger.debug(f"Saving person in {__class__}: {person}")
