@@ -5,10 +5,11 @@ import warnings
 warnings.filterwarnings("ignore")
 
 logger = logging.getLogger("qwatch")
+loglvl = logging.INFO
 
-logger.setLevel(logging.DEBUG)
+logger.setLevel(loglvl)
 ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
+ch.setLevel(loglvl)
 formatter = logging.Formatter(
     '%(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s'
 )

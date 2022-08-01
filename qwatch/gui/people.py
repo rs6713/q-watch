@@ -691,17 +691,12 @@ class PersonPage(ttk.Frame):
         )
 
     def update_contents(self, people: pd.DataFrame = None, characters: pd.DataFrame = None) -> None:
-        logger.debug("Updating contents")
+        logger.debug(f"Updating contents in {__class__}")
         if self.is_character and people is not None:
             logger.debug(f"There are {len(people.to_dict('records'))} actors")
             self.actors = people.to_dict("records")
 
     def get_options(self, person: Dict, option: str, OPTIONS: pd.DataFrame = None) -> str:
-        logger.info(
-            "Getting options: %s.",
-            option
-        )
-
         # Get Options from
         if OPTIONS is None:
             OPTIONS = self.OPTIONS[option]

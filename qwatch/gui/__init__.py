@@ -360,16 +360,27 @@ class MovieWindow():
 
     def save_movie(self):
         """ Create movie object and save."""
-        movie = {
-            prop: self.movie[prop].get()
-            for prop in self.movie.keys()
-        }
+        movie = {}
+        for prop in self.movie.keys():
+            try:
+                movie[prop] = self.movie[prop].get()
+            except Exception as e:
+                logger.warning("Failed to get property for %s", prop)
+                raise e
 
         for menu in ["GENRES", "TROPE_TRIGGERS", "REPRESENTATIONS", "TYPES"]:
-            movie[menu] = self.datastore[menu].get_selected_options()
+            try:
+                movie[menu] = self.datastore[menu].get_selected_options()
+            except Exception as e:
+                logger.warning("Failed to get options from %s", menu)
+                raise e
 
         for lst in ["SOURCES", "QUOTES", "IMAGES"]:
-            movie[lst] = self.datastore[lst].get_items()
+            try:
+                movie[lst] = self.datastore[lst].get_items()
+            except Exception as e:
+                logger.warning("Failed to get items for %s", lst)
+                raise e
 
         movie = {
             **movie,
@@ -378,12 +389,32 @@ class MovieWindow():
 
         engine = _create_engine()
         with engine.connect() as conn:
+            logger.info("Saving constructed movie object:\n%s", str(movie))
             save_movie(conn, movie)
+
+    @staticmethod
+    def describe_movie(movie):
+        description = ""
+        for k in movie.keys():
+            if isinstance(movie[k], str):
+                description += f"{k}: {movie[k][:40]}{'...' if len(movie[k]) > 40 else ''}"
+            elif isinstance(movie[k], pd.DataFrame):
+                description += f"{k}: {movie[k].shape}: {','.join(movie[k].columns)}"
+            elif isinstance(movie[k], (int, float)):
+                description += f"{k}: {movie[k]}"
+            elif isinstance(movie[k], dict):
+                description += f"{k}: {', '.join(movie[k].keys())}"
+            else:
+                description += f"{k}:"
+            description += "\n"
+
+        return description
 
     def update_contents(self, movie: Dict) -> None:
         """ Update contents of UI with self.movie."""
 
-        logger.info(f"Updating Movie Contents \n{movie}")
+        logger.info(
+            f"Updating Movie Contents \n{self.describe_movie(movie)}")
 
         for k in self.movie.keys():
             if k in movie:
@@ -392,7 +423,7 @@ class MovieWindow():
                 if isinstance(self.movie[k], tk.StringVar):
                     self.movie[k].set("")
                 else:
-                    self.movie[k].set(None)
+                    self.movie[k].set(-1)  # -1 is the invalid value
 
         for menu in ["GENRES", "TROPE_TRIGGERS", "REPRESENTATIONS", "TYPES"]:
             self.datastore[menu].load(

@@ -52,6 +52,8 @@ class IMDBScraper(object):
         self.cinema_goer = Cinemagoer()
 
     def search(self, movie_title: str, year: int = None):
+        logger.info("Performing IMDB Search for %s year %s",
+                    movie_title, str(year))
         self.movie_properties = {}
         movies = self.cinema_goer.search_movie(movie_title)
 

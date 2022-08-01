@@ -55,12 +55,19 @@ def scrape_movie_information(movie_title: str, year: str = None, open_urls=False
     gsearch_url = f"https://www.google.com/search?q={movie_query}"
 
     urls = [
-        yt_url, yt_full_url, gsearch_url, gsearch_url+"&tbm=isch",
+        yt_url,
+        yt_full_url,
+        gsearch_url,
+        gsearch_url+"&tbm=isch",
         *wiki_information.get("URLS", []),
-        *imdb_information.get("URLS", []),
+        #*imdb_information.get("URLS", []),
     ]
 
+    ##################################################
+    # (Optional) Open URL's in Chrome for quick review
+    ##################################################
     if open_urls and len(urls):
+        logger.info("Opening urls using chrome webdriver")
         options = webdriver.ChromeOptions()
         # options.add_argument('--headless')
         driver = webdriver.Chrome(
@@ -69,6 +76,7 @@ def scrape_movie_information(movie_title: str, year: str = None, open_urls=False
         )
         driver.get(urls[0])
         for i, url in enumerate(urls[1:]):
+            logger.info("Opening %s", url)
             driver.execute_script(
                 f"window.open('about:blank', 'tab{i}');"
             )

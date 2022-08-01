@@ -138,7 +138,7 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
     movie_quote_table = Table(
         "MOVIE_QUOTE", meta, schema=SCHEMA, autoload_with=conn)
     movie_image_table = Table(
-        "MOVIE_IMAGES", meta, schema=SCHEMA, autoload_with=conn
+        "MOVIE_IMAGE", meta, schema=SCHEMA, autoload_with=conn
     )
 
     # intensity_table = Table(

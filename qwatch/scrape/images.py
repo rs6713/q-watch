@@ -41,8 +41,10 @@ def scrape_movie_images(movie_title: str, movie_year: int = None, limit: int = 5
         keywords=search_term,
         # image_directory,
         output_directory=OUTPUT_DIR,
-        print_urls=True,
-        chromedriver='path/chromedriver'
+        chromedriver='path/chromedriver',
+        print_urls=False,
+        print_size=False,
+        print_paths=False,
         #format = gif,
     )
 

@@ -2,6 +2,7 @@
 import datetime
 import logging
 import os
+from pathlib import Path
 import shutil
 from typing import Dict, List
 
@@ -30,6 +31,9 @@ SCHEMA = "dbo"
 
 def delete_movie(conn: Connection, movie_id: int) -> None:
     """Delete Movie."""
+    if movie_id == -1:
+        return
+
     logger.info("Deleting movie %d from db", movie_id)
     remove_entry(conn, "MOVIES", ID=movie_id)
 
@@ -51,9 +55,30 @@ def delete_movie(conn: Connection, movie_id: int) -> None:
 
 def save_movie(conn: Connection, movie: Dict) -> None:
     """Save/Update movie."""
-    if movie.get("ID", None) is not None:
+    logger.info("Saving movie: %s", movie["TITLE"])
+    if movie.get("ID", -1) != -1:
         # We are not editing movie
         delete_movie(conn, movie["ID"])
+    else:
+        logger.info(
+            f"No pre-existing movie entry to remove for {movie['TITLE']}")
+
+    ############################################
+    # Clean movie information
+    ############################################
+    for k in movie:
+        try:
+            if movie[k] == -1:
+                movie[k] = None
+        # Handle exception in case is dataframe
+        except Exception as e:
+            continue
+        if k in ["YEAR", "RUNTIME", "BOX_OFFICE"]:
+            movie[k] = int(''.join([c for c in movie[k] if c.isnumeric()]))
+
+    #############################################
+    # Insert movie into DB
+    #############################################
 
     movie_id = add_entry(conn, "MOVIES", **movie)
 
@@ -63,15 +88,18 @@ def save_movie(conn: Connection, movie: Dict) -> None:
     img_dir = os.path.join(
         Path(__name__).parent.parent.parent,
         "website", "src", "static", "movie-pictures")
-    img_dst = MOVIE["TITLE"].lower().replace(
-        " ", "-") + "_" + str(MOVIE["YEAR"])
+    img_dst = movie["TITLE"].lower().replace(
+        " ", "-") + "_" + str(movie["YEAR"])
+
     existing_img_n = len([
-        f for f in listdir(img_dir)
-        if f.contains(img_dst)
+        f for f in os.listdir(img_dir)
+        if img_dst in f
     ])
+    logger.info("Moving %s to %s.", img_dst, img_dir)
+
     for image in movie["IMAGES"]:
         try:
-            if image["ID"] is None or not image["ID"]:
+            if image["ID"] is None or not image["ID"] or image["ID"] == -1:
                 ext = image["FILENAME"].split(".")[1]
                 dst = os.path.join(
                     img_dir,
@@ -136,8 +164,6 @@ def save_movie(conn: Connection, movie: Dict) -> None:
     for relationship in movie["RELATIONSHIPS"]:
         add_entry(conn, "CHARACTER_RELATIONSHIPS", **relationship)
 
-# TODO Handle list prop, not single val , isin
-
 
 def remove_entry(conn: Connection, table_name: str, return_prop=None, **properties) -> None:
     """Delete entry from table."""
@@ -198,7 +224,10 @@ def add_entry(conn: Connection, table_name: str, ID: int = None, **properties) -
         table_name, MetaData(), schema=SCHEMA, autoload_with=conn
     )
 
-    columns = conn.execute(table.select()).keys()
+    columns = [
+        k for k in conn.execute(table.select()).keys()
+        if k != "ID"
+    ]
 
     if not all([k.upper() in columns for k in properties]):
         logger.debug(
@@ -210,12 +239,12 @@ def add_entry(conn: Connection, table_name: str, ID: int = None, **properties) -
     properties = {k: v for k, v in properties.items() if k in columns}
 
     # ID should not be equal to 0
-    if ID is not None and ID:
-        logger.info("Inserting entry to %s", table_name)
-        conn.execute(update(table).where(table.c.ID == id).values(properties))
+    if ID != -1 and ID is not None and ID:
+        logger.info("Updating entry %d in %s", ID, table_name)
+        conn.execute(update(table).where(table.c.ID == ID).values(properties))
         return ID
     else:
-        logger.info("Updating entry %d in %s", ID, table_name)
+        logger.info("Inserting entry to %s", table_name)
         properties = {c: properties.get(c, None) for c in columns}
         result = conn.execute(
             table.insert(), properties

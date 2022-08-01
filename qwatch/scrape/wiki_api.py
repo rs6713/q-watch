@@ -36,6 +36,8 @@ class WIKIScraper(object):
         self.wiki_url = None
 
     def search(self, movie_title: str, year: int = None):
+        logger.info("Performing Wiki Search for %s year %s",
+                    movie_title, str(year))
         self.wiki_url = None
 
         search_term = movie_title + \
