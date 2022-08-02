@@ -1025,10 +1025,10 @@ class PeopleManagementPanel(ttk.Frame):
     def get_items(self) -> Dict:
         """ Get all characters/people/actions/relationships in movie self.people_overview."""
         return {
-            "characters": self.characterPage.get_contents(),
-            "people": self.personPage.get_contents(),
-            "relationships": self.relationshipPage.get_contents(),
-            "character_actions": self.actionPage.get_contents()
+            "characters": self.characterPage.get_contents().to_dict("records"),
+            "people": self.personPage.get_contents().to_dict("records"),
+            "relationships": self.relationshipPage.get_contents().to_dict("records"),
+            "character_actions": self.actionPage.get_contents().to_dict("records")
         }
 
     def update_people_overview(

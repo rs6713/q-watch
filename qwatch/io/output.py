@@ -24,6 +24,8 @@ from sqlalchemy.engine import (
     Engine
 )
 
+from qwatch.utils import describe_obj
+
 logger = logging.getLogger(__name__)
 
 SCHEMA = "dbo"
@@ -53,8 +55,8 @@ def delete_movie(conn: Connection, movie_id: int) -> None:
         remove_entry(conn, "CHARACTER_ACTIONS", CHARACTER_ID=characters)
 
 
-def save_movie(conn: Connection, movie: Dict) -> None:
-    """Save/Update movie."""
+def save_movie(conn: Connection, movie: Dict) -> int:
+    """Save/Update movie. Returns int of created movie id"""
     logger.info("Saving movie: %s", movie["TITLE"])
     if movie.get("ID", -1) != -1:
         # We are not editing movie
@@ -66,6 +68,8 @@ def save_movie(conn: Connection, movie: Dict) -> None:
     ############################################
     # Clean movie information
     ############################################
+    logger.info(
+        "Performing movie cleaning --> Converting entries to correct type")
     for k in movie:
         try:
             if movie[k] == -1:
@@ -75,11 +79,11 @@ def save_movie(conn: Connection, movie: Dict) -> None:
             continue
         if k in ["YEAR", "RUNTIME", "BOX_OFFICE"]:
             movie[k] = int(''.join([c for c in movie[k] if c.isnumeric()]))
+    # for k in ["IMAGES", "SOURCES", "CHARACTERS", "CHARACTER_ACTIONS", "GENRE", "REPRESENTATION", "TROPE_TRIGGER", "TYPE", "PEOPLE", "RELATIONSHIPS"]:
 
     #############################################
     # Insert movie into DB
     #############################################
-
     movie_id = add_entry(conn, "MOVIES", **movie)
 
     #############################################
@@ -97,7 +101,7 @@ def save_movie(conn: Connection, movie: Dict) -> None:
     ])
     logger.info("Moving %s to %s.", img_dst, img_dir)
 
-    for image in movie["IMAGES"]:
+    for image in (movie["IMAGES"] or []):
         try:
             if image["ID"] is None or not image["ID"] or image["ID"] == -1:
                 ext = image["FILENAME"].split(".")[1]
@@ -108,6 +112,7 @@ def save_movie(conn: Connection, movie: Dict) -> None:
                 shutil.copyfile(image["FILENAME"], dst)
                 image["FILENAME"] = img_dst + f"-{existing_img_n:03d}.{ext}"
                 existing_img_n += 1
+                logger.info("Copying image to %s", image["FILENAME"])
         except Exception as e:
             logger.warning(
                 "Failed to copy over image: %s",
@@ -116,25 +121,29 @@ def save_movie(conn: Connection, movie: Dict) -> None:
             continue
         # Hard reset image ID as won't exist anymore
         image["ID"] = None
-        add_entry(conn, "MOVIE_IMAGES", MOVIE_ID=movie_id, **image)
+        logger.info("Adding image for movie %d", movie_id)
+        add_entry(conn, "MOVIE_IMAGE", MOVIE_ID=movie_id, **image)
 
     ################################################
     # Sources
     ###############################################
-    for source in movie["SOURCES"]:
-        add_entry(conn, "MOVIE_SOURCES", MOVIE_ID=movie_id, **source)
+    logger.info("Adding %d sources", len((movie["SOURCES"] or [])))
+    for source in (movie["SOURCES"] or []):
+        add_entry(conn, "MOVIE_SOURCE", MOVIE_ID=movie_id, **source)
 
     ##############################################
     # Quotes
     ##############################################
-    for quote in movie["QUOTES"]:
-        add_entry(conn, "MOVIE_QUOTES", MOVIE_ID=movie_id, **quote)
+    logger.info("Adding %d quotes", len((movie["QUOTES"] or [])))
+    for quote in (movie["QUOTES"] or []):
+        add_entry(conn, "MOVIE_QUOTE", MOVIE_ID=movie_id, **quote)
 
     ################################################
     # Genres, Tropes, Representations, Types
     ################################################
     for props in ["GENRE", "REPRESENTATION", "TROPE_TRIGGER", "TYPE"]:
-        for selected_option in movie[props + "S"]:
+        logger.info("Saving  %d %sS", len((movie[props + "S"] or [])), props)
+        for selected_option in (movie[props + "S"] or []):
             add_entry(conn, f"MOVIE_{props}",
                       MOVIE_ID=movie_id, **selected_option)
 
@@ -143,7 +152,8 @@ def save_movie(conn: Connection, movie: Dict) -> None:
     #############################################
     # TODO More complex update of PERSON, properties, don't delete, recreate
     person_id_mappings = {}
-    for person in movie["PEOPLE"]:
+    logger.info("Adding %d people", len((movie["PEOPLE"] or [])))
+    for person in (movie["PEOPLE"] or []):
         orig_person_id = person["ID"]
         person_id = add_entry(conn, "PEOPLE", **person)
         person_id_mappings[orig_person_id] = person_id
@@ -153,16 +163,25 @@ def save_movie(conn: Connection, movie: Dict) -> None:
                 PERSON_ID=person_id, MOVIE_ID=movie_id, ROLE_ID=role_id
             )
 
-    for character in movie["CHARACTERS"]:
+    logger.info("Adding %d characters", len((movie["CHARACTERS"] or [])))
+    for character in (movie["CHARACTERS"] or []):
         character["ACTOR_ID"] = person_id_mappings[character["ACTOR_ID"]]
         character["MOVIE_ID"] = movie_id
         add_entry(
             conn, "CHARACTERS", **character
         )
-    for action in movie["CHARACTER_ACTIONS"]:
+
+    logger.info("Adding %d character actions", len(
+        (movie["CHARACTER_ACTIONS"] or [])))
+    for action in (movie["CHARACTER_ACTIONS"] or []):
         add_entry(conn, "CHARACTER_ACTIONS", **action)
-    for relationship in movie["RELATIONSHIPS"]:
+
+    logger.info("Adding %d character relationship",
+                len((movie["RELATIONSHIPS"] or [])))
+    for relationship in (movie["RELATIONSHIPS"] or []):
         add_entry(conn, "CHARACTER_RELATIONSHIPS", **relationship)
+
+    return movie_id
 
 
 def remove_entry(conn: Connection, table_name: str, return_prop=None, **properties) -> None:
@@ -216,9 +235,9 @@ def remove_entry(conn: Connection, table_name: str, return_prop=None, **properti
 # TODO Handle case where id is fake generated
 def add_entry(conn: Connection, table_name: str, ID: int = None, **properties) -> None:
     """Add/Update entry in specified table. Return generated/existing id."""
-    logger.info(
-        "Adding entry to %s, with props: %s",
-        table_name, str(properties)
+    logger.debug(
+        "Adding entry to %s, with props:\n%s",
+        table_name, describe_obj(properties)
     )
     table = Table(
         table_name, MetaData(), schema=SCHEMA, autoload_with=conn
@@ -249,7 +268,8 @@ def add_entry(conn: Connection, table_name: str, ID: int = None, **properties) -
         result = conn.execute(
             table.insert(), properties
         )
-        return result.inserted_primary_key
+        logger.info("Insert primary key %s", str(result.inserted_primary_key))
+        return result.inserted_primary_key[0] if len(result.inserted_primary_key) else None
 
 ###################################################################
 # User Interaction Commands
