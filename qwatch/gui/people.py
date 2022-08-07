@@ -3,6 +3,7 @@ import logging
 from typing import Callable, Dict, List, Optional, Union
 import uuid
 
+import numpy as np
 import pandas as pd
 import tkinter as tk
 from tkinter import ttk
@@ -540,7 +541,25 @@ class PersonPage(ttk.Frame):
         if self.people is None:
             return None
 
-        return pd.DataFrame(self.people)
+        if self.is_character:
+            logger.debug("Characters: %s", pd.DataFrame(self.people))
+            return pd.DataFrame(self.people)
+        else:
+            default_person = {
+                "DISABILITY": [],
+                "ETHNICITY": [],
+                "GENDER": None,
+                "DOB": "",
+                "SEXUALITY": None,
+                "BIO": "",
+                "TRANSGENDER": None
+            }
+            people = pd.DataFrame(
+                [{**default_person, **person} for person in self.people]
+            )
+            people = people.fillna(np.nan).replace([np.nan], [None])
+            logger.debug("People: %s", people)
+            return people
 
     def resize_window(self, event) -> None:
         """On resize of canvas, ensure subframe matches width."""
@@ -610,6 +629,13 @@ class PersonPage(ttk.Frame):
     def add_person_ui(self, person: Dict) -> None:
         """Add person to ui"""
         logger.debug(f"Adding person to UI in {__class__}: {person}")
+
+        person = {
+            k: v for k, v in person.items()
+            if v is not None and not (isinstance(v, float) and np.isnan(v))
+        }
+        logger.debug(
+            f"Adding person to UI in {__class__} post nan filter: {person}")
 
         personFrame = ttk.Frame(self.personContainer)
         # Name
@@ -1025,10 +1051,10 @@ class PeopleManagementPanel(ttk.Frame):
     def get_items(self) -> Dict:
         """ Get all characters/people/actions/relationships in movie self.people_overview."""
         return {
-            "characters": self.characterPage.get_contents().to_dict("records"),
-            "people": self.personPage.get_contents().to_dict("records"),
-            "relationships": self.relationshipPage.get_contents().to_dict("records"),
-            "character_actions": self.actionPage.get_contents().to_dict("records")
+            "CHARACTERS": self.characterPage.get_contents().to_dict("records"),
+            "PEOPLE": self.personPage.get_contents().to_dict("records"),
+            "RELATIONSHIPS": self.relationshipPage.get_contents().to_dict("records"),
+            "CHARACTER_ACTIONS": self.actionPage.get_contents().to_dict("records")
         }
 
     def update_people_overview(

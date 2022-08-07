@@ -318,12 +318,23 @@ class IMDBScraper(object):
         people = pd.DataFrame(people).groupby(["FIRST_NAME", "LAST_NAME"]).agg(
             {"ID": "first", "ROLE": list}).reset_index()
 
+        default_person = {
+            "DISABILITY": [],
+            "ETHNICITY": [],
+            "GENDER": None,
+            "DOB": "",
+            "SEXUALITY": None,
+            "BIO": "",
+            "TRANSGENDER": None
+        }
         with engine.connect() as conn:
             people = pd.DataFrame([{
+                **default_person,
                 **person,
                 **get_person_if_exists(conn, FIRST_NAME=person["FIRST_NAME"], LAST_NAME=person["LAST_NAME"]),
             } for person in people.to_dict("records")])
-
+            people = people.fillna(np.nan).replace([np.nan], [None])
+            logger.debug(people)
         # Get characters - after processing people for db matches
         characters = [
             {

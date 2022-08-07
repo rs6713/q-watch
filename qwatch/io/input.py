@@ -1,4 +1,5 @@
 """ Functions to retrieve data from SQL Server."""
+import logging
 from typing import Dict, List
 
 import pandas as pd
@@ -20,11 +21,14 @@ from sqlalchemy.engine import (
     Engine
 )
 from sqlalchemy.orm import aliased
-
 import sqlalchemy
 from sqlalchemy.sql.expression import cast
 
+from qwatch.utils import describe_obj
+
 SCHEMA = "dbo"
+
+logger = logging.getLogger(__file__)
 
 
 def get_movies_ids(conn: Connection, with_year=False) -> List[Dict]:
@@ -100,7 +104,27 @@ def get_person_if_exists(conn: Connection, **actor_props) -> Dict:
     person = results.to_dict("records")
 
     if len(person):
-        return person[0]
+        person = person[0]
+        logger.info(
+            "There is a pre-existing match for person %s %s in db, loading their info..",
+            person["FIRST_NAME"], person["LAST_NAME"]
+        )
+
+        ethnicities, _ = get_entries(
+            conn, "PERSON_ETHNICITY", PERSON_ID=person["ID"], IS_CHARACTER=0)
+        disabilities, _ = get_entries(
+            conn, "PERSON_DISABILITY", PERSON_ID=person["ID"], IS_CHARACTER=0)
+        if ethnicities:
+            person["ETHNICITY"] = [p["ETHNICITY_ID"]
+                                   for p in ethnicities]
+        if disabilities:
+            person["DISABILITY"] = [p["DISABILITY_ID"]
+                                    for p in disabilities]
+        return {
+            k: v for k, v in person.items()
+            if v is not None
+        }
+
     else:
         return {}
 
@@ -462,6 +486,47 @@ def get_people(conn: Connection, movie_id: int):
         "RELATIONSHIPS": relationships,
         "CHARACTER_ACTIONS": character_actions,
     }
+
+
+def get_entries(conn: Connection, table_name: str, ID: int = None, **properties) -> List[Dict]:
+    """Get entries that match ID/properties from table."""
+    logger.debug(
+        "Fetching entry in %s, with ID %d properties:\n%s",
+        table_name, ID, describe_obj(properties)
+    )
+    table = Table(table_name, MetaData(), schema=SCHEMA, autoload_with=conn)
+    table_columns = conn.execute(table.select()).keys()
+    columns = [
+        k for k in table_columns
+        if k != "ID"
+    ]
+
+    if not all([k.upper() in columns for k in properties]):
+        logger.warning(
+            "%s columns not found in table %s",
+            ", ".join([k for k in properties if k not in columns]),
+            table_name
+        )
+        return [], table_columns
+
+    if ID != -1 and ID is not None and ID:
+        query = select(table).where(table.c.ID == ID)
+    else:
+        query = select(table).filter(
+            *[
+                (table.c[k].isin(v)
+                 if isinstance(v, list)
+                 else table.c[k] == v)
+                for k, v in properties.items()
+            ]
+        )
+    matches = pd.DataFrame([
+        _._mapping for _ in conn.execute(query).fetchall()
+    ], columns=table_columns
+    ).to_dict("records")
+
+    logger.debug("There are %d matches", len(matches))
+    return matches, table_columns
 
 
 def get_images(conn: Connection, movie_id: int):

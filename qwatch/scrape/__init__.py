@@ -5,6 +5,9 @@ from typing import Dict
 
 from selenium import webdriver
 
+
+from qwatch.io import _create_engine
+from qwatch.io.input import get_entries
 from qwatch.scrape.imdb_api import IMDBScraper
 from qwatch.scrape.wiki_api import WIKIScraper
 
@@ -21,7 +24,7 @@ def scrape_movie_information(movie_title: str, year: str = None, open_urls=False
     imdb_information = imdb_scraper.scrape(movie_title, year)
     wiki_information = wiki_scraper.scrape(movie_title, year)
 
-    # Use wiki people to order people from imdb
+    # Use wiki people to order people from imdb -> tends to prioritize main characters
     if "PEOPLE" in wiki_information and wiki_information["PEOPLE"] is not None:
         actors = [p[0] for p in wiki_information["PEOPLE"]]
         characters = [p[1] for p in wiki_information["PEOPLE"]]

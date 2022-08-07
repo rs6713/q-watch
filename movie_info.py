@@ -23,7 +23,7 @@ from qwatch.scrape.imdb_api import IMDBScraper
 scraper = IMDBScraper()
 
 # %%
-res = scraper.scrape("but im a cheerleader")
+res = scraper.scrape("imagine me and you")
 
 # %%
 for k, v in res.items():
@@ -33,7 +33,7 @@ for k, v in res.items():
 
 ia = Cinemagoer()
 
-movies = ia.search_movie("blue is the warmest color")
+movies = ia.search_movie("rafiki 2018")
 print(movies[0].movieID)
 movie = ia.get_movie(movies[0].movieID)
 
@@ -55,6 +55,7 @@ html = browser.page_source
 # html = browser.page_source#site.text
 soup = BeautifulSoup(html, "html.parser")
 # %%
+soup.select('div:-soup-contains("Watch on BFI Player")')
 
 
 # %%
@@ -267,9 +268,9 @@ characters = [
 html = wikipedia.page("when night is falling (film)").html()
 page = BeautifulSoup(html, 'html.parser')
 # %%
-page.find("span", class="mw-headline", id="Cast").find_next_sibling(
+[person.text.split(" as ") for person in page.find("span", {"class": "mw-headline", "id": "Cast"}).parent.find_next_sibling(
     "ul"
-).findall("li")
+).find_all("li")]
 
 # %%
 
