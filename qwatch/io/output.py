@@ -70,16 +70,16 @@ def delete_movie(conn: Connection, movie_id: int) -> None:
         removed_entries = remove_entry(
             conn, f"MOVIE_{props}", return_prop="ID", MOVIE_ID=movie_id)
         # Remove votes associated with MOVIE_SOURCE
-        if props == "SOURCE":
+        if props == "SOURCE" and len(removed_entries):
             remove_entry(conn, "MOVIE_SOURCE_VOTE",
-                         MOVIE_SOURCE=removed_entries)
+                         MOVIE_SOURCE_ID=removed_entries)
 
     ##################################################
     # Remove People, Characters, Actions
     ##################################################
     remove_entry(conn, "PERSON_ROLE", MOVIE_ID=movie_id)
     characters = remove_entry(
-        conn, "CHARACTERS", MOVIE_ID=movie_id, return_prop="CHARACTER_ID")
+        conn, "CHARACTERS", MOVIE_ID=movie_id, return_prop="ID")
 
     if len(characters):
         remove_entry(conn, "CHARACTER_RELATIONSHIPS", CHARACTER_ID1=characters)
@@ -336,7 +336,6 @@ def save_movie(conn: Connection, movie: Dict) -> int:
         update_props = [
             "SOURCE",
             "TROPE_TRIGGER",
-            "QUOTE",
             "GENRE",
             "REPRESENTATION",
             "TYPE",
@@ -429,6 +428,17 @@ def save_movie(conn: Connection, movie: Dict) -> int:
                             prop
                         )
 
+        ######################################
+        # Save Quotes after character mappings
+        ######################################
+        if movie.get("QUOTES", None) is not None and len(movie["QUOTES"]):
+            for quote in movie["QUOTES"]:
+                quote["CHARACTER_ID"] = character_id_mappings[quote["CHARACTER_ID"]]
+
+            _ = update_entry_list(
+                conn, f"MOVIE_QUOTE", movie["QUOTES"], MOVIE_ID=movie_id
+            )
+
         logger.info("Adding %d character actions", len(
             (movie["CHARACTER_ACTIONS"] or [])))
         if movie["CHARACTER_ACTIONS"] is not None and len(movie["CHARACTER_ACTIONS"]):
@@ -454,7 +464,7 @@ def save_movie(conn: Connection, movie: Dict) -> int:
                 for r in movie["RELATIONSHIPS"]
             ]
             _ = update_entry_list(
-                conn, "RELATIONSHIPS", movie["RELATIONSHIPS"],
+                conn, "CHARACTER_RELATIONSHIPS", movie["RELATIONSHIPS"],
                 CHARACTER_ID1=existing_characters
             )
     except Exception as e:
@@ -466,6 +476,23 @@ def save_movie(conn: Connection, movie: Dict) -> int:
             logger.error(
                 "Cancelling movie creation process, and deleting all references")
             delete_movie(conn, movie_id)
+
+            img_dir = os.path.join(
+                Path(__name__).parent.parent.parent,
+                "website", "src", "static", "movie-pictures"
+            )
+            # Remove moved images
+            if movie.get("IMAGES", None) is not None:
+                for img in movie["IMAGES"]:
+                    if img.get("ID", None) is None:
+                        logger.error(
+                            "Removing img %s, moved to movie-pictures", img["FILENAME"])
+                        os.remove(
+                            os.path.join(
+                                img_dir,
+                                img["FILENAME"]
+                            )
+                        )
         raise e
 
     return movie_id
@@ -503,20 +530,22 @@ def remove_entry(conn: Connection, table_name: str, return_prop=None, **properti
 
     results = None
 
+    query = table.select().where(
+        and_(
+            *[
+                table.c[key] == val if not isinstance(
+                    val, list) else table.c[key].in_(val)
+                for key, val in properties.items()
+            ]
+        )
+    )
+    deleted_entries = pd.DataFrame([
+        _._mapping for _ in conn.execute(query).fetchall()
+    ], columns=conn.execute(query).keys())
+
     # Return list of return_prop, that represent items deleted
     if return_prop is not None:
-        query = select(table.c[return_prop]).where(
-            and_(
-                *[
-                    table.c[key] == val if not isinstance(
-                        val, list) else table.c[key].isin(val)
-                    for key, val in properties.items()
-                ]
-            )
-        )
-        results = pd.DataFrame([
-            _._mapping for _ in conn.execute(query).fetchall()
-        ], columns=[return_prop])[return_prop].values
+        results = deleted_entries[return_prop].values
 
     # Handle case where FILENAME in dir
     if table == "MOVIE_IMAGE":
@@ -524,7 +553,7 @@ def remove_entry(conn: Connection, table_name: str, return_prop=None, **properti
             and_(
                 *[
                     table.c[key] == val if not isinstance(
-                        val, list) else table.c[key].isin(val)
+                        val, list) else table.c[key].in_(val)
                     for key, val in properties.items()
                 ]
             )
@@ -545,13 +574,13 @@ def remove_entry(conn: Connection, table_name: str, return_prop=None, **properti
         and_(
             *[
                 table.c[key] == val if not isinstance(
-                    val, list) else table.c[key].isin(val)
+                    val, list) else table.c[key].in_(val)
                 for key, val in properties.items()
             ]
         )
     )
-    logger.info("Deleted entries matching %s from table %s.",
-                str(properties), table_name)
+    logger.info("Deleted %d entries matching %s from table %s.",
+                deleted_entries.shape[0], str(properties), table_name)
 
     return results
 

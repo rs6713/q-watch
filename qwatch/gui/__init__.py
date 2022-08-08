@@ -29,7 +29,7 @@ from qwatch.io.input import (
     _get_movie_properties,
     get_movie
 )
-from qwatch.io.output import save_movie
+from qwatch.io.output import delete_movie, save_movie
 from qwatch.scrape.images import scrape_movie_images
 from qwatch.scrape import scrape_movie_information
 from qwatch.gui.defaults import DEFAULTS
@@ -292,6 +292,8 @@ class MovieWindow():
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label='Save', command=self.save_movie)
         self.fileMenu.add_separator()
+        self.fileMenu.add_command(label='Delete', command=self.delete_movie)
+        self.fileMenu.add_separator()
         self.fileMenu.add_command(
             label='Options', command=partial(OptionsMenu, self.OPTIONS))
         self.fileMenu.add_command(label='Exit', command=self.root.destroy)
@@ -358,6 +360,45 @@ class MovieWindow():
                     )
                 }
             )
+
+    def delete_movie(self):
+        """Delete movie object from db."""
+        if self.movie["ID"].get() is None or not self.movie["ID"].get():
+
+            messagebox.showerror(
+                "showerror",
+                "Could not delete movie that doesn't exist in db!"
+            )
+        else:
+            delete_popup = tk.Toplevel(pady=5, padx=5)
+            delete_popup.wm_title(
+                f"Delete Movie {self.movie['TITLE'].get()}"
+            )
+
+            txt = ttk.Label(
+                delete_popup,
+                wraplength=300,
+                text="Are you sure you want to delete?"
+            )
+            txt.grid(row=0, column=0, columnspan=2, sticky="ew")
+
+            def delete_movie_func():
+                """ Delete movie in db, clear movie_entry gui, destroy window."""
+                engine = _create_engine()
+                with engine.connect() as conn:
+                    delete_movie(conn, movie_id=self.movie["ID"].get())
+                self.refresh()
+                delete_popup.destroy()
+
+            ttk.Button(
+                delete_popup, text="Delete",
+                command=delete_movie_func
+            ).grid(row=1, column=1, padx=(5, 0))
+
+            ttk.Button(
+                delete_popup, text="Cancel",
+                command=delete_popup.destroy
+            ).grid(row=1, column=0, padx=(0, 5))
 
     def save_movie(self):
         """ Create movie object and save."""

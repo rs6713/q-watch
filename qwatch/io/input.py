@@ -199,7 +199,8 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
     quote_query = select(
         movie_quote_table.c.ID,
         movie_quote_table.c.QUOTE,
-        movie_quote_table.c.CHARACTER_ID
+        movie_quote_table.c.CHARACTER_ID,
+        movie_quote_table.c.QUOTE_ID
     ).select_from(
         movie_quote_table
     ).where(
@@ -208,7 +209,7 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
     quotes = pd.DataFrame([
         row._mapping
         for row in conn.execute(quote_query).fetchall()
-    ], columns=["ID", "QUOTE", "CHARACTER_ID"]
+    ], columns=["ID", "QUOTE", "CHARACTER_ID", "QUOTE_ID"]
     )
     #quotes.CHARACTER_ID.fillna(0, inplace=True)
 
@@ -363,7 +364,7 @@ def get_people(conn: Connection, movie_id: int):
     agg_role = get_agg_role()
 
     character_query = select(
-        character_table.c.CHARACTER_ID.label("ID"),
+        character_table.c.ID,
         character_table.c.ACTOR_ID,
         character_table.c.FIRST_NAME,
         character_table.c.LAST_NAME,
@@ -379,9 +380,9 @@ def get_people(conn: Connection, movie_id: int):
         character_table.c.CAREER,
         character_table.c.BIO,
     ).select_from(character_table).join(
-        agg_disability_character, agg_disability_character.c.PERSON_ID == character_table.c.CHARACTER_ID, isouter=True
+        agg_disability_character, agg_disability_character.c.PERSON_ID == character_table.c.ID, isouter=True
     ).join(
-        agg_ethnicity_character, agg_ethnicity_character.c.PERSON_ID == character_table.c.CHARACTER_ID, isouter=True
+        agg_ethnicity_character, agg_ethnicity_character.c.PERSON_ID == character_table.c.ID, isouter=True
     ).where(
         character_table.c.MOVIE_ID == movie_id
     )
@@ -514,7 +515,7 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, **properties)
     else:
         query = select(table).filter(
             *[
-                (table.c[k].isin(v)
+                (table.c[k].in_(v)
                  if isinstance(v, list)
                  else table.c[k] == v)
                 for k, v in properties.items()

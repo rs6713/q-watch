@@ -301,7 +301,7 @@ class EditableList(ttk.Frame):
             widgets.destroy()
 
         # There are no items
-        if self.items is None:
+        if self.items is None or self.items.empty:
             return
 
         items = self.items.copy()
