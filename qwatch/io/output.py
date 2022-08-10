@@ -7,6 +7,7 @@ from pathlib import Path
 import shutil
 from typing import Dict, List, Optional, Tuple
 
+import numpy as np
 import pandas as pd
 from sqlalchemy import (
     and_,
@@ -78,13 +79,18 @@ def delete_movie(conn: Connection, movie_id: int) -> None:
     # Remove People, Characters, Actions
     ##################################################
     remove_entry(conn, "PERSON_ROLE", MOVIE_ID=movie_id)
-    characters = remove_entry(
+    character_ids = remove_entry(
         conn, "CHARACTERS", MOVIE_ID=movie_id, return_prop="ID")
+    character_ids = [
+        int(i) for i in character_ids
+    ]
 
-    if len(characters):
-        remove_entry(conn, "CHARACTER_RELATIONSHIPS", CHARACTER_ID1=characters)
-        remove_entry(conn, "CHARACTER_RELATIONSHIPS", CHARACTER_ID2=characters)
-        remove_entry(conn, "CHARACTER_ACTIONS", CHARACTER_ID=characters)
+    if len(character_ids):
+        remove_entry(conn, "CHARACTER_RELATIONSHIPS",
+                     CHARACTER_ID1=character_ids)
+        remove_entry(conn, "CHARACTER_RELATIONSHIPS",
+                     CHARACTER_ID2=character_ids)
+        remove_entry(conn, "CHARACTER_ACTIONS", CHARACTER_ID=character_ids)
 
 
 def preprocess_movie(movie: Dict) -> Dict:
@@ -111,8 +117,12 @@ def preprocess_movie(movie: Dict) -> Dict:
         # Handle exception in case movie[k] is dataframe
         except Exception as e:
             continue
-        if k in ["YEAR", "RUNTIME", "BOX_OFFICE"]:
-            movie[k] = int(''.join([c for c in movie[k] if c.isnumeric()]))
+        if k in ["YEAR", "RUNTIME", "BOX_OFFICE", "BUDGET"]:
+            num_prop = [c for c in movie[k] if c.isnumeric()]
+            if len(num_prop):
+                movie[k] = int(''.join(num_prop))
+            else:
+                movie[k] = None
 
     ###################################################
     # If an image is new, copy it to movie-pictures dir
@@ -127,7 +137,7 @@ def preprocess_movie(movie: Dict) -> Dict:
 
         # Determine next image numeric id
         existing_imgs = [
-            int(f.split("-")[-1].split(".")[0])
+            int(f.split(".")[0].split("-")[-1])
             for f in os.listdir(img_dir)
             if img_name in f
         ]
@@ -372,21 +382,15 @@ def save_movie(conn: Connection, movie: Dict) -> int:
 
             # Add ROLES, DISABILITIES, ETHNICITIES
             for prop in ["ROLE", "DISABILITY", "ETHNICITY"]:
-                if prop in person:
-                    if prop == "ROLE":
-                        _ = update_entry_by_id_list(
-                            conn, f"PERSON_{prop}", person[prop],
-                            PERSON_ID=person["ID"], MOVIE_ID=movie_id
-                        )
-                    else:
-                        _ = update_entry_by_id_list(
-                            conn, f"PERSON_{prop}", person[prop],
-                            PERSON_ID=person["ID"], IS_CHARACTER=0
-                        )
+                if prop == "ROLE":
+                    _ = update_entry_by_id_list(
+                        conn, f"PERSON_{prop}", person.get(prop, []),
+                        PERSON_ID=person["ID"], MOVIE_ID=movie_id
+                    )
                 else:
-                    logger.warning(
-                        "Couldn't update entries by id list in %s as doesn't exist in person",
-                        prop
+                    _ = update_entry_by_id_list(
+                        conn, f"PERSON_{prop}", person.get(prop, []),
+                        PERSON_ID=person["ID"], IS_CHARACTER=0
                     )
 
         existing_characters = [
@@ -417,22 +421,18 @@ def save_movie(conn: Connection, movie: Dict) -> int:
             for character in movie["CHARACTERS"]:
                 # Add DISABILITIES, ETHNICITIES
                 for prop in ["DISABILITY", "ETHNICITY"]:
-                    if prop in character:
-                        _ = update_entry_by_id_list(
-                            conn, f"PERSON_{prop}", character[prop],
-                            PERSON_ID=character["ID"], IS_CHARACTER=1,
-                        )
-                    else:
-                        logger.warning(
-                            "Couldn't update agg entry list %s as doesn't exist in character",
-                            prop
-                        )
+                    _ = update_entry_by_id_list(
+                        conn, f"PERSON_{prop}", character.get(prop, []),
+                        PERSON_ID=character["ID"], IS_CHARACTER=1,
+                    )
 
         ######################################
         # Save Quotes after character mappings
         ######################################
+        logger.debug("Character ID Mappings %s", str(character_id_mappings))
         if movie.get("QUOTES", None) is not None and len(movie["QUOTES"]):
             for quote in movie["QUOTES"]:
+
                 quote["CHARACTER_ID"] = character_id_mappings[quote["CHARACTER_ID"]]
 
             _ = update_entry_list(
@@ -442,19 +442,30 @@ def save_movie(conn: Connection, movie: Dict) -> int:
         logger.info("Adding %d character actions", len(
             (movie["CHARACTER_ACTIONS"] or [])))
         if movie["CHARACTER_ACTIONS"] is not None and len(movie["CHARACTER_ACTIONS"]):
+            logger.debug("Pre-map Movie Character Actions: \n%s",
+                         str(movie["CHARACTER_ACTIONS"]))
             movie["CHARACTER_ACTIONS"] = [
                 {**ca,
                     "CHARACTER_ID": character_id_mappings[ca["CHARACTER_ID"]]}
                 for ca in movie["CHARACTER_ACTIONS"]
             ]
-            _ = update_entry_list(
-                conn, "CHARACTER_ACTIONS", movie["CHARACTER_ACTIONS"],
-                CHARACTER_ID=existing_characters
-            )
+            logger.debug("Post-map Movie Character Actions: \n%s",
+                         str(movie["CHARACTER_ACTIONS"]))
+            for character_action in movie["CHARACTER_ACTIONS"]:
+                _ = update_entry_by_id_list(
+                    conn, "CHARACTER_ACTIONS", character_action.get(
+                        "ACTION_ID", []),
+                    CHARACTER_ID=character_action["CHARACTER_ID"],
+                )
 
         logger.info("Adding %d character relationship",
                     len((movie["RELATIONSHIPS"] or [])))
         if movie["RELATIONSHIPS"] is not None and len(movie["RELATIONSHIPS"]):
+            for r in movie["RELATIONSHIPS"]:
+                if not(
+                        isinstance(character["ID"], numbers.Number) and len(str(character["ID"])) < 15):
+                    r["ID"] = None
+
             movie["RELATIONSHIPS"] = [
                 {
                     **r,
@@ -463,14 +474,15 @@ def save_movie(conn: Connection, movie: Dict) -> int:
                 }
                 for r in movie["RELATIONSHIPS"]
             ]
+            logger.debug(describe_obj(movie["RELATIONSHIPS"]))
             _ = update_entry_list(
                 conn, "CHARACTER_RELATIONSHIPS", movie["RELATIONSHIPS"],
                 CHARACTER_ID1=existing_characters
             )
     except Exception as e:
         logger.error(
-            "Error while saving movie %s, %s.",
-            movie_id, movie["TITLE"]
+            "Error while saving movie %s, %s.\n %s",
+            movie_id, movie["TITLE"], str(e)
         )
         if not MOVIE_EXISTS:
             logger.error(
@@ -534,7 +546,7 @@ def remove_entry(conn: Connection, table_name: str, return_prop=None, **properti
         and_(
             *[
                 table.c[key] == val if not isinstance(
-                    val, list) else table.c[key].in_(val)
+                    val, (np.ndarray, list)) else table.c[key].in_(list(val))
                 for key, val in properties.items()
             ]
         )
@@ -553,7 +565,8 @@ def remove_entry(conn: Connection, table_name: str, return_prop=None, **properti
             and_(
                 *[
                     table.c[key] == val if not isinstance(
-                        val, list) else table.c[key].in_(val)
+                        val, (list, np.ndarray)) else table.c[key].in_(list([
+                            int(v) for v in val]))
                     for key, val in properties.items()
                 ]
             )
@@ -570,15 +583,17 @@ def remove_entry(conn: Connection, table_name: str, return_prop=None, **properti
             logger.info("Deleting file %s", os.path.join(img_dir, img))
             os.remove(os.path.join(img_dir, img))
 
-    delete(table).where(
+    delete_query = delete(table).where(
         and_(
             *[
                 table.c[key] == val if not isinstance(
-                    val, list) else table.c[key].in_(val)
+                    val, (np.ndarray, list)) else table.c[key].in_(list([int(v) for v in val]))
                 for key, val in properties.items()
             ]
         )
     )
+    conn.execute(delete_query)
+
     logger.info("Deleted %d entries matching %s from table %s.",
                 deleted_entries.shape[0], str(properties), table_name)
 
@@ -604,10 +619,6 @@ def add_update_entry(conn: Connection, table_name: str, ID: int = None, **proper
     -------
     int: ID of inserted/updated row
     """
-    logger.debug(
-        "Adding entry to %s, with props:\n%s",
-        table_name, describe_obj(properties)
-    )
     table = Table(
         table_name, MetaData(), schema=SCHEMA, autoload_with=conn
     )
@@ -640,7 +651,8 @@ def add_update_entry(conn: Connection, table_name: str, ID: int = None, **proper
         result = conn.execute(
             table.insert(), properties
         )
-        logger.debug("Insert primary key %s", str(result.inserted_primary_key))
+        logger.debug("Produced primary key %s",
+                     str(result.inserted_primary_key))
         return result.inserted_primary_key[0] if len(result.inserted_primary_key) else None
 
 ###################################################################

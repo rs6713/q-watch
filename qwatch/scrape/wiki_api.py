@@ -81,7 +81,7 @@ class WIKIScraper(object):
         try:
             return [person.text.lower().split(" as ") for person in self.page.find("span", {"class": "mw-headline", "id": "Cast"}).parent.find_next_sibling(
                 "ul"
-            ).find_all("li")]
+            ).find_all("li") if " as " in person]
         except Exception as e:
             logger.warning(e)
             logger.warning("No characters found in wiki page")

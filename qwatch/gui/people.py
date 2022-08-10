@@ -676,10 +676,10 @@ class PersonPage(ttk.Frame):
         )
 
         if self.is_character:
-            if person.get("ACTOR", None) is not None:
+            if person.get("ACTOR_ID", None) is not None:
 
                 actor = [a for a in self.actors if a["ID"]
-                         == person["ACTOR"]][0]
+                         == person["ACTOR_ID"]][0]
                 actor = f"{actor['FIRST_NAME']} {actor['LAST_NAME']}"
             else:
                 actor = "[ACTOR UNKNOWN]"
@@ -853,7 +853,7 @@ class CreatePerson(tk.Toplevel):
                 "CAREER": self.career_menu.get_selected_option(),
                 "HAIR_COLOR": self.hair_color.get(),
                 "MAIN": self.main.get(),
-                "ACTOR": self.actor_menu.get_selected_option() if hasattr(self, "actor_menu") else None,
+                "ACTOR_ID": self.actor_menu.get_selected_option() if hasattr(self, "actor_menu") else None,
             }
         else:
             self.person = {
@@ -948,7 +948,7 @@ class CreatePerson(tk.Toplevel):
                 f'{a["FIRST_NAME"]} {a["LAST_NAME"]}' for a in self.actors]
             actors.loc[:, "ID"] = [a["ID"] for a in self.actors]
             self.actor_menu = MenuSingleSelector(
-                level2, "Actor", actors, default=self.person.get("ACTOR", None)
+                level2, "Actor", actors, default=self.person.get("ACTOR_ID", None)
             )
             self.actor_menu.pack(
                 side="left", fill=tk.X, expand=True, padx=(0, 5)

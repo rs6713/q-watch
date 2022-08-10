@@ -2,6 +2,7 @@
 import logging
 from typing import Dict, List
 
+import numpy as np
 import pandas as pd
 from sqlalchemy import (
     and_,
@@ -421,6 +422,10 @@ def get_people(conn: Connection, movie_id: int):
         agg_disability, agg_disability.c.PERSON_ID == people_table.c.ID, isouter=True
     ).join(
         agg_ethnicity, agg_ethnicity.c.PERSON_ID == people_table.c.ID, isouter=True
+    ).join(
+        person_role_table, person_role_table.c.PERSON_ID == people_table.c.ID
+    ).where(
+        person_role_table.c.MOVIE_ID == movie_id
     )
     """
     .where(
@@ -493,7 +498,7 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, **properties)
     """Get entries that match ID/properties from table."""
     logger.debug(
         "Fetching entry in %s, with ID %d properties:\n%s",
-        table_name, ID, describe_obj(properties)
+        table_name, (ID or -1), describe_obj(properties)
     )
     table = Table(table_name, MetaData(), schema=SCHEMA, autoload_with=conn)
     table_columns = conn.execute(table.select()).keys()
@@ -515,8 +520,8 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, **properties)
     else:
         query = select(table).filter(
             *[
-                (table.c[k].in_(v)
-                 if isinstance(v, list)
+                (table.c[k].in_(list(v))
+                 if isinstance(v, (list, np.ndarray))
                  else table.c[k] == v)
                 for k, v in properties.items()
             ]
