@@ -172,9 +172,11 @@ class EditableList(ttk.Frame):
         """
         Need to translate cols to tkinter variables.
         """
+
         if items is None:
             return items
 
+        logger.debug("Procesing in EditableList %s items %s", self.name, items)
         item_var_map = {
             "ENTRY": tk.StringVar,
             "DROPDOWN": tk.IntVar,
@@ -182,11 +184,13 @@ class EditableList(ttk.Frame):
             "NUM_ENTRY": tk.StringVar,
         }
 
-        def valid_check(data_type, val):
+        def valid_check(data_type: str, val):
             """ If data type is invalid for var type, load empty variable."""
             if data_type in ["DROPDOWN", "BOOLEAN"]:
                 if isinstance(val, (bool, int, np.int64, np.int32)):
                     return True
+                logger.debug(
+                    "VALID_CHECK value %s for %s is invalid", str(val), data_type)
                 return False
             if data_type in ["NUM_ENTRY"]:
                 if isinstance(val, (float, int, np.int64, np.int32, np.float32, np.float64)) and not np.isnan(val):
@@ -197,7 +201,7 @@ class EditableList(ttk.Frame):
                 return False
             return True
 
-        return pd.DataFrame([
+        items = pd.DataFrame([
             [
                 item[c] if c not in self.item_map.keys(
                 ) else (
@@ -207,8 +211,11 @@ class EditableList(ttk.Frame):
                 )
                 for c in items.columns
             ]
-            for _, item in items.iterrows()
+            for item in items.to_dict("records")
         ], columns=items.columns, index=items.index)
+
+        logger.debug("EditableList Processed items: %s", items)
+        return items
 
     def add_item(self, group=None) -> None:
         """ Note: Button next to label to add an item."""
@@ -224,7 +231,6 @@ class EditableList(ttk.Frame):
             new_item += [item_var_map[self.item_map[col]]()]
 
         # Add item to items, and update visuals.
-
         if self.items is None:
             if self.group is not None:
                 new_id = uuid.uuid4().int & (1 << 64)-1
@@ -287,7 +293,7 @@ class EditableList(ttk.Frame):
             for _, item in self.items.iterrows()
         ], columns=self.items.columns, index=self.items.index)
 
-    def load(self, items=None, options=None) -> None:
+    def load(self, items: pd.DataFrame = None, options=None) -> None:
         if items is not None:
             self.items = self.process_items(items)
         if options is not None:

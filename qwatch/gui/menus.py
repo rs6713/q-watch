@@ -44,7 +44,7 @@ class MenuSingleSelector(ttk.Menubutton):
         if default is not None:
             self.selected_variable.set(default)
 
-        if self.selected_variable.get():
+        if self.selected_variable.get() and self.selected_variable.get() != -1:
             self.set_menu_label()
 
     def set_menu_label(self):

@@ -6,6 +6,7 @@ import uuid
 import numpy as np
 import pandas as pd
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import ttk
 
 from qwatch.io import _create_engine
@@ -46,7 +47,7 @@ class ActionsPage(ttk.Frame):
 
         ttk.Label(actionsHeader, text="Add Character Actions").pack(
             side="left", padx=(0, 10))
-        ttk.Button(actionsHeader, text="+", command=lambda: self.add_character_action()).pack(
+        ttk.Button(actionsHeader, text="+", command=self.add_character_action).pack(
             side="left", pady=5, padx=5
         )
 
@@ -122,7 +123,7 @@ class ActionsPage(ttk.Frame):
         return pd.DataFrame([
             {"LABEL": c["FIRST_NAME"] + " " + c["LAST_NAME"], "ID": c["ID"]}
             for c in characters.to_dict("records")
-        ])
+        ], columns=["LABEL", "ID"])
 
     def update_contents(self, characters: pd.DataFrame = None) -> None:
         if characters is not None:
@@ -133,15 +134,15 @@ class ActionsPage(ttk.Frame):
             # Only keep character actions associated with existing characters
             self.character_actions = [
                 r for r in self.character_actions
-                if r["CHARACTER_ID"].get() in [c["ID"] for c in self.characters]
+                if r["CHARACTER_ID"].get() in self.characters["ID"].values
             ]
 
         self.refresh_ui()
 
-    def delete_character_action(self, idd: int) -> None:
-        logger.debug(f"Deleting character action {idd}")
+    def delete_character_action(self, action_id: int) -> None:
+        logger.debug(f"Deleting character action {action_id}")
         self.character_actions = [
-            ca for ca in self.character_actions if ca["CHARACTER_ID"] != idd
+            ca for ca in self.character_actions if ca["CHARACTER_ID"] != action_id
         ]
         self.refresh_ui()
 
@@ -314,7 +315,7 @@ class RelationshipPage(ttk.Frame):
         """Convert relationships to variables for interaction."""
         return [
             {
-                "ID": uuid.uuid4().int & (1 << 64)-1,
+                "ID": r["ID"],
                 "CHARACTER_ID1": tk.IntVar(value=r["CHARACTER_ID1"]),
                 "CHARACTER_ID2": tk.IntVar(value=r["CHARACTER_ID2"]),
                 "RELATIONSHIP_ID": tk.IntVar(value=r["RELATIONSHIP_ID"]),
@@ -328,18 +329,23 @@ class RelationshipPage(ttk.Frame):
         return pd.DataFrame([
             {"LABEL": c["FIRST_NAME"] + " " + c["LAST_NAME"], "ID": c["ID"]}
             for c in characters.to_dict("records")
-        ])
+        ], columns=["LABEL", "ID"])
 
     def update_contents(self, characters: pd.DataFrame = None) -> pd.DataFrame:
         if characters is not None:
             self.characters = self.process_characters(characters)
 
+            self.relationships = [
+                r for r in self.relationships
+                if r["CHARACTER_ID1"].get() in self.characters.ID.values and r["CHARACTER_ID2"].get() in self.characters.ID.values
+            ]
+
         self.refresh_ui()
 
-    def delete_relationship(self, idd: int) -> None:
-        logger.debug(f"Deleting relationship {idd}")
+    def delete_relationship(self, relationship_id: int) -> None:
+        logger.debug(f"Deleting relationship {relationship_id}")
         self.relationships = [
-            r for r in self.relationships if r["ID"] != idd
+            r for r in self.relationships if r["ID"] != relationship_id
         ]
         self.refresh_ui()
 
@@ -361,7 +367,7 @@ class RelationshipPage(ttk.Frame):
                 "ID": r["ID"]
             }
             for r in self.relationships
-            if r["CHARACTER_ID1"] != 0 and r["CHARACTER_ID2"] != 0 and r["RELATIONSHIP_ID"] != 0
+            if r["CHARACTER_ID1"].get() > 0 and r["CHARACTER_ID2"].get() > 0 and r["RELATIONSHIP_ID"].get() != 0
         ])
         logger.debug("Character Relationships: %s", relationships)
 
@@ -369,6 +375,7 @@ class RelationshipPage(ttk.Frame):
 
     def add_relationship(self, relationship: Dict = None) -> None:
         if relationship is None:
+            # New relationship needs generated id
             relationship = {
                 "ID": uuid.uuid4().int & (1 << 64)-1,
                 "CHARACTER_ID1": tk.IntVar(),
@@ -542,8 +549,25 @@ class PersonPage(ttk.Frame):
             return None
 
         if self.is_character:
-            logger.debug("Characters: %s", pd.DataFrame(self.people))
-            return pd.DataFrame(self.people)
+            default_character = {
+                "DISABILITY": [],
+                "ETHNICITY": [],
+                "GENDER": None,
+                "MAIN": None,
+                "SEXUALITY": None,
+                "TRANSGENDER": None,
+                "HAIR_COLOR": "",
+                "CAREER": None,
+                "BIO": ""
+            }
+            characters = pd.DataFrame([
+                {**default_character, **character}
+                for character in self.people
+            ])
+            characters = characters.fillna(np.nan).replace([np.nan], [None])
+            logger.debug("Characters: %s", characters)
+
+            return characters
         else:
             default_person = {
                 "DISABILITY": [],
@@ -579,6 +603,7 @@ class PersonPage(ttk.Frame):
             ]
 
         else:
+            logger.info("Loading people\n%s", people.to_dict("records"))
             self.people = [] if people is None else people.to_dict("records")
             self.actors = None
         self.refresh_ui()
@@ -602,6 +627,9 @@ class PersonPage(ttk.Frame):
 
         # Update People lists for other people management pages
         prop = "characters" if self.is_character else "people"
+        if not self.is_character:
+            logger.debug("%s Delete post update: \n%s",
+                         prop, pd.DataFrame(self.people))
 
         self.update_people(**{prop: pd.DataFrame(self.people)})
 
@@ -638,7 +666,9 @@ class PersonPage(ttk.Frame):
             f"Adding person to UI in {__class__} post nan filter: {person}")
 
         personFrame = ttk.Frame(self.personContainer)
-        # Name
+
+        # Create descriptors sentence for person
+        # Name, DOB, ROLE, CAREER, Main Character?
         descriptors = [
             f"{person.get('FIRST_NAME', '[FIRST NAME UNKNOWN]')} {person.get('LAST_NAME', '[LAST_NAME UNKNOWN]')}"]
 
@@ -665,6 +695,7 @@ class PersonPage(ttk.Frame):
         ))
         lbl.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="w")
 
+        # Create . separated list of identities for person/character
         identities = []
         for identity in ["SEXUALITY", "GENDER", "TRANSGENDER", "ETHNICITY", "DISABILITY"]:
             identities.append(self.get_options(person, identity))
@@ -674,7 +705,7 @@ class PersonPage(ttk.Frame):
         ttk.Label(personFrame, text=" \u2022 ".join(identities)).grid(
             row=1, column=0, padx=5, pady=(0, 5), sticky="w"
         )
-
+        # If character, display actor they are portrayed by
         if self.is_character:
             if person.get("ACTOR_ID", None) is not None:
 
@@ -688,12 +719,13 @@ class PersonPage(ttk.Frame):
                 row=2, column=0, padx=5, pady=(0, 5), sticky="w"
             )
 
+        # Character / Actor BIO
         ttk.Label(personFrame, text=person.get("BIO", "")).grid(
             row=3, column=0, padx=5, pady=5, sticky="w"
         )
 
         ################################################
-        # Command Panel
+        # Command Panel - Edit/Remove Person/Character
         ################################################
         ttk.Button(
             personFrame, text="Remove", command=partial(self.delete_person, person["ID"])
@@ -721,6 +753,13 @@ class PersonPage(ttk.Frame):
         if self.is_character and people is not None:
             logger.debug(f"There are {len(people.to_dict('records'))} actors")
             self.actors = people.to_dict("records")
+            # Remove characters, whose actors do not exist anymore
+            self.people = [
+                person if person["ACTOR_ID"] in [a["ID"] for a in self.actors]
+                else {**person, "ACTOR_ID": None}
+                for person in self.people
+            ]
+            self.refresh_ui()
 
     def get_options(self, person: Dict, option: str, OPTIONS: pd.DataFrame = None) -> str:
         # Get Options from
@@ -812,6 +851,8 @@ class AddPerson(tk.Toplevel):
 
 
 class CreatePerson(tk.Toplevel):
+    """ UI to create/edit Character/Person. Then save using external func save_action"""
+
     def __init__(self, save_action: Callable, is_character: bool, person: Dict = None, actors: List[Dict] = None, options: Dict = None) -> None:
         tk.Toplevel.__init__(self, pady=5, padx=5)
         self.wm_title(
@@ -830,10 +871,15 @@ class CreatePerson(tk.Toplevel):
         self.create_ui()
 
     def validate_contents(self) -> bool:
+        """TODO: Validate entry for person/character qualities."""
         return True
 
     def save(self) -> None:
         if not self.validate_contents():
+            messagebox.showerror(
+                "showerror",
+                f"Could not save {'person' if not self.is_character else 'character'} due to invalid data entry."
+            )
             return
 
         self.person = {
@@ -1063,18 +1109,18 @@ class PeopleManagementPanel(ttk.Frame):
         Called to subpages, to update their contents with new people.
         Depending on which properties have been updated.
         """
-        logger.debug(f"Update People Qualities")
+        logger.debug(f"Update People Overview")
 
         if people is not None:
-            logger.debug("Updating character page contents")
+            logger.debug("Updating character page contents with new people\n%s", str(
+                people.to_dict("records")))
             self.characterPage.update_contents(
                 people=people
             )
-            # TODO update relationships options
 
         if characters is not None:
-            # TODO Update relationships/actions options
-            logger.debug("Update relationships/actions")
+            logger.debug("Update relationships/actions with new characters\n%s",
+                         str(characters.to_dict("records")))
             self.relationshipPage.update_contents(characters=characters)
             self.actionPage.update_contents(characters=characters)
 

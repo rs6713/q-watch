@@ -165,6 +165,9 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
     movie_image_table = Table(
         "MOVIE_IMAGE", meta, schema=SCHEMA, autoload_with=conn
     )
+    movie_source_table = Table(
+        "MOVIE_SOURCE", meta, schema=SCHEMA, autoload_with=conn
+    )
 
     # intensity_table = Table(
     #     "INTENSITYS", meta, schema=SCHEMA, autoload_with=conn)
@@ -249,9 +252,26 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
         conn, "REPRESENTATION", movie_id, addit_props=["MAIN"])
     tropes = _get_movie_properties(conn, "TROPE_TRIGGER", movie_id)
     qualities = _get_movie_properties(conn, "QUALITY", movie_id)
-    sources = _get_movie_properties(
-        conn, "SOURCE", movie_id, addit_props=["COST", "MEMBERSHIP_INCLUDED"]
+    # sources = _get_movie_properties(
+    #     conn, "SOURCE", movie_id, addit_props=["COST", "MEMBERSHIP_INCLUDED"]
+    # ).loc[:, ["ID", "SOURCE_ID"]]
+
+    source_query = select(
+        movie_source_table.c.ID,
+        movie_source_table.c.SOURCE_ID,
+        movie_source_table.c.COST,
+        movie_source_table.c.MEMBERSHIP_INCLUDED
+    ).select_from(
+        movie_source_table
+    ).where(
+        movie_source_table.c.MOVIE_ID == movie_id
     )
+    sources = pd.DataFrame([
+        row._mapping
+        for row in conn.execute(source_query).fetchall()
+    ], columns=["ID", "SOURCE_ID", "COST", "MEMBERSHIP_INCLUDED"]
+    )
+    sources.loc[:, "SOURCE_ID"] = sources.SOURCE_ID.astype(int)
 
     characters_people_dict = get_people(conn, movie_id)
     # TODO: Fetch images, captchas associated with movie
@@ -301,9 +321,9 @@ def get_people(conn: Connection, movie_id: int):
     character_table = Table(
         "CHARACTERS", meta, schema=SCHEMA, autoload_with=conn)
     character_relationship_table = Table(
-        "CHARACTER_RELATIONSHIPS", meta, schema=SCHEMA, autoload_with=conn)
+        "CHARACTER_RELATIONSHIP", meta, schema=SCHEMA, autoload_with=conn)
     character_action_table = Table(
-        "CHARACTER_ACTIONS", meta, schema=SCHEMA, autoload_with=conn
+        "CHARACTER_ACTION", meta, schema=SCHEMA, autoload_with=conn
     )
 
     def get_agg_ethnicity(is_character=False):
@@ -458,6 +478,7 @@ def get_people(conn: Connection, movie_id: int):
         )
 
     relationship_query = select(
+        character_relationship_table.c.ID,
         character_relationship_table.c.CHARACTER_ID1,
         character_relationship_table.c.CHARACTER_ID2,
         character_relationship_table.c.RELATIONSHIP_ID,
@@ -475,6 +496,7 @@ def get_people(conn: Connection, movie_id: int):
     ], columns=conn.execute(relationship_query).keys())
 
     actions_query = select(
+        character_action_table.c.ID,
         character_action_table.c.CHARACTER_ID,
         character_action_table.c.ACTION_ID
     ).where(
@@ -497,8 +519,8 @@ def get_people(conn: Connection, movie_id: int):
 def get_entries(conn: Connection, table_name: str, ID: int = None, **properties) -> List[Dict]:
     """Get entries that match ID/properties from table."""
     logger.debug(
-        "Fetching entry in %s, with ID %d properties:\n%s",
-        table_name, (ID or -1), describe_obj(properties)
+        "Fetching entry in %s, with ID %s properties:\n%s",
+        table_name, str((ID or 'None')), describe_obj(properties)
     )
     table = Table(table_name, MetaData(), schema=SCHEMA, autoload_with=conn)
     table_columns = conn.execute(table.select()).keys()

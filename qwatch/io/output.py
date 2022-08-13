@@ -86,11 +86,15 @@ def delete_movie(conn: Connection, movie_id: int) -> None:
     ]
 
     if len(character_ids):
-        remove_entry(conn, "CHARACTER_RELATIONSHIPS",
+        remove_entry(conn, "CHARACTER_RELATIONSHIP",
                      CHARACTER_ID1=character_ids)
-        remove_entry(conn, "CHARACTER_RELATIONSHIPS",
+        remove_entry(conn, "CHARACTER_RELATIONSHIP",
                      CHARACTER_ID2=character_ids)
-        remove_entry(conn, "CHARACTER_ACTIONS", CHARACTER_ID=character_ids)
+        remove_entry(conn, "CHARACTER_ACTION", CHARACTER_ID=character_ids)
+        remove_entry(conn, "PERSON_ETHNICITY",
+                     IS_CHARACTER=1, PERSON_ID=character_ids)
+        remove_entry(conn, "PERSON_DISABILITY",
+                     IS_CHARACTER=1, PERSON_ID=character_ids)
 
 
 def preprocess_movie(movie: Dict) -> Dict:
@@ -202,8 +206,8 @@ def update_entry_by_id_list(conn: Connection, table_name: str, id_list: List[int
     List[int]
         ID's of rows associated with match criteria, post db insertions/deletions
     """
-    logger.info("update_entry_by_id_list Saving/Updating  %d entries in %s",
-                len((id_list or [])), table_name)
+    logger.info("update_entry_by_id_list Saving/Updating %d entries in %s with match criteria \n  %s",
+                len((id_list or [])), table_name, str(match_criteria))
     prop = table_name.split("_")[-1]
 
     existing_entries, _ = get_entries(conn, table_name, **match_criteria)
@@ -221,8 +225,15 @@ def update_entry_by_id_list(conn: Connection, table_name: str, id_list: List[int
         for entry_id in removed_entries:
             remove_entry(conn, table_name, ID=entry_id)
 
+        # Remove ids that already exist
+        id_list = [
+            i for i in id_list if i not in [
+                entry[f"{prop}_ID"] for entry in existing_entries
+            ]
+        ]
         # Update / Add New Entries
-        logger.info("Adding %d entries", len(id_list or []))
+        logger.info("Adding %d entries %s",
+                    len(id_list or []), id_list)
         for entry in id_list:
             # Allows for overlapping properties
             new_entry = {f"{prop}_ID": entry, **match_criteria}
@@ -298,7 +309,14 @@ def update_entry_list(conn: Connection, table_name: str, entry_list: List[Dict],
         logger.info("Adding %d entries", len(entry_list or []))
         for entry in entry_list:
             # Allows for overlap properties
-            new_entry = {**entry, **match_criteria}
+            # Only keep match criteria if is non-list, aka value
+            new_entry = {
+                **entry,
+                **{
+                    k: v for k, v in match_criteria.items()
+                    if not isinstance(v, (list, np.ndarray))
+                }
+            }
             new_ids += [
                 add_update_entry(conn, table_name, **new_entry)
             ]
@@ -363,11 +381,12 @@ def save_movie(conn: Connection, movie: Dict) -> int:
         ############################################################
         logger.info("Adding %d people", len((movie["PEOPLE"] or [])))
 
-        existing_roles, _ = get_entries(conn, "PERSON_ROLE", MOVIE_ID=movie_id)
-
         person_id_mappings = {}
+
+        logger.info("Saving %d PEOPLE", len(movie.get("PEOPLE", [])))
         # Person
-        for person in (movie["PEOPLE"] or []):
+        for person in movie.get("PEOPLE", []):
+            logger.info("Saving person %s", str(person))
             # Existing ID, not generated
             if isinstance(person["ID"], numbers.Number) and len(str(person["ID"])) < 15:
                 person["ID"] = int(person["ID"])
@@ -382,15 +401,16 @@ def save_movie(conn: Connection, movie: Dict) -> int:
 
             # Add ROLES, DISABILITIES, ETHNICITIES
             for prop in ["ROLE", "DISABILITY", "ETHNICITY"]:
+
                 if prop == "ROLE":
                     _ = update_entry_by_id_list(
                         conn, f"PERSON_{prop}", person.get(prop, []),
-                        PERSON_ID=person["ID"], MOVIE_ID=movie_id
+                        PERSON_ID=int(person["ID"]), MOVIE_ID=movie_id
                     )
                 else:
                     _ = update_entry_by_id_list(
                         conn, f"PERSON_{prop}", person.get(prop, []),
-                        PERSON_ID=person["ID"], IS_CHARACTER=0
+                        PERSON_ID=int(person["ID"]), IS_CHARACTER=0
                     )
 
         existing_characters = [
@@ -398,9 +418,11 @@ def save_movie(conn: Connection, movie: Dict) -> int:
                 conn, "CHARACTERS", MOVIE_ID=movie_id
             )[0]
         ]
+        logger.info("Existing Characters: %d", len(existing_characters))
         logger.info("Adding %d characters", len((movie["CHARACTERS"] or [])))
         character_id_mappings = {}
         if movie["CHARACTERS"] is not None and len(movie["CHARACTERS"]):
+
             for character in movie["CHARACTERS"]:
                 character["ACTOR_ID"] = person_id_mappings[character["ACTOR_ID"]]
                 character["MOVIE_ID"] = movie_id
@@ -423,23 +445,26 @@ def save_movie(conn: Connection, movie: Dict) -> int:
                 for prop in ["DISABILITY", "ETHNICITY"]:
                     _ = update_entry_by_id_list(
                         conn, f"PERSON_{prop}", character.get(prop, []),
-                        PERSON_ID=character["ID"], IS_CHARACTER=1,
+                        PERSON_ID=int(character["ID"]), IS_CHARACTER=1,
                     )
 
         ######################################
         # Save Quotes after character mappings
         ######################################
         logger.debug("Character ID Mappings %s", str(character_id_mappings))
+        logger.debug("Quotes %s", str(movie["QUOTES"]))
         if movie.get("QUOTES", None) is not None and len(movie["QUOTES"]):
             for quote in movie["QUOTES"]:
-
-                quote["CHARACTER_ID"] = character_id_mappings[quote["CHARACTER_ID"]]
-
+                if quote["CHARACTER_ID"] is not None and quote["CHARACTER_ID"] > 0:
+                    quote["CHARACTER_ID"] = character_id_mappings[quote["CHARACTER_ID"]]
+                else:
+                    quote["CHARACTER_ID"] = None
+            logger.debug("Quotes %s", str(movie["QUOTES"]))
             _ = update_entry_list(
                 conn, f"MOVIE_QUOTE", movie["QUOTES"], MOVIE_ID=movie_id
             )
 
-        logger.info("Adding %d character actions", len(
+        logger.info("There are %d character actions to save", len(
             (movie["CHARACTER_ACTIONS"] or [])))
         if movie["CHARACTER_ACTIONS"] is not None and len(movie["CHARACTER_ACTIONS"]):
             logger.debug("Pre-map Movie Character Actions: \n%s",
@@ -453,19 +478,21 @@ def save_movie(conn: Connection, movie: Dict) -> int:
                          str(movie["CHARACTER_ACTIONS"]))
             for character_action in movie["CHARACTER_ACTIONS"]:
                 _ = update_entry_by_id_list(
-                    conn, "CHARACTER_ACTIONS", character_action.get(
+                    conn, "CHARACTER_ACTION", character_action.get(
                         "ACTION_ID", []),
                     CHARACTER_ID=character_action["CHARACTER_ID"],
                 )
 
-        logger.info("Adding %d character relationship",
+        logger.info("There are %d character relationships to save",
                     len((movie["RELATIONSHIPS"] or [])))
         if movie["RELATIONSHIPS"] is not None and len(movie["RELATIONSHIPS"]):
             for r in movie["RELATIONSHIPS"]:
                 if not(
-                        isinstance(character["ID"], numbers.Number) and len(str(character["ID"])) < 15):
+                        isinstance(r["ID"], numbers.Number) and len(str(r["ID"])) < 15):
+                    logger.debug("Setting relationship id to None: %s", r)
                     r["ID"] = None
 
+            logger.debug("Character mappings %s", character_id_mappings)
             movie["RELATIONSHIPS"] = [
                 {
                     **r,
@@ -476,7 +503,7 @@ def save_movie(conn: Connection, movie: Dict) -> int:
             ]
             logger.debug(describe_obj(movie["RELATIONSHIPS"]))
             _ = update_entry_list(
-                conn, "CHARACTER_RELATIONSHIPS", movie["RELATIONSHIPS"],
+                conn, "CHARACTER_RELATIONSHIP", movie["RELATIONSHIPS"],
                 CHARACTER_ID1=existing_characters
             )
     except Exception as e:
@@ -638,8 +665,8 @@ def add_update_entry(conn: Connection, table_name: str, ID: int = None, **proper
     properties = {k: v for k, v in properties.items() if k in columns}
 
     # Entry already exists, has valid ID in table. Update
-    if ID != -1 and ID is not None and ID:
-        logger.debug("Updating entry %d in %s:\n%s", ID,
+    if ID != -1 and ID is not None and ID and not np.isnan(ID):
+        logger.debug("Updating entry ID %d in %s:\n%s", ID,
                      table_name, describe_obj(properties))
         conn.execute(update(table).where(table.c.ID == ID).values(properties))
         return ID

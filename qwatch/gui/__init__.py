@@ -348,17 +348,28 @@ class MovieWindow():
             with engine.connect() as conn:
                 movie = get_movie(conn, movie_id)
 
+        logger.debug("Updating contents of gui with movie:\n%s", movie)
         self.update_contents(movie)
 
-    def update_external(self, characters=None, **kws):
+    def update_external(self, characters: pd.DataFrame = None, **kws):
         """Update global attrs in people management."""
         if characters is not None:
+            # If character has been deleted need to remove character reference
+            quotes = self.datastore["QUOTES"].get_items()
+            logger.debug("Update external quotes: \n%s, due to new characters \n%s",
+                         quotes, characters
+                         )
+            quotes.loc[
+                ~quotes.CHARACTER_ID.isin(characters.ID.values),
+                "CHARACTER_ID"
+            ] = -1  # Can't be None, or converts col to float
             self.datastore["QUOTES"].load(
                 options={
                     "CHARACTER_ID": get_options(
                         characters, "ID", ["FIRST_NAME", "LAST_NAME"]
                     )
-                }
+                },
+                items=quotes
             )
 
     def delete_movie(self):
@@ -656,12 +667,12 @@ class MovieWindow():
         self.datastore["SOURCES"] = EditableList(
             self.notebook, "Sources",
             item_map={
-                "ID": "DROPDOWN",
-                "URL": "ENTRY",
+                "SOURCE_ID": "DROPDOWN",
+                # "URL": "ENTRY",
                 "COST": "NUM_ENTRY",
                 "MEMBERSHIP_INCLUDED": "BOOLEAN",
             },
-            options={"ID": get_options(
+            options={"SOURCE_ID": get_options(
                 self.sources, "ID", ["LABEL", "REGION"], sep=" - ")}
         )
 
