@@ -39,6 +39,10 @@ class IMDBScraper(object):
     def __init__(self, options=None):
         if options is not None:
             for option, var in options.items():
+                logger.debug(
+                    "Configuring %s with %d",
+                    option, int(var.get())
+                )
                 setattr(self, option, int(var.get()))
 
         options = webdriver.ChromeOptions()
@@ -116,8 +120,8 @@ class IMDBScraper(object):
 
         return {
             "SUMMARY": self.movie_properties.get("plot outline", None),
-            "CERTIFICATE": ",".join(self.movie_properties["certificates"]),
-            "LANGUAGE": ", ".join([lc.upper() for lc in self.movie_properties["language codes"]]),
+            "CERTIFICATE": ",".join(self.movie_properties.get("certificates", [])),
+            "LANGUAGE": ", ".join([lc.upper() for lc in self.movie_properties.get("language codes", [])]),
             "GENRES": self.get_genres(),
             **self.get_box_office(),
             "RUNNING_TIME": self.movie_properties.get("runtimes", [None])[0],
@@ -235,35 +239,42 @@ class IMDBScraper(object):
         engine = _create_engine()
         with engine.connect() as conn:
             all_sources = _get_movie_properties(
-                conn, "SOURCE", None, ["COST", "MEMBERSHIP_INCLUDED"])
+                conn, "SOURCE", None, [])
 
-        sources = pd.DataFrame([], columns=all_sources.columns)
+        sources = pd.DataFrame(
+            [], columns=["ID", "SOURCE_ID", "COST", "MEMBERSHIP_INCLUDED", "URL"])
 
         logger.info(f"BFI Source: {bfi_source}")
         if bfi_source:
-            bfi_source = all_sources[
+            bfi_source_id = all_sources[
                 (all_sources.LABEL == "British Film Institute") & (
                     all_sources.REGION == "UK")
-            ].iloc[0, :]
-            bfi_source.COST = 0.0
-            bfi_source.MEMBERSHIP_INCLUDED = True
+            ].iloc[0, :].ID
+            bfi_source = pd.Series([
+                None, bfi_source_id, 0.0, True, ""
+            ], index=["ID", "SOURCE_ID", "COST", "MEMBERSHIP_INCLUDED", "URL"])
             sources = pd.concat(
                 [sources, bfi_source.to_frame().T], axis=0, ignore_index=True)
 
         if netflix:
-            netflix_source = all_sources[
+            netflix_source_id = all_sources[
                 (all_sources.LABEL == "Netflix") & (all_sources.REGION == "UK")
-            ].iloc[0, :]
-            netflix_source.COST = 0.0
-            netflix_source.MEMBERSHIP_INCLUDED = True
+            ].iloc[0, :].ID
+            netflix_source = pd.Series([
+                None, netflix_source_id, 0.0, True, ""
+            ], index=["ID", "SOURCE_ID", "COST", "MEMBERSHIP_INCLUDED", "URL"])
             sources = pd.concat(
                 [sources, netflix_source.to_frame().T], axis=0, ignore_index=True)
 
         if len(prime_costs):
-            prime_source = all_sources[
+            prime_source_id = all_sources[
                 (all_sources.LABEL == "Amazon Prime") & (
                     all_sources.REGION == "UK")
-            ].iloc[0, :]
+            ].iloc[0, :].ID
+            prime_source = pd.Series(
+                [None, prime_source_id, 0.0, False, ""],
+                index=["ID", "SOURCE_ID", "COST", "MEMBERSHIP_INCLUDED", "URL"]
+            )
             for prime in prime_costs:
                 if prime.get("COST", False):
                     prime_source.COST = prime["COST"]
@@ -296,9 +307,9 @@ class IMDBScraper(object):
         actor_id = None
         with engine.connect() as conn:
             role_members = {
-                get_id(conn, "ROLES", "Actor"): self.clip_cast(self.movie_properties["cast"]),
-                get_id(conn, "ROLES", "Director"): self.movie_properties["writer"][: self.NUM_WRITER_SCRAPE],
-                get_id(conn, "ROLES", "Writer"): self.movie_properties["director"][: self.NUM_DIRECTOR_SCRAPE]
+                get_id(conn, "ROLES", "Actor"): self.clip_cast(self.movie_properties.get("cast", [])),
+                get_id(conn, "ROLES", "Director"): self.movie_properties.get("writer", [])[: self.NUM_WRITER_SCRAPE],
+                get_id(conn, "ROLES", "Writer"): self.movie_properties.get("director", [])[: self.NUM_DIRECTOR_SCRAPE]
             }
             actor_id = get_id(conn, "ROLES", "Actor")
 

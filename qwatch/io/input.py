@@ -184,6 +184,7 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
         movie_table.c.LANGUAGE,
         movie_table.c.SUMMARY,
         movie_table.c.BIO,
+        movie_table.c.OPINION,
         movie_table.c.TITLE,
         movie_table.c.YEAR,
         movie_table.c.BUDGET,
@@ -260,7 +261,8 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
         movie_source_table.c.ID,
         movie_source_table.c.SOURCE_ID,
         movie_source_table.c.COST,
-        movie_source_table.c.MEMBERSHIP_INCLUDED
+        movie_source_table.c.MEMBERSHIP_INCLUDED,
+        movie_source_table.c.URL
     ).select_from(
         movie_source_table
     ).where(
@@ -269,7 +271,7 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
     sources = pd.DataFrame([
         row._mapping
         for row in conn.execute(source_query).fetchall()
-    ], columns=["ID", "SOURCE_ID", "COST", "MEMBERSHIP_INCLUDED"]
+    ], columns=["ID", "SOURCE_ID", "COST", "MEMBERSHIP_INCLUDED", "URL"]
     )
     sources.loc[:, "SOURCE_ID"] = sources.SOURCE_ID.astype(int)
 
@@ -462,11 +464,11 @@ def get_people(conn: Connection, movie_id: int):
 
     characters = pd.DataFrame([
         row._mapping for row in conn.execute(character_query).fetchall()
-    ], columns=conn.execute(character_query).keys())
+    ], columns=conn.execute(character_query).keys()).groupby("ID").first().reset_index()
 
     people = pd.DataFrame([
         row._mapping for row in conn.execute(person_query).fetchall()
-    ], columns=conn.execute(person_query).keys())
+    ], columns=conn.execute(person_query).keys()).groupby("ID").first().reset_index()
 
     for col in ["ROLE", "DISABILITY", "ETHNICITY"]:
         people.loc[:, col] = people.loc[:, col].apply(

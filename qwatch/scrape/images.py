@@ -32,7 +32,7 @@ def scrape_movie_images(movie_title: str, movie_year: int = None, limit: int = 5
                 #   print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     # Download Images
-    logger.debug(
+    logger.info(
         "Downloading %d images for movie: %s", limit, movie_title
     )
 

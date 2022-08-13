@@ -354,7 +354,8 @@ def save_movie(conn: Connection, movie: Dict) -> int:
     ######################
     # Insert movie into DB
     ######################
-    movie_id = add_update_entry(conn, "MOVIES", **movie)
+    movie_id = add_update_entry(
+        conn, "MOVIES", **{**movie, "LAST_UPDATED": datetime.datetime.now()})
 
     try:
         ###########################################################
@@ -390,13 +391,15 @@ def save_movie(conn: Connection, movie: Dict) -> int:
             # Existing ID, not generated
             if isinstance(person["ID"], numbers.Number) and len(str(person["ID"])) < 15:
                 person["ID"] = int(person["ID"])
-                _ = add_update_entry(conn, "PEOPLE", **person)
+                _ = add_update_entry(
+                    conn, "PEOPLE", **{**person, "LAST_UPDATED": datetime.datetime.now()})
                 person_id_mappings[person["ID"]] = person["ID"]
             # Generated ids from uuid are 20 long.
             else:
                 orig_person_id = person["ID"]
                 person["ID"] = None
-                person["ID"] = add_update_entry(conn, "PEOPLE", **person)
+                person["ID"] = add_update_entry(
+                    conn, "PEOPLE", **{**person, "LAST_UPDATED": datetime.datetime.now()})
                 person_id_mappings[orig_person_id] = person["ID"]
 
             # Add ROLES, DISABILITIES, ETHNICITIES

@@ -70,24 +70,26 @@ def scrape_movie_information(movie_title: str, year: str = None, open_urls=False
     # (Optional) Open URL's in Chrome for quick review
     ##################################################
     if open_urls and len(urls):
-        logger.info("Opening urls using chrome webdriver")
-        options = webdriver.ChromeOptions()
-        # options.add_argument('--headless')
-        driver = webdriver.Chrome(
-            executable_path='E:/Projects/scraping/chromedriver_new.exe',
-            options=options
-        )
-        driver.get(urls[0])
-        for i, url in enumerate(urls[1:]):
-            logger.info("Opening %s", url)
-            driver.execute_script(
-                f"window.open('about:blank', 'tab{i}');"
+        try:
+            logger.info("Opening urls using chrome webdriver")
+            options = webdriver.ChromeOptions()
+            # options.add_argument('--headless')
+            driver = webdriver.Chrome(
+                executable_path='E:/Projects/scraping/chromedriver_new.exe',
+                options=options
             )
-            driver.switch_to.window(f"tab{i}")
-            driver.get(url)
-            time.sleep(0.1)
-        driver.close()
-
+            driver.get(urls[0])
+            for i, url in enumerate(urls[1:]):
+                logger.info("Opening %s", url)
+                driver.execute_script(
+                    f"window.open('about:blank', 'tab{i}');"
+                )
+                driver.switch_to.window(f"tab{i}")
+                driver.get(url)
+                time.sleep(0.1)
+            driver.close()
+        except Exception as e:
+            logger.error("Failed to open urls: %s", e)
     return {
         **{
             k: v for k, v in wiki_information.items()

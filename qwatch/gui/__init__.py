@@ -321,7 +321,12 @@ class MovieWindow():
         limit: int
         """
         if movie_title is not None:
-            logger.info("Loading New Movie: %s", movie_title)
+            logger.info(
+                "Loading New Movie: %s, scraping %s images, opening urls? %s",
+                movie_title,
+                self.OPTIONS["NUM_IMAGES_SCRAPE"].get(),
+                str(self.OPTIONS["OPEN_URLS"].get())
+            )
             # Get movie images
             image_dirs = scrape_movie_images(
                 movie_title, movie_year=movie_year, limit=int(self.OPTIONS["NUM_IMAGES_SCRAPE"].get()))
@@ -668,7 +673,7 @@ class MovieWindow():
             self.notebook, "Sources",
             item_map={
                 "SOURCE_ID": "DROPDOWN",
-                # "URL": "ENTRY",
+                "URL": "ENTRY",
                 "COST": "NUM_ENTRY",
                 "MEMBERSHIP_INCLUDED": "BOOLEAN",
             },
