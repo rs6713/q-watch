@@ -188,6 +188,8 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
         movie_table.c.TITLE,
         movie_table.c.YEAR,
         movie_table.c.BUDGET,
+        movie_table.c.COUNTRY,
+        movie_table.c.TRAILER,
         movie_table.c.BOX_OFFICE,
         movie_table.c.INTENSITY
     ).select_from(movie_table).where(

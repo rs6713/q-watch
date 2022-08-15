@@ -364,10 +364,11 @@ class MovieWindow():
             logger.debug("Update external quotes: \n%s, due to new characters \n%s",
                          quotes, characters
                          )
-            quotes.loc[
-                ~quotes.CHARACTER_ID.isin(characters.ID.values),
-                "CHARACTER_ID"
-            ] = -1  # Can't be None, or converts col to float
+            if not quotes.empty:
+                quotes.loc[
+                    ~quotes.CHARACTER_ID.isin(characters.ID.values),
+                    "CHARACTER_ID"
+                ] = -1  # Can't be None, or converts col to float
             self.datastore["QUOTES"].load(
                 options={
                     "CHARACTER_ID": get_options(
@@ -502,11 +503,11 @@ class MovieWindow():
         self.configure_root()
 
         self.OPTIONS = {
-            "NUM_IMAGES_SCRAPE": tk.StringVar(value="5"),
-            "NUM_CAST_SCRAPE": tk.StringVar(value="8"),
-            "NUM_WRITER_SCRAPE": tk.StringVar(value="5"),
-            "NUM_DIRECTOR_SCRAPE": tk.StringVar(value="3"),
-            "NUM_QUOTES_SCRAPE": tk.StringVar(value="10"),
+            "NUM_IMAGES_SCRAPE": tk.StringVar(value="10"),
+            "NUM_CAST_SCRAPE": tk.StringVar(value="5"),
+            "NUM_WRITER_SCRAPE": tk.StringVar(value="3"),
+            "NUM_DIRECTOR_SCRAPE": tk.StringVar(value="2"),
+            "NUM_QUOTES_SCRAPE": tk.StringVar(value="6"),
             "OPEN_URLS": tk.IntVar(value=1),
         }
         self.configure_menu()

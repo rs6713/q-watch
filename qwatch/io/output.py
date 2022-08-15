@@ -121,7 +121,7 @@ def preprocess_movie(movie: Dict) -> Dict:
         # Handle exception in case movie[k] is dataframe
         except Exception as e:
             continue
-        if k in ["YEAR", "RUNTIME", "BOX_OFFICE", "BUDGET"]:
+        if k in ["YEAR", "RUNTIME"]:  # "BOX_OFFICE", "BUDGET"
             num_prop = [c for c in movie[k] if c.isnumeric()]
             if len(num_prop):
                 movie[k] = int(''.join(num_prop))

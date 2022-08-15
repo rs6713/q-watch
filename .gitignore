@@ -3,6 +3,8 @@
 /google-images-download/
 /Azure-ttk-theme/
 
+/website/.pnp
+.pnp.js
 
 # Production/Build
 /website/build
@@ -14,8 +16,23 @@
 # Local/Temporary Files
 /website/src/static/
 .env
+.venv
 database.txt
 .vscode/
 .db_config.json
 *.pyc
 IMAGES/
+
+# testing
+/coverage
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

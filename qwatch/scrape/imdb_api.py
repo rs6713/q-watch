@@ -181,7 +181,7 @@ class IMDBScraper(object):
     def get_quotes(self):
         """ Get quotes from imdb quotes page. Try match back to recorded characters."""
         character_names = {
-            F'{c["FIRST_NAME"]} {c["LAST_NAME"]}': c["ID"]
+            f'{c["FIRST_NAME"]} {c["LAST_NAME"]}': c["ID"]
             for c in self.characters
         }
 
@@ -201,10 +201,32 @@ class IMDBScraper(object):
         if not len(quotes):
             return None
 
+        def find_character_id(name: str) -> int:
+            nonlocal character_names
+
+            def is_full_name(s: str):
+                return len(s.split(" ")) > 1 and len(s.split(" ")[1]) > 0
+
+            for c_name, c_id in character_names.items():
+
+                # Quote has first/last name
+                # Occurs when both full_names / first names only
+                if c_name == name:
+                    return c_id
+
+                if is_full_name(c_name) and not is_full_name(name) and name.replace(" ", "") == c_name.split(" ")[0]:
+                    return c_id
+
+                if not is_full_name(c_name) and is_full_name(name) and name.split(" ")[0] == c_name.replace(" ", ""):
+                    return c_id
+
+            return -1  # Can't be none or converts col to float
+
+        # If names match, give quotes correct character_id
         quotes = [
             {
                 **quote,
-                "CHARACTER_ID": character_names[[name for name in character_names.keys() if quote["CHARACTER_ID"] in name][0]] if any([name for name in character_names.keys() if quote["CHARACTER_ID"] in name]) else None
+                "CHARACTER_ID": find_character_id(quote["CHARACTER_ID"])
             }
             for quote in quotes
         ]

@@ -603,8 +603,8 @@ class PersonPage(ttk.Frame):
             ]
 
         else:
-            logger.info("Loading people\n%s", people.to_dict("records"))
             self.people = [] if people is None else people.to_dict("records")
+            logger.info("Loading people\n%s", str(self.people))
             self.actors = None
         self.refresh_ui()
 

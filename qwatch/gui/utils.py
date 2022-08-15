@@ -84,7 +84,7 @@ class TextExtension(ttk.Frame):
     #         self._text_variable.trace_vdelete("w", self._var_trace)
 
     def set_text(self, _value):
-        self._text_widget.delete(1.0, tk.END)
+        self._text_widget.delete("1.0", tk.END)
         if (_value is not None):
             self._text_widget.insert(tk.END, _value)
 
@@ -294,10 +294,10 @@ class EditableList(ttk.Frame):
         ], columns=self.items.columns, index=self.items.index)
 
     def load(self, items: pd.DataFrame = None, options=None) -> None:
-        if items is not None:
-            self.items = self.process_items(items)
         if options is not None:
             self.options = options
+        if items is not None:
+            self.items = self.process_items(items)
         self.update_list()
 
     def update_list(self) -> None:
