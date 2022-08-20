@@ -23,7 +23,7 @@ from sqlalchemy.engine import (
 )
 from sqlalchemy.orm import aliased
 import sqlalchemy
-from sqlalchemy.sql.expression import cast
+from sqlalchemy.sql.expression import Alias, cast
 
 from qwatch.utils import describe_obj
 
@@ -53,7 +53,7 @@ def get_movies_ids(conn: Connection, with_year=False) -> List[Dict]:
 
 
 def get_label(conn: Connection, table_name: str, idd: str) -> int:
-    """ Retrieve id for element in table"""
+    """ Retrieve `LABEL` for `ID` in table"""
     table = Table(table_name, MetaData(), schema=SCHEMA, autoload_with=conn)
 
     query = select(
@@ -66,7 +66,7 @@ def get_label(conn: Connection, table_name: str, idd: str) -> int:
 
 
 def get_id(conn: Connection, table_name: str, label: str) -> int:
-    """ Retrieve id for element in table"""
+    """ Retrieve `ID` for element `LABEL` in table"""
     table = Table(table_name, MetaData(), schema=SCHEMA, autoload_with=conn)
 
     query = select(
@@ -76,6 +76,36 @@ def get_id(conn: Connection, table_name: str, label: str) -> int:
     )
 
     return conn.execute(query).fetchall()[0]._mapping["ID"]
+
+
+def get_table_aggregate(conn: Connection, table_name: str, groups: List[str], aggs: List[str], criteria: Dict = None) -> Alias:
+    """ Get string aggregate of table, using supplied groups, criteria, and aggs.
+    groups - columns to group by 
+    aggs - columns to string aggregate
+    criteria - entries to consider
+    """
+    meta = MetaData()
+    table = Table(table_name, meta, schema=SCHEMA, autoload_with=conn)
+
+    query = select(
+        *[table.c[g] for g in groups],
+        *[func.string_agg(
+            cast(table.c[agg], sqlalchemy.String),
+            sqlalchemy.literal_column("','")
+        ).label(agg) for agg in aggs]
+    ).select_from(table)
+
+    if criteria is not None:
+        query = query.where(
+            and_(*[
+                table.c[key] == val
+                for key, val in criteria.items()
+            ])
+        )
+
+    return query.group_by(
+        *[table.c[group] for group in groups]
+    ).subquery()
 
 
 def get_person_if_exists(conn: Connection, **actor_props) -> Dict:
@@ -148,104 +178,24 @@ def get_actors(conn: Connection) -> pd.DataFrame:
     return results
 
 
-def get_movies(conn: Connection, filters: Dict = None) -> List[Dict]:
-    """Retrieve Movies that match filters."""
-    meta = MetaData()
-    pass
-
-
 def get_movie(conn: Connection, movie_id: int) -> Dict:
     """Retrieve Movie by Id. """
-    meta = MetaData()
-
-    movie_table = Table("MOVIES", meta, schema=SCHEMA, autoload_with=conn)
-
-    movie_quote_table = Table(
-        "MOVIE_QUOTE", meta, schema=SCHEMA, autoload_with=conn)
-    movie_image_table = Table(
-        "MOVIE_IMAGE", meta, schema=SCHEMA, autoload_with=conn
-    )
-    movie_source_table = Table(
-        "MOVIE_SOURCE", meta, schema=SCHEMA, autoload_with=conn
-    )
-
-    # intensity_table = Table(
-    #     "INTENSITYS", meta, schema=SCHEMA, autoload_with=conn)
-    # ages_table = Table("AGES", meta, schema=SCHEMA, autoload_with=conn)
-    ratings_table = Table("RATINGS", meta, schema=SCHEMA, autoload_with=conn)
-
     # Get movie details from table with matched age/intensity
-    movie_query = select(
-        movie_table.c.ID,
-        # ages_table.c.LABEL.label("AGE"),
-        movie_table.c.AGE,
-        movie_table.c.RUNTIME,
-        movie_table.c.CERTIFICATE,
-        movie_table.c.LANGUAGE,
-        movie_table.c.SUMMARY,
-        movie_table.c.BIO,
-        movie_table.c.OPINION,
-        movie_table.c.TITLE,
-        movie_table.c.YEAR,
-        movie_table.c.BUDGET,
-        movie_table.c.COUNTRY,
-        movie_table.c.TRAILER,
-        movie_table.c.BOX_OFFICE,
-        movie_table.c.INTENSITY
-    ).select_from(movie_table).where(
-        movie_table.c.ID == movie_id
-    )
-    # .join(
-    #     ages_table, ages_table.c.ID == movie_table.c.AGE, isouter=True
-    # ).join(
-    #     intensity_table, intensity_table.c.ID == movie_table.c.INTENSITY, isouter=True
-    # )
-    movie = conn.execute(movie_query).first()._asdict()
+    movie, _ = get_entries(conn, "MOVIES", ID=movie_id)[0][0]
 
     # List of all quotes in movie
-    quote_query = select(
-        movie_quote_table.c.ID,
-        movie_quote_table.c.QUOTE,
-        movie_quote_table.c.CHARACTER_ID,
-        movie_quote_table.c.QUOTE_ID
-    ).select_from(
-        movie_quote_table
-    ).where(
-        movie_quote_table.c.MOVIE_ID == movie_id
-    )
-    quotes = pd.DataFrame([
-        row._mapping
-        for row in conn.execute(quote_query).fetchall()
-    ], columns=["ID", "QUOTE", "CHARACTER_ID", "QUOTE_ID"]
-    )
-    #quotes.CHARACTER_ID.fillna(0, inplace=True)
+    quotes, _ = get_entries(conn, "MOVIE_QUOTE", return_properties=[
+                            "ID", "QUOTE", "CHARACTER_ID", "QUOTE_ID"], MOVIE_ID=movie_id, format="dataframe")
 
     # List of all images in movie
-    image_query = select(
-        movie_image_table.c.ID,
-        movie_image_table.c.FILENAME,
-        movie_image_table.c.CAPTION
-    ).select_from(
-        movie_image_table
-    ).where(
-        movie_image_table.c.MOVIE_ID == movie_id
-    )
-    images = pd.DataFrame([
-        row._mapping
-        for row in conn.execute(image_query).fetchall()
-    ], columns=["ID", "FILENAME", "CAPTION"]
+    images, _ = get_entries(
+        conn, "MOVIE_IMAGE", return_properties=["ID", "FILENAME", "CAPTION"], MOVIE_ID=movie_id, format="dataframe"
     )
 
     # All ratings made against movie
-    ratings_query = select(
-        ratings_table.c.DATE,
-        ratings_table.c.RATING
-    ).where(
-        ratings_table.c.MOVIE_ID == movie_id
+    ratings, _ = get_entries(
+        conn, "RATINGS", return_properties=["DATE", "RATING"], format="dataframe", MOVIE_ID=movie_id
     )
-    ratings = pd.DataFrame([
-        row._mapping for row in conn.execute(ratings_query).fetchall()
-    ], columns=["DATE", "RATING"])
 
     # Get all genre, representations, tropes matched on movie_id
     types = _get_movie_properties(
@@ -255,31 +205,29 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
         conn, "REPRESENTATION", movie_id, addit_props=["MAIN"])
     tropes = _get_movie_properties(conn, "TROPE_TRIGGER", movie_id)
     qualities = _get_movie_properties(conn, "QUALITY", movie_id)
-    # sources = _get_movie_properties(
-    #     conn, "SOURCE", movie_id, addit_props=["COST", "MEMBERSHIP_INCLUDED"]
-    # ).loc[:, ["ID", "SOURCE_ID"]]
 
-    source_query = select(
-        movie_source_table.c.ID,
-        movie_source_table.c.SOURCE_ID,
-        movie_source_table.c.COST,
-        movie_source_table.c.MEMBERSHIP_INCLUDED,
-        movie_source_table.c.URL
-    ).select_from(
-        movie_source_table
-    ).where(
-        movie_source_table.c.MOVIE_ID == movie_id
-    )
-    sources = pd.DataFrame([
-        row._mapping
-        for row in conn.execute(source_query).fetchall()
-    ], columns=["ID", "SOURCE_ID", "COST", "MEMBERSHIP_INCLUDED", "URL"]
+    sources, _ = get_entries(
+        conn, "MOVIE_SOURCE", MOVIE_ID=movie_id, return_properties=["ID", "SOURCE_ID", "COST", "MEMBERSHIP_INCLUDED", "URL"], format="dataframe"
     )
     sources.loc[:, "SOURCE_ID"] = sources.SOURCE_ID.astype(int)
 
-    characters_people_dict = get_people(conn, movie_id)
-    # TODO: Fetch images, captchas associated with movie
-    #images_dict = get_images(conn, movie_id)
+    # Get Characters
+    characters = get_characters(conn, movie_id)
+
+    # Get people
+    people = get_people(conn, movie_id)
+
+    # Get Character Relationships
+    character_relationships, _ = get_entries(
+        conn, "CHARACTER_RELATIONSHIPS", CHARACTER_ID1=list(characters.ID.values), CHARACTER_ID2=list(characters.ID.values), format="dataframe"
+    )
+
+    # Get Character Actions
+    character_actions, _ = get_entries(
+        conn, "CHARACTER_ACTIONS", CHARACTER_ID=list(characters.ID.values), format="dataframe"
+    )
+    character_actions = character_actions.groupby(
+        "CHARACTER_ID").ACTION_ID.apply(list).reset_index()
 
     return {
         **movie,
@@ -292,128 +240,22 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
         "RATINGS": ratings,
         "QUALITIES": qualities,
         "IMAGES": images,
-        **characters_people_dict,
-        # **images_dict
+        "PEOPLE": people,
+        "CHARACTERS": characters,
+        "RELATIONSHIPS": character_relationships,
+        "CHARACTER_ACTIONS": character_actions
     }
 
 
-def get_table_aggregate(conn: Connection, table_name: str, groups: List[str], aggs: List[str], criteria: Dict = None):
-    """ Get string aggregate of table, using supplied groups, criteria, and aggs.
-    groups - columns to group by 
-    aggs - columns to string aggregate
-    criteria - entries to consider
-    """
+def get_characters(conn: Connection, movie_id: int) -> pd.DataFrame:
+    """ Get characters associated with movie."""
     meta = MetaData()
-    table = Table(table_name, meta, schema=SCHEMA, autoload_with=conn)
-
-    return select(
-        *[table.c[g] for g in groups],
-        *[func.string_agg(
-            cast(table.c[agg], sqlalchemy.String),
-            sqlalchemy.literal_column("','")
-        ).label(agg) for agg in aggs]
-    ).select_from(table).where(
-        and_(*[
-            table.c[key] == val
-            for key, val in criteria
-        ])
-    ).group_by(
-        *[table.c[group] for group in groups]
-    ).subquery()
-
-
-def get_people(conn: Connection, movie_id: int):
-    """Get people associated with movie."""
-    meta = MetaData()
-
-    roles_table = Table("ROLES", meta, schema=SCHEMA, autoload_with=conn)
-    genders_table = Table("GENDERS", meta, schema=SCHEMA, autoload_with=conn)
-    person_role_table = Table(
-        "PERSON_ROLE", meta, schema=SCHEMA, autoload_with=conn)
-    person_ethnicity_table = Table(
-        "PERSON_ETHNICITY", meta, schema=SCHEMA, autoload_with=conn)
-    person_disability_table = Table(
-        "PERSON_DISABILITY", meta, schema=SCHEMA, autoload_with=conn)
-
-    disabilities_table = Table(
-        "DISABILITIES", meta, schema=SCHEMA, autoload_with=conn)
-    ethnicities_table = Table(
-        "ETHNICITIES", meta, schema=SCHEMA, autoload_with=conn)
-    sexualities_table = Table(
-        "SEXUALITIES", meta, schema=SCHEMA, autoload_with=conn)
-    genders_table = Table("GENDERS", meta, schema=SCHEMA, autoload_with=conn)
-    transgender_table = Table(
-        "TRANSGENDERS", meta, schema=SCHEMA, autoload_with=conn)
-    careers_table = Table("CAREERS", meta, schema=SCHEMA, autoload_with=conn)
-
-    people_table = Table("PEOPLE", meta, schema=SCHEMA, autoload_with=conn)
     character_table = Table(
         "CHARACTERS", meta, schema=SCHEMA, autoload_with=conn)
-    character_relationship_table = Table(
-        "CHARACTER_RELATIONSHIP", meta, schema=SCHEMA, autoload_with=conn)
-    character_action_table = Table(
-        "CHARACTER_ACTION", meta, schema=SCHEMA, autoload_with=conn
-    )
-
-    def get_agg_ethnicity(is_character=False):
-
-        eth = aliased(person_ethnicity_table)
-        return select(
-            person_ethnicity_table.c.PERSON_ID,
-            func.string_agg(cast(person_ethnicity_table.c.ETHNICITY_ID,
-                            sqlalchemy.String), sqlalchemy.literal_column("','")).label("ETHNICITY")
-            # func.concat(
-            #     select(
-            #         cast(eth.c.ETHNICITY_ID, sqlalchemy.String)
-            #     ).where(eth.c.PERSON_ID == person_ethnicity_table.c.PERSON_ID)
-            # ).label("ETHNICITY")
-        ).select_from(person_ethnicity_table).where(
-            person_ethnicity_table.c.IS_CHARACTER == is_character
-        ).group_by(
-            person_ethnicity_table.c.PERSON_ID
-        ).subquery()
-
-    agg_ethnicity = get_table_aggregate(conn, "PERSON_ETHNICITY", groups=[
-                                        "PERSON_ID"], aggs=["ETHNICITY_ID"], criteria={"IS_CHARACTER": 1})
-    #agg_ethnicity = get_agg_ethnicity(is_character=False)
-    agg_ethnicity_character = get_agg_ethnicity(is_character=True)
-
-    def get_agg_disability(is_character=False):
-        dis = aliased(person_disability_table)
-        return select(
-            person_disability_table.c.PERSON_ID,
-            func.string_agg(cast(person_disability_table.c.DISABILITY_ID,
-                            sqlalchemy.String), sqlalchemy.literal_column("','")).label("DISABILITY")
-            # func.concat(
-            #     select(
-            #         cast(dis.c.DISABILITY_ID, sqlalchemy.String)
-            #     ).where(dis.c.PERSON_ID == person_disability_table.c.PERSON_ID)
-            #     #cast(person_disability_table.c.DISABILITY_ID, sqlalchemy.String)
-            # ).label("DISABILITY")
-        ).select_from(person_disability_table).where(
-            person_disability_table.c.IS_CHARACTER == is_character
-        ).group_by(
-            person_disability_table.c.PERSON_ID
-        ).subquery()
-    agg_disability = get_agg_disability(is_character=False)
-    agg_disability_character = get_agg_disability(is_character=True)
-
-    def get_agg_role():
-        dis = aliased(person_role_table)
-        return select(
-            person_role_table.c.PERSON_ID,
-            func.string_agg(cast(person_role_table.c.ROLE_ID,
-                            sqlalchemy.String), sqlalchemy.literal_column("','")).label("ROLE")
-            # func.concat(
-            #     select(
-            #         cast(dis.c.DISABILITY_ID, sqlalchemy.String)
-            #     ).where(dis.c.PERSON_ID == person_disability_table.c.PERSON_ID)
-            #     #cast(person_disability_table.c.DISABILITY_ID, sqlalchemy.String)
-            # ).label("DISABILITY")
-        ).select_from(person_role_table).group_by(
-            person_role_table.c.PERSON_ID
-        ).subquery()
-    agg_role = get_agg_role()
+    agg_ethnicity_character = get_table_aggregate(conn, "PERSON_ETHNICITY", groups=[
+        "PERSON_ID"], aggs=["ETHNICITY_ID"], criteria={"IS_CHARACTER": True})
+    agg_disability_character = get_table_aggregate(conn, "PERSON_DISABILITY", groups=[
+        "PERSON_ID"], aggs=["DISABILITY_ID"], criteria={"IS_CHARACTER": True})
 
     character_query = select(
         character_table.c.ID,
@@ -422,13 +264,11 @@ def get_people(conn: Connection, movie_id: int):
         character_table.c.LAST_NAME,
         character_table.c.MAIN,
         character_table.c.HAIR_COLOR,
-        character_table.c.GENDER,  # genders_table.c.LABEL.label("GENDER"),
-        # sexualities_table.c.LABEL.label("SEXUALITY"),
+        character_table.c.GENDER,
         character_table.c.SEXUALITY,
-        # transgender_table.c.LABEL.label("TRANSGENDER"),
         character_table.c.TRANSGENDER,
-        agg_disability_character.c.DISABILITY,
-        agg_ethnicity_character.c.ETHNICITY,
+        agg_disability_character.c.DISABILITY_ID.label("DISABILITY"),
+        agg_ethnicity_character.c.ETHNICITY_ID.label("ETHNICITY"),
         character_table.c.CAREER,
         character_table.c.BIO,
     ).select_from(character_table).join(
@@ -438,19 +278,36 @@ def get_people(conn: Connection, movie_id: int):
     ).where(
         character_table.c.MOVIE_ID == movie_id
     )
+    characters = pd.DataFrame([
+        row._mapping for row in conn.execute(character_query).fetchall()
+    ], columns=conn.execute(character_query).keys()).groupby("ID").first().reset_index()
 
-    """
-    .join(
-        genders_table, genders_table.c.ID == character_table.c.GENDER, isouter=True
-    ).join(
-        sexualities_table, sexualities_table.c.ID == character_table.c.SEXUALITY, isouter=True
-    ).join(
-        transgender_table, transgender_table.c.ID == character_table.c.TRANSGENDER, isouter=True
+    for col in ["DISABILITY", "ETHNICITY"]:
+        characters.loc[:, col] = characters.loc[:, col].apply(
+            lambda s: s if s is None else [int(_) for _ in s.split(",")]
+        )
+
+    return characters
+
+
+def get_people(conn: Connection, movie_id: int) -> pd.DataFrame:
+    """Get people associated with movie."""
+    meta = MetaData()
+
+    person_role_table = Table(
+        "PERSON_ROLE", meta, schema=SCHEMA, autoload_with=conn)
+
+    people_table = Table("PEOPLE", meta, schema=SCHEMA, autoload_with=conn)
+
+    agg_ethnicity = get_table_aggregate(conn, "PERSON_ETHNICITY", groups=[
+                                        "PERSON_ID"], aggs=["ETHNICITY_ID"], criteria={"IS_CHARACTER": False})
+
+    agg_disability = get_table_aggregate(conn, "PERSON_DISABILITY", groups=[
+        "PERSON_ID"], aggs=["DISABILITY_ID"], criteria={"IS_CHARACTER": False})
+
+    agg_role = get_table_aggregate(
+        conn, "PERSON_ROLE", groups=["PERSON_ID"], aggs=["ROLE_ID"]
     )
-    .join(
-        careers_table, careers_table.c.ID == character_table.c.CAREER, isouter=True
-    )
-    """
 
     person_query = select(
         people_table.c.ID,
@@ -458,14 +315,11 @@ def get_people(conn: Connection, movie_id: int):
         people_table.c.FIRST_NAME,
         people_table.c.LAST_NAME,
         people_table.c.DOB,
-        # people_table.c.DESCRIP,
-        people_table.c.GENDER,  # genders_table.c.LABEL.label("GENDER"),
-        # sexualities_table.c.LABEL.label("SEXUALITY"),
+        people_table.c.GENDER,
         people_table.c.SEXUALITY,
-        # transgender_table.c.LABEL.label("TRANSGENDER"),
         people_table.c.TRANSGENDER,
-        agg_ethnicity.c.ETHNICITY,
-        agg_disability.c.DISABILITY,
+        agg_ethnicity.c.ETHNICITY_ID.label("ETHNICITY"),
+        agg_disability.c.DISABILITY_ID.label("DISABILITY"),
         agg_role.c.ROLE,
     ).join(
         agg_role, agg_role.c.PERSON_ID == people_table.c.ID, isouter=True
@@ -478,22 +332,6 @@ def get_people(conn: Connection, movie_id: int):
     ).where(
         person_role_table.c.MOVIE_ID == movie_id
     )
-    """
-    .where(
-        person_role_table.c.MOVIE_ID == movie_id
-    )
-    .join(
-        genders_table, genders_table.c.ID == people_table.c.GENDER, isouter=True
-    ).join(
-        sexualities_table, sexualities_table.c.ID == people_table.c.SEXUALITY, isouter=True
-    ).join(
-        transgender_table, transgender_table.c.ID == people_table.c.TRANSGENDER, isouter=True
-    )
-    """
-
-    characters = pd.DataFrame([
-        row._mapping for row in conn.execute(character_query).fetchall()
-    ], columns=conn.execute(character_query).keys()).groupby("ID").first().reset_index()
 
     people = pd.DataFrame([
         row._mapping for row in conn.execute(person_query).fetchall()
@@ -503,51 +341,11 @@ def get_people(conn: Connection, movie_id: int):
         people.loc[:, col] = people.loc[:, col].apply(
             lambda s: s if s is None else [int(_) for _ in s.split(",")]
         )
-    for col in ["DISABILITY", "ETHNICITY"]:
-        characters.loc[:, col] = characters.loc[:, col].apply(
-            lambda s: s if s is None else [int(_) for _ in s.split(",")]
-        )
 
-    relationship_query = select(
-        character_relationship_table.c.ID,
-        character_relationship_table.c.CHARACTER_ID1,
-        character_relationship_table.c.CHARACTER_ID2,
-        character_relationship_table.c.RELATIONSHIP_ID,
-        character_relationship_table.c.EXPLICIT
-    ).where(
-        and_(
-            character_relationship_table.c.CHARACTER_ID1.in_(
-                characters.ID),
-            character_relationship_table.c.CHARACTER_ID2.in_(
-                characters.ID)
-        )
-    )
-    relationships = pd.DataFrame([
-        row._mapping for row in conn.execute(relationship_query).fetchall()
-    ], columns=conn.execute(relationship_query).keys())
-
-    actions_query = select(
-        character_action_table.c.ID,
-        character_action_table.c.CHARACTER_ID,
-        character_action_table.c.ACTION_ID
-    ).where(
-        character_action_table.c.CHARACTER_ID.in_(characters.ID)
-    )
-    character_actions = pd.DataFrame([
-        row._mapping for row in conn.execute(actions_query).fetchall()
-    ], columns=conn.execute(actions_query).keys())
-    character_actions = character_actions.groupby(
-        "CHARACTER_ID").ACTION_ID.apply(list).reset_index()
-
-    return {
-        "CHARACTERS": characters,
-        "PEOPLE": people,
-        "RELATIONSHIPS": relationships,
-        "CHARACTER_ACTIONS": character_actions,
-    }
+    return people
 
 
-def get_entries(conn: Connection, table_name: str, ID: int = None, return_properties: List[str] = None, **properties) -> List[Dict]:
+def get_entries(conn: Connection, table_name: str, ID: int = None, return_properties: List[str] = None, **properties, format="listdict") -> List[Dict]:
     """Get entries that match ID/properties from table.
 
     If return_properties is specified return those properties
@@ -607,10 +405,13 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, return_proper
     matches = pd.DataFrame([
         _._mapping for _ in conn.execute(query).fetchall()
     ], columns=table_columns
-    ).loc[:, subset_columns].to_dict("records")
-
+    ).loc[:, subset_columns]
     logger.debug("There are %d matches", len(matches))
-    return matches, table_columns
+
+    if format == "listdict":
+        return matches.to_dict("records"), subset_columns
+    elif format == "dataframe":
+        return matches, subset_columns
 
 
 def get_images(conn: Connection, movie_id: int):
