@@ -297,6 +297,31 @@ def get_movie(conn: Connection, movie_id: int) -> Dict:
     }
 
 
+def get_table_aggregate(conn: Connection, table_name: str, groups: List[str], aggs: List[str], criteria: Dict = None):
+    """ Get string aggregate of table, using supplied groups, criteria, and aggs.
+    groups - columns to group by 
+    aggs - columns to string aggregate
+    criteria - entries to consider
+    """
+    meta = MetaData()
+    table = Table(table_name, meta, schema=SCHEMA, autoload_with=conn)
+
+    return select(
+        *[table.c[g] for g in groups],
+        *[func.string_agg(
+            cast(table.c[agg], sqlalchemy.String),
+            sqlalchemy.literal_column("','")
+        ).label(agg) for agg in aggs]
+    ).select_from(table).where(
+        and_(*[
+            table.c[key] == val
+            for key, val in criteria
+        ])
+    ).group_by(
+        *[table.c[group] for group in groups]
+    ).subquery()
+
+
 def get_people(conn: Connection, movie_id: int):
     """Get people associated with movie."""
     meta = MetaData()
@@ -348,7 +373,9 @@ def get_people(conn: Connection, movie_id: int):
             person_ethnicity_table.c.PERSON_ID
         ).subquery()
 
-    agg_ethnicity = get_agg_ethnicity(is_character=False)
+    agg_ethnicity = get_table_aggregate(conn, "PERSON_ETHNICITY", groups=[
+                                        "PERSON_ID"], aggs=["ETHNICITY_ID"], criteria={"IS_CHARACTER": 1})
+    #agg_ethnicity = get_agg_ethnicity(is_character=False)
     agg_ethnicity_character = get_agg_ethnicity(is_character=True)
 
     def get_agg_disability(is_character=False):
@@ -520,8 +547,11 @@ def get_people(conn: Connection, movie_id: int):
     }
 
 
-def get_entries(conn: Connection, table_name: str, ID: int = None, **properties) -> List[Dict]:
-    """Get entries that match ID/properties from table."""
+def get_entries(conn: Connection, table_name: str, ID: int = None, return_properties: List[str] = None, **properties) -> List[Dict]:
+    """Get entries that match ID/properties from table.
+
+    If return_properties is specified return those properties
+    """
     logger.debug(
         "Fetching entry in %s, with ID %s properties:\n%s",
         table_name, str((ID or 'None')), describe_obj(properties)
@@ -541,21 +571,43 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, **properties)
         )
         return [], table_columns
 
+    def get_conditional(col, val):
+        if isinstance(val, (list, np.ndarray)):
+            return col.in_(list(val))
+        if isinstance(val, dict):
+            if val.TYPE == "GREATER_THAN":
+                return col > val.VALUE
+            if val.TYPE == "LESS_THAN":
+                return col < val.VALUE
+            if val.TYPE == "INCLUDE":
+                return col.in_(val.VALUE)
+            if val.TYPE == "EXCLUDE":
+                return col.not_in(val.VALUE)
+            if val.TYPE == "LIKE":
+                return col.like(f"%{val.VALUE}%")
+        return col == val
+
     if ID != -1 and ID is not None and ID:
         query = select(table).where(table.c.ID == ID)
     else:
         query = select(table).filter(
             *[
-                (table.c[k].in_(list(v))
-                 if isinstance(v, (list, np.ndarray))
-                 else table.c[k] == v)
+                get_conditional(table.c[k], v)
                 for k, v in properties.items()
             ]
         )
+
+    if return_properties is not None:
+        subset_columns = [
+            c for c in return_properties if c in table_columns
+        ]
+    else:
+        subset_columns = table_columns
+
     matches = pd.DataFrame([
         _._mapping for _ in conn.execute(query).fetchall()
     ], columns=table_columns
-    ).to_dict("records")
+    ).loc[:, subset_columns].to_dict("records")
 
     logger.debug("There are %d matches", len(matches))
     return matches, table_columns
