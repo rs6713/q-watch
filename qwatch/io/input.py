@@ -36,10 +36,21 @@ logger = logging.getLogger(__file__)
 ###########################################
 # Traits associated with Movies
 ###########################################
-MovieLabel = namedtuple(
-    'MovieLabel', ['name', 'label', 'addit_props'], defaults=[None])
+MovieLabels = namedtuple(
+    'MovieLabels', ['name', 'label', 'addit_props'], defaults=[None])
 MovieEntries = namedtuple(
     'MovieEntries', ['name', 'table', 'return_properties', 'joins'], defaults=[None])
+TableAggregate = namedtuple(
+    'TableAggregate', ['table_name', 'label', 'aggs', 'groups', 'criteria'], defaults=[None]
+)
+TableJoin = namedtuple(
+    'TableJoin', ['table', 'return_properties',
+                  'base_table_prop', 'join_table_prop', 'isouter']
+)
+Aggregate = namedtuple(
+    'Aggregate', ['property', 'label', 'func']
+)
+
 MOVIE_TRAITS = [
     MovieEntries('QUOTES', 'MOVIE_QUOTE', [
                  'ID', 'QUOTE', 'CHARACTER_ID', 'QUOTE_ID']),
@@ -51,36 +62,26 @@ MOVIE_TRAITS = [
     MovieLabels('TROPES', 'TROPE_TRIGGER'),
     MovieLabels('QUALITIES', 'QUALITY'),
     MovieEntries('SOURCES', 'MOVIE_SOURCE', [
-                 'ID', 'SOURCE_ID', 'COST', 'MEMBERSHIP_INCLUDED', 'URL'])
-]
-
-TableAggregate = namedtuple(
-    'TableAggregate', ['table_name', 'label', 'aggs', 'groups', 'criteria'], defaults=[None]
-)
-TableJoin = namedtuple(
-    'TableJoin', ['table', 'return_properties',
-                  'base_table_prop', 'join_table_prop']
-)
-Aggregate = namedtuple(
-    'Aggregate', ['property', 'label', 'func']
-)
-
-MovieEntries('CHARACTERS', 'CHARACTERS',
-             joins=[
-                 TableJoin(
-                     TableAggregate(
-                         table_name='PERSON_DISABILITY',
-                         aggs=[
-                             Aggregate('DISABILITY_ID', 'DISABILITY', 'string')
-                         ],
-                         groups=['PERSON_ID'],
-                         criteria={'IS_CHARACTER': True}
-                     ),
-                     return_properties=['DISABILITY'],
-                     base_table_prop='ID', join_table_prop='PERSON_ID'
+                 'ID', 'SOURCE_ID', 'COST', 'MEMBERSHIP_INCLUDED', 'URL']),
+    MovieEntries('CHARACTERS', 'CHARACTERS',
+                 joins=[
+                     TableJoin(
+                         TableAggregate(
+                             table_name=f'PERSON_{prop}',
+                             aggs=[
+                                 Aggregate(f'{prop}_ID', prop, 'string')
+                             ],
+                             groups=['PERSON_ID'],
+                             criteria={'IS_CHARACTER': True}
+                         ),
+                         return_properties=[prop],
+                         base_table_prop='ID', join_table_prop='PERSON_ID',
+                         isouter=True
+                     )
+                     for prop in ["DISABILITY", "ETHNICITY"]
+                 ]
                  )
-             ]
-             )
+]
 
 
 def get_label(conn: Connection, table_name: str, idd: str) -> int:
@@ -357,23 +358,19 @@ def get_movie(conn: Connection, movie_id: int, properties: List[str] = None) -> 
 
     for trait in MOVIE_TRAITS:
         if properties is None or trait.name in properties:
-            if trait.__name__ == 'MovieLabel':
+            if trait.__class__.__name__ == 'MovieLabel':
                 movie[trait.name] = _get_movie_labels(
                     conn, trait.table, movie_id, addit_props=trait.addit_props
                 )
 
-            elif trait.__name__ == 'MovieEntries':
+            elif trait.__class__.__name__ == 'MovieEntries':
                 movie[trait.name] = get_entries(
                     conn, trait.table,
                     return_properties=trait.return_properties,
                     MOVIE_ID=movie_id,
+                    joins=trait.joins,
                     format="dataframe"
                 )[0]
-
-    # Get Characters
-    if properties is None or "CHARACTERS" in properties:
-        movie["CHARACTERS"] = get_characters(conn, movie_id)
-        characters = list(movie["CHARACTERS"].ID.values)
 
     # Get people
     if properties is None or "PEOPLE" in properties:
@@ -381,12 +378,14 @@ def get_movie(conn: Connection, movie_id: int, properties: List[str] = None) -> 
 
     # Get Character Relationships
     if properties is None or "RELATIONSHIPS" in properties:
+        characters = list(movie["CHARACTERS"].ID.values)
         movie["RELATIONSHIPS"] = get_entries(
             conn, "CHARACTER_RELATIONSHIPS", CHARACTER_ID1=characters, CHARACTER_ID2=characters, format="dataframe"
         )[0]
 
     # Get Character Actions
     if properties is None or "CHARACTER_ACTIONS" in properties:
+        characters = list(movie["CHARACTERS"].ID.values)
         movie["CHARACTER_ACTIONS"] = get_entries(
             conn, "CHARACTER_ACTIONS", CHARACTER_ID=characters, format="dataframe"
         )[0]
