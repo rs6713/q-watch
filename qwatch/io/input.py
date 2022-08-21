@@ -31,7 +31,7 @@ from qwatch.utils import describe_obj
 
 SCHEMA = "dbo"
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 ###########################################
 # Traits associated with Movies
@@ -39,9 +39,9 @@ logger = logging.getLogger(__file__)
 MovieLabels = namedtuple(
     'MovieLabels', ['name', 'label', 'addit_props'], defaults=[None])
 MovieEntries = namedtuple(
-    'MovieEntries', ['name', 'table', 'return_properties', 'joins'], defaults=[None])
+    'MovieEntries', ['name', 'table', 'return_properties', 'joins'], defaults=[None, None])
 TableAggregate = namedtuple(
-    'TableAggregate', ['table_name', 'label', 'aggs', 'groups', 'criteria'], defaults=[None]
+    'TableAggregate', ['table_name', 'aggs', 'groups', 'criteria'], defaults=[None]
 )
 TableJoin = namedtuple(
     'TableJoin', ['table', 'return_properties',
@@ -59,11 +59,11 @@ MOVIE_TRAITS = [
     MovieLabels('TYPES', 'TYPE', ['EXPLICIT']),
     MovieLabels('GENRES', 'GENRE'),
     MovieLabels('REPRESENTATIONS', 'REPRESENTATION', ['MAIN']),
-    MovieLabels('TROPES', 'TROPE_TRIGGER'),
+    MovieLabels('TROPE_TRIGGERS', 'TROPE_TRIGGER'),
     MovieLabels('QUALITIES', 'QUALITY'),
     MovieEntries('SOURCES', 'MOVIE_SOURCE', [
                  'ID', 'SOURCE_ID', 'COST', 'MEMBERSHIP_INCLUDED', 'URL']),
-    MovieEntries('CHARACTERS', 'CHARACTERS',
+    MovieEntries(name='CHARACTERS', table='CHARACTERS',
                  joins=[
                      TableJoin(
                          TableAggregate(
@@ -80,7 +80,25 @@ MOVIE_TRAITS = [
                      )
                      for prop in ["DISABILITY", "ETHNICITY"]
                  ]
-                 )
+                 ),
+    MovieEntries('PEOPLE', 'PEOPLE', joins=[
+        TableJoin(
+            TableAggregate(
+                table_name=f'PERSON_{prop}',
+                aggs=[
+                    Aggregate(f'{prop}_ID', prop, 'string')
+                ],
+                groups=["PERSON_ID"] +
+                (["MOVIE_ID"] if prop == "ROLE" else []),
+                criteria=(None if prop == "ROLE" else {"IS_CHARACTER": False})
+            ),
+            return_properties=[prop] +
+            (["MOVIE_ID"] if prop == "ROLE" else []),
+            base_table_prop='ID', join_table_prop='PERSON_ID',
+            isouter=(False if prop == "ROLE" else True)
+        )
+        for prop in ["DISABILITY", "ETHNICITY", "ROLE"]
+    ])
 ]
 
 
@@ -211,8 +229,12 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, return_proper
         table_name, MetaData(), schema=SCHEMA, autoload_with=conn)
     table_columns = conn.execute(table.select()).keys()
 
+    join_cols = []
+    for join in (joins or []):
+        join_cols += join.return_properties
+    logger.debug("Join columns: %s", str(join_cols))
     # If criteria properties specify columns not found in table, return empty response.
-    if not all([k in table_columns for k in properties]):
+    if not all([k in [*table_columns, *join_cols] for k in properties]):
         logger.warning(
             "%s columns not found in table %s",
             ", ".join([k for k in properties if k not in table_columns]),
@@ -224,50 +246,75 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, return_proper
 
     # Create table joins
     join_properties = []
+    join_tables = []
     for join in (joins or []):
         if isinstance(join.table, str):
             join_table = Table(join.table, MetaData(),
                                schema=SCHEMA, autoload_with=conn)
         elif isinstance(join.table, TableAggregate):
             join_table = get_table_aggregate(
+                conn,
                 **join.table._asdict()
             )
         table = table.join(
             join_table,
-            base_table.c[join.base_table_prop] == join_table.c[join.join_table_prop]
+            base_table.c[join.base_table_prop] == join_table.c[join.join_table_prop],
+            isouter=join.isouter
         )
-        join_properties += join.return_properties
+        join_properties += [join_table.c[p] for p in join.return_properties]
+        join_tables += [join_table]
 
     # ['*']
     query = select(
-        *[table.c[col] for col in [*join_properties, *table_columns]]
+        *[base_table.c[col] for col in table_columns],
+        *join_properties
     )
 
     # If ID exists, is valid, return only entries that match that id
     if is_valid_id(ID):
-        query = query.where(table.c.ID == ID)
+        query = query.where(base_table.c.ID == ID)
     else:
+        # Conditionals for properties can be against join/base tables
+        conditionals = []
+        for k, v in properties.items():
+            logger.debug(
+                "Trying to create conditional for %s -> %s", k, str(v))
+            for tab in [base_table, *join_tables]:
+                if k in tab.c:
+                    conditionals += [get_conditional(tab.c[k], v)]
+                    break
+            else:
+                raise ValueError(
+                    'Property %s not found in base/join tables %s',
+                    k, str([*table_columns, *join_cols])
+                )
         query = query.filter(
-            *[
-                get_conditional(table.c[k], v)
-                for k, v in properties.items()
-            ]
+            *conditionals
         )
 
-    query = query.select_from(base_table)
+    query = query.select_from(table)
 
     # If return_properties exists only, return those properties
-    subset_columns = [*table_columns, *join_properties]
+    subset_columns = [*table_columns, *join_cols]
     if return_properties is not None:
         subset_columns = [
             c for c in return_properties if c in table_columns
-        ] + join_properties
+        ] + join_cols
 
     matches = pd.DataFrame([
         _._mapping for _ in conn.execute(query).fetchall()
-    ], columns=table_columns
+    ], columns=[*table_columns, *join_cols]
     ).loc[:, subset_columns]
     logger.debug("There are %d matches", len(matches))
+
+    # Convert aggregates to preferred form
+    for join in (joins or []):
+        if isinstance(join.table, TableAggregate):
+            for agg in join.table.aggs:
+                matches.loc[:, agg.label] = matches.loc[:, agg.label].apply(
+                    lambda s: s if s is None else [
+                        int(_) for _ in s.split(",")]
+                )
 
     # Results of get_entries is returned in either dataframe, or List[Dict] format
     if return_format == "listdict":
@@ -353,14 +400,16 @@ def get_movie(conn: Connection, movie_id: int, properties: List[str] = None) -> 
         Qualities want to return associated with movie
     """
     # Get movie details from table with matched age/intensity
-    movie, _ = get_entries(conn, "MOVIES", ID=movie_id,
-                           return_properties=properties)[0][0]
+    movie = get_entries(conn, "MOVIES", ID=movie_id,
+                        return_properties=properties)[0][0]
 
     for trait in MOVIE_TRAITS:
+        logger.debug("Getting trait: %s", trait.name)
+        # If no properties specified (default ALL) or trait in properties
         if properties is None or trait.name in properties:
-            if trait.__class__.__name__ == 'MovieLabel':
+            if trait.__class__.__name__ == 'MovieLabels':
                 movie[trait.name] = _get_movie_labels(
-                    conn, trait.table, movie_id, addit_props=trait.addit_props
+                    conn, trait.label, movie_id, addit_props=trait.addit_props
                 )
 
             elif trait.__class__.__name__ == 'MovieEntries':
@@ -369,25 +418,25 @@ def get_movie(conn: Connection, movie_id: int, properties: List[str] = None) -> 
                     return_properties=trait.return_properties,
                     MOVIE_ID=movie_id,
                     joins=trait.joins,
-                    format="dataframe"
+                    return_format="dataframe"
                 )[0]
 
-    # Get people
-    if properties is None or "PEOPLE" in properties:
-        movie["PEOPLE"] = get_people(conn, movie_id)
+    # # Get people
+    # if properties is None or "PEOPLE" in properties:
+    #     movie["PEOPLE"] = get_people(conn, movie_id)
 
     # Get Character Relationships
     if properties is None or "RELATIONSHIPS" in properties:
-        characters = list(movie["CHARACTERS"].ID.values)
+        characters = [int(i) for i in movie["CHARACTERS"].ID.values]
         movie["RELATIONSHIPS"] = get_entries(
-            conn, "CHARACTER_RELATIONSHIPS", CHARACTER_ID1=characters, CHARACTER_ID2=characters, format="dataframe"
+            conn, "CHARACTER_RELATIONSHIP", CHARACTER_ID1=characters, CHARACTER_ID2=characters, return_format="dataframe"
         )[0]
 
     # Get Character Actions
     if properties is None or "CHARACTER_ACTIONS" in properties:
-        characters = list(movie["CHARACTERS"].ID.values)
+        characters = [int(i) for i in movie["CHARACTERS"].ID.values]
         movie["CHARACTER_ACTIONS"] = get_entries(
-            conn, "CHARACTER_ACTIONS", CHARACTER_ID=characters, format="dataframe"
+            conn, "CHARACTER_ACTION", CHARACTER_ID=characters, return_format="dataframe"
         )[0]
         movie["CHARACTER_ACTIONS"] = movie["CHARACTER_ACTIONS"].groupby(
             "CHARACTER_ID").ACTION_ID.apply(list).reset_index()
