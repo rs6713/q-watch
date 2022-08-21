@@ -26,7 +26,7 @@ from qwatch.io.input import (
     get_tropes,
     get_genres,
     get_movies_ids,
-    _get_movie_properties,
+    _get_movie_labels,
     get_movie
 )
 from qwatch.io.output import delete_movie, save_movie
@@ -245,10 +245,10 @@ class MovieWindow():
             self.tropes = get_tropes(conn)
             self.genres = get_genres(conn)
             self.movies = get_movies_ids(conn)
-            self.types = _get_movie_properties(conn, "TYPE", None)
-            self.ages = _get_movie_properties(conn, "AGE", None)
-            self.intensities = _get_movie_properties(conn, "INTENSITY", None)
-            self.sources = _get_movie_properties(conn, "SOURCE", None)
+            self.types = _get_movie_labels(conn, "TYPE", None)
+            self.ages = _get_movie_labels(conn, "AGE", None)
+            self.intensities = _get_movie_labels(conn, "INTENSITY", None)
+            self.sources = _get_movie_labels(conn, "SOURCE", None)
 
     def configure_root(self):
         """ Configure properties of app window."""

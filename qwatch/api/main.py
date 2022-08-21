@@ -9,7 +9,7 @@ from qwatch.utils import _create_engine
 from qwatch.io.input import (
     get_entries,
     get_movie,
-    _get_movie_properties
+    _get_movie_labels
 )
 from qwatch.io.output import (
     add_update_entry

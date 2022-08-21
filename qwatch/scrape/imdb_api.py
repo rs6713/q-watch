@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 from selenium import webdriver
 
-from qwatch.io.input import get_person_if_exists, get_id, _get_movie_properties
+from qwatch.io.input import get_person_if_exists, get_id, _get_movie_labels
 from qwatch.io import _create_engine
 from qwatch.utils import get_first_name, get_last_name
 
@@ -95,7 +95,7 @@ class IMDBScraper(object):
         # Convert imdb genres to ids
         engine = _create_engine()
         with engine.connect() as conn:
-            genres = _get_movie_properties(conn, "GENRE")
+            genres = _get_movie_labels(conn, "GENRE")
 
             return genres[
                 genres.LABEL.isin([
@@ -260,7 +260,7 @@ class IMDBScraper(object):
         # Get source details for amazon/netflix
         engine = _create_engine()
         with engine.connect() as conn:
-            all_sources = _get_movie_properties(
+            all_sources = _get_movie_labels(
                 conn, "SOURCE", None, [])
 
         sources = pd.DataFrame(

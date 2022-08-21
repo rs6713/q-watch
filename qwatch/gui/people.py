@@ -15,7 +15,7 @@ from qwatch.io.input import (
     get_tropes,
     get_genres,
     get_movies_ids,
-    _get_movie_properties,
+    _get_movie_labels,
     get_id,
     get_actors,
 )
@@ -224,7 +224,7 @@ class ActionsPage(ttk.Frame):
         """ Retrieve action mappings from db."""
         engine = _create_engine()
         with engine.connect() as conn:
-            actions = _get_movie_properties(conn, "ACTION")
+            actions = _get_movie_labels(conn, "ACTION")
 
             self.OPTIONS = {
                 "actions": actions,
@@ -443,7 +443,7 @@ class RelationshipPage(ttk.Frame):
         """ Retrieve relationship mappings from db."""
         engine = _create_engine()
         with engine.connect() as conn:
-            relationships = _get_movie_properties(conn, "RELATIONSHIP")
+            relationships = _get_movie_labels(conn, "RELATIONSHIP")
 
             self.OPTIONS = {
                 "relationships": relationships,
@@ -785,13 +785,13 @@ class PersonPage(ttk.Frame):
         """ Retrieve person mappings from db."""
         engine = _create_engine()
         with engine.connect() as conn:
-            genders = _get_movie_properties(conn, "GENDER")
-            ethnicities = _get_movie_properties(conn, "ETHNICITIE")
-            sexualities = _get_movie_properties(conn, "SEXUALITIE")
-            roles = _get_movie_properties(conn, "ROLE")
-            disabilities = _get_movie_properties(conn, "DISABILITIE")
-            careers = _get_movie_properties(conn, "CAREER")
-            transgenders = _get_movie_properties(conn, "TRANSGENDER")
+            genders = _get_movie_labels(conn, "GENDER")
+            ethnicities = _get_movie_labels(conn, "ETHNICITIE")
+            sexualities = _get_movie_labels(conn, "SEXUALITIE")
+            roles = _get_movie_labels(conn, "ROLE")
+            disabilities = _get_movie_labels(conn, "DISABILITIE")
+            careers = _get_movie_labels(conn, "CAREER")
+            transgenders = _get_movie_labels(conn, "TRANSGENDER")
             self.OPTIONS = {
                 "GENDER": genders,
                 "ETHNICITY": ethnicities,
@@ -1048,13 +1048,13 @@ class CreatePerson(tk.Toplevel):
         """ Retrieve person traits from db."""
         engine = _create_engine()
         with engine.connect() as conn:
-            genders = _get_movie_properties(conn, "GENDER")
-            ethnicities = _get_movie_properties(conn, "ETHNICITIE")
-            sexualities = _get_movie_properties(conn, "SEXUALITIE")
-            roles = _get_movie_properties(conn, "ROLE")
-            disabilities = _get_movie_properties(conn, "DISABILITIE")
-            careers = _get_movie_properties(conn, "CAREER")
-            transgenders = _get_movie_properties(conn, "TRANSGENDER")
+            genders = _get_movie_labels(conn, "GENDER")
+            ethnicities = _get_movie_labels(conn, "ETHNICITIE")
+            sexualities = _get_movie_labels(conn, "SEXUALITIE")
+            roles = _get_movie_labels(conn, "ROLE")
+            disabilities = _get_movie_labels(conn, "DISABILITIE")
+            careers = _get_movie_labels(conn, "CAREER")
+            transgenders = _get_movie_labels(conn, "TRANSGENDER")
             self.OPTIONS = {
                 "GENDER": genders,
                 "ETHNICITY": ethnicities,
