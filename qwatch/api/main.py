@@ -1,11 +1,14 @@
+import datetime
+import json
+import random
 from typing import Dict, List
 
 from flask import Flask, request
 from markupsafe import escape
+import pandas as pd
 from sqlalchemy import MetaData, Table
 
-
-from qwatch.utils import _create_engine
+from qwatch.io import _create_engine
 from qwatch.io.input import (
     get_entries,
     get_movie,
@@ -13,6 +16,13 @@ from qwatch.io.input import (
 )
 from qwatch.io.output import (
     add_update_entry
+)
+from qwatch.io.utils import (
+    Aggregate,
+    MovieEntries,
+    MovieLabels,
+    TableAggregate,
+    TableJoin,
 )
 
 # Setup DB
@@ -44,51 +54,268 @@ MOVIE_LABELS = ["GENRE", "TYPE", "TROPE_TRIGGER", "REPRESENTATION"]
 
 def convert_to_json(d):
     return {
-        k: v.to_dict('records') if isinstance(v, pd.DataFrame) else v
+        k: (
+            v.to_dict('records')
+            if isinstance(v, pd.DataFrame) else v
+        )
+        for k, v in d.items()
     }
 
 
-@app.route('/api/count/people', methods=["POST"])
-def get_count_matching_people() -> int:
-    ethnicty_id = escape(request.form.get("ethnicity_id"))
-    disability_id = escape(request.form.get("disability_id"))
+@app.route('/api/movie/labels')
+def get_labels() -> Dict:
+
+    tables = MOVIE_LABELS + ["INTENSITY", "CAREER", "ACTION"]
+
+    labels = {}
+    with engine.begin() as conn:
+        for table in tables:
+            labels[f"{table}S"] = get_entries(
+                conn, f"{table}S"
+            )[0]
+    return labels
 
 
-@app.route('/api/count/characters', methods=["POST"])
+@app.route('/api/characters/count', methods=["POST"])
 def get_count_matching_characters() -> int:
-    """
-    {
-        criteria: MAIN
-        groupby: GENRE, ETHNCIITY,
-    }
-    {
-        criteria: brunettes that pursue a lighter haired person
-    }
-    """
-    pass
+    criteria = request.get_json().get("criteria", {})
+
+    characters = get_matching_characters(criteria)
+
+    return len(characters)
 
 
-def get_matching_people(criteria: Dict, movie_id: List[str] = None, properties: List[str] = None) -> List[int]:
+@app.route('/api/characters', methods=["POST"])
+def get_character_list():
     """
-    Get people ids that match criteria
+    Get character list using posted criteria.
+    Return specified properties
+    """
+    criteria = request.get_json().get("criteria", {})
+    properties = request.get_json().get("properties", None)
+
+    characters = get_matching_characters(criteria, properties)
+
+    return {"characters": characters}
+
+
+def get_matching_characters(criteria: Dict, properties: List[str] = None):
+    """ Get charaters matching specified criteria."""
+    query = MovieEntries(
+        name='CHARACTERS', table='CHARACTERS',
+        joins=[
+            *[TableJoin(
+                TableAggregate(
+                    table_name=f'PERSON_{prop}',
+                    aggs=[
+                        Aggregate(f'{prop}_ID', prop, 'string')
+                    ],
+                    groups=['PERSON_ID'],
+                    criteria={'IS_CHARACTER': True}
+                ),
+                return_properties=[prop],
+                base_table_prop='ID', join_table_prop='PERSON_ID',
+                isouter=True
+            )
+                for prop in ["DISABILITY", "ETHNICITY"]],
+            TableJoin(
+                TableAggregate(
+                    table_name=f'CHARACTER_ACTION',
+                    aggs=[
+                        Aggregate(f'ACTION_ID', 'ACTIONS', 'string')
+                    ],
+                    groups=['CHARACTER_ID']
+                ),
+                return_properties=['ACTIONS'],
+                base_table_prop='ID', join_table_prop='CHARACTER_ID',
+                isouter=True
+            ),
+            TableJoin(
+                "PEOPLE",
+                return_properties=['DOB'],
+                base_table_prop="ACTOR_ID", join_table_prop='ID',
+                isouter=False
+            ),
+            TableJoin(
+                "MOVIES",
+                return_properties=['YEAR'],
+                base_table_prop="MOVIE_ID", join_table_id="ID",
+                isouter=False
+            )
+        ]
+    )
+    with engine.begin() as conn:
+        characters = get_entries(
+            conn, query.table,
+            return_properties=properties,
+            joins=query.joins,
+            return_format="listdict",
+            **criteria
+        )[0]
+
+    # If associated actor has DOB, calculate approximate character age.
+    for character in characters:
+        if character['DOB'] is not None and len(character['DOB']) >= 4:
+            character['APPROX_AGE'] = int(character['YEAR']) - \
+                int(character['DOB'][:4])
+    return characters
+
+
+def get_matching_people(criteria: Dict, properties: List[str] = None) -> List[Dict]:
+    """ Get People matching specified criteria."""
+    query = MovieEntries('PEOPLE', 'PEOPLE', joins=[
+        *[
+            TableJoin(
+                TableAggregate(
+                    table_name=f'PERSON_{prop}',
+                    aggs=[
+                        Aggregate(f'{prop}_ID', prop, 'string')
+                    ],
+                    groups=["PERSON_ID"] +
+                    (["MOVIE_ID"] if prop == "ROLE" else []),
+                    criteria=(None if prop == "ROLE" else {
+                              "IS_CHARACTER": False})
+                ),
+                return_properties=[prop] +
+                (["MOVIE_ID"] if prop == "ROLE" else []),
+                base_table_prop='ID', join_table_prop='PERSON_ID',
+                isouter=(False if prop == "ROLE" else True)
+            )
+            for prop in ["DISABILITY", "ETHNICITY", "ROLE"]
+        ]
+    ])
+
+    with engine.begin() as conn:
+        people, _ = get_entries(
+            conn, query.table,
+            return_properties=properties,
+            joins=query.joins,
+            return_format="listdict",
+            **criteria
+        )
+
+    return people
+
+
+@app.route('/api/people', methods=["POST"])
+def get_people_list():
+    """
+    Get people list using posted criteria.
+    Return specified properties
+    """
+    criteria = request.get_json().get("criteria", {})
+    properties = request.get_json().get("properties", None)
+
+    people = get_matching_people(criteria, properties)
+
+    return {"people": people}
+
+
+@app.route('/api/people/count', methods=["POST"])
+def get_count_matching_people() -> int:
+    """ Get count of people that match criteria."""
+    criteria = request.get_json().get("criteria", {})
+
+    people = get_matching_people(criteria)
+
+    return len(people)
+
+
+def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[int]:
+    """
+    Get movie ids of movies that match criteria
+    - qualities: values on MOVIES entries, e.g. YEAR, BOX_OFFICE
+    - labels: many-to_many labels assigned to movies e.g. representations
+    - writers: writers associated with 
     """
     if properties is None:
         return_properties = ["ID"]
     else:
         return_properties = list(set([*properties, "ID"]))
 
+    query = MovieEntries('MOVIES', 'MOVIES', joins=[
+        *[
+            TableJoin(
+                TableAggregate(
+                    table_name=f'MOVIE_{prop}',
+                    aggs=[
+                        Aggregate(f'{prop}_ID', prop, 'string')
+                    ],
+                    groups=["MOVIE_ID"],
+                    criteria=None
+                ),
+                return_properties=[prop],
+                base_table_prop='ID', join_table_prop='MOVIE_ID',
+                isouter=True
+            )
+            for prop in MOVIE_LABELS
+        ],
+        TableJoin(
+            TableAggregate(
+                table_name="RATINGS",
+                aggs=[
+                    Aggregate('RATING', 'AVG_RATING', 'mean'),
+                    Aggregate('RATING', 'NUM_RATING', 'count')
+                ],
+                groups=["MOVIE_ID"]
+            ),
+            return_properties=["AVG_RATING", "NUM_RATING"],
+            base_table_prop='ID', join_table_prop='MOVIE_ID',
+            isouter=True
+        )
+    ])
+
+    criteria_qualities = {
+        k: v for k, v in criteria.get("qualities", {}).items()
+        if k in MOVIE_QUALTIIES
+    }
+    criteria_labels = {
+        label: label_criteria
+        for label, label_criteria in criteria.get("labels", {}).items()
+        if label in MOVIE_LABELS
+    }
+
     with engine.begin() as conn:
-        # If getting characters
-        if criteria.get("IS_CHARACTER", 0):
+        movies = get_entries(
+            conn, query.table,
+            return_properties=return_properties,
+            joins=query.joins,
+            return_format="listdict",
+            **criteria_qualities,
+            **criteria_labels
+        )
+        # Not just a list ahs been returned
+        if len(return_properties) > 1:
+            movies = movies[0]
 
-        else:
-            if criteria.get("ROLE", None) is not None:
-                get_entries(
-                    conn, "PERSON_ROLE", MOVIE_ID=movie_id, ROLE_ID=criteria.get("ROLE")
-                )
+    # Filter movies that don't have associated character types
+    if "CHARACTERS" in criteria:
+        movie_ids = get_matching_characters(
+            {**criteria["CHARACTERS"], "MOVIE_ID": [movie["ID"]
+                                                    for movie in movies]},
+            properties=["MOVIE_ID"]
+        )
+        movies = [
+            movie for movie in movies
+            if movie["ID"] in movie_ids
+        ]
+
+    # Filter movies if have associated people matching people criteria.
+    if "PEOPLE" in criteria:
+        movie_ids = get_matching_people(
+            {**criteria["PEOPLE"], "MOVIE_ID": [movie["ID"]
+                                                for movie in movies]},
+            properties=["MOVIE_ID"]
+        )
+        movies = [
+            movie for movie in movies
+            if movie["ID"] in movie_ids
+        ]
+
+    return movies
 
 
-def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[int]:
+def get_matching_movies_archive(criteria: Dict, properties: List[str] = None) -> List[int]:
     """
     Get movie ids of movies that match criteria
     - qualities: values on MOVIES entries, e.g. YEAR, BOX_OFFICE
@@ -111,8 +338,11 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
     }
 
     with engine.begin() as conn:
-        movies, _ = get_entries(
+        movies = get_entries(
             conn, "MOVIES", **criteria_qualities, return_properties=return_properties)
+        # Not just a list ahs been returned
+        if len(return_properties) > 1:
+            movies = movies[0]
 
         for label in criteria_labels:
             if not len(movies):
@@ -135,24 +365,38 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                     if movie["ID"] not in matching_movie_ids
                 ]
 
-    # Filter movies if have associated people matching people criteria.
-    if "PEOPLE" in crtieria:
-        movie_ids = get_matching_people(
-            criteria["PEOPLE"],
-            movie_id=[movie["ID"] for movie in movies],
+    # Filter movies that don't have associated character types
+    if "CHARACTERS" in criteria:
+        movie_ids = get_matching_characters(
+            {**criteria["CHARACTERS"], "MOVIE_ID": [movie["ID"]
+                                                    for movie in movies]},
             properties=["MOVIE_ID"]
         )
         movies = [
             movie for movie in movies
             if movie["ID"] in movie_ids
         ]
-    if len(return_properties) == 1:
-        return [movie[return_properties[0]] for movie in movies]
 
-    return [{k: v for k, v in movie.items() if k in properties} for movie in movies]
+    # Filter movies if have associated people matching people criteria.
+    if "PEOPLE" in criteria:
+        movie_ids = get_matching_people(
+            {**criteria["PEOPLE"], "MOVIE_ID": [movie["ID"]
+                                                for movie in movies]},
+            properties=["MOVIE_ID"]
+        )
+        movies = [
+            movie for movie in movies
+            if movie["ID"] in movie_ids
+        ]
+
+    return movies
+    # if len(return_properties) == 1:
+    #     return [movie[return_properties[0]] for movie in movies]
+
+    # return [{k: v for k, v in movie.items() if k in properties} for movie in movies]
 
 
-@app.route('/api/count/movie', methods=["POST"])
+@app.route('/api/count/movies', methods=["POST"])
 def get_count_matching_movies() -> int:
     """
     With filters, get count of movies that match request.
@@ -163,25 +407,25 @@ def get_count_matching_movies() -> int:
     }
     """
     criteria = request.get_json()
-    movie_ids = get_matching_movie_ids(criteria, properties=["ID"])
+    movie_ids = get_matching_movies(criteria, properties=["ID"])
 
     return len(movie_ids)
 
 
-@app.route('/api/movie/<int:id>')
+@app.route('/api/movie/<int:movie_id>')
 def get_movie_by_id(movie_id: int):
     """ Return movie that is associated with ID."""
     movie_id = escape(movie_id)
 
     with engine.begin() as conn:
         movie = get_movie(
-            conn, ID=movie_id
+            conn, movie_id
         )
 
     return convert_to_json(movie)
 
 
-@app.route('/api/movielist', methods=["POST"])
+@app.route('/api/movies', methods=["POST"])
 def get_movie_list():
     """
     Get movie list using posted criteria.
@@ -189,7 +433,6 @@ def get_movie_list():
     """
     criteria = request.get_json().get("criteria", {})
     properties = request.get_json().get("properties", None)
-    movie_ids = get_matching_movies(criteria, properties=["ID"])
 
     if properties is None:
         properties = [
@@ -197,19 +440,12 @@ def get_movie_list():
             "YEAR",
             "BIO",
             "DEFAULT_IMAGE",
-            "RATING"
+            "AVG_RATING"
         ]
 
-    movies = []
-    for movie_id in movie_ids:
-        movies.append(
-            get_movie(
-                movie_id,
-                properties=properties
-            )
-        )
+    movies = get_matching_movies(criteria, properties=properties)
 
-    return movies
+    return {"data": movies}
 
     # if request.method == 'POST':
     #     genre = request.form.get('genre')
@@ -217,14 +453,24 @@ def get_movie_list():
     #     genre = request.args.get('genre')
 
 
-@app.route('api/movie/random')
+@app.route('/api/movie/random')
 def get_random_movie():
     """ Return information of random movie. """
     properties = request.get_json().get("properties", {})
-    _ =
+
+    with engine.begin() as conn:
+        movie_ids = get_entries(
+            conn, "MOVIES", return_properties=["ID"]
+        )
+        chosen_movie_id = random.choice(movie_ids)["ID"]
+
+        movie = get_movie(
+            conn, chosen_movie_id, properties=properties
+        )
+    return convert_to_json(movie)
 
 
-@app.route('api/movie/rating/', methods=["POST"])
+@app.route('/api/movie/rating/', methods=["POST"])
 def save_movie_rating() -> int:
     """ Save rating for movie. """
     movie_id = request.form.get('movie_id')
@@ -248,12 +494,12 @@ def save_movie_rating() -> int:
             ID=movie_rating_id,
             MOVIE_ID=movie_id,
             RATING=rating,
-            DATE=datetime.datetine.now()
+            DATE=datetime.datetime.now()
         )
     return json.dumps({'success': True, "movie_rating_id": movie_rating_id}), 200
 
 
-@app.route('api/source/vote/')
+@app.route('/api/source/vote/')
 def save_movie_source_vote() -> int:
     """ Up/down vote a movie source. """
     movie_source_id = request.form.get('movie_source_id')
@@ -277,7 +523,7 @@ def save_movie_source_vote() -> int:
             ID=movie_source_vote_id,
             MOVIE_SOURCE_ID=movie_source_id,
             VOTE=vote,
-            DATE=datetime.datetine.now()
+            DATE=datetime.datetime.now()
         )
     return json.dumps({'success': True, "movie_source_vote_id": movie_source_vote_id}), 200
 

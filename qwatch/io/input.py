@@ -15,7 +15,9 @@ from sqlalchemy import (
     sql,
     Table,
     update,
-    Column
+    Column,
+    or_,
+    not_,
 )
 from sqlalchemy.engine import (
     Connection,
@@ -28,7 +30,13 @@ import sqlalchemy
 from sqlalchemy.sql.expression import Alias, cast
 
 from qwatch.utils import describe_obj
-
+from qwatch.io.utils import (
+    Aggregate,
+    MovieEntries,
+    MovieLabels,
+    TableAggregate,
+    TableJoin,
+)
 SCHEMA = "dbo"
 
 logger = logging.getLogger(__name__)
@@ -36,21 +44,6 @@ logger = logging.getLogger(__name__)
 ###########################################
 # Traits associated with Movies
 ###########################################
-MovieLabels = namedtuple(
-    'MovieLabels', ['name', 'label', 'addit_props'], defaults=[None])
-MovieEntries = namedtuple(
-    'MovieEntries', ['name', 'table', 'return_properties', 'joins'], defaults=[None, None])
-TableAggregate = namedtuple(
-    'TableAggregate', ['table_name', 'aggs', 'groups', 'criteria'], defaults=[None]
-)
-TableJoin = namedtuple(
-    'TableJoin', ['table', 'return_properties',
-                  'base_table_prop', 'join_table_prop', 'isouter']
-)
-Aggregate = namedtuple(
-    'Aggregate', ['property', 'label', 'func']
-)
-
 MOVIE_TRAITS = [
     MovieEntries('QUOTES', 'MOVIE_QUOTE', [
                  'ID', 'QUOTE', 'CHARACTER_ID', 'QUOTE_ID']),
@@ -142,6 +135,12 @@ def get_table_aggregate(conn: Connection, table_name: str, groups: List[str], ag
                 cast(table.c[agg.property], sqlalchemy.String),
                 sqlalchemy.literal_column("','")
             ).label(agg.label)
+        if agg.func == "mean":
+            return func.avg(table.c[agg.property]).label(agg.label)
+        if agg.func == "sum":
+            return func.sum(table.c[agg.property]).label(agg.label)
+        if agg.func == "count":
+            return func.count(table.c[agg.property]).label(agg.label)
 
     query = select(
         *[table.c[g] for g in groups],
@@ -161,7 +160,7 @@ def get_table_aggregate(conn: Connection, table_name: str, groups: List[str], ag
     ).subquery()
 
 
-def get_conditional(col: Column, val: Union[Dict, List, int, str, float]):
+def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_string_agg: bool = False):
     """
     Get result of conditional applied to Column col.
 
@@ -174,20 +173,61 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float]):
         List --> col value must be in the list
         Dict --> col value must satisfy conditional determined by val.VAL and val.TYPE
             - GREATER/LESS_THAN, IN/EXCLUDE, LIKE
+    is_string_agg: bool
+        Is the column the result of string aggregation
     """
     if isinstance(val, (list, np.ndarray)):
-        return col.in_(list(val))
+        if not is_string_agg:
+            return col.in_(list(val))
+        else:
+            return or_(
+                or_(
+                    col == str(v),
+                    col.like(f"{v},%"),
+                    col.like(f"%,{v}"),
+                    col.like(f"%,{v},%")
+                )
+                for v in val
+            )
     if isinstance(val, dict):
         if val.TYPE == "GREATER_THAN":
             return col > val.VALUE
         if val.TYPE == "LESS_THAN":
             return col < val.VALUE
         if val.TYPE == "INCLUDE":
+            if is_string_agg:
+                return or_(
+                    or_(
+                        col == str(v),
+                        col.like(f"{v},%"),
+                        col.like(f"%,{v}"),
+                        col.like(f"%,{v},%")
+                    )
+                    for v in val.VALUE
+                )
             return col.in_(val.VALUE)
         if val.TYPE == "EXCLUDE":
+            if is_string_agg:
+                return not_(or_(
+                    or_(
+                            col == str(v),
+                            col.like(f"{v},%"),
+                            col.like(f"%,{v}"),
+                            col.like(f"%,{v},%")
+                            )
+                    for v in val.VALUE
+                ))
             return col.not_in(val.VALUE)
         if val.TYPE == "LIKE":
             return col.like(f"%{val.VALUE}%")
+
+    if is_string_agg:
+        return or_(
+            col == str(val),
+            col.like(f"{val},%"),
+            col.like(f"%,{val}"),
+            col.like(f"%,{val},%")
+        )
     return col == val
 
 
@@ -279,9 +319,17 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, return_proper
         for k, v in properties.items():
             logger.debug(
                 "Trying to create conditional for %s -> %s", k, str(v))
-            for tab in [base_table, *join_tables]:
+            for i, tab in enumerate([base_table, *join_tables]):
                 if k in tab.c:
-                    conditionals += [get_conditional(tab.c[k], v)]
+                    # In join table
+                    is_string_agg = False
+                    if i > 0 and isinstance(joins[i-1].table, TableAggregate):
+                        is_string_agg = any([
+                            k == agg.label and agg.func == "string"
+                            for agg in joins[i-1].table.aggs
+                        ])
+                    conditionals += [get_conditional(tab.c[k],
+                                                     v, is_string_agg=is_string_agg)]
                     break
             else:
                 raise ValueError(
@@ -299,7 +347,7 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, return_proper
     if return_properties is not None:
         subset_columns = [
             c for c in return_properties if c in table_columns
-        ] + join_cols
+        ]  # + join_cols
 
     matches = pd.DataFrame([
         _._mapping for _ in conn.execute(query).fetchall()
@@ -307,14 +355,15 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, return_proper
     ).loc[:, subset_columns]
     logger.debug("There are %d matches", len(matches))
 
-    # Convert aggregates to preferred form
+    # Convert string aggregates to preferred form
     for join in (joins or []):
         if isinstance(join.table, TableAggregate):
             for agg in join.table.aggs:
-                matches.loc[:, agg.label] = matches.loc[:, agg.label].apply(
-                    lambda s: s if s is None else [
-                        int(_) for _ in s.split(",")]
-                )
+                if agg.func == "string" and agg.label in matches.columns:
+                    matches.loc[:, agg.label] = matches.loc[:, agg.label].apply(
+                        lambda s: s if s is None else [
+                            int(_) for _ in s.split(",")]
+                    )
 
     # Results of get_entries is returned in either dataframe, or List[Dict] format
     if return_format == "listdict":

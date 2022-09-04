@@ -6,6 +6,8 @@ import Filters from './components/Filters';
 import {ReactComponent as Caret} from '../static/icons/caret.svg'
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
 
+
+
 var movies = [
   {
     id: 1,
@@ -269,24 +271,49 @@ class Browse extends Component {
   constructor(props){
     super(props)
     this.state = {
-      category: null,
-      categories: ["All", "Romance", "Drama", "Comedy", "Sci-Fi", "Period-Piece", "Horror", "Cult Classic"],
-      filterActive: false,
-      movies: movies,
-      sort: Object.keys(SORT)[0]
+      genre: "All",
+      // categories: ["All", "Romance", "Drama", "Comedy", "Sci-Fi", "Period-Piece", "Horror", "Cult Classic"],
+      //genres: [],
+      filterMenuActive: false,
+      movies: [],
+      sort: Object.keys(SORT)[0],
+      filter_criteria: {}
     }
-    this.all_movies = movies;
+    //this.all_movies = movies;
+  }
+
+  getMovies(){
+    fetch('/api/movies', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    }).then(res => res.json()).then(data => {
+      this.all_movies = data["data"]
+
+    })
   }
 
   componentDidMount(){
-    this.getCategories();
+    //this.getCategories();
+
+    fetch('/api/movie/labels').then(res => res.json()).then(data => {
+      this.setState({
+        "GENRES": data["GENRES"]
+      })
+    });
+
+
+
   }
 
-  getCategories(){
-    this.setState({
-      "categories": ["Romance", "Drama", "Comedy", "Sci-Fi", "Period-Piece", "Horror", "Cult Classic"]
-    })
-  }
+  // getCategories(){
+  //   this.setState({
+  //     "categories": ["Romance", "Drama", "Comedy", "Sci-Fi", "Period-Piece", "Horror", "Cult Classic"]
+  //   })
+  // }
 
   getMovies () {
     //TODO Function to fetch movies info from repo
@@ -306,10 +333,10 @@ class Browse extends Component {
     return (
         <div id="Browse" className="page">
           {
-            this.state.filterActive && 
-              <div className="cover" onClick={()=>{this.setState({filterActive: false})}} />
+            this.state.filterMenuActive && 
+              <div className="cover" onClick={()=>{this.setState({filterMenuActive: false})}} />
           }
-          <Filters active={this.state.filterActive? "active": "inactive"} config={filterConfig} list={this.all_movies} action={(mvs)=> {this.setState({movies: mvs})}} />
+          <Filters active={this.state.filterMenuActive? "active": "inactive"} config={filterConfig} list={this.all_movies} action={(mvs)=> {this.setState({movies: mvs})}} />
           <div id="ControlPanel">
             <div id="Sort">
               <div>Sort <Caret/></div>
@@ -325,7 +352,7 @@ class Browse extends Component {
                 <div className={this.state.category==category? 'active' : ''} onClick={()=>{this.setState({category:category })}} >{category}</div>
               ))}
             </div>
-            <div id="FiltersToggle" onClick={()=>{this.setState({"filterActive": !this.state.filterActive})}} className={this.state.filterActive? 'active': ''} ><Filter/>Filters</div>
+            <div id="FiltersToggle" onClick={()=>{this.setState({"filterMenuActive": !this.state.filterMenuActive})}} className={this.state.filterMenuActive? 'active': ''} ><Filter/>Filters</div>
           </div>
           <div id="BrowseResults">
             {movies.filter(movie=>(
