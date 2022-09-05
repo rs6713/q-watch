@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom';
 import Footer from './components/Footer';
 import Rating from './components/Rating';
 import Filters from './components/Filters';
+import Image from './components/Image'
 import {ReactComponent as Caret} from '../static/icons/caret.svg'
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
 
@@ -330,7 +331,7 @@ function Browse(){
       </div>
       <div id="BrowseResults">
         {movies.filter(movie=>(
-            !genre || movie['GENRE'].indexOf(genre) != -1
+            !genre || movie['GENRES'].map(g=> g.ID).indexOf(genre) != -1
           )).length===0 && <div id="alert">
             We are sorry we could find no titles matching your search criteria.
             To learn more about the state of lesbian cinema, click here.
@@ -340,11 +341,14 @@ function Browse(){
 
         {
           sortMovies(movies, sort).filter(movie=>(
-            !genre || movie.GENRE.indexOf(genre) != -1
+            !genre || movie.GENRES.map(g => g.ID).indexOf(genre) != -1
           )).map(movie => (
             <Link to={'/movies/' + movie.ID} key={movie.ID}>
               <div className="movietile" key={movie.ID}>
-                <div className="screenshot" alt={movie.CAPTION} style={{backgroundImage: 'url(/movie-pictures/' + movie.FILENAME + ')'}} />
+                {/* <div className="screenshot" alt={movie.CAPTION} style={{backgroundImage: 'url(/movie-pictures/' + movie.FILENAME + ')'}} /> */}
+                <div className="screenshot">
+                  {Image(movie.FILENAME, movie.CAPTION)}
+                  </div>
                 <div className="description">
                   <h3>{movie.TITLE}</h3>
                   <p> {movie.BIO}</p>

@@ -43,6 +43,7 @@
       border-radius: 0.5em;
       line-height: 1em;
       font-weight: bold;
+      flex-shrink: 0;
       cursor: pointer;
       position: relative;
       z-index: 1;
@@ -125,8 +126,11 @@
     #Categories {
       display: flex;
       flex-direction: row;
-      justify-content: space-around;
       flex: 1 1;
+      overflow-x: scroll;
+      padding-left: 1em;
+      padding-right: 1em;
+      box-sizing: border-box;
 
       div {
         display: inline-block;
@@ -143,6 +147,9 @@
       div:hover {
         color: $FONT_COLOR_DEFAULT;
       }
+    }
+    ::-webkit-scrollbar {
+      display: none;
     }
   }
 
@@ -196,16 +203,39 @@
       stroke-width: 1.5em;
       stroke-linejoin: round;
     }
-
     .screenshot {
       width: 100%;
       height: 15em;
       display: block;
-      background-size: cover;
-      background-clip: padding-box;
-      background-position-x: center;
+      position: relative;
+      overflow: hidden;
+
+      img {
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: inherit !important;
+      }
+      // background-size: cover;
+      // background-clip: padding-box;
+      // background-position-x: center;
       border-radius: 1em 1em 0em 0em;
     }
+
+    // .screenshot {
+    //   width: 100%;
+    //   height: 15em;
+    //   display: block;
+    //   background-size: cover;
+    //   background-clip: padding-box;
+    //   background-position-x: center;
+    //   border-radius: 1em 1em 0em 0em;
+    // }
 
     .description {
       padding: 0.5em 1.5em;

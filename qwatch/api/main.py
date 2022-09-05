@@ -60,9 +60,19 @@ movie_genre_table = Table('MOVIE_GENRE', metadata, autoload=True)
 app = Flask(__name__)
 
 # Default Values
-MOVIE_QUALTIIES = ["COUNTRY", "YEAR", "LANGUAGE",
+MOVIE_QUALITIES = ["ID", "COUNTRY", "YEAR", "LANGUAGE",
                    "BOX_OFFICE", "BUDGET", "INTENSITY", "AGE"]
 MOVIE_LABELS = ["GENRE", "TYPE", "TROPE_TRIGGER", "REPRESENTATION"]
+
+# Create Label Mappings
+LABEL_MAPPINGS = {}
+with engine.begin() as conn:
+    for label in MOVIE_LABELS:
+        labels, _ = get_entries(conn, F"{label}S")
+        LABEL_MAPPINGS[f'{label}S'] = {
+            l['ID']: l
+            for l in labels
+        }
 
 
 def convert_to_json(d):
@@ -256,8 +266,12 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
     - labels: many-to_many labels assigned to movies e.g. representations
     - writers: writers associated with 
     """
+    logger.info(
+        "Retrieving movies that match criteria: %s",
+        str(criteria)
+    )
     if properties is None:
-        return_properties = ["ID"]
+        return_properties = None
     else:
         return_properties = list(set([*properties, "ID"]))
 
@@ -267,12 +281,12 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                 TableAggregate(
                     table_name=f'MOVIE_{prop}',
                     aggs=[
-                        Aggregate(f'{prop}_ID', prop, 'string')
+                        Aggregate(f'{prop}_ID', f'{prop}S', 'string')
                     ],
                     groups=["MOVIE_ID"],
                     criteria=None
                 ),
-                return_properties=[prop],
+                return_properties=[f'{prop}S'],
                 base_table_prop='ID', join_table_prop='MOVIE_ID',
                 isouter=True
             )
@@ -314,7 +328,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
 
     criteria_qualities = {
         k: v for k, v in criteria.get("qualities", {}).items()
-        if k in MOVIE_QUALTIIES
+        if k in MOVIE_QUALITIES
     }
     criteria_labels = {
         label: label_criteria
@@ -332,7 +346,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             **criteria_labels
         )
         # Not just a list ahs been returned
-        if len(return_properties) > 1:
+        if return_properties is None or len(return_properties) > 1:
             movies = movies[0]
 
     # Filter movies that don't have associated character types
@@ -360,7 +374,9 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             if (movie["ID"] if isinstance(movie, dict) else movie) in movie_ids
         ]
 
-    if "FILENAME" in return_properties:
+    # Perform Post-Processing on properties
+
+    if return_properties is None or "FILENAME" in return_properties:
         for movie in movies:
             if movie["FILENAME"] is None:
                 with engine.begin() as conn:
@@ -375,10 +391,17 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                         movie["CAPTION"] = images[0]["CAPTION"]
 
     for movie in movies:
-        if "AVG_RATING" in return_properties and np.isnan(movie["AVG_RATING"]):
+        if (return_properties is None or "AVG_RATING" in return_properties) and np.isnan(movie["AVG_RATING"]):
             movie["AVG_RATING"] = 0.0
-        if "NUM_RATING" in return_properties and np.isnan(movie["NUM_RATING"]):
+        if (return_properties is None or "NUM_RATING" in return_properties) and np.isnan(movie["NUM_RATING"]):
             movie["NUM_RATING"] = 0
+        for label in MOVIE_LABELS:
+            if (return_properties is None or f"{label}S" in return_properties):
+                movie[f"{label}S"] = [
+                    LABEL_MAPPINGS[f"{label}S"][i]
+                    for i in movie[f"{label}S"]
+                ]
+
     return movies
 
 
@@ -401,12 +424,14 @@ def get_count_matching_movies() -> int:
 @app.route('/api/movie/<int:movie_id>')
 def get_movie_by_id(movie_id: int):
     """ Return movie that is associated with ID."""
-    movie_id = escape(movie_id)
+    movie_id = int(movie_id)
 
-    with engine.begin() as conn:
-        movie = get_movie(
-            conn, movie_id
-        )
+    movie = get_matching_movies(
+        dict(qualities=dict(ID=movie_id))
+    )[0]
+    # movie = get_movie(
+    #     conn, movie_id
+    # )
 
     return convert_to_json(movie)
 
@@ -427,7 +452,7 @@ def get_movie_list():
             "BIO",
             "FILENAME", "CAPTION",
             "AVG_RATING", "NUM_RATING",
-            "GENRE"
+            "GENRES"
         ]
 
     movies = get_matching_movies(criteria, properties=properties)
@@ -542,7 +567,7 @@ def get_matching_movies_archive(criteria: Dict, properties: List[str] = None) ->
 
     criteria_qualities = {
         k: v for k, v in criteria.get("qualities", {}).items()
-        if k in MOVIE_QUALTIIES
+        if k in MOVIE_QUALITIES
     }
     criteria_labels = {
         label: label_criteria
