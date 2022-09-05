@@ -345,9 +345,10 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, return_proper
     # If return_properties exists only, return those properties
     subset_columns = [*table_columns, *join_cols]
     if return_properties is not None:
-        subset_columns = [
-            c for c in return_properties if c in table_columns
-        ]  # + join_cols
+        subset_columns = return_properties
+        # subset_columns = [
+        #     c for c in return_properties if c in table_columns
+        # ]  # + join_cols
 
     matches = pd.DataFrame([
         _._mapping for _ in conn.execute(query).fetchall()

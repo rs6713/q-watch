@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import Footer from './components/Footer';
 import Rating from './components/Rating';
@@ -83,12 +83,12 @@ var movies = [
   }
 ]
 const SORT = {
-  //"Most Popular": ("views", -1),
-  //"Least Popular": ("views", 1),
-  "Highest Rating": ["rating", -1],
-  "Lowest Rating": ["rating", 1],
-  "Most Recent Release": ["year", -1],
-  "Least Recent Release": ["year", 1],
+  "Most Popular": ("NUM_RATING", -1),
+  "Least Popular": ("NUM_RATING", 1),
+  "Highest Rating": ["AVG_RATING", -1],
+  "Lowest Rating": ["AVG_RATING", 1],
+  "Most Recent Release": ["YEAR", -1],
+  "Least Recent Release": ["YEAR", 1],
 }
 
 const filterConfig = {
@@ -265,127 +265,210 @@ const filterConfig = {
   ]
 }
 
+function sortMovies(movies, sort){
+  /* Sort Movies by properties.*/
+  let prop = SORT[sort][0]
+  let order = SORT[sort][1]
+  
+  return movies.sort((m1, m2) => (m1[prop] > m2[prop] ? order: -1 * order))
+}
+
+function Browse(){
+  const [genres, setGenres] = useState([]);
+  const [filterActive, setFilterActive] = useState(false);
+  const [movies, setMovies] = useState([]);
+  const [allMovies, setAllMovies] = useState([]);
+  const [sort, setSort] = useState(Object.keys(SORT)[0]);
+  const [genre, setGenre] = useState(null);
 
 
-class Browse extends Component {
-  constructor(props){
-    super(props)
-    this.state = {
-      genre: "All",
-      // categories: ["All", "Romance", "Drama", "Comedy", "Sci-Fi", "Period-Piece", "Horror", "Cult Classic"],
-      //genres: [],
-      filterMenuActive: false,
-      movies: [],
-      sort: Object.keys(SORT)[0],
-      filter_criteria: {}
-    }
-    //this.all_movies = movies;
-  }
-
-  getMovies(){
+  // Data Fetching Called once at mount/dismount
+  useEffect(() => {
     fetch('/api/movies', {
       method: 'POST',
       headers: {
-        'Accept': 'application/json, text/plain, */*',
-        'Content-Type': 'application/json'
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'cache-control': 'no-store',
       },
-      body: JSON.stringify({})
+      body: JSON.stringify({})//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
-      this.all_movies = data["data"]
-
+      setMovies(data["data"]);
+      setAllMovies(data["data"]);
     })
-  }
+  }, []);
 
-  componentDidMount(){
-    //this.getCategories();
-
+  useEffect(() => {
     fetch('/api/movie/labels').then(res => res.json()).then(data => {
-      this.setState({
-        "GENRES": data["GENRES"]
-      })
+      setGenres(data["GENRES"]);
     });
+  }, []);
 
-
-
-  }
-
-  // getCategories(){
-  //   this.setState({
-  //     "categories": ["Romance", "Drama", "Comedy", "Sci-Fi", "Period-Piece", "Horror", "Cult Classic"]
-  //   })
-  // }
-
-  getMovies () {
-    //TODO Function to fetch movies info from repo
-    // all_movies
-
-  }
-
-  sortMovies(movies){
-    /* Sort Movies by properties.*/
-    let prop = SORT[this.state.sort][0]
-    let order = SORT[this.state.sort][1]
-    
-    return movies.sort((m1, m2) => (m1[prop] > m2[prop] ? order: -1 * order))
-  }
-
-  render () {
-    return (
-        <div id="Browse" className="page">
-          {
-            this.state.filterMenuActive && 
-              <div className="cover" onClick={()=>{this.setState({filterMenuActive: false})}} />
-          }
-          <Filters active={this.state.filterMenuActive? "active": "inactive"} config={filterConfig} list={this.all_movies} action={(mvs)=> {this.setState({movies: mvs})}} />
-          <div id="ControlPanel">
-            <div id="Sort">
-              <div>Sort <Caret/></div>
-              <ul id="SortOptions">
-                {Object.keys(SORT).map(key => (
-                  <li key={key} className={this.state.sort === key ? 'active' : ''} onClick={()=>{this.setState({'sort': key})}}>{key}</li>
-                ))}
-              </ul>
-            </div>
-            <div id="Categories">
-              <div className={!this.state.category? 'active': ''}  onClick={()=>{this.setState({category: null})}}>All</div>
-              {this.state.categories.map(category => (
-                <div className={this.state.category==category? 'active' : ''} onClick={()=>{this.setState({category:category })}} >{category}</div>
-              ))}
-            </div>
-            <div id="FiltersToggle" onClick={()=>{this.setState({"filterMenuActive": !this.state.filterMenuActive})}} className={this.state.filterMenuActive? 'active': ''} ><Filter/>Filters</div>
-          </div>
-          <div id="BrowseResults">
-            {movies.filter(movie=>(
-                !this.state.category || movie.category.indexOf(this.state.category) != -1
-              )).length==0 && <div id="alert">
-                We are sorry we could find no titles matching your search criteria.
-                To learn more about the state of lesbian cinema, click here.
-                Otherwise, similar searches with results are:  
-              </div>}
-
-            {
-              this.sortMovies(this.state.movies).filter(movie=>(
-                !this.state.category || movie.category.indexOf(this.state.category) != -1
-              )).map(movie => (
-                <Link to={'/movies/'+movie.id}>
-                  <div className="movietile">
-                    <div className="screenshot" style={{backgroundImage: 'url(' + movie.screenshot + ')'}} />
-                    <div className="description">
-                      <h3>{movie.title}</h3>
-                      <p> {movie.bio}</p>
-                    </div>
-                    <span>{movie.year}</span>
-                    <Rating score={movie.rating} rotated={true}/ >
-                  </div>
-                </Link>
-              ))
-            }
-          </div>
-          <div className="spacer"/>
-          <Footer />
+  return (
+    <div id="Browse" className="page">
+      {
+        filterActive &&
+          <div className="cover" onClick={()=>{setFilterActive(false)}} />
+      }
+      <Filters active={filterActive? "active": "inactive"} config={filterConfig} list={allMovies} action={(mvs)=> {setMovies(mvs)}} />
+      <div id="ControlPanel">
+        <div id="Sort">
+          <div>Sort <Caret/></div>
+          <ul id="SortOptions">
+            {Object.keys(SORT).map(key => (
+              <li key={key} className={sort === key ? 'active' : ''} onClick={()=>{setSort(key)}}>{key}</li>
+            ))}
+          </ul>
         </div>
-    )
-  }
+        <div id="Categories">
+          <div className={!genre? 'active': ''} onClick={()=>{setGenres(null)}}>All</div>
+          {genres.map(g => (
+            <div key={g['ID']} className={genre==g["ID"]? 'active' : ''} onClick={()=>{setGenre(g['ID'])}} >{g['LABEL']}</div>
+          ))}
+        </div>
+        <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
+      </div>
+      <div id="BrowseResults">
+        {movies.filter(movie=>(
+            !genre || movie['GENRE'].indexOf(genre) != -1
+          )).length===0 && <div id="alert">
+            We are sorry we could find no titles matching your search criteria.
+            To learn more about the state of lesbian cinema, click here.
+            Otherwise, similar searches with results are:  
+          </div>
+        }
+
+        {
+          sortMovies(movies, sort).filter(movie=>(
+            !genre || movie.GENRE.indexOf(genre) != -1
+          )).map(movie => (
+            <Link to={'/movies/' + movie.ID} key={movie.ID}>
+              <div className="movietile" key={movie.ID}>
+                <div className="screenshot" alt={movie.CAPTION} style={{backgroundImage: 'url(/movie-pictures/' + movie.FILENAME + ')'}} />
+                <div className="description">
+                  <h3>{movie.TITLE}</h3>
+                  <p> {movie.BIO}</p>
+                </div>
+                <span>{movie.YEAR}</span>
+                <Rating score={movie.AVG_RATING} rotated={true}/ >
+              </div>
+            </Link>
+          ))
+        }
+      </div>
+      <div className="spacer"/>
+      <Footer />
+    </div>
+  )
 }
+
+
+// class Browse extends Component {
+//   constructor(props){
+//     super(props)
+//     this.state = {
+//       genre: null,
+//       // categories: ["All", "Romance", "Drama", "Comedy", "Sci-Fi", "Period-Piece", "Horror", "Cult Classic"],
+//       genres: [],
+//       filterMenuActive: false,
+//       movies: [],
+//       sort: Object.keys(SORT)[0],
+//       filterCriteria: {}
+//     }
+//     this.all_movies = [];
+//     //this.genres = [];
+//   }
+
+//   getMovies(){
+//     fetch('/api/movies', {
+//       method: 'POST',
+//       headers: {
+//         'Accept': 'application/json, text/plain, */*',
+//         'Content-Type': 'application/json'
+//       },
+//       body: JSON.stringify({})//this.state.filterCriteria
+//     }).then(res => res.json()).then(data => { //
+//       console.log(data)
+//       this.all_movies = data.data;
+//       this.setState({movies: data.data});
+//     })
+//   }
+//   getGenres(){
+//     fetch('/api/movie/labels').then(res => res.json()).then(data => {
+//       this.setState({genres: data["GENRES"]});
+//     });
+//   }
+
+//   componentDidMount(){
+//     this.getGenres();
+//     this.getMovies();
+//   }
+
+//   sortMovies(movies){
+//     /* Sort Movies by properties.*/
+//     let prop = SORT[this.state.sort][0]
+//     let order = SORT[this.state.sort][1]
+    
+//     return movies.sort((m1, m2) => (m1[prop] > m2[prop] ? order: -1 * order))
+//   }
+
+//   render () {
+//     return (
+//         <div id="Browse" className="page">
+//           {
+//             this.state.filterMenuActive && 
+//               <div className="cover" onClick={()=>{this.setState({filterMenuActive: false})}} />
+//           }
+//           <Filters active={this.state.filterMenuActive? "active": "inactive"} config={filterConfig} list={this.all_movies} action={(mvs)=> {this.setState({movies: mvs})}} />
+//           <div id="ControlPanel">
+//             <div id="Sort">
+//               <div>Sort <Caret/></div>
+//               <ul id="SortOptions">
+//                 {Object.keys(SORT).map(key => (
+//                   <li key={key} className={this.state.sort === key ? 'active' : ''} onClick={()=>{this.setState({'sort': key})}}>{key}</li>
+//                 ))}
+//               </ul>
+//             </div>
+//             <div id="Categories">
+//               <div className={!this.state.genre? 'active': ''} onClick={()=>{this.setState({genre: null})}}>All</div>
+//               {this.state.genres.map(genre => (
+//                 <div className={this.state.genre==genre["ID"]? 'active' : ''} onClick={()=>{this.setState({genre:genre['ID'] })}} >{genre['LABEL']}</div>
+//               ))}
+//             </div>
+//             <div id="FiltersToggle" onClick={()=>{this.setState({"filterMenuActive": !this.state.filterMenuActive})}} className={this.state.filterMenuActive? 'active': ''} ><Filter/>Filters</div>
+//           </div>
+//           <div id="BrowseResults">
+//             {this.state.movies.filter(movie=>(
+//                 !this.state.genre || movie['GENRE'].indexOf(this.state.genre) != -1
+//               )).length==0 && <div id="alert">
+//                 We are sorry we could find no titles matching your search criteria.
+//                 To learn more about the state of lesbian cinema, click here.
+//                 Otherwise, similar searches with results are:  
+//               </div>}
+
+//             {
+//               this.sortMovies(this.state.movies).filter(movie=>(
+//                 !this.state.genre || movie.GENRE.indexOf(this.state.genre) != -1
+//               )).map(movie => (
+//                 <Link to={'/movies/' + movie.ID}>
+//                   <div className="movietile">
+//                     <div className="screenshot" alt={movie.CAPTION} style={{backgroundImage: 'url(/movie-pictures/' + movie.FILENAME + ')'}} />
+//                     <div className="description">
+//                       <h3>{movie.TITLE}</h3>
+//                       <p> {movie.BIO}</p>
+//                     </div>
+//                     <span>{movie.YEAR}</span>
+//                     <Rating score={movie.AVG_RATING} rotated={true}/ >
+//                   </div>
+//                 </Link>
+//               ))
+//             }
+//           </div>
+//           <div className="spacer"/>
+//           <Footer />
+//         </div>
+//     )
+//   }
+// }
 
 export default Browse

@@ -1,3 +1,4 @@
+import datetime
 from io import BytesIO
 
 import pandas as pd
@@ -32,10 +33,14 @@ def describe_obj(obj):
                 description += f"{k}: {obj[k]}"
             elif isinstance(obj[k], dict):
                 description += f"{k}: {', '.join(obj[k].keys())}"
+            elif isinstance(obj[k], list):
+                description += f"{k}: {','.join([str(c) for c in obj[k]])}"
+            elif isinstance(obj[k], datetime.datetime):
+                description += f"{k}: {str(obj[k])}"
             else:
                 description += f"{k}:"
             description += "\n"
     else:
-        return obj
+        return str(obj)
 
     return description

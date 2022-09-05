@@ -18,7 +18,7 @@ function Filters(props){
       <div>
       
       {props.config.filterSections.map((filter) => (
-        <div >
+        <div key={filter.title}>
           
           {filter.type=="bubble" && 
             <ExpandableBubbles 
@@ -37,7 +37,7 @@ function Filters(props){
               {filter.filters.map(f => (
                 <div>
                   <input type="checkbox" id={f.id} name={f.label} value={f.id}></input>
-                  <label for={f.label}> {f.label}</label>
+                  <label> {f.label}</label>
                 </div>
               ))}
             </div>

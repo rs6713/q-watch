@@ -1,10 +1,12 @@
 import datetime
 import json
+import logging
 import random
 from typing import Dict, List
 
 from flask import Flask, request
 from markupsafe import escape
+import numpy as np
 import pandas as pd
 from sqlalchemy import MetaData, Table
 
@@ -24,6 +26,17 @@ from qwatch.io.utils import (
     TableAggregate,
     TableJoin,
 )
+
+logger = logging.getLogger("qwatch")
+loglvl = logging.DEBUG
+logger.setLevel(loglvl)
+ch = logging.StreamHandler()
+ch.setLevel(loglvl)
+formatter = logging.Formatter(
+    '%(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s'
+)
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 # Setup DB
 engine = _create_engine()
@@ -139,7 +152,7 @@ def get_matching_characters(criteria: Dict, properties: List[str] = None):
             TableJoin(
                 "MOVIES",
                 return_properties=['YEAR'],
-                base_table_prop="MOVIE_ID", join_table_id="ID",
+                base_table_prop="MOVIE_ID", join_table_prop="ID",
                 isouter=False
             )
         ]
@@ -151,11 +164,19 @@ def get_matching_characters(criteria: Dict, properties: List[str] = None):
             joins=query.joins,
             return_format="listdict",
             **criteria
-        )[0]
+        )
+        if properties is None or len(properties) > 1:
+            characters = characters[0]
+
+        logger.info(
+            "Found %d characters matching criteria: %s",
+            len(characters), str(criteria)
+        )
 
     # If associated actor has DOB, calculate approximate character age.
     for character in characters:
-        if character['DOB'] is not None and len(character['DOB']) >= 4:
+        logger.info(character['DOB'])
+        if character.get('DOB', None) is not None and len(character['DOB']) >= 4 and character['DOB'][:4].isdecimal():
             character['APPROX_AGE'] = int(character['YEAR']) - \
                 int(character['DOB'][:4])
     return characters
@@ -186,13 +207,20 @@ def get_matching_people(criteria: Dict, properties: List[str] = None) -> List[Di
     ])
 
     with engine.begin() as conn:
-        people, _ = get_entries(
+        people = get_entries(
             conn, query.table,
             return_properties=properties,
             joins=query.joins,
             return_format="listdict",
             **criteria
         )
+        print(people)
+        if properties is None or len(properties) > 1:
+            people = people[0]
+    logger.info(
+        "Found %d people matching criteria: %s, properties %s",
+        len(people), str(criteria), str(properties)
+    )
 
     return people
 
@@ -262,7 +290,26 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             return_properties=["AVG_RATING", "NUM_RATING"],
             base_table_prop='ID', join_table_prop='MOVIE_ID',
             isouter=True
-        )
+        ),
+        TableJoin(
+            "MOVIE_IMAGE",
+            return_properties=["FILENAME", "CAPTION"],
+            base_table_prop='DEFAULT_IMAGE', join_table_prop='ID',
+            isouter=True
+        ),
+        # TableJoin(
+        #     TableAggregate(
+        #         table_name="MOVIE_IMAGE",
+        #         aggs=[
+        #             Aggregate('FILENAME', 'BACKUP_FILENAME', 'first'),
+        #             Aggregate('CAPTION', 'BACKUP_CAPTION', 'first')
+        #         ],
+        #         groups=["MOVIE_ID"]
+        #     ),
+        #     return_properties=["BACKUP_FILENAME", "BACKUP_CAPTION"],
+        #     base_table_prop="ID", join_table_prop="MOVIE_ID",
+        #     isouter=False
+        # )
     ])
 
     criteria_qualities = {
@@ -297,7 +344,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
         )
         movies = [
             movie for movie in movies
-            if movie["ID"] in movie_ids
+            if (movie["ID"] if isinstance(movie, dict) else movie) in movie_ids
         ]
 
     # Filter movies if have associated people matching people criteria.
@@ -307,12 +354,178 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                                                 for movie in movies]},
             properties=["MOVIE_ID"]
         )
+        logger.info("Matching PEOPLE Movie IDS %s", str(movie_ids))
         movies = [
             movie for movie in movies
-            if movie["ID"] in movie_ids
+            if (movie["ID"] if isinstance(movie, dict) else movie) in movie_ids
         ]
 
+    if "FILENAME" in return_properties:
+        for movie in movies:
+            if movie["FILENAME"] is None:
+                with engine.begin() as conn:
+                    # Set as first image
+                    images = get_entries(
+                        conn, "MOVIE_IMAGE",
+                        return_properties=["FILENAME", "CAPTION"],
+                        MOVIE_ID=movie["ID"]
+                    )[0]
+                    if len(images):
+                        movie["FILENAME"] = images[0]["FILENAME"]
+                        movie["CAPTION"] = images[0]["CAPTION"]
+
+    for movie in movies:
+        if "AVG_RATING" in return_properties and np.isnan(movie["AVG_RATING"]):
+            movie["AVG_RATING"] = 0.0
+        if "NUM_RATING" in return_properties and np.isnan(movie["NUM_RATING"]):
+            movie["NUM_RATING"] = 0
     return movies
+
+
+@app.route('/api/count/movies', methods=["POST"])
+def get_count_matching_movies() -> int:
+    """
+    With filters, get count of movies that match request.
+
+    {
+        criteria:
+        groupby: e.g. COUNTRY, YEAR, GENRE
+    }
+    """
+    criteria = request.get_json()
+    movie_ids = get_matching_movies(criteria, properties=["ID"])
+
+    return len(movie_ids)
+
+
+@app.route('/api/movie/<int:movie_id>')
+def get_movie_by_id(movie_id: int):
+    """ Return movie that is associated with ID."""
+    movie_id = escape(movie_id)
+
+    with engine.begin() as conn:
+        movie = get_movie(
+            conn, movie_id
+        )
+
+    return convert_to_json(movie)
+
+
+@app.route('/api/movies', methods=["POST"])
+def get_movie_list():
+    """
+    Get movie list using posted criteria.
+
+    """
+    criteria = request.get_json().get("criteria", {})
+    properties = request.get_json().get("properties", None)
+
+    if properties is None:
+        properties = [
+            "TITLE",
+            "YEAR",
+            "BIO",
+            "FILENAME", "CAPTION",
+            "AVG_RATING", "NUM_RATING",
+            "GENRE"
+        ]
+
+    movies = get_matching_movies(criteria, properties=properties)
+
+    return {"data": movies}
+
+    # if request.method == 'POST':
+    #     genre = request.form.get('genre')
+    # else:
+    #     genre = request.args.get('genre')
+
+
+@app.route('/api/movie/random', methods=["POST"])
+def get_random_movie():
+    """ Return information of random movie. """
+    properties = request.get_json().get("properties", None)
+
+    with engine.begin() as conn:
+        movie_ids = get_entries(
+            conn, "MOVIES", return_properties=["ID"]
+        )
+        chosen_movie_id = random.choice(movie_ids)
+
+        logger.info("Returning random movie: %d", chosen_movie_id)
+        movie = get_movie(
+            conn, chosen_movie_id, properties=properties
+        )
+    return convert_to_json(movie)
+
+
+@app.route('/api/movie/rating/', methods=["POST"])
+def save_movie_rating() -> int:
+    """ Save rating for movie. """
+    movie_id = int(request.form.get('movie_id'))
+    rating = int(request.form.get('rating'))
+    movie_rating_id = request.form.get('movie_rating_id', None)
+    if movie_rating_id is not None:
+        movie_rating_id = int(movie_rating_id)
+
+    logger.info(
+        "Saving movie rating for movie %d, rating %d, existing rating? %s",
+        movie_id, rating, str(movie_rating_id)
+    )
+
+    if not (rating <= 5 and rating >= 1):
+        return json.dumps({'success': False}), 400
+
+    with engine.begin() as conn:
+        print(get_entries(
+            conn, "MOVIES", ID=movie_id)[0])
+        movie_exists = len(get_entries(
+            conn, "MOVIES", ID=movie_id)[0]) == 1
+        if not movie_exists:
+            return json.dumps({'success': False}), 400
+
+        movie_rating_id = add_update_entry(
+            conn,
+            "RATINGS",
+            ID=movie_rating_id,
+            MOVIE_ID=movie_id,
+            RATING=rating,
+            DATE=datetime.datetime.now()
+        )
+    return json.dumps({'success': True, "movie_rating_id": movie_rating_id}), 200
+
+
+@app.route('/api/source/vote/')
+def save_movie_source_vote() -> int:
+    """ Up/down vote a movie source. """
+    movie_source_id = int(request.form.get('movie_source_id'))
+    vote = int(request.form.get('vote'))
+    movie_source_vote_id = request.form.get('movie_source_vote_id', None)
+    if movie_source_vote_id is not None:
+        movie_source_vote_id = int(movie_source_vote_id)
+
+    if not (vote in [-1, 0, 1]):
+        return json.dumps({'success': False}), 400
+
+    with engine.begin() as conn:
+        movie_source_exists = len(get_entries(
+            conn, "MOVIE_SOURCE", ID=movie_source_id)[0]) == 1
+        if not movie_source_exists:
+            return json.dumps({'success': False}), 400
+
+        movie_source_vote_id = add_update_entry(
+            conn,
+            "MOVIE_SOURCE_VOTE",
+            ID=movie_source_vote_id,
+            MOVIE_SOURCE_ID=movie_source_id,
+            VOTE=vote,
+            DATE=datetime.datetime.now()
+        )
+    return json.dumps({'success': True, "movie_source_vote_id": movie_source_vote_id}), 200
+
+
+if __name__ == '__main__':
+    # run app in debug mode on port 5000
+    app.run(debug=True, port=5000)
 
 
 def get_matching_movies_archive(criteria: Dict, properties: List[str] = None) -> List[int]:
@@ -394,140 +607,3 @@ def get_matching_movies_archive(criteria: Dict, properties: List[str] = None) ->
     #     return [movie[return_properties[0]] for movie in movies]
 
     # return [{k: v for k, v in movie.items() if k in properties} for movie in movies]
-
-
-@app.route('/api/count/movies', methods=["POST"])
-def get_count_matching_movies() -> int:
-    """
-    With filters, get count of movies that match request.
-
-    {
-        criteria:
-        groupby: e.g. COUNTRY, YEAR, GENRE
-    }
-    """
-    criteria = request.get_json()
-    movie_ids = get_matching_movies(criteria, properties=["ID"])
-
-    return len(movie_ids)
-
-
-@app.route('/api/movie/<int:movie_id>')
-def get_movie_by_id(movie_id: int):
-    """ Return movie that is associated with ID."""
-    movie_id = escape(movie_id)
-
-    with engine.begin() as conn:
-        movie = get_movie(
-            conn, movie_id
-        )
-
-    return convert_to_json(movie)
-
-
-@app.route('/api/movies', methods=["POST"])
-def get_movie_list():
-    """
-    Get movie list using posted criteria.
-
-    """
-    criteria = request.get_json().get("criteria", {})
-    properties = request.get_json().get("properties", None)
-
-    if properties is None:
-        properties = [
-            "TITLE",
-            "YEAR",
-            "BIO",
-            "DEFAULT_IMAGE",
-            "AVG_RATING"
-        ]
-
-    movies = get_matching_movies(criteria, properties=properties)
-
-    return {"data": movies}
-
-    # if request.method == 'POST':
-    #     genre = request.form.get('genre')
-    # else:
-    #     genre = request.args.get('genre')
-
-
-@app.route('/api/movie/random')
-def get_random_movie():
-    """ Return information of random movie. """
-    properties = request.get_json().get("properties", {})
-
-    with engine.begin() as conn:
-        movie_ids = get_entries(
-            conn, "MOVIES", return_properties=["ID"]
-        )
-        chosen_movie_id = random.choice(movie_ids)["ID"]
-
-        movie = get_movie(
-            conn, chosen_movie_id, properties=properties
-        )
-    return convert_to_json(movie)
-
-
-@app.route('/api/movie/rating/', methods=["POST"])
-def save_movie_rating() -> int:
-    """ Save rating for movie. """
-    movie_id = request.form.get('movie_id')
-    rating = request.form.get('rating')
-    movie_rating_id = request.form.get('movie_rating_id')
-
-    if not (isinstance(rating, int) and rating <= 5 and rating >= 1):
-        return json.dumps({'success': False}), 400
-    if not (isinstance(movie_id, int)):
-        return json.dumps({'success': False}), 400
-
-    with engine.begin() as conn:
-        movie_exists = len(get_entries(
-            conn, "MOVIES", ID=movie_id)[0]) == 1
-        if not movie_exists:
-            return json.dumps({'success': False}), 400
-
-        movie_rating_id = add_update_entry(
-            conn,
-            "RATINGS",
-            ID=movie_rating_id,
-            MOVIE_ID=movie_id,
-            RATING=rating,
-            DATE=datetime.datetime.now()
-        )
-    return json.dumps({'success': True, "movie_rating_id": movie_rating_id}), 200
-
-
-@app.route('/api/source/vote/')
-def save_movie_source_vote() -> int:
-    """ Up/down vote a movie source. """
-    movie_source_id = request.form.get('movie_source_id')
-    vote = request.form.get('vote')
-    movie_source_vote_id = request.form.get('movie_source_vote_id')
-
-    if not (isinstance(vote, int) and vote in [-1, 0, 1]):
-        return json.dumps({'success': False}), 400
-    if not (isinstance(movie_source_id, int)):
-        return json.dumps({'success': False}), 400
-
-    with engine.begin() as conn:
-        movie_source_exists = len(get_entries(
-            conn, "MOVIE_SOURCE", ID=movie_source_id)[0]) == 1
-        if not movie_source_exists:
-            return json.dumps({'success': False}), 400
-
-        movie_source_vote_id = add_update_entry(
-            conn,
-            "MOVIE_SOURCE_VOTE",
-            ID=movie_source_vote_id,
-            MOVIE_SOURCE_ID=movie_source_id,
-            VOTE=vote,
-            DATE=datetime.datetime.now()
-        )
-    return json.dumps({'success': True, "movie_source_vote_id": movie_source_vote_id}), 200
-
-
-if __name__ == '__main__':
-    # run app in debug mode on port 5000
-    app.run(debug=True, port=5000)
