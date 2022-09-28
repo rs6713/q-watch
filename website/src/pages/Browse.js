@@ -1,14 +1,14 @@
 import React, { Component, useState, useEffect} from 'react';
-import {Link} from 'react-router-dom';
 import Footer from './components/Footer';
-import Rating from './components/Rating';
+
 import Filters from './components/Filters';
-import Image from './components/Image'
+import MovieList from './components/MovieList';
+import {SORT} from './components/defaults';
+
 import {ReactComponent as Caret} from '../static/icons/caret.svg'
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
 
-
-
+console.log(SORT)
 var movies = [
   {
     id: 1,
@@ -83,14 +83,14 @@ var movies = [
     category: ["Drama", "Period-Piece", "Romance"],
   }
 ]
-const SORT = {
-  "Most Popular": ("NUM_RATING", -1),
-  "Least Popular": ("NUM_RATING", 1),
-  "Highest Rating": ["AVG_RATING", -1],
-  "Lowest Rating": ["AVG_RATING", 1],
-  "Most Recent Release": ["YEAR", -1],
-  "Least Recent Release": ["YEAR", 1],
-}
+// const SORT = {
+//   "Most Popular": ("NUM_RATING", -1),
+//   "Least Popular": ("NUM_RATING", 1),
+//   "Highest Rating": ["AVG_RATING", -1],
+//   "Lowest Rating": ["AVG_RATING", 1],
+//   "Most Recent Release": ["YEAR", -1],
+//   "Least Recent Release": ["YEAR", 1],
+// }
 
 const filterConfig = {
   title: "Movie Filters",
@@ -266,19 +266,19 @@ const filterConfig = {
   ]
 }
 
-function sortMovies(movies, sort){
-  /* Sort Movies by properties.*/
-  let prop = SORT[sort][0]
-  let order = SORT[sort][1]
+// function sortMovies(movies, sort){
+//   /* Sort Movies by properties.*/
+//   let prop = SORT[sort][0]
+//   let order = SORT[sort][1]
   
-  return movies.sort((m1, m2) => (m1[prop] > m2[prop] ? order: -1 * order))
-}
+//   return movies.sort((m1, m2) => (m1[prop] > m2[prop] ? order: -1 * order))
+// }
 
 function Browse(){
   const [genres, setGenres] = useState([]);
   const [filterActive, setFilterActive] = useState(false);
-  const [movies, setMovies] = useState([]);
-  const [allMovies, setAllMovies] = useState([]);
+  const [movies, setMovies] = useState(null);
+  const [allMovies, setAllMovies] = useState(null);
   const [sort, setSort] = useState(Object.keys(SORT)[0]);
   const [genre, setGenre] = useState(null);
 
@@ -305,6 +305,7 @@ function Browse(){
     });
   }, []);
 
+
   return (
     <div id="Browse" className="page">
       {
@@ -329,42 +330,32 @@ function Browse(){
         </div>
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
       </div>
-      <div id="BrowseResults">
-        {movies.filter(movie=>(
-            !genre || movie['GENRES'].map(g=> g.ID).indexOf(genre) != -1
-          )).length===0 && <div id="alert">
-            We are sorry we could find no titles matching your search criteria.
-            To learn more about the state of lesbian cinema, click here.
-            Otherwise, similar searches with results are:  
-          </div>
-        }
-
-        {
-          sortMovies(movies, sort).filter(movie=>(
-            !genre || movie.GENRES.map(g => g.ID).indexOf(genre) != -1
-          )).map(movie => (
-            <Link to={'/movies/' + movie.ID} key={movie.ID}>
-              <div className="movietile" key={movie.ID}>
-                {/* <div className="screenshot" alt={movie.CAPTION} style={{backgroundImage: 'url(/movie-pictures/' + movie.FILENAME + ')'}} /> */}
-                <div className="screenshot">
-                  {Image(movie.FILENAME, movie.CAPTION)}
-                  </div>
-                <div className="description">
-                  <h3>{movie.TITLE}</h3>
-                  <p> {movie.BIO}</p>
-                </div>
-                <span>{movie.YEAR}</span>
-                <Rating score={movie.AVG_RATING} rotated={true}/ >
-              </div>
-            </Link>
-          ))
-        }
-      </div>
+      <MovieList movies={movies} sort={sort} filters={{'GENRES': genre}} />
       <div className="spacer"/>
       <Footer />
     </div>
   )
 }
+
+{/* <div id="BrowseResults">
+<Loader isLoading={movies.length > 0} />
+{movies.filter(movie=>(
+    !genre || movie['GENRES'].map(g=> g.ID).indexOf(genre) != -1
+  )).length===0 && <div id="alert">
+    We are sorry we could find no titles matching your search criteria.
+    To learn more about the state of lesbian cinema, click here.
+    Otherwise, similar searches with results are:  
+  </div>
+}
+
+{
+  sortMovies(movies, sort).filter(movie=>(
+    !genre || movie.GENRES.map(g => g.ID).indexOf(genre) != -1
+  )).map(movie => (
+    <MovieTile movie={movie} />
+  ))
+}
+</div> */}
 
 
 // class Browse extends Component {

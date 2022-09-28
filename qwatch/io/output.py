@@ -154,7 +154,7 @@ def preprocess_movie(movie: Dict) -> Dict:
             try:
                 # If image does not pre-exist copy to movie-pictures dir
                 if image["ID"] is None or not image["ID"] or image["ID"] == -1:
-                    ext = image["FILENAME"].split(".")[1]
+                    ext = image["FILENAME"].split(".")[-1]
                     dst = os.path.join(
                         img_dir,
                         f"{img_name}-{existing_img_n:03d}.{ext}"
@@ -371,9 +371,17 @@ def save_movie(conn: Connection, movie: Dict) -> int:
             "IMAGE",
         ]
         for prop in update_props:
-            _ = update_entry_list(
+            ids = update_entry_list(
                 conn, f"MOVIE_{prop}", movie[f"{prop}S"], MOVIE_ID=movie_id
             )
+
+        # Inserted movie images
+        # Check for default_image and update movie entry
+        for img_id, img in zip(ids, movie["IMAGES"]):
+            if img["DEFAULT_IMAGE"]:
+                add_update_entry(
+                    conn, "MOVIES", ID=movie_id, DEFAULT_IMAGE=img_id
+                )
 
         ############################################################
         # Add/Update People associated with movie

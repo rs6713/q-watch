@@ -1,0 +1,44 @@
+@import "./defaults.scss";
+
+.loader.inactive {
+  display: none;
+}
+
+.loader {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  color: $FONT_COLOR_LIGHTEST;
+  svg {
+    width: 100px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+  }
+}
+
+@media (max-width: $WIDTH_LARGE_SCREEN) {
+  .loader {
+    svg {
+      width: 80px;
+    }
+  }
+}
+
+@media (max-width: $WIDTH_TABLET) {
+  .loader {
+    svg {
+      width: 50px;
+    }
+  }
+}
+
+@media (max-width: $WIDTH_MOBILE) {
+  .loader {
+    font-size: 30px;
+  }
+}
