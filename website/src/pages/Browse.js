@@ -284,20 +284,20 @@ function Browse(){
 
 
   // Data Fetching Called once at mount/dismount
-  useEffect(() => {
-    fetch('/api/movies', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'cache-control': 'no-store',
-      },
-      body: JSON.stringify({})//this.state.filterCriteria
-    }).then(res => res.json()).then(data => {
-      setMovies(data["data"]);
-      setAllMovies(data["data"]);
-    })
-  }, []);
+  // useEffect(() => {
+  //   fetch('/api/movies', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json',
+  //       'cache-control': 'no-store',
+  //     },
+  //     body: JSON.stringify({})//this.state.filterCriteria
+  //   }).then(res => res.json()).then(data => {
+  //     setMovies(data["data"]);
+  //     setAllMovies(data["data"]);
+  //   })
+  // }, []);
 
   useEffect(() => {
     fetch('/api/movie/labels').then(res => res.json()).then(data => {
@@ -331,12 +331,13 @@ function Browse(){
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
       </div>
       <MovieList movies={movies} sort={sort} filters={{'GENRES': genre}} />
-      <div className="spacer"/>
+      
       <Footer />
     </div>
   )
 }
 
+//<!--<div className="spacer"/>-->
 {/* <div id="BrowseResults">
 <Loader isLoading={movies.length > 0} />
 {movies.filter(movie=>(
