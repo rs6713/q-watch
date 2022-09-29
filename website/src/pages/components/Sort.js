@@ -1,3 +1,5 @@
+import {ReactComponent as Caret} from '../../static/icons/caret.svg'
+import {useState} from 'react';
 
 const SORT = {
   "Most Popular": ("NUM_RATING", -1),
@@ -8,15 +10,22 @@ const SORT = {
   "Least Recent Release": ["YEAR", 1],
 }
 
-function Sort({updateSort}){
+function Sort({updateSort, sort}){
+
+  function clickSort(sortKey){
+    updateSort(SORT[sortKey]);
+  }
+
   return (
     <div id="Sort">
       <div>Sort <Caret/></div>
       <ul id="SortOptions">
         {Object.keys(SORT).map(key => (
-          <li key={key} className={sort === key ? 'active' : ''} onClick={()=>{updateSort({"sort": SORT[key]})}}>{key}</li>
+          <li key={key} className={sort === SORT[key] ? 'active' : ''} onClick={()=>{clickSort(key)}}>{key}</li>
         ))}
       </ul>
     </div>
   )
 }
+
+export default Sort

@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+import math
 import random
 from typing import Dict, List
 
@@ -326,15 +327,20 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
         # )
     ])
 
-    criteria_qualities = {
-        k: v for k, v in criteria.get("qualities", {}).items()
-        if k in MOVIE_QUALITIES
-    }
-    criteria_labels = {
-        label: label_criteria
-        for label, label_criteria in criteria.get("labels", {}).items()
-        if label in MOVIE_LABELS
-    }
+    # criteria_qualities = {
+    #     k: v for k, v in criteria.get("qualities", {}).items()
+    #     if k in MOVIE_QUALITIES
+    # }
+    # criteria_labels = {
+    #     label: label_criteria
+    #     for label, label_criteria in criteria.get("labels", {}).items()
+    #     if label in MOVIE_LABELS
+    # }
+
+    # criteria = {
+    #     k: v for k, v in criteria.items()
+    #     if k in [*MOVIE_QUALITIES, *MOVIE_LABELS]
+    # }
 
     with engine.begin() as conn:
         movies = get_entries(
@@ -342,8 +348,9 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             return_properties=return_properties,
             joins=query.joins,
             return_format="listdict",
-            **criteria_qualities,
-            **criteria_labels
+            # **criteria_qualities,
+            # **criteria_labels
+            **criteria
         )
         # Not just a list ahs been returned
         if return_properties is None or len(return_properties) > 1:
@@ -444,6 +451,14 @@ def get_movie_list():
     """
     criteria = request.get_json().get("criteria", {})
     properties = request.get_json().get("properties", None)
+    sort = request.get_json().get("sort", None)
+    index = request.get_json().get("index", None)
+
+    logger.info("Getting movies with sort %s, index %d, against criteria:\n%s",
+                str(sort), int(index), str(criteria)
+                )
+
+    results_per_index = 12
 
     if properties is None:
         properties = [
@@ -456,8 +471,26 @@ def get_movie_list():
         ]
 
     movies = get_matching_movies(criteria, properties=properties)
+    n_indexes = math.ceil(len(movies) / results_per_index)
 
-    return {"data": movies}
+    # Sort movies according to sort
+    if sort is not None:
+        movies = sorted(
+            movies,
+            key=lambda o: o[sort[0]],
+            reverse=sort[1] == -1
+        )
+
+    if index is not None:
+        if index > n_indexes or index < 1:
+            # TODO How to do error messages
+            return json.dumps({'success': False}), 400
+
+        movies = movies[
+            (index - 1) * results_per_index: index * results_per_index
+        ]
+
+    return {"data": movies, "n_indexes": n_indexes}
 
     # if request.method == 'POST':
     #     genre = request.form.get('genre')

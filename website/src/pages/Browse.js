@@ -2,95 +2,16 @@ import React, { Component, useState, useEffect} from 'react';
 import Footer from './components/Footer';
 
 import Filters from './components/Filters';
+import Labels from './components/Labels';
 import MovieList from './components/MovieList';
-import {SORT} from './components/defaults';
+import Sort from './components/Sort';
+import Indexer from './components/Indexer';
 
-import {ReactComponent as Caret} from '../static/icons/caret.svg'
+
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
 
-console.log(SORT)
-var movies = [
-  {
-    id: 1,
-    title: "But I'm a Cheerleader",
-    year: "1999",
-    rating: 4.5,
-    bio: "A popart, lesbian classic, an all-american cheerleader must attend conversion therapy.",
-    screenshot: 'movie-pictures/but-im-a-cheerleader-001.webp',
-    category: ["Comedy", "Cult Classic", "Romance"]
-  },
-  {
-    id: 2,
-    title: "Blue is the warmest color",
-    year: "2013",
-    rating: 3.5,
-    bio: "If the male gaze were a love scene.",
-    screenshot: '/movie-pictures/blue-is-the-warmest-color-000.jpg',
-    category: ["Drama", "Romance"]
-  },
-  {
-    id: 3,
-    title: "Desert Hearts",
-    year: "1985",
-    rating: 4.7,
-    bio: "Who knew it could be so wet in the desert.",
-    screenshot: '/movie-pictures/desert-hearts-000.jpg',
-    category: ["Drama", "Romance", "Cult Classic"]
-  },
-  {
-    id: 4,
-    title: "Imagine me and you",
-    year: "2007",
-    rating: 4.5,
-    bio: "A woman meets the gaze of a florist, there's just one problem, she's already walking down the aisle.",
-    screenshot: 'movie-pictures/imagine-me-and-you-000.jpg',
-    category: ["Comedy", "Romance", "Cult Classic"]
-  },
-  {
-    id: 5,
-    title: "Rafiki",
-    year: "2018",
-    rating: 4.8,
-    bio: "Against the backdrop and LGBT rights in Kenya, two girls love.",
-    screenshot: 'movie-pictures/rafiki-000.jpg',
-    category: ["Drama", "Romance"]
-  },
-  {
-    id: 6,
-    title: "D.E.B.S",
-    year: "2004",
-    rating: 4.8,
-    bio: "The one who is best at lying, lies best to themselves.",
-    screenshot: "movie-pictures/debs-000.png",
-    category: ["Cult Classic", "Comedy", "Romance"]
-  },
-  {
-    id: 7,
-    title: "Lost and Delirious",
-    year: "2001",
-    rating: 2.7,
-    bio: "The girls boarding school dream.",
-    screenshot: "/movie-pictures/lost-and-delirious-000.jpg",
-    category: ["Drama"]
-  },
-  {
-    id: 8,
-    title: "Ammonite",
-    year: "2021",
-    rating: 4.7,
-    bio: "An overlooked Geologist discovers there is more to life than fossils. (pussy)",
-    screenshot: "/movie-pictures/ammonite-000.jpg",
-    category: ["Drama", "Period-Piece", "Romance"],
-  }
-]
-// const SORT = {
-//   "Most Popular": ("NUM_RATING", -1),
-//   "Least Popular": ("NUM_RATING", 1),
-//   "Highest Rating": ["AVG_RATING", -1],
-//   "Lowest Rating": ["AVG_RATING", 1],
-//   "Most Recent Release": ["YEAR", -1],
-//   "Least Recent Release": ["YEAR", 1],
-// }
+
+
 
 const filterConfig = {
   title: "Movie Filters",
@@ -266,76 +187,75 @@ const filterConfig = {
   ]
 }
 
-// function sortMovies(movies, sort){
-//   /* Sort Movies by properties.*/
-//   let prop = SORT[sort][0]
-//   let order = SORT[sort][1]
-  
-//   return movies.sort((m1, m2) => (m1[prop] > m2[prop] ? order: -1 * order))
-// }
 
 function Browse(){
-  const [genres, setGenres] = useState([]);
+
   const [filterActive, setFilterActive] = useState(false);
   const [movies, setMovies] = useState(null);
-  const [allMovies, setAllMovies] = useState(null);
-  const [sort, setSort] = useState(Object.keys(SORT)[0]);
-  const [genre, setGenre] = useState(null);
+  const [criteria, setCriteria] = useState({});
+  const [sort, setSort] = useState(["YEAR", -1]);
+  const [index, setIndex] = useState(1);
+  const [nIndexes, setNIndexes] = useState(null);
 
 
-  // Data Fetching Called once at mount/dismount
-  // useEffect(() => {
-  //   fetch('/api/movies', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json',
-  //       'cache-control': 'no-store',
-  //     },
-  //     body: JSON.stringify({})//this.state.filterCriteria
-  //   }).then(res => res.json()).then(data => {
-  //     setMovies(data["data"]);
-  //     setAllMovies(data["data"]);
-  //   })
-  // }, []);
-
+  // Data Fetching Called at criteria updates
   useEffect(() => {
-    fetch('/api/movie/labels').then(res => res.json()).then(data => {
-      setGenres(data["GENRES"]);
-    });
-  }, []);
+    // Loading is true while movies are null
+    setMovies(null);
 
+    fetch('/api/movies', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'cache-control': 'no-store',
+      },
+      body: JSON.stringify({
+        "criteria": criteria,
+        "sort": sort,
+        "index": index
+      })//this.state.filterCriteria
+    }).then(res => res.json()).then(data => {
+      setMovies(data["data"]);
+      setNIndexes(data["n_indexes"]);
+    })
+  }, [criteria, sort, index]);
+
+  function updateCriteria(update){
+
+    let newCriteria = {...criteria, ...update}
+
+    // Cancelled criteria are removed
+    for(let key in newCriteria){
+      if(newCriteria[key] === null){
+        delete newCriteria[key];
+      }
+    }
+    setCriteria(
+      newCriteria
+    )
+  }
 
   return (
     <div id="Browse" className="page">
-      {
-        filterActive &&
-          <div className="cover" onClick={()=>{setFilterActive(false)}} />
-      }
-      <Filters active={filterActive? "active": "inactive"} config={filterConfig} list={allMovies} action={(mvs)=> {setMovies(mvs)}} />
+      {filterActive && <div className="cover" onClick={()=>{setFilterActive(false)}} />}
+
+      {/* <Filters active={filterActive? "active": "inactive"} config={filterConfig} list={allMovies} action={(mvs)=> {setMovies(mvs)}} />
+       */}
       <div id="ControlPanel">
-        <div id="Sort">
-          <div>Sort <Caret/></div>
-          <ul id="SortOptions">
-            {Object.keys(SORT).map(key => (
-              <li key={key} className={sort === key ? 'active' : ''} onClick={()=>{setSort(key)}}>{key}</li>
-            ))}
-          </ul>
-        </div>
-        <div id="Categories">
-          <div className={!genre? 'active': ''} onClick={()=>{setGenres(null)}}>All</div>
-          {genres.map(g => (
-            <div key={g['ID']} className={genre==g["ID"]? 'active' : ''} onClick={()=>{setGenre(g['ID'])}} >{g['LABEL']}</div>
-          ))}
-        </div>
+        <Sort updateSort={setSort} sort={sort} />
+        <Labels labelType="GENRES" updateLabel={updateCriteria}/>
+        
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
       </div>
-      <MovieList movies={movies} sort={sort} filters={{'GENRES': genre}} />
-      
+
+      <MovieList movies={movies} />
+      <Indexer nIndexes={nIndexes} updateIndex={setIndex} index={index} />
       <Footer />
     </div>
   )
 }
+export default Browse
 
 //<!--<div className="spacer"/>-->
 {/* <div id="BrowseResults">
@@ -374,6 +294,14 @@ function Browse(){
 //     this.all_movies = [];
 //     //this.genres = [];
 //   }
+
+// function sortMovies(movies, sort){
+//   /* Sort Movies by properties.*/
+//   let prop = SORT[sort][0]
+//   let order = SORT[sort][1]
+  
+//   return movies.sort((m1, m2) => (m1[prop] > m2[prop] ? order: -1 * order))
+// }
 
 //   getMovies(){
 //     fetch('/api/movies', {
@@ -467,4 +395,86 @@ function Browse(){
 //   }
 // }
 
-export default Browse
+// var movies = [
+//   {
+//     id: 1,
+//     title: "But I'm a Cheerleader",
+//     year: "1999",
+//     rating: 4.5,
+//     bio: "A popart, lesbian classic, an all-american cheerleader must attend conversion therapy.",
+//     screenshot: 'movie-pictures/but-im-a-cheerleader-001.webp',
+//     category: ["Comedy", "Cult Classic", "Romance"]
+//   },
+//   {
+//     id: 2,
+//     title: "Blue is the warmest color",
+//     year: "2013",
+//     rating: 3.5,
+//     bio: "If the male gaze were a love scene.",
+//     screenshot: '/movie-pictures/blue-is-the-warmest-color-000.jpg',
+//     category: ["Drama", "Romance"]
+//   },
+//   {
+//     id: 3,
+//     title: "Desert Hearts",
+//     year: "1985",
+//     rating: 4.7,
+//     bio: "Who knew it could be so wet in the desert.",
+//     screenshot: '/movie-pictures/desert-hearts-000.jpg',
+//     category: ["Drama", "Romance", "Cult Classic"]
+//   },
+//   {
+//     id: 4,
+//     title: "Imagine me and you",
+//     year: "2007",
+//     rating: 4.5,
+//     bio: "A woman meets the gaze of a florist, there's just one problem, she's already walking down the aisle.",
+//     screenshot: 'movie-pictures/imagine-me-and-you-000.jpg',
+//     category: ["Comedy", "Romance", "Cult Classic"]
+//   },
+//   {
+//     id: 5,
+//     title: "Rafiki",
+//     year: "2018",
+//     rating: 4.8,
+//     bio: "Against the backdrop and LGBT rights in Kenya, two girls love.",
+//     screenshot: 'movie-pictures/rafiki-000.jpg',
+//     category: ["Drama", "Romance"]
+//   },
+//   {
+//     id: 6,
+//     title: "D.E.B.S",
+//     year: "2004",
+//     rating: 4.8,
+//     bio: "The one who is best at lying, lies best to themselves.",
+//     screenshot: "movie-pictures/debs-000.png",
+//     category: ["Cult Classic", "Comedy", "Romance"]
+//   },
+//   {
+//     id: 7,
+//     title: "Lost and Delirious",
+//     year: "2001",
+//     rating: 2.7,
+//     bio: "The girls boarding school dream.",
+//     screenshot: "/movie-pictures/lost-and-delirious-000.jpg",
+//     category: ["Drama"]
+//   },
+//   {
+//     id: 8,
+//     title: "Ammonite",
+//     year: "2021",
+//     rating: 4.7,
+//     bio: "An overlooked Geologist discovers there is more to life than fossils. (pussy)",
+//     screenshot: "/movie-pictures/ammonite-000.jpg",
+//     category: ["Drama", "Period-Piece", "Romance"],
+//   }
+// ]
+// const SORT = {
+//   "Most Popular": ("NUM_RATING", -1),
+//   "Least Popular": ("NUM_RATING", 1),
+//   "Highest Rating": ["AVG_RATING", -1],
+//   "Lowest Rating": ["AVG_RATING", 1],
+//   "Most Recent Release": ["YEAR", -1],
+//   "Least Recent Release": ["YEAR", 1],
+// }
+

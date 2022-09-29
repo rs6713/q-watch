@@ -203,7 +203,7 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_str
                         col.like(f"%,{v}"),
                         col.like(f"%,{v},%")
                     )
-                    for v in val.VALUE
+                    for v in ([val.VALUE] if isinstance(val.VALUE, (int, float)) else val.VALUE)
                 )
             return col.in_(val.VALUE)
         if val.TYPE == "EXCLUDE":
