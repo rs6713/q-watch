@@ -60,7 +60,7 @@ function Movie(props){
         <div id="MovieContainer">
           
           <div id="MovieContents">
-            <Rating score={movie.rating} rotated={true} />
+            <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} />
             <h1>{movie.TITLE}</h1>
             <h2>
               {formatRuntime(movie.RUNTIME)}&nbsp;&#9679;&nbsp;

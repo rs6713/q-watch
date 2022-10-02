@@ -467,7 +467,7 @@ def get_movie_list():
             "BIO",
             "FILENAME", "CAPTION",
             "AVG_RATING", "NUM_RATING",
-            "GENRES"
+            "GENRES", "TYPES"
         ]
 
     movies = get_matching_movies(criteria, properties=properties)

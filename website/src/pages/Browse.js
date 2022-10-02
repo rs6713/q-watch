@@ -221,6 +221,10 @@ function Browse(){
     })
   }, [criteria, sort, index]);
 
+  useEffect(() => {
+    setIndex(1);
+  }, [criteria, sort])
+
   function updateCriteria(update){
 
     let newCriteria = {...criteria, ...update}

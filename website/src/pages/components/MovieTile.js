@@ -15,7 +15,7 @@ function MovieTile({movie}){
           <p> {movie.BIO}</p>
         </div>
         <span>{movie.YEAR}</span>
-        <Rating score={movie.AVG_RATING} rotated={true}/ >
+        <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} / >
       </div>
     </Link>
   )
