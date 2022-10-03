@@ -68,7 +68,7 @@ MOVIE_LABELS = ["GENRE", "TYPE", "TROPE_TRIGGER", "REPRESENTATION"]
 # Create Label Mappings
 LABEL_MAPPINGS = {}
 with engine.begin() as conn:
-    for label in MOVIE_LABELS:
+    for label in [*MOVIE_LABELS, "INTENSITY", "AGE"]:
         labels, _ = get_entries(conn, F"{label}S")
         LABEL_MAPPINGS[f'{label}S'] = {
             l['ID']: l
@@ -312,19 +312,18 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             base_table_prop='DEFAULT_IMAGE', join_table_prop='ID',
             isouter=True
         ),
-        # TableJoin(
-        #     TableAggregate(
-        #         table_name="MOVIE_IMAGE",
-        #         aggs=[
-        #             Aggregate('FILENAME', 'BACKUP_FILENAME', 'first'),
-        #             Aggregate('CAPTION', 'BACKUP_CAPTION', 'first')
-        #         ],
-        #         groups=["MOVIE_ID"]
-        #     ),
-        #     return_properties=["BACKUP_FILENAME", "BACKUP_CAPTION"],
-        #     base_table_prop="ID", join_table_prop="MOVIE_ID",
-        #     isouter=False
-        # )
+        TableJoin(
+            TableAggregate(
+                table_name="MOVIE_IMAGE",
+                aggs=[
+                    Aggregate('ID', 'IMAGES', 'string')
+                ],
+                groups=["MOVIE_ID"]
+            ),
+            return_properties=["IMAGES"],
+            base_table_prop="ID", join_table_prop="MOVIE_ID",
+            isouter=False
+        )
     ])
 
     # criteria_qualities = {
@@ -352,7 +351,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             # **criteria_labels
             **criteria
         )
-        # Not just a list ahs been returned
+        # Not just a list has been returned
         if return_properties is None or len(return_properties) > 1:
             movies = movies[0]
 
@@ -382,8 +381,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
         ]
 
     # Perform Post-Processing on properties
-
-    if return_properties is None or "FILENAME" in return_properties:
+    if return_properties is not None and "FILENAME" in return_properties:
         for movie in movies:
             if movie["FILENAME"] is None:
                 with engine.begin() as conn:
@@ -396,18 +394,29 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                     if len(images):
                         movie["FILENAME"] = images[0]["FILENAME"]
                         movie["CAPTION"] = images[0]["CAPTION"]
+    print(movies)
+    if return_properties is None or "IMAGES" in return_properties:
+        for movie in movies:
+            with engine.begin() as conn:
+                movie["IMAGES"] = get_entries(
+                    conn, "MOVIE_IMAGE", ID=movie["IMAGES"]
+                )[0]
+    print(movies)
 
     for movie in movies:
-        if (return_properties is None or "AVG_RATING" in return_properties) and np.isnan(movie["AVG_RATING"]):
+        if (return_properties is None or "AVG_RATING" in return_properties) and (movie["AVG_RATING"] is None or np.isnan(movie["AVG_RATING"])):
             movie["AVG_RATING"] = 0.0
-        if (return_properties is None or "NUM_RATING" in return_properties) and np.isnan(movie["NUM_RATING"]):
+        if (return_properties is None or "NUM_RATING" in return_properties) and (movie["NUM_RATING"] is None or np.isnan(movie["NUM_RATING"])):
             movie["NUM_RATING"] = 0
         for label in MOVIE_LABELS:
-            if (return_properties is None or f"{label}S" in return_properties):
+            if ((return_properties is None or f"{label}S" in return_properties) and movie[f"{label}S"] is not None):
                 movie[f"{label}S"] = [
                     LABEL_MAPPINGS[f"{label}S"][i]
                     for i in movie[f"{label}S"]
                 ]
+        for label in ["INTENSITY", "AGE"]:
+            if return_properties is None or label in return_properties:
+                movie[label] = LABEL_MAPPINGS[f"{label}S"][movie[label]]
 
     return movies
 
@@ -434,7 +443,7 @@ def get_movie_by_id(movie_id: int):
     movie_id = int(movie_id)
 
     movie = get_matching_movies(
-        dict(qualities=dict(ID=movie_id))
+        dict(ID=movie_id)
     )[0]
     # movie = get_movie(
     #     conn, movie_id

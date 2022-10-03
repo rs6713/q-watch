@@ -252,9 +252,10 @@ function Browse(){
         
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
       </div>
-
-      <MovieList movies={movies} />
-      <Indexer nIndexes={nIndexes} updateIndex={setIndex} index={index} />
+      <div id="MovieList">
+        <MovieList movies={movies} />
+        <Indexer nIndexes={nIndexes} updateIndex={setIndex} index={index} />
+      </div>
       <Footer />
     </div>
   )

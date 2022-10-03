@@ -231,12 +231,21 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_str
     return col == val
 
 
-def is_valid_id(ID):
+def is_valid_id(ID: Union[List[int], int]):
     """ Positive non-null ID."""
-    return ID != -1 and ID is not None and ID
+    if ID is None:
+        return False
+
+    if isinstance(ID, int):
+        return ID != -1 and ID
+
+    passes = True
+    for i in ID:
+        passes = passes and i != 1 and i
+    return passes
 
 
-def get_entries(conn: Connection, table_name: str, ID: int = None, return_properties: List[str] = None, joins: List[TableJoin] = None, return_format="listdict", **properties) -> List[Dict]:
+def get_entries(conn: Connection, table_name: str, ID: Union[List[int], int] = None, return_properties: List[str] = None, joins: List[TableJoin] = None, return_format="listdict", **properties) -> List[Dict]:
     """Get entries that match ID/properties from table, with optional joins.
 
     Pararms
@@ -312,7 +321,10 @@ def get_entries(conn: Connection, table_name: str, ID: int = None, return_proper
 
     # If ID exists, is valid, return only entries that match that id
     if is_valid_id(ID):
-        query = query.where(base_table.c.ID == ID)
+        if isinstance(ID, int):
+            query = query.where(base_table.c.ID == ID)
+        else:
+            query = query.where(base_table.c.ID.in_(ID))
     else:
         # Conditionals for properties can be against join/base tables
         conditionals = []

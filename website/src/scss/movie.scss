@@ -63,20 +63,6 @@
       display: none;
     }
 
-    #MovieScreenshots {
-      overflow-y: scroll;
-      width: 44%;
-      float: left;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 1em;
-      img {
-        width: 100%;
-      }
-      height: 100%;
-    }
-
     #MovieContents {
       width: 54%;
       float: right;
@@ -187,12 +173,6 @@
     > div#aside {
       top: 1.5em;
     }
-  }
-  #Movie #MovieContainer #MovieScreenshots {
-    width: 100%;
-    height: auto;
-    overflow-y: hidden;
-    float: none;
   }
 }
 

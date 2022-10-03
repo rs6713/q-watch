@@ -7,6 +7,34 @@
   display: flex;
   flex-direction: column;
 
+  #MovieList {
+    flex: 1 1;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+
+    #BrowseResults {
+      flex: 1 1;
+      display: grid;
+      height: 100%;
+      position: relative;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5em;
+      align-items: stretch;
+      justify-content: space-between;
+      padding: 1em $SIDE_PAD;
+      width: 100vw;
+      box-sizing: border-box;
+    }
+  }
+  #MovieList::-webkit-scrollbar {
+    display: none;
+  }
+
   .spacer {
     width: 100%;
     flex: 1 0;
@@ -153,28 +181,6 @@
     }
   }
 
-  #BrowseResults {
-    flex: 1 1;
-    display: grid;
-    position: relative;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 5em;
-    align-items: stretch;
-    justify-content: space-between;
-    padding: 1em $SIDE_PAD;
-    width: 100vw;
-    box-sizing: border-box;
-    overflow-y: scroll;
-
-    /* Hide scrollbar for IE, Edge and Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-
-  #BrowseResults::-webkit-scrollbar {
-    display: none;
-  }
-
   .movietile:hover {
     transform: scale(1.05);
     box-shadow: 0 0px 0.5em rgb(0 0 0 / 50%);
@@ -263,7 +269,7 @@
 }
 
 @mixin tile_styling($screenshot_height, $font_multiplier, $gap, $grid_repeat) {
-  #Browse #BrowseResults {
+  #Browse #MovieList #BrowseResults {
     gap: $gap;
     grid-template-columns: $grid_repeat;
 

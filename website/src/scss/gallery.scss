@@ -1,0 +1,52 @@
+@import "./defaults.scss";
+
+.Gallery {
+  overflow-y: scroll;
+  width: 44%;
+  float: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1em;
+  img {
+    width: 100%;
+  }
+  height: 100%;
+}
+
+@media (max-width: $WIDTH_LARGE_SCREEN) {
+  .Gallery {
+    width: 100%;
+    height: 20em;
+    flex-direction: row;
+    overflow-x: scroll;
+    float: none;
+
+    img {
+      height: 100%;
+      width: auto;
+    }
+  }
+}
+
+@media (max-width: $WIDTH_SMALL_SCREEN) {
+  .Gallery {
+    height: 15em;
+  }
+}
+
+@media (max-width: $WIDTH_MOBILE) {
+  .Gallery {
+    width: 100%;
+    height: auto;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    float: none;
+    flex-direction: column;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+}

@@ -2,7 +2,7 @@
 
 @mixin width_styling($side_padding) {
   // your SCSS here, e.g.
-  #Browse #BrowseResults,
+  #Browse #MovieList #BrowseResults,
   .footer,
   #Browse #ControlPanel {
     padding-left: $side_padding;
