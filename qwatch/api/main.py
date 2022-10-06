@@ -463,9 +463,10 @@ def get_movie_list():
     sort = request.get_json().get("sort", None)
     index = request.get_json().get("index", None)
 
-    logger.info("Getting movies with sort %s, index %d, against criteria:\n%s",
-                str(sort), int(index), str(criteria)
-                )
+    logger.info(
+        "Getting movies with sort %s, index %d, against criteria:\n%s",
+        sort, index, str(criteria)
+    )
 
     results_per_index = 12
 
@@ -505,6 +506,32 @@ def get_movie_list():
     #     genre = request.form.get('genre')
     # else:
     #     genre = request.args.get('genre')
+
+
+@app.route('/api/gif/random', methods=['GET'])
+def get_random_gif():
+    """ Get random gif. """
+    with engine.begin() as conn:
+        joins = [
+            TableJoin(
+                'MOVIES',
+                return_properties=['TITLE', 'YEAR'],
+                base_table_prop='MOVIE_ID', join_table_prop='ID',
+                isouter=False
+            )
+        ]
+        gifs = get_entries(
+            conn,
+            "MOVIE_IMAGE",
+            joins=joins,
+            return_properties=[
+                'TITLE', 'MOVIE_ID', 'CAPTION', 'FILENAME', 'YEAR'
+            ],
+            FILENAME={"TYPE": "LIKE", "VALUE": [".gif", ".webp"]}
+        )[0]
+        chosen_random_gif = random.choice(gifs)
+
+        return convert_to_json(chosen_random_gif)
 
 
 @app.route('/api/movie/random', methods=["POST"])

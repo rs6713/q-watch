@@ -4,12 +4,13 @@ import Footer from './components/Footer';
 import Gallery from './components/Gallery';
 import Loader from './components/Loader';
 import Rating from './components/Rating';
+import Quote from './components/Quote';
 import {formatRuntime} from '../utils.js';
 import Bubbles from './components/Bubbles';
 import ExpandableBubbles from './components/ExpandableBubbles'
 import {sourceDisclaimer} from '../constants'
 import Source from './components/Source';
-import Image from './components/Image';
+
 import {ReactComponent as ReturnMovie} from '../static/icons/return.svg';
 import {ReactComponent as ShuffleMovie} from '../static/icons/shuffle.svg';
 
@@ -72,7 +73,7 @@ function Movie(){
         <ExpandableBubbles items={movie.REPRESENTATIONS} title="Representation Matters" expandable={false} />
         
 
-        <div id="quote"></div>
+        <Quote quote={movie.quote}/>
 
       </div>
       <Gallery images={movie.IMAGES} />

@@ -6,7 +6,7 @@ import {ReactComponent as Minus} from '../../static/icons/minus.svg'
 function ExpandableBubbles({expandable, title, aside, subtitle, items, clickAction}){
   const [active, setActive] = useState(expandable? false : true)
 
-  if(items.length === 0){
+  if(items === null || items.length === 0){
     return <></>
   }
 

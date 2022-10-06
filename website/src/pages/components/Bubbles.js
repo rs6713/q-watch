@@ -13,7 +13,7 @@ function Bubbles({items, clickAction, id}){
     }
   }
 
-  if(items.length == 0){
+  if(items === null || items.length == 0){
     return <></>
   }
 

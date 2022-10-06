@@ -6,17 +6,7 @@ import {ReactComponent as Rainbow} from '../../static/icons/rainbow.svg';
 // import {ReactComponent as ReactLogo} from './logo.svg';
 //import '../../App.scss';
 
-
-function Rating({id, rating, rotated, movieTypes}){
-  const [active, setActive] = useState(false);
-  const [vote, setVote] = useState(null);
-  const [newVote, setNewVote] = useState(null);
-
-  const maxRating = 5;
-
-  //TODO: Check local stored variables in session - set vote
-  //TODO: When place vote, update/insert vote in db. Store vote locally on success
-
+export function getIcon(movieTypes){
   var Icon = Rainbow;
   // Selection of Icon
   for(let typ of movieTypes){
@@ -30,6 +20,21 @@ function Rating({id, rating, rotated, movieTypes}){
       Icon = Paw;
     }
   }
+  return Icon;
+}
+
+function Rating({id, rating, rotated, movieTypes}){
+  const [active, setActive] = useState(false);
+  const [vote, setVote] = useState(null);
+  const [newVote, setNewVote] = useState(null);
+
+  const maxRating = 5;
+
+  //TODO: Check local stored variables in session - set vote
+  //TODO: When place vote, update/insert vote in db. Store vote locally on success
+
+
+  var Icon = getIcon(movieTypes);
 
 
   var classname = "yourvote";

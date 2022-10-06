@@ -30,7 +30,7 @@ function Menu(){
             </div>
           </Link>
           <hr />
-          <h3>The State of Lesbian Cinema</h3>
+          <h3>The State of Queer Cinema</h3>
           <Link to={"/visualizations/overtime"} className="link">
             <div>
               <Time title="" />

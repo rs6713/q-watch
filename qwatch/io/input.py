@@ -190,11 +190,11 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_str
                 for v in val
             )
     if isinstance(val, dict):
-        if val.TYPE == "GREATER_THAN":
-            return col > val.VALUE
-        if val.TYPE == "LESS_THAN":
-            return col < val.VALUE
-        if val.TYPE == "INCLUDE":
+        if val["TYPE"] == "GREATER_THAN":
+            return col > val['VALUE']
+        if val["TYPE"] == "LESS_THAN":
+            return col < val["VALUE"]
+        if val["TYPE"] == "INCLUDE":
             if is_string_agg:
                 return or_(
                     or_(
@@ -203,10 +203,10 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_str
                         col.like(f"%,{v}"),
                         col.like(f"%,{v},%")
                     )
-                    for v in ([val.VALUE] if isinstance(val.VALUE, (int, float)) else val.VALUE)
+                    for v in ([val['VALUE']] if isinstance(val['VALUE'], (int, float)) else val['VALUE'])
                 )
-            return col.in_(val.VALUE)
-        if val.TYPE == "EXCLUDE":
+            return col.in_(val['VALUE'])
+        if val['TYPE'] == "EXCLUDE":
             if is_string_agg:
                 return not_(or_(
                     or_(
@@ -215,11 +215,16 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_str
                             col.like(f"%,{v}"),
                             col.like(f"%,{v},%")
                             )
-                    for v in val.VALUE
+                    for v in val['VALUE']
                 ))
-            return col.not_in(val.VALUE)
-        if val.TYPE == "LIKE":
-            return col.like(f"%{val.VALUE}%")
+            return col.not_in(val['VALUE'])
+        if val['TYPE'] == "LIKE":
+            if isinstance(val['VALUE'], list):
+                return or_(
+                    col.like(f"%{v}%")
+                    for v in val['VALUE']
+                )
+            return col.like(f"%{val['VALUE']}%")
 
     if is_string_agg:
         return or_(
