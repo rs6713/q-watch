@@ -394,14 +394,13 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                     if len(images):
                         movie["FILENAME"] = images[0]["FILENAME"]
                         movie["CAPTION"] = images[0]["CAPTION"]
-    print(movies)
+
     if return_properties is None or "IMAGES" in return_properties:
         for movie in movies:
             with engine.begin() as conn:
                 movie["IMAGES"] = get_entries(
                     conn, "MOVIE_IMAGE", ID=movie["IMAGES"]
                 )[0]
-    print(movies)
 
     for movie in movies:
         if (return_properties is None or "AVG_RATING" in return_properties) and (movie["AVG_RATING"] is None or np.isnan(movie["AVG_RATING"])):
@@ -481,6 +480,9 @@ def get_movie_list():
         ]
 
     movies = get_matching_movies(criteria, properties=properties)
+
+    if len(movies) == 0:
+        return {"data": [], "n_indexes": 0}
     n_indexes = math.ceil(len(movies) / results_per_index)
 
     # Sort movies according to sort

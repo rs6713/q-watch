@@ -57,10 +57,19 @@
 
 @media (max-width: $WIDTH_TABLET) {
   @include width_styling($side_padding: 3vw);
+  #Browse .Alert {
+    width: 60vw;
+    max-width: 60vw;
+  }
 }
 
 @media (max-width: $WIDTH_MOBILE) {
   @include width_styling($side_padding: 5vw);
+  #Browse .Alert {
+    width: 90vw;
+    max-width: 90vw;
+  }
+
   #Browse #ControlPanel #Categories {
     width: 90vw;
     margin-left: 5vw;

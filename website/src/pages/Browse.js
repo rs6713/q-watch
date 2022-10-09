@@ -202,6 +202,7 @@ function Browse(){
   useEffect(() => {
     // Loading is true while movies are null
     setMovies(null);
+    setNIndexes(null);
 
     fetch('/api/movies', {
       method: 'POST',

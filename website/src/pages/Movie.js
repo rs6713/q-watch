@@ -42,39 +42,42 @@ function Movie(){
   if(movie !== null){
     content = (<div id="MovieContainer">
       <div id="MovieContents">
-        <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} />
-        <h1>{movie.TITLE}</h1>
-        <h2>
-          {formatRuntime(movie.RUNTIME)}&nbsp;&#9679;&nbsp;
-          {movie.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
-          {movie.LANGUAGE}&nbsp;&#9679;&nbsp;
-          {movie.COUNTRY}
-        </h2>
-        <p>{movie.SUMMARY}</p>
-        <div id="aside">{movie.YEAR}</div>
-        
-        <Bubbles items={movie.GENRES} />
-        {/* {movie.SOURCES.length > 0 &&
-          <div id="findMe">
-            <h2>
-              Find Me On
-              {movie.TRAILER && <span id="watchTrailer" onClick={()=>{setPlayTrailer(true)}}>
-                Watch Trailer
-              </span>
-              }
-            </h2>
-            <span className="disclaimer">({sourceDisclaimer})</span>
-            <div>
-              {movie.SOURCES.map((source, i) => <Source key={i} id={source.ID} />)}
+        <div id="MovieTitle">
+          <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} />
+          <h1>{movie.TITLE}</h1>
+          <h2>
+            {formatRuntime(movie.RUNTIME)}&nbsp;&#9679;&nbsp;
+            {movie.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
+            {movie.LANGUAGE}&nbsp;&#9679;&nbsp;
+            {movie.COUNTRY}
+          </h2>
+        </div>
+        <div id="MovieParts">
+          <p>{movie.SUMMARY}</p>
+          <div id="aside">{movie.YEAR}</div>
+          
+          <Bubbles items={movie.GENRES} />
+          {/* {movie.SOURCES.length > 0 &&
+            <div id="findMe">
+              <h2>
+                Find Me On
+                {movie.TRAILER && <span id="watchTrailer" onClick={()=>{setPlayTrailer(true)}}>
+                  Watch Trailer
+                </span>
+                }
+              </h2>
+              <span className="disclaimer">({sourceDisclaimer})</span>
+              <div>
+                {movie.SOURCES.map((source, i) => <Source key={i} id={source.ID} />)}
+              </div>
             </div>
-          </div>
-        } */}
-        <ExpandableBubbles items={movie.TROPE_TRIGGERS} aside="(Potential for upsetting content/spoilers)" title="Trope/Trigger Warnings" />
-        <ExpandableBubbles items={movie.REPRESENTATIONS} title="Representation Matters" expandable={false} />
-        
+          } */}
+          <ExpandableBubbles items={movie.TROPE_TRIGGERS} aside="(Potential for upsetting content/spoilers)" title="Trope/Trigger Warnings" />
+          <ExpandableBubbles items={movie.REPRESENTATIONS} title="Representation Matters" expandable={false} />
+          
 
-        <Quote quote={movie.quote}/>
-
+          <Quote quote={movie.quote}/>
+        </div>
       </div>
       <Gallery images={movie.IMAGES} />
 

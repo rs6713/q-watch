@@ -1,3 +1,4 @@
+import {Link} from 'react-router-dom';
 import Loader from './Loader';
 import MovieTile from './MovieTile';
 
@@ -9,10 +10,10 @@ function MovieList({movies}){
   if (movies === null){
     content = <div/>;
   }else if(movies.length === 0){
-    content = <div id="alert">
-      We are sorry we could find no titles matching your search criteria.
-      To learn more about the state of lesbian cinema, click here.
-      Otherwise, similar searches with results are:  
+    content = <div className="Alert">
+      We are sorry we could find no titles matching your search criteria.<br/>
+      To learn more about the state of queer cinema, click <Link to={'/data/explore'}>here</Link>.
+      
     </div>
   }else{
     content = movies.map(movie => (
