@@ -10,17 +10,61 @@ import Bubbles from './components/Bubbles';
 import ExpandableBubbles from './components/ExpandableBubbles'
 import {sourceDisclaimer} from '../constants'
 import Source from './components/Source';
+import styles from '../scss/defaults.scss';
 
 import {ReactComponent as ReturnMovie} from '../static/icons/return.svg';
 import {ReactComponent as ShuffleMovie} from '../static/icons/shuffle.svg';
 
-function Movie(){
+function getWindowDimensions() {
+  const { innerWidth: pageWidth, innerHeight: pageHeight } = window;
+  return {
+    pageWidth, pageHeight
+  };
+}
+
+function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+}
+
+function Movie(props){
  
   var path = window.location.href.split("/")
-  var id = path[path.length-1]
 
+  const [id, setId] = useState(path[path.length-1])
   const [playTrailer, setPlayTrailer] = useState(false);
   const [movie, setMovie] = useState(null);
+  const { pageHeight, pageWidth } = useWindowDimensions();
+  //const [randomMovieId, setRandomMovieId] = useState(3)
+
+  function pickRandomMovie(){
+    setMovie(null);
+    fetch(`/api/movie/random`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'cache-control': 'no-store',
+      },
+      body: JSON.stringify({
+        "properties":['ID']
+      })//this.state.filterCriteria
+    }).then(res => res.json()).then(data => {
+      console.log(data)
+      setId(parseInt(data['ID']));
+      window.location.href = ('/movies/'+ data['ID'])
+    })
+  }
 
   // Data Fetching Called once at mount/dismount
   useEffect(() => {
@@ -30,14 +74,15 @@ function Movie(){
         'cache-control': 'no-store',
       }
     }).then(res => res.json()).then(data => {
-      console.log(data);
       setMovie(data);
     })
-  }, []);
+  }, [id]);
 
   var content = <div id="MovieContainer">
     <Loader isLoading={movie===null} />
   </div>;
+
+  var largeScreenWidth = parseInt(styles.WIDTH_LARGE_SCREEN)
 
   if(movie !== null){
     content = (<div id="MovieContainer">
@@ -51,11 +96,10 @@ function Movie(){
             {movie.LANGUAGE}&nbsp;&#9679;&nbsp;
             {movie.COUNTRY}
           </h2>
+          <div id="aside">{movie.YEAR}</div>
         </div>
         <div id="MovieParts">
           <p>{movie.SUMMARY}</p>
-          <div id="aside">{movie.YEAR}</div>
-          
           <Bubbles items={movie.GENRES} />
           {/* {movie.SOURCES.length > 0 &&
             <div id="findMe">
@@ -72,14 +116,14 @@ function Movie(){
               </div>
             </div>
           } */}
-          <ExpandableBubbles items={movie.TROPE_TRIGGERS} aside="(Potential for upsetting content/spoilers)" title="Trope/Trigger Warnings" />
+          <ExpandableBubbles items={movie.TROPE_TRIGGERS} aside="(Potential for upsetting content/spoilers)" title="Trope/Trigger Warnings" expandable={true}/>
           <ExpandableBubbles items={movie.REPRESENTATIONS} title="Representation Matters" expandable={false} />
-          
-
           <Quote quote={movie.quote}/>
+          {pageWidth < largeScreenWidth && <Gallery images={movie.IMAGES} />}
         </div>
+        
       </div>
-      <Gallery images={movie.IMAGES} />
+      {pageWidth >= largeScreenWidth && <Gallery images={movie.IMAGES} />}
 
     </div>)
   }
@@ -89,7 +133,7 @@ function Movie(){
       <div id="Movie" className="page">
         <div id="MovieControls">
           
-          <ShuffleMovie aria-label="Choose Random Movie" title="Choose random movie." className="ShuffleMovie"/>
+          <ShuffleMovie aria-label="Choose Random Movie" title="Choose random movie." className="ShuffleMovie" onClick={pickRandomMovie}/>
           <Link to="/browse">
             <ReturnMovie aria-label="Return to Browse" title="Return to Browse" className="ReturnMovie" />
           </Link>

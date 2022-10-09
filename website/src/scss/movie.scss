@@ -67,81 +67,92 @@
     #MovieContents {
       width: 54%;
       float: right;
-      overflow-y: scroll;
-      height: 100%;
+      max-height: 100%;
       position: relative;
-
-      > p {
-        text-align: justify;
-      }
-
-      .rating {
-        width: 15em;
-        fill: $ACCENT_COLOR3;
-      }
-
-      h1 {
-        margin-top: 0;
-        margin-bottom: 0;
-      }
-      > h2 {
-        font-weight: normal;
-        margin-bottom: 3em;
-      }
-
-      > div#aside {
-        position: absolute;
-        right: 0;
-        top: 0;
-        font-weight: bold;
-        line-height: 1em;
-        font-size: 2em;
-      }
-
-      #quote {
-        width: 100%;
-        background-color: $ACCENT_COLOR4;
-        border-radius: 1em;
-        text-align: center;
-        padding: 2em 1em;
-        box-sizing: border-box;
-        margin-top: 2em;
-      }
-
-      #findMe {
-        .disclaimer {
-          font-weight: lighter;
-          position: relative;
-          top: -1em;
-          width: 100%;
-          display: block;
-          text-align: justify;
-        }
-        > div {
-          margin-top: 1em;
-        }
-
-        #watchTrailer {
-          float: right;
-          font-size: $FONT_SIZE_DEFAULT;
-          text-decoration: underline;
-          font-weight: lighter;
-          cursor: pointer;
-        }
-        > div {
-          display: flex;
-          gap: 2em;
-          flex-direction: row;
-          flex-wrap: wrap;
-          img {
-            height: 5em;
-          }
-        }
-      }
+      overflow-y: hidden;
+      display: flex;
+      flex-direction: column;
 
       .expandable_bubbles {
         h2 {
           font-size: $FONT_SIZE_HEADING;
+        }
+      }
+
+      #MovieTitle {
+        flex: 0 1;
+        .rating {
+          width: 15em;
+          fill: $ACCENT_COLOR3;
+        }
+
+        h1 {
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+        > h2 {
+          font-weight: normal;
+          margin-bottom: 2em;
+        }
+        > div#aside {
+          position: absolute;
+          right: 0;
+          top: 0;
+          font-weight: bold;
+          line-height: 1em;
+          font-size: 2em;
+        }
+      }
+
+      #MovieParts {
+        flex: 1 1;
+        overflow-y: scroll;
+        ::-webkit-scrollbar {
+          display: none;
+        }
+        > p {
+          text-align: justify;
+        }
+
+        #quote {
+          width: 100%;
+          background-color: $ACCENT_COLOR4;
+          border-radius: 1em;
+          text-align: center;
+          padding: 2em 1em;
+          box-sizing: border-box;
+          margin-top: 2em;
+        }
+
+        #findMe {
+          .disclaimer {
+            font-weight: lighter;
+            position: relative;
+            top: -1em;
+            width: 100%;
+            display: block;
+            text-align: justify;
+          }
+          > div {
+            margin-top: 1em;
+          }
+
+          #watchTrailer {
+            float: right;
+            font-size: $FONT_SIZE_DEFAULT;
+            text-decoration: underline;
+            font-weight: lighter;
+            cursor: pointer;
+          }
+          > div {
+            display: flex;
+            gap: 2em;
+            flex-direction: row;
+            flex-wrap: wrap;
+            img {
+              height: 5em;
+            }
+          }
         }
       }
     }
@@ -171,8 +182,10 @@
     float: none;
     margin-bottom: 1em;
 
-    > div#aside {
-      top: 1.5em;
+    #MovieTitle {
+      > div#aside {
+        top: 1.5em;
+      }
     }
   }
 }
@@ -187,26 +200,31 @@
 
     #MovieContainer #MovieContents {
       font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
-      h1 {
-        font-size: $FONT_SIZE_TITLE * $font_multiplier;
-      }
-      > h2 {
-        font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
-      }
-      > div#aside {
-        font-size: $FONT_SIZE_HEADING * $font_multiplier;
-      }
 
-      #findMe {
-        #watchTrailer {
-          font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+      #MovieTitle {
+        h1 {
+          font-size: $FONT_SIZE_TITLE * $font_multiplier;
         }
         > h2 {
+          font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+        }
+        > div#aside {
           font-size: $FONT_SIZE_HEADING * $font_multiplier;
         }
+      }
 
-        .source span {
-          font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+      #MovieParts {
+        #findMe {
+          #watchTrailer {
+            font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+          }
+          > h2 {
+            font-size: $FONT_SIZE_HEADING * $font_multiplier;
+          }
+
+          .source span {
+            font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+          }
         }
       }
       .bubbles {

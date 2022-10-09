@@ -20,7 +20,6 @@ function Main(){
         'cache-control': 'no-store',
       }
     }).then(res => res.json()).then(data => {
-      console.log(data);
       setMovieGif(data);
     })
   }, []);

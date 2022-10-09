@@ -464,7 +464,7 @@ def get_movie_list():
 
     logger.info(
         "Getting movies with sort %s, index %d, against criteria:\n%s",
-        sort, index, str(criteria)
+        (sort or ''), (index or 0), str(criteria)
     )
 
     results_per_index = 12
@@ -546,6 +546,9 @@ def get_random_movie():
             conn, "MOVIES", return_properties=["ID"]
         )
         chosen_movie_id = random.choice(movie_ids)
+
+        if len(properties) == 1 and properties[0] == "ID":
+            return {'ID': chosen_movie_id}
 
         logger.info("Returning random movie: %d", chosen_movie_id)
         movie = get_movie(

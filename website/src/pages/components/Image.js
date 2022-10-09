@@ -2,7 +2,6 @@ import React from "react";
 
 function Image(name, caption){
   try {
-    console.log(name, caption)
     // Import image on demand
     const image = require(`../../static/movie-pictures/${name}`);
 
