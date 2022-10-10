@@ -13,180 +13,6 @@ import {ReactComponent as Filter} from '../static/icons/filter.svg'
 
 
 
-const filterConfig = {
-  title: "Movie Filters",
-  filterSections:[
-    {
-      title: "By Women for Women",
-      subtitle: "Sometimes things are best done yourself.",
-      type: "checkbox",
-      filters:[
-        {
-          label: "Female Director",
-          id: "female_director",
-          descrip: "The movie is directed by a woman"
-        },
-        {
-          label: "Female Writer",
-          id:"female_writer",
-          descrip: "The movie is written by a woman"
-        }
-      ]
-    },
-    {
-      title: "Movie Qualities",
-      filters: [
-        {
-          label: "Age Range",
-          id: "age_range",
-          type: "slider",
-          options: ["Coming of Age", "Young Adult", "30-60", "60+"]
-        },
-        {
-          label: "Language",
-          id: "language",
-          type: "dropdown",
-        },
-      ]
-    },
-    {
-      title: "Tropes / Trigger Warnings",
-      id: "warnings",
-      expandable: true,
-      warning: "IMPLIED SPOILERS",
-      subtitle: "Early mainstream, queer media was messy at best. Select the tropes you wish to avoid.",
-      type: "bubble",
-      filters:[
-        {
-          label: "Teacher/Student",
-          id:"teacher_student",
-          descrip: "Because it's illegal"
-        },
-        {
-          label: "Lesbian Bed death",
-          id: "lesbian_bed_death"
-        },
-        {
-          label: "Bury your gays",
-          id: "bury_your_gays"
-        },
-        {
-          label: "Sexual Violence",
-          id: "sexual_violence"
-        },
-        {
-          label: "Suicide",
-          id: "suicide",
-          descrip: ""
-        },
-        {
-          label: "Conversion Therapy",
-          id: "conversion_therapy",
-          descrip: ""
-        },
-        {
-          label: "Hate Crimes",
-          id: "hate_crimes",
-          descrip: ""
-        },
-        {
-          label: "They don't end up together.",
-          id: "lonely_lesbians",
-          descrip: ""
-        },
-        {
-          label: "Unaccepting Family/Disowning",
-          id: "family_troubles",
-          descrip: ""
-        },
-        {
-          label: "Bi Erasure",
-          id: "bi_erasure",
-          descrip: ""
-        },
-        {
-          label: "It was just a phase",
-          id: "it_was_a_phase",
-          descrip: ""
-        }
-      ]
-    },
-    {
-      title: "Representation Matters",
-      id: "representation",
-      warning: "See yourself on the bigscreen.",
-      subtitle: "We have tried our best, but if you feel we are missing filters here, please let us know, email us at q-watch.gmail.com.",
-      disclaimers: [
-        "Unfortunately some options may be missing or extremely broad, due to a lack of representation in the media itself.",
-        "Representation here, guarantees presence, but not good representation: see tropes/trigger warnings."
-      ],
-      type: "bubble",
-      filters: [
-        {
-          label: "Black Love",
-          id: "blackLove",
-          descrip: "Black characters loving black characters."
-        },
-        {
-          label: "POC Love",
-          id: "pocLove",
-          descrip: "POC characters loving POC characters."
-        },
-        {
-          label: "QTIPOC",
-          id: "qtipoc",
-          descrip: "At least one of the main characters is POC"
-        },
-        {
-          label: "Transgender",
-          id: "transgender",
-          descrip: "At least one of the main characters is trans"
-        },
-        {
-          label: "Disability",
-          id: "disability",
-          descrip: "At least one of the main characters is disabled"
-        },
-        {
-          label: "Butch",
-          id: "butch",
-          descrip: "At least one of the main characters is butch"
-        },
-        {
-          label: "Bisexual",
-          id: "bisexual",
-          descrip: "At least one of the main characters is bisexual"
-        },
-        {
-          label: "Polyamory",
-          id: "polyamory",
-          descrip: "The relationship is polyamorous"
-        },
-        {
-          label: "Jewish",
-          id: "jewish",
-          descrip: "At least one of the main characters is jewish"
-        }
-      ]
-    },
-    {
-      title: "Can't find what you're looking for?",
-      subtitle: "Unfortunately Queer cinema (like most media) can be majority homogeneous. Allowing these options, may help you find more movies for specific demographics/story types",
-      type: "checkbox",
-      filters:[
-        {
-          label: "Queer Love can be Side Stories/Characters",
-          id: "allowSideCharacters"
-        },
-        {
-          label: "Queerness can be implied (only)",
-          id: "allowImplied"
-        }
-      ]
-    }
-  ]
-}
-
 
 function Browse(){
 
@@ -196,13 +22,15 @@ function Browse(){
   const [sort, setSort] = useState(["YEAR", -1]);
   const [index, setIndex] = useState(1);
   const [nIndexes, setNIndexes] = useState(null);
-
+  const [nMatches, setNMatches] = useState(null);
 
   // Data Fetching Called at criteria updates
   useEffect(() => {
     // Loading is true while movies are null
     setMovies(null);
     setNIndexes(null);
+    setNMatches(null);
+    console.log(criteria)
 
     fetch('/api/movies', {
       method: 'POST',
@@ -219,6 +47,7 @@ function Browse(){
     }).then(res => res.json()).then(data => {
       setMovies(data["data"]);
       setNIndexes(data["n_indexes"]);
+      setNMatches(data["n_matches"]);
     })
   }, [criteria, sort, index]);
 
@@ -245,8 +74,8 @@ function Browse(){
     <div id="Browse" className="page">
       {filterActive && <div className="cover" onClick={()=>{setFilterActive(false)}} />}
 
-      {/* <Filters active={filterActive? "active": "inactive"} config={filterConfig} list={allMovies} action={(mvs)=> {setMovies(mvs)}} />
-       */}
+      <Filters active={filterActive} nMatches={nMatches} updateFilters={updateCriteria} filters={criteria} />
+      
       <div id="ControlPanel">
         <Sort updateSort={setSort} sort={sort} />
         <Labels labelType="GENRES" updateLabel={updateCriteria}/>

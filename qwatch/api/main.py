@@ -482,7 +482,7 @@ def get_movie_list():
     movies = get_matching_movies(criteria, properties=properties)
 
     if len(movies) == 0:
-        return {"data": [], "n_indexes": 0}
+        return {"data": [], "n_indexes": 0, "n_matches": 0}
     n_indexes = math.ceil(len(movies) / results_per_index)
 
     # Sort movies according to sort
@@ -493,6 +493,8 @@ def get_movie_list():
             reverse=sort[1] == -1
         )
 
+    n_matches = len(movies)
+
     if index is not None:
         if index > n_indexes or index < 1:
             # TODO How to do error messages
@@ -502,7 +504,7 @@ def get_movie_list():
             (index - 1) * results_per_index: index * results_per_index
         ]
 
-    return {"data": movies, "n_indexes": n_indexes}
+    return {"data": movies, "n_indexes": n_indexes, "n_matches": n_matches}
 
     # if request.method == 'POST':
     #     genre = request.form.get('genre')

@@ -7,7 +7,7 @@ function Bubbles({items, clickAction, id}){
   function chooseItem(item, i){
     return () => {
       if(clickAction){
-        setActiveItems({...activeItems, i: !activeItems[i]})
+        setActiveItems({...activeItems, [i]: !activeItems[i]})
         clickAction(item)
       }
     }
@@ -16,7 +16,6 @@ function Bubbles({items, clickAction, id}){
   if(items === null || items.length == 0){
     return <></>
   }
-
   return (
     <div className="bubbles" id={id || ""}>
       {
