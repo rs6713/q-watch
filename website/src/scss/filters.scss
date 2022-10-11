@@ -9,6 +9,10 @@
 }
 
 #Filters {
+  .Switch {
+    margin-top: 1em;
+  }
+
   input[type="checkbox"] {
     accent-color: $ACCENT_COLOR3;
     cursor: pointer;

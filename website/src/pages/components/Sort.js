@@ -11,7 +11,6 @@ const SORT = {
 }
 
 function Sort({updateSort, sort}){
-  console.log(sort)
   function clickSort(sortKey){
     updateSort(SORT[sortKey]);
   }

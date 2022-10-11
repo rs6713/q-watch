@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import ExpandableBubbles from './ExpandableBubbles'
 import {ReactComponent as Minus} from '../../static/icons/minus.svg'
+import BubbleFilter from './Filters/BubbleFilter';
 
 const baseConfig = {
   title: "Movie Filters",
@@ -27,7 +28,8 @@ const baseConfig = {
       id: "TYPES",
       subtitle: "Take you anywhere under the LGBTQIA2+ rainbow.",
       type: "bubble",
-      filters:null
+      filters:null,
+      switchType: 'include'
     },
     {
       title: "Movie Qualities",
@@ -52,7 +54,8 @@ const baseConfig = {
       warning: "IMPLIED SPOILERS",
       subtitle: "Early mainstream, queer media was messy at best. Select the tropes you wish to avoid.",
       type: "bubble",
-      filters:null
+      filters:null,
+      switchType:'exclude'
     },
     {
       title: "Representation Matters",
@@ -64,7 +67,8 @@ const baseConfig = {
         "Representation here, guarantees presence, but not good representation: see tropes/trigger warnings."
       ],
       type: "bubble",
-      filters: null
+      filters: null,
+      switchType:'include'
     },
     // {
     //   title: "Can't find what you're looking for?",
@@ -107,20 +111,6 @@ function Filters({active, nMatches, updateFilters, filters}){
     });
   }, [])
 
-  function bubbleSelect(itemId, filter){
-    let currentIds = filters[filter['id']] || [];
-    // Toggle item in/out of filter list
-    if(currentIds.indexOf(itemId) !== -1){
-      currentIds.splice(currentIds.indexOf(itemId))
-      if(currentIds.length === 0){
-        updateFilters({[filter['id']]: null});
-      }else{
-        updateFilters({[filter['id']]: currentIds});
-      }
-    }else{
-      updateFilters({[filter['id']]: [...currentIds, itemId]})
-    }
-  }
 
   //<Minus/>
   return (
@@ -131,17 +121,8 @@ function Filters({active, nMatches, updateFilters, filters}){
       
       {config.filterSections.map((filter) => (
         <div key={filter.title}>
-          
-          {filter.type=="bubble" && 
-            <ExpandableBubbles
-              title={filter.title}
-              aside={filter.warning || ""}
-              items={filter.filters}
-              clickAction={(itemId) => {bubbleSelect(itemId, filter)}}
-              expandable={filter.expandable || false}
-              subtitle={filter.subtitle}
-            />
-          }
+          {filter.type === "bubble" && <BubbleFilter filters={filters} updateFilters={updateFilters} filter={filter}/>}
+
           {filter.type=="checkbox" &&
             <div>
               <h2>{filter.title}</h2>

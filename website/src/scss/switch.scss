@@ -1,0 +1,51 @@
+@import "../scss/defaults.scss";
+
+.Switch {
+  height: 3em;
+  max-width: 100%;
+
+  #Toggle {
+    margin-right: 1em;
+    height: 100%;
+    width: 6em;
+    padding: 0.5em;
+    box-sizing: border-box;
+    border-radius: 1.5em;
+    border-color: $FONT_COLOR_LIGHTEST;
+    border-width: 0.05em;
+    background-color: $ACCENT_COLOR1;
+    text-align: left;
+    float: left;
+    //box-shadow: 0 0 5px 5px $FONT_COLOR_DEFAULT inset;
+    cursor: pointer;
+
+    span {
+      display: inline-block;
+      height: 2em;
+      width: 2em;
+      position: relative;
+      left: 0;
+      border-radius: 1.25em;
+      background-color: $FONT_COLOR_LIGHTEST;
+      //box-shadow: 0 0 5px 5px $FONT_COLOR_DEFAULT;
+      transition-duration: 500ms;
+    }
+    span.active {
+      left: 3em;
+    }
+    transition-duration: 500ms;
+  }
+  #Toggle.active {
+    background-color: $ACCENT_COLOR4;
+  }
+  div:last-child {
+    float: left;
+    text-align: justify;
+    max-width: calc(100% - 7em);
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    word-wrap: break-word;
+    overflow-wrap: normal;
+  }
+}
