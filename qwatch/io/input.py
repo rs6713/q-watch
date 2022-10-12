@@ -196,7 +196,9 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_str
             return col < val["VALUE"]
         if val["TYPE"] == "INCLUDE":
             if is_string_agg:
-                return or_(
+                rule = or_ if (
+                    'RULE' not in val or val['RULE'] == 'OR') else and_
+                return rule(
                     or_(
                         col == str(v),
                         col.like(f"{v},%"),

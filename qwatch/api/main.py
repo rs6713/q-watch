@@ -89,7 +89,7 @@ def convert_to_json(d):
 @app.route('/api/movie/labels')
 def get_labels() -> Dict:
 
-    tables = MOVIE_LABELS + ["INTENSITY", "CAREER", "ACTION"]
+    tables = MOVIE_LABELS + ["INTENSITY", "CAREER", "ACTION", 'AGE']
 
     labels = {}
     with engine.begin() as conn:

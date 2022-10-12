@@ -33,16 +33,30 @@ const baseConfig = {
     },
     {
       title: "Movie Qualities",
+      type: 'subfilters',
       filters: [
         {
           label: "Age Range",
-          id: "age_range",
+          id: "AGES",
           type: "slider",
-          options: ["Coming of Age", "Young Adult", "30-60", "60+"]
+          options: null
+        },
+        {
+          label: "Intensity",
+          id: "INTENSITYS",
+          type: "slider",
+          options: null
         },
         {
           label: "Language",
-          id: "language",
+          id: "LANGUAGE",
+          fetchType: "stringDisAgg",
+          type: "dropdown",
+        },
+        {
+          label: "Country",
+          id: "COUNTRY",
+          fetchType: "stringDisAgg",
           type: "dropdown",
         },
       ]
@@ -97,19 +111,66 @@ function Filters({active, nMatches, updateFilters, filters}){
   const [config, setConfig] = useState(baseConfig)
   useEffect(() => {
     fetch('/api/movie/labels').then(res => res.json()).then(data => {
+      console.log(Object.keys(data))
       let temp_config = {...config, 'filterSections': []}
       for(let section of config['filterSections']){
         if(section['id'] !== null && Object.keys(data).indexOf(section['id'])!= -1){
           temp_config['filterSections'].push(
             {...section, 'filters': data[section['id']]}
           )
+        }else if(section['type'] === 'subfilters'){
+          let filter_section = {...section, 'filters': []}
+          
+          for(let filter of section['filters']){
+            // If is slider subfilter with options in data
+            if(['slider'].indexOf(filter['type'])!== -1 && Object.keys(data).indexOf(filter['id'])!==-1){
+              console.log('slider options', data[filter['id']])
+              filter_section['filters'].push(
+                {...filter, 'options': data[filter['id']]}
+              )
+            }else{
+              filter_section['filters'].push(filter)
+            }
+          }
+          temp_config['filterSections'].push(filter_section)
         }else{
           temp_config['filterSections'].push(section)
         }
       }
+      console.log(temp_config)
       setConfig(temp_config)
     });
   }, [])
+
+  function generateFilter(filter){
+    console.log(filter.type)
+    return <div key={filter.title}>
+      {filter.type === "bubble" && <BubbleFilter filters={filters} updateFilters={updateFilters} filter={filter}/>}
+
+      {filter.type === "checkbox" &&
+        <div>
+          <h2>{filter.title}</h2>
+          <p>{filter.subtitle}</p>
+          {filter.filters.map(f => (
+            <div>
+              <input type="checkbox" id={f.id} name={f.label} value={f.id}></input>
+              <label> {f.label}</label>
+            </div>
+          ))}
+        </div>
+      }
+      {filter.type === "slider" && <div>
+          {filter.title}
+        </div>}
+      {
+        filter.type === 'subfilters' && 
+          <div>
+            <h2>{filter.title}</h2>
+            {filter.filters.map(generateFilter)}
+          </div>
+      }
+    </div>
+  }
 
 
   //<Minus/>
@@ -118,25 +179,7 @@ function Filters({active, nMatches, updateFilters, filters}){
     <div id="Filters" className={active? "active": "inactive"}>
       <h1>{config.title} <span>({nMatches} Matches)</span></h1>
       <div>
-      
-      {config.filterSections.map((filter) => (
-        <div key={filter.title}>
-          {filter.type === "bubble" && <BubbleFilter filters={filters} updateFilters={updateFilters} filter={filter}/>}
-
-          {filter.type=="checkbox" &&
-            <div>
-              <h2>{filter.title}</h2>
-              <p>{filter.subtitle}</p>
-              {filter.filters.map(f => (
-                <div>
-                  <input type="checkbox" id={f.id} name={f.label} value={f.id}></input>
-                  <label> {f.label}</label>
-                </div>
-              ))}
-            </div>
-          }
-        </div>)
-      )}
+        {config.filterSections.map(generateFilter)}
       </div>
     </div>
   )

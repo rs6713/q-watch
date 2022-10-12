@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Switch from '../Switch';
 import ExpandableBubbles from '../ExpandableBubbles';
 
@@ -6,18 +6,54 @@ function BubbleFilter({filter, updateFilters, filters}){
 
   const [switchState, setSwitchState] = useState(false);
 
-  function bubbleSelect(itemId, filter){
-    let currentIds = filters[filter['id']] || [];
-    // Toggle item in/out of filter list
-    if(currentIds.indexOf(itemId) !== -1){
-      currentIds.splice(currentIds.indexOf(itemId))
-      if(currentIds.length === 0){
-        updateFilters({[filter['id']]: null});
+  useEffect(()=>{
+    if(filter.switchType === 'include'){
+      if(filters[filter['id']] !== undefined){
+        updateFilters(
+          {
+            [filter['id']]: {
+              'TYPE': 'INCLUDE',
+              'RULE': switchState? 'AND' : 'OR',
+              'VALUE': filters[filter['id']]['VALUE']
+            }
+          }
+        )
+        }
+    }
+  }, [switchState])
+
+  function bubbleSelect(itemId){
+    console.log('bubbleselect')
+    let currentIds = filters[filter['id']] !== undefined? (filters[filter['id']]['VALUE'] || []) : [];
+    console.log(currentIds)
+    let rule = switchState? 'AND' : 'OR';
+
+    if(filter["switchType"] === "include"){
+      // Toggle item in/out of filter list
+      if(currentIds.indexOf(itemId) !== -1){
+        currentIds.splice(currentIds.indexOf(itemId))
+        if(currentIds.length === 0){
+          updateFilters({[filter['id']]: null});
+        }else{
+          updateFilters({[filter['id']]: {'TYPE': 'INCLUDE', 'RULE': rule, 'VALUE': currentIds}});
+        }
       }else{
-        updateFilters({[filter['id']]: currentIds});
+        updateFilters({[filter['id']]: {'TYPE': 'INCLUDE', 'RULE': rule, 'VALUE':[...currentIds, itemId]}})
       }
-    }else{
-      updateFilters({[filter['id']]: [...currentIds, itemId]})
+    }
+    //{VALUE: [1,2], TYPE: 'INCLUDE', RULE: 'ALL'}
+    if(filter["switchType"] === "exclude"){
+      console.log('exclude')
+      if(currentIds.indexOf(itemId) !== -1){
+        currentIds.splice(currentIds.indexOf(itemId))
+        if(currentIds.length === 0){
+          updateFilters({[filter['id']]: null});
+        }else{
+          updateFilters({[filter['id']]: {'TYPE': 'EXCLUDE', 'VALUE': currentIds}});
+        }
+      }else{
+        updateFilters({[filter['id']]: {'TYPE': 'EXCLUDE', 'VALUE': [...currentIds, itemId]}})
+      }
     }
   }
 
@@ -30,11 +66,13 @@ function BubbleFilter({filter, updateFilters, filters}){
         title={filter.title}
         aside={filter.warning || ""}
         items={filter.filters}
-        clickAction={(itemId) => {bubbleSelect(itemId, filter)}}
+        clickAction={bubbleSelect}
         expandable={filter.expandable || false}
         subtitle={filter.subtitle}
       />
-      <Switch state={switchState} setState={setSwitchState} onMessage={onMessage} offMessage={offMessage}/>
+      {filter.switchType === 'include' &&
+        <Switch state={switchState} setState={setSwitchState} onMessage={onMessage} offMessage={offMessage}/>
+      }
     </div>
   )
 }
