@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import ExpandableBubbles from './ExpandableBubbles'
 import {ReactComponent as Minus} from '../../static/icons/minus.svg'
 import BubbleFilter from './Filters/BubbleFilter';
+import SliderFilter from './Filters/SliderFilter';
 
 const baseConfig = {
   title: "Movie Filters",
@@ -36,25 +37,27 @@ const baseConfig = {
       type: 'subfilters',
       filters: [
         {
-          label: "Age Range",
-          id: "AGES",
-          type: "slider",
-          options: null
+          title: "Age Range",
+          id: "AGE",
+          dataLabel: 'AGES',
+          type: "bubble",
+          filters: null, 
+          switchType: 'include'
         },
         {
-          label: "Intensity",
+          title: "Intensity",
           id: "INTENSITYS",
           type: "slider",
-          options: null
+          filters: null
         },
         {
-          label: "Language",
+          title: "Language",
           id: "LANGUAGE",
           fetchType: "stringDisAgg",
           type: "dropdown",
         },
         {
-          label: "Country",
+          title: "Country",
           id: "COUNTRY",
           fetchType: "stringDisAgg",
           type: "dropdown",
@@ -113,20 +116,25 @@ function Filters({active, nMatches, updateFilters, filters}){
     fetch('/api/movie/labels').then(res => res.json()).then(data => {
       console.log(Object.keys(data))
       let temp_config = {...config, 'filterSections': []}
+
       for(let section of config['filterSections']){
-        if(section['id'] !== null && Object.keys(data).indexOf(section['id'])!= -1){
+
+        let sectionLabel = Object.keys(section).indexOf('dataLabel') === -1? section['id'] : section['dataLabel']
+        if(sectionLabel !== null && Object.keys(data).indexOf(sectionLabel)!= -1){
           temp_config['filterSections'].push(
-            {...section, 'filters': data[section['id']]}
+            {...section, 'filters': data[sectionLabel]}
           )
         }else if(section['type'] === 'subfilters'){
           let filter_section = {...section, 'filters': []}
           
           for(let filter of section['filters']){
+            let filterLabel = Object.keys(filter).indexOf('dataLabel') === -1? filter['id'] : filter['dataLabel'];
+
             // If is slider subfilter with options in data
-            if(['slider'].indexOf(filter['type'])!== -1 && Object.keys(data).indexOf(filter['id'])!==-1){
-              console.log('slider options', data[filter['id']])
+            if(['slider', 'bubble'].indexOf(filter['type'])!== -1 && Object.keys(data).indexOf(filterLabel)!==-1){
+              console.log('options', data[filterLabel])
               filter_section['filters'].push(
-                {...filter, 'options': data[filter['id']]}
+                {...filter, 'filters': data[filterLabel]}
               )
             }else{
               filter_section['filters'].push(filter)
@@ -159,9 +167,7 @@ function Filters({active, nMatches, updateFilters, filters}){
           ))}
         </div>
       }
-      {filter.type === "slider" && <div>
-          {filter.title}
-        </div>}
+      {filter.type === "slider" && <SliderFilter filters={filters} updateFilers={updateFilters} filter={filter} />}
       {
         filter.type === 'subfilters' && 
           <div>

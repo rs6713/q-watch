@@ -23,6 +23,7 @@ function BubbleFilter({filter, updateFilters, filters}){
   }, [switchState])
 
   function bubbleSelect(itemId){
+
     console.log('bubbleselect')
     let currentIds = filters[filter['id']] !== undefined? (filters[filter['id']]['VALUE'] || []) : [];
     console.log(currentIds)
