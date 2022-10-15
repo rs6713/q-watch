@@ -1,5 +1,29 @@
 import React from "react";
 
+
+export function Icon(name, className){
+  try{
+    const svgIcon = require(`../../static/icons/${name}.svg`);
+
+    // const Icon = require(`../../static/icons/${name}.svg`).default
+    // return <Icon />
+
+    if(!svgIcon){
+      return <></>
+    }
+
+    return <img src={svgIcon} className={className} />
+    return svgIcon.default
+    return <svg>
+        <use xlinkHref={`../../static/icons/${name}.svg`} className={className} fill="currentColor" stroke="currentColor"></use>
+    </svg>
+    return <svg xmlns={svgIcon} className={className} fill="currentColor" stroke="currentColor"/>
+  }catch (error) {
+    console.log(`Icon with name "${name}" does not exist`);
+    return <></>
+  }
+}
+
 function Image(name, caption){
   try {
     // Import image on demand

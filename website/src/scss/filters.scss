@@ -5,25 +5,52 @@
 
   .Slider {
     width: 100%;
-    padding-top: 0.5em;
+    .SliderOptions {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      img.icon {
+        height: 3em;
+      }
+
+      .SliderOption {
+        cursor: pointer;
+      }
+
+      .SliderOption.active {
+        fill: $ACCENT_COLOR3;
+      }
+    }
 
     #bar {
       width: 100%;
       height: 0.5em;
       background-color: $FONT_COLOR_LIGHT;
       border-radius: 0.25em;
-      margin: 1em 0em;
+      margin: 2em 0em;
       position: relative;
 
-      #toggle {
-        width: 1em;
-        height: 1em;
+      #barOverlay {
         position: absolute;
-        left: -0.25em;
-        top: -0.25em;
+        left: 0;
+        right: 0;
+        height: 100%;
+        width: 100%;
+        background-color: $ACCENT_COLOR3;
+        border-radius: 0.25em;
+        z-index: 3;
+      }
+
+      #toggle {
+        width: 1.5em;
+        height: 1.5em;
+        position: absolute;
+        top: -0.375em;
         background-color: $FONT_COLOR_DEFAULT;
-        border-radius: 0.5em;
+        border-radius: 0.75em;
         cursor: pointer;
+        z-index: 5;
       }
     }
   }
