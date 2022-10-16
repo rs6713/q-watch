@@ -46,7 +46,8 @@ const baseConfig = {
         },
         {
           title: "Intensity",
-          id: "INTENSITYS",
+          id: "INTENSITY",
+          dataLabel: 'INTENSITYS',
           type: "slider",
           filters: null
         },
@@ -132,7 +133,7 @@ function Filters({active, nMatches, updateFilters, filters}){
 
             // If is slider subfilter with options in data
             if(['slider', 'bubble'].indexOf(filter['type'])!== -1 && Object.keys(data).indexOf(filterLabel)!==-1){
-              console.log('options', data[filterLabel])
+
               filter_section['filters'].push(
                 {...filter, 'filters': data[filterLabel]}
               )
@@ -145,13 +146,13 @@ function Filters({active, nMatches, updateFilters, filters}){
           temp_config['filterSections'].push(section)
         }
       }
-      console.log(temp_config)
+
       setConfig(temp_config)
     });
   }, [])
 
   function generateFilter(filter){
-    console.log(filter.type)
+
     return <div key={filter.title}>
       {filter.type === "bubble" && <BubbleFilter filters={filters} updateFilters={updateFilters} filter={filter}/>}
 
@@ -167,7 +168,7 @@ function Filters({active, nMatches, updateFilters, filters}){
           ))}
         </div>
       }
-      {filter.type === "slider" && <SliderFilter filters={filters} updateFilers={updateFilters} filter={filter} />}
+      {filter.type === "slider" && <SliderFilter updateFilters={updateFilters} filter={filter} />}
       {
         filter.type === 'subfilters' && 
           <div>
