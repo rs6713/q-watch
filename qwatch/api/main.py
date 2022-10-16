@@ -1,5 +1,6 @@
 import datetime
 import json
+import itertools
 import logging
 import math
 import random
@@ -97,6 +98,22 @@ def get_labels() -> Dict:
             labels[f"{table}S"] = get_entries(
                 conn, f"{table}S"
             )[0]
+
+    options = [
+        {'TABLE': 'MOVIES', 'ID': 'COUNTRY', 'TYPE': 'LIST'},
+        {'TABLE': 'MOVIES', 'ID': 'LANGUAGE', 'TYPE': 'STRING_DISAGG'},
+    ]
+    with engine.begin() as conn:
+        for option in options:
+            vals = get_entries(
+                conn, option['TABLE'], return_properties=[option['ID']])
+            if option['TYPE'] == 'LIST':
+                labels[f"{option['ID']}S"] = list(set(vals))
+            if option['TYPE'] == 'STRING_DISAGG':
+                labels[f"{option['ID']}S"] = list(set(itertools.chain.from_iterable(
+                    list(map(lambda s: s.split(','), vals))
+                )))
+
     return labels
 
 

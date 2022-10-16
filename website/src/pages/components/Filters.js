@@ -3,6 +3,7 @@ import ExpandableBubbles from './ExpandableBubbles'
 import {ReactComponent as Minus} from '../../static/icons/minus.svg'
 import BubbleFilter from './Filters/BubbleFilter';
 import SliderFilter from './Filters/SliderFilter';
+import DropDownFilter from './Filters/DropdownFilter'
 
 const baseConfig = {
   title: "Movie Filters",
@@ -51,17 +52,26 @@ const baseConfig = {
           type: "slider",
           filters: null
         },
+        // {
+        //   title: "Runtime",
+        //   id: "RUNTIME",
+        //   type: "slider",
+        //   range: [0, 210],
+        //   filters: null
+        // },
         {
           title: "Language",
           id: "LANGUAGE",
-          fetchType: "stringDisAgg",
+          dataLabel: 'LANGUAGES',
           type: "dropdown",
+          filters: null
         },
         {
           title: "Country",
           id: "COUNTRY",
-          fetchType: "stringDisAgg",
-          type: "dropdown",
+          dataLabel: 'COUNTRYS',
+          filters: null,
+          type: 'dropdown'
         },
       ]
     },
@@ -132,7 +142,7 @@ function Filters({active, nMatches, updateFilters, filters}){
             let filterLabel = Object.keys(filter).indexOf('dataLabel') === -1? filter['id'] : filter['dataLabel'];
 
             // If is slider subfilter with options in data
-            if(['slider', 'bubble'].indexOf(filter['type'])!== -1 && Object.keys(data).indexOf(filterLabel)!==-1){
+            if(['slider', 'bubble', 'dropdown'].indexOf(filter['type'])!== -1 && Object.keys(data).indexOf(filterLabel)!==-1){
 
               filter_section['filters'].push(
                 {...filter, 'filters': data[filterLabel]}
@@ -176,6 +186,8 @@ function Filters({active, nMatches, updateFilters, filters}){
             {filter.filters.map(generateFilter)}
           </div>
       }
+      {filter.type === 'dropdown' && <DropDownFilter updateFilters={updateFilters} filter={filter}/>}
+
     </div>
   }
 
