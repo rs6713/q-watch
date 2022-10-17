@@ -55,8 +55,9 @@ const baseConfig = {
         // {
         //   title: "Runtime",
         //   id: "RUNTIME",
-        //   type: "slider",
+        //   type: "rangeslider",
         //   range: [0, 210],
+        //   step: 10,
         //   filters: null
         // },
         {
@@ -64,14 +65,16 @@ const baseConfig = {
           id: "LANGUAGE",
           dataLabel: 'LANGUAGES',
           type: "dropdown",
-          filters: null
+          filters: null,
+          placeholder: 'Select the Primary Language Characters Speak'
         },
         {
           title: "Country",
           id: "COUNTRY",
           dataLabel: 'COUNTRYS',
           filters: null,
-          type: 'dropdown'
+          type: 'dropdown',
+          placeholder: 'Select the Primary Country of the Movie'
         },
       ]
     },
@@ -178,7 +181,8 @@ function Filters({active, nMatches, updateFilters, filters}){
           ))}
         </div>
       }
-      {filter.type === "slider" && <SliderFilter updateFilters={updateFilters} filter={filter} />}
+      {filter.type === "slider" && filter.filters !== null && <SliderFilter updateFilters={updateFilters} filter={filter} filters={filters} />}
+      {filter.type === 'dropdown' && <DropDownFilter updateFilters={updateFilters} filter={filter} filters={filters}/>}
       {
         filter.type === 'subfilters' && 
           <div>
@@ -186,7 +190,7 @@ function Filters({active, nMatches, updateFilters, filters}){
             {filter.filters.map(generateFilter)}
           </div>
       }
-      {filter.type === 'dropdown' && <DropDownFilter updateFilters={updateFilters} filter={filter}/>}
+      
 
     </div>
   }

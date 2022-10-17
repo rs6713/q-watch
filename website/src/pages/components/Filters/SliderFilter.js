@@ -2,19 +2,14 @@ import {useEffect, useState} from 'react';
 import {Icon} from '../Image'
 import Switch from '../Switch'
 
-function SliderFilter({filter, updateFilters}){
-  const [selectedOption, setSelectedOption] = useState(
-    filter !== null && filter.filters !== null ? filter.filters[filter.filters.length-1]: null
-  )
+function SliderFilter({filter, updateFilters, filters}){
+  
   const [toggleActive, setToggleActive] = useState(false);
   const [toggleLeft, setToggleLeft] = useState(0);
   const [atLeast, setAtLeast] = useState(false);
-
-  useEffect(()=>{
-    if(filter !== null && filter.filters !== null && filter.filters.length > 0){
-      chooseOption(filter.filters[filter.filters.length-1])
-    }
-  }, [filter])
+  const [selectedOption, setSelectedOption] = useState(
+    filter !== null && filter.filters !== null ? filter.filters[filter.filters.length-1]: null
+  )
 
   useEffect(() =>{
     setSnapPosition();
@@ -32,7 +27,7 @@ function SliderFilter({filter, updateFilters}){
     setSelectedOption(option);
     
     var validIds = [];
-    console.log(option)
+    console.log('Selected Option:', option)
     for(let filterOption of filter.filters){
       console.log(filterOption.ID, option.ID)
       if(filterOption.ID === option.ID){

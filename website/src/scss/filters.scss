@@ -1,5 +1,61 @@
 @import "./defaults.scss";
 
+.DropDownFilter {
+  .DropDownContainer.active {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .DropDownContainer {
+    background-color: $FONT_COLOR_LIGHTEST;
+    font-weight: bold;
+    position: relative;
+    border: 1px solid $FONT_COLOR_DEFAULT;
+    border-radius: 0.5em;
+    padding: 0.5em;
+    cursor: pointer;
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    .DropDownOptions {
+      display: none;
+      position: absolute;
+      top: calc(100% + 1px);
+      left: -1px;
+      max-height: 10em;
+      overflow-y: scroll;
+      width: 100%;
+      z-index: 5;
+      border-top: 1px solid $FONT_COLOR_DEFAULT;
+      border-bottom: 1px solid $FONT_COLOR_DEFAULT;
+      border-bottom-left-radius: 0.5em;
+      border-bottom-right-radius: 0.5em;
+      border-left: 1px solid $FONT_COLOR_DEFAULT;
+      border-right: 1px solid $FONT_COLOR_DEFAULT;
+
+      .DropDownOption:last-child {
+        border-width: 0;
+      }
+      .DropDownOption {
+        background-color: $FONT_COLOR_LIGHTEST;
+        padding: 0.5em;
+        font-weight: normal;
+        cursor: pointer;
+        border-width: 0px 0px 1px 0px;
+        border-color: $FONT_COLOR_DEFAULT;
+        border-style: solid;
+      }
+      .DropDownOption.active {
+        font-weight: bold;
+      }
+    }
+    .DropDownOptions.active {
+      display: block;
+    }
+  }
+}
+
 .SliderFilter {
   width: 100%;
 
