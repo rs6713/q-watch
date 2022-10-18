@@ -108,11 +108,11 @@ def get_labels() -> Dict:
             vals = get_entries(
                 conn, option['TABLE'], return_properties=[option['ID']])
             if option['TYPE'] == 'LIST':
-                labels[f"{option['ID']}S"] = list(set(vals))
+                labels[f"{option['ID']}S"] = sorted(list(set(vals)))
             if option['TYPE'] == 'STRING_DISAGG':
-                labels[f"{option['ID']}S"] = list(set(itertools.chain.from_iterable(
+                labels[f"{option['ID']}S"] = sorted(list(set(itertools.chain.from_iterable(
                     list(map(lambda s: s.split(','), vals))
-                )))
+                ))))
 
     return labels
 

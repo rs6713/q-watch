@@ -5,6 +5,8 @@ import BubbleFilter from './Filters/BubbleFilter';
 import SliderFilter from './Filters/SliderFilter';
 import DropDownFilter from './Filters/DropdownFilter'
 
+const _ = require("lodash"); 
+
 const baseConfig = {
   title: "Movie Filters",
   filterSections:[
@@ -50,16 +52,32 @@ const baseConfig = {
           id: "INTENSITY",
           dataLabel: 'INTENSITYS',
           type: "slider",
-          filters: null
+          filters: null,
+          onMessage: "I'm a person.... A person with needs",
+          offMessage: 'No more than this please. (Think of the children!)'
         },
-        // {
-        //   title: "Runtime",
-        //   id: "RUNTIME",
-        //   type: "rangeslider",
-        //   range: [0, 210],
-        //   step: 10,
-        //   filters: null
-        // },
+        {
+          title: "Rating",
+          id: "AVG_RATING",
+          type: "rangeslider",
+          filters: _.range(1, 5.5, 0.5).map((i) => ({'ID': i})),
+          onMessage: "I'd like to 'Ask! The! Audience!'",
+          offMessage: "I'm a Garbage boi, nomnom, thankyou for the tasty trash, my favouriteee."
+          //range: [0, 210],
+          //step: 10,
+          //filters: null
+        },
+        {
+          title: "Runtime",
+          id: "RUNTIME",
+          type: "rangeslider",
+          filters: _.range(0, 121, 15).map((i) => ({'ID': i})),
+          onMessage: 'Come on... I need time to cuddle',
+          offMessage: "What does Sarah Paulson and my attention have in common? I'll never hold them..."
+          //range: [0, 210],
+          //step: 10,
+          //filters: null
+        },
         {
           title: "Language",
           id: "LANGUAGE",
@@ -181,7 +199,7 @@ function Filters({active, nMatches, updateFilters, filters}){
           ))}
         </div>
       }
-      {filter.type === "slider" && filter.filters !== null && <SliderFilter updateFilters={updateFilters} filter={filter} filters={filters} />}
+      { ["slider", "rangeslider"].indexOf(filter.type) !== -1 && filter.filters !== null && <SliderFilter updateFilters={updateFilters} filter={filter} filters={filters} />}
       {filter.type === 'dropdown' && <DropDownFilter updateFilters={updateFilters} filter={filter} filters={filters}/>}
       {
         filter.type === 'subfilters' && 

@@ -72,6 +72,20 @@
 
       .SliderOption {
         cursor: pointer;
+        font-weight: bold;
+      }
+
+      .SliderDot {
+        width: 1em;
+        height: 1em;
+        border-radius: 0.5em;
+        background-color: $FONT_COLOR_LIGHT;
+        position: relative;
+        top: -2.75em;
+        z-index: 3;
+      }
+      .SliderDot.active {
+        background-color: $FONT_COLOR_LIGHT;
       }
 
       .SliderOption.active {
