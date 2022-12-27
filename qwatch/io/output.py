@@ -67,7 +67,7 @@ def delete_movie(conn: Connection, movie_id: int) -> None:
     ###################################
     # Remove genre, representation, tropes, types, images, quotes, sources
     ###################################
-    for props in ["GENRE", "REPRESENTATION", "TROPE_TRIGGER", "TYPE", "IMAGE", "QUOTE", "SOURCE"]:
+    for props in ["GENRE", "REPRESENTATION", "TROPE_TRIGGER", "TYPE", "TAG", "IMAGE", "QUOTE", "SOURCE"]:
         removed_entries = remove_entry(
             conn, f"MOVIE_{props}", return_prop="ID", MOVIE_ID=movie_id)
         # Remove votes associated with MOVIE_SOURCE
@@ -368,6 +368,7 @@ def save_movie(conn: Connection, movie: Dict) -> int:
             "GENRE",
             "REPRESENTATION",
             "TYPE",
+            "TAG",
             "IMAGE",
         ]
         for prop in update_props:
@@ -438,9 +439,10 @@ def save_movie(conn: Connection, movie: Dict) -> int:
                 character["ACTOR_ID"] = person_id_mappings[character["ACTOR_ID"]]
                 character["MOVIE_ID"] = movie_id
 
+                # Character ID is known, pre-existing in database
                 if isinstance(character["ID"], numbers.Number) and len(str(character["ID"])) < 15:
                     character_id_mappings[character["ID"]] = character["ID"]
-                # Generated ids from uuid are 20 long.
+                # Tkinter Generated ids from uuid are 20 long - new character
                 else:
                     orig_character_id = character["ID"]
                     character["ID"] = None
@@ -448,6 +450,7 @@ def save_movie(conn: Connection, movie: Dict) -> int:
                         conn, "CHARACTERS", **character)
                     character_id_mappings[orig_character_id] = character["ID"]
 
+            # Update characters, (remove those attached to MOVIE_ID not mentioned here)
             _ = update_entry_list(
                 conn, "CHARACTERS", movie["CHARACTERS"], MOVIE_ID=movie_id
             )
@@ -462,8 +465,8 @@ def save_movie(conn: Connection, movie: Dict) -> int:
         ######################################
         # Save Quotes after character mappings
         ######################################
-        logger.debug("Character ID Mappings %s", str(character_id_mappings))
-        logger.debug("Quotes %s", str(movie["QUOTES"]))
+        logger.info("Character ID Mappings %s", str(character_id_mappings))
+        logger.info("Quotes %s", str(movie["QUOTES"]))
         if movie.get("QUOTES", None) is not None and len(movie["QUOTES"]):
             for quote in movie["QUOTES"]:
                 if quote["CHARACTER_ID"] is not None and quote["CHARACTER_ID"] > 0:

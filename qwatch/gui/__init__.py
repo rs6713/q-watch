@@ -25,6 +25,7 @@ from qwatch.io.input import (
     get_representations,
     get_tropes,
     get_genres,
+    get_tags,
     get_movies_ids,
     _get_movie_labels,
     get_movie
@@ -236,6 +237,9 @@ class MovieWindow():
         "RUNTIME",
         "TRAILER",
     ]
+    static_movie_props = {
+        'IMDB_ID': None
+    }
 
     def get_movie_properties(self):
         """ Getting possible movie properties """
@@ -244,6 +248,7 @@ class MovieWindow():
             self.representations = get_representations(conn)
             self.tropes = get_tropes(conn)
             self.genres = get_genres(conn)
+            self.tags = get_tags(conn)
             self.movies = get_movies_ids(conn)
             self.types = _get_movie_labels(conn, "TYPE", None)
             self.ages = _get_movie_labels(conn, "AGE", None)
@@ -305,6 +310,7 @@ class MovieWindow():
             "SOURCES": pd.DataFrame([]),
             "QUOTES": pd.DataFrame([]),
         })
+        self.static_movie_props = {}
 
     def load_movie(self, movie_title: str = None, movie_id: int = None, movie_year: str = None, limit: int = 1) -> None:
         """
@@ -419,15 +425,14 @@ class MovieWindow():
 
     def save_movie(self):
         """ Create movie object and save."""
-        movie = {}
+        movie = {**self.static_movie_props}
         for prop in self.movie.keys():
             try:
                 movie[prop] = self.movie[prop].get()
             except Exception as e:
                 logger.warning("Failed to get property for %s", prop)
-                raise e
 
-        for menu in ["GENRES", "TROPE_TRIGGERS", "REPRESENTATIONS", "TYPES"]:
+        for menu in ["GENRES", "TROPE_TRIGGERS", "REPRESENTATIONS", "TYPES", "TAGS"]:
             try:
                 movie[menu] = self.datastore[menu].get_selected_options()
             except Exception as e:
@@ -470,7 +475,13 @@ class MovieWindow():
                 else:
                     self.movie[k].set(-1)  # -1 is the invalid value
 
-        for menu in ["GENRES", "TROPE_TRIGGERS", "REPRESENTATIONS", "TYPES"]:
+        for k in self.static_movie_props.keys():
+            if k in movie:
+                self.static_movie_props[k] = movie[k]
+            else:
+                self.static_movie_props[k] = None
+
+        for menu in ["GENRES", "TROPE_TRIGGERS", "REPRESENTATIONS", "TYPES", "TAGS"]:
             self.datastore[menu].load(
                 movie.get(menu, None)
             )
@@ -481,6 +492,7 @@ class MovieWindow():
         )
 
         characters = movie.get("CHARACTERS", pd.DataFrame([]))
+        # TODO: This breaks when there are null values, as float ID's don't match int ID's
         self.datastore["QUOTES"].load(
             items=movie.get("QUOTES", None),
             options={
@@ -613,7 +625,9 @@ class MovieWindow():
         #####################################################
         # COLUMN 2 --> Checkbox lists, image selector
         #####################################################
-        checklist_container = ttk.Frame(self.root)
+        #checklist_container = ttk.Frame(self.root)
+        checklist_container = ttk.Notebook(self.root)
+
         checklist_container.grid(
             column=2, row=0, columnspan=6, rowspan=3, sticky="nsew", pady=5, padx=5)
 
@@ -631,24 +645,33 @@ class MovieWindow():
             checklist_container, "Types", self.types,
             radio="EXPLICIT", id_name="TYPE_ID"
         )
-        self.datastore["GENRES"].pack(
-            side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
+        self.datastore["TAGS"] = ChecklistBox(
+            checklist_container, "Tags", self.tags, id_name="TAG_ID"
         )
-        self.datastore["TROPE_TRIGGERS"].pack(
-            side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
-        )
-        self.datastore["REPRESENTATIONS"].pack(
-            side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
-        )
-        self.datastore["TYPES"].pack(
-            side="left", expand=1, fill=tk.BOTH
-        )
-        # self.datastore["GENRES"].grid(
-        #     column=2, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5, padx=(0, 3))
-        # self.datastore["TROPES"].grid(
-        #     column=3, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5, padx=(0, 3))
-        # self.datastore["REPRESENTATIONS"].grid(
-        #     column=4, row=0, rowspan=3, columnspan=1, sticky="nsew", pady=5)
+
+        checklist_container.add(
+            self.datastore["REPRESENTATIONS"], text="Representations")
+        checklist_container.add(
+            self.datastore["TROPE_TRIGGERS"], text="Tropes")
+        checklist_container.add(self.datastore["GENRES"], text="Genres")
+        checklist_container.add(self.datastore["TYPES"], text="Types")
+        checklist_container.add(self.datastore["TAGS"], text="Tags")
+
+        # self.datastore["GENRES"].pack(
+        #     side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
+        # )
+        # self.datastore["TROPE_TRIGGERS"].pack(
+        #     side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
+        # )
+        # self.datastore["REPRESENTATIONS"].pack(
+        #     side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
+        # )
+        # self.datastore["TYPES"].pack(
+        #     side="left", expand=1, fill=tk.BOTH
+        # )
+        # self.datastore["TAGS"].pack(
+        #     side="left", expand=1, fill=tk.BOTH, padx=(0, 5)
+        # )
 
         self.datastore["IMAGES"] = ImagePanel(self.root)
         self.datastore["IMAGES"].grid(

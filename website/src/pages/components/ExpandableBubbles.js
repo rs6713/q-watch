@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import Bubbles from './Bubbles.js';
+import React from 'react';
 import {ReactComponent as Plus} from '../../static/icons/plus.svg'
 import {ReactComponent as Minus} from '../../static/icons/minus.svg'
 

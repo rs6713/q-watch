@@ -1,3 +1,4 @@
+import React from 'react';
 import {useEffect, useState} from 'react';
 import {Icon} from '../Image'
 import Switch from '../Switch'

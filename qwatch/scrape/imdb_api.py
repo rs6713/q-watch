@@ -46,11 +46,11 @@ class IMDBScraper(object):
                 setattr(self, option, int(var.get()))
 
         options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         # executable_path param is not needed if you updated PATH
         self.browser = webdriver.Chrome(
             options=options,
-            executable_path='E:/Projects/scraping/chromedriver_new.exe'
+            executable_path='E:/Projects/scraping/chromedriver.exe'
         )
 
         self.cinema_goer = Cinemagoer()
@@ -134,14 +134,15 @@ class IMDBScraper(object):
             "SOURCES": self.get_sources(),
             "URLS": [
                 self.movie_url
-            ]
+            ],
+            'IMDB_ID': self.movie_id
         }
 
     def get_bio(self):
         tagline_section = self.movie_soup.find(
             "li", {"data-testid": "storyline-taglines"})
         tagline = (
-            tagline_section.find("div").text
+            tagline_section.find("label").text
             if tagline_section is not None else None
         )
         logger.debug("Tagline: %s", tagline)
@@ -160,7 +161,7 @@ class IMDBScraper(object):
             box_offices = [
                 b.find("div").text
                 for b in box_office_section.find_all("li")
-                if b.find("span").text in ["Gross worldwide", "Cumulative Worldwide Gross"]
+                if b.find("button") and b.find('button').text in ["Gross worldwide", "Cumulative Worldwide Gross"]
             ]
             if len(box_offices):
                 box_office = box_offices[0]
@@ -168,7 +169,7 @@ class IMDBScraper(object):
             budgets = [
                 b.find("div").text
                 for b in box_office_section.find_all("li")
-                if b.find("span").text in ["Budget"]
+                if b.find("button") and b.find('button').text in ["Budget"]
             ]
             if len(budgets):
                 budget = budgets[0]
@@ -250,9 +251,15 @@ class IMDBScraper(object):
         ]
         logger.debug(f"Prime Prices: {prime_costs}")
 
-        netflix = "Netflix" in self.movie_soup.find(
-            "li", {"data-testid": "title-details-companies"}).text
-        logger.debug("Available on netflix? %s", str(netflix))
+        if self.movie_soup.find(
+            "li", {"data-testid": "title-details-companies"}
+        ) is not None:
+            netflix = "Netflix" in self.movie_soup.find(
+                "li", {"data-testid": "title-details-companies"}
+            ).text
+            logger.debug("Available on netflix? %s", str(netflix))
+        else:
+            netflix = False
 
         if len(prime_costs) == 0 and not netflix and not bfi_source:
             return None

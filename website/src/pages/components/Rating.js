@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState} from 'react';
 import {ReactComponent as Scissor} from '../../static/icons/scissor.svg';
 import {ReactComponent as Trans} from '../../static/icons/trans.svg';

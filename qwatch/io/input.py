@@ -53,7 +53,7 @@ MOVIE_TRAITS = [
     MovieLabels('GENRES', 'GENRE'),
     MovieLabels('REPRESENTATIONS', 'REPRESENTATION', ['MAIN']),
     MovieLabels('TROPE_TRIGGERS', 'TROPE_TRIGGER'),
-    MovieLabels('QUALITIES', 'QUALITY'),
+    MovieLabels('TAGS', 'TAG'),
     MovieEntries('SOURCES', 'MOVIE_SOURCE', [
                  'ID', 'SOURCE_ID', 'COST', 'MEMBERSHIP_INCLUDED', 'URL']),
     MovieEntries(name='CHARACTERS', table='CHARACTERS',
@@ -546,10 +546,10 @@ def get_person_if_exists(conn: Connection, **actor_props) -> Dict:
             person["FIRST_NAME"], person["LAST_NAME"]
         )
 
-        person["ETHNICITY"], _ = get_entries(
+        person["ETHNICITY"] = get_entries(
             conn, "PERSON_ETHNICITY", PERSON_ID=person["ID"], IS_CHARACTER=0,
             return_properties=["ETHNICITY_ID"])
-        person["DISABILITY"], _ = get_entries(
+        person["DISABILITY"] = get_entries(
             conn, "PERSON_DISABILITY", PERSON_ID=person["ID"], IS_CHARACTER=0,
             return_properties=["DISABILITY_ID"])
 
@@ -686,6 +686,11 @@ def get_images(conn: Connection, movie_id: int):
 def get_genres(conn: Connection, movie_id: int = None) -> List:
     """Get genres (potential to specify movie)"""
     return _get_movie_labels(conn, "GENRE", movie_id)
+
+
+def get_tags(conn: Connection, movie_id: int = None) -> List:
+    """Get Tags (potential to specify movie)"""
+    return _get_movie_labels(conn, "TAG", movie_id)
 
 
 def get_representations(conn: Connection, movie_id: int = None) -> Dict:

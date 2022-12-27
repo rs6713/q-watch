@@ -1,3 +1,4 @@
+import React from 'react';
 import {useEffect, useState} from 'react';
 import ExpandableBubbles from './ExpandableBubbles'
 import {ReactComponent as Minus} from '../../static/icons/minus.svg'
@@ -71,7 +72,7 @@ const baseConfig = {
           title: "Runtime",
           id: "RUNTIME",
           type: "rangeslider",
-          filters: _.range(0, 121, 15).map((i) => ({'ID': i})),
+          filters: _.range(0, 181, 15).map((i) => ({'ID': i})),
           onMessage: 'Come on... I need time to cuddle',
           offMessage: "What does Sarah Paulson and my attention have in common? I'll never hold them..."
           //range: [0, 210],
@@ -200,6 +201,7 @@ function Filters({active, nMatches, updateFilters, filters}){
         </div>
       }
       { ["slider", "rangeslider"].indexOf(filter.type) !== -1 && filter.filters !== null && <SliderFilter updateFilters={updateFilters} filter={filter} filters={filters} />}
+
       {filter.type === 'dropdown' && <DropDownFilter updateFilters={updateFilters} filter={filter} filters={filters}/>}
       {
         filter.type === 'subfilters' && 

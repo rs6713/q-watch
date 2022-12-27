@@ -22,6 +22,7 @@ database.txt
 .db_config.json
 *.pyc
 IMAGES/
+chromedriver.exe
 
 # testing
 /coverage

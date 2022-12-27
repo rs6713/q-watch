@@ -23,7 +23,39 @@ from qwatch.scrape.imdb_api import IMDBScraper
 scraper = IMDBScraper()
 
 # %%
-res = scraper.scrape("imagine me and you")
+movie_title = 'blue is the warmest color'
+
+options = webdriver.ChromeOptions()
+# options.add_argument('--headless')
+
+# executable_path param is not needed if you updated PATH
+browser = webdriver.Chrome(
+    options=options,
+    executable_path='E:/Projects/scraping/chromedriver.exe'
+)
+cinema_goer = Cinemagoer()
+
+movie_properties = {}
+movies = cinema_goer.search_movie(movie_title)
+
+movie_id = movies[0].movieID if len(movies) else None
+
+
+movie_properties = cinema_goer.get_movie(movie_id)
+
+# Get IMDB Main page
+movie_url = f"https://www.imdb.com/title/tt{movie_id}"
+print(movie_url)
+browser.get(movie_url)
+movie_soup = BeautifulSoup(
+    browser.page_source, "html.parser")
+print(movie_soup)
+# %%
+tagline_section = movie_soup.find(
+    "li", {"data-testid": "storyline-taglines"})
+
+# %%
+res = scraper.scrape("blue is the warmest color")
 
 # %%
 for k, v in res.items():

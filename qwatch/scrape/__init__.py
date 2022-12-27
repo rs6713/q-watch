@@ -75,7 +75,7 @@ def scrape_movie_information(movie_title: str, year: str = None, open_urls=False
             options = webdriver.ChromeOptions()
             # options.add_argument('--headless')
             driver = webdriver.Chrome(
-                executable_path='E:/Projects/scraping/chromedriver_new.exe',
+                executable_path='E:/Projects/scraping/chromedriver.exe',
                 options=options
             )
             driver.get(urls[0])
@@ -87,7 +87,7 @@ def scrape_movie_information(movie_title: str, year: str = None, open_urls=False
                 driver.switch_to.window(f"tab{i}")
                 driver.get(url)
                 time.sleep(0.1)
-            driver.close()
+
         except Exception as e:
             logger.error("Failed to open urls: %s", e)
     return {

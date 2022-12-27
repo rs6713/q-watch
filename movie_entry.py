@@ -7,7 +7,6 @@ warnings.filterwarnings("ignore")
 logger = logging.getLogger("qwatch")
 loglvl = logging.DEBUG
 
-
 logger.setLevel(loglvl)
 ch = logging.StreamHandler()
 ch.setLevel(loglvl)

@@ -1,3 +1,4 @@
+import React from 'react';
 import {ReactComponent as Caret} from '../../static/icons/caret.svg'
 import {useState} from 'react';
 

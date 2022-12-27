@@ -1,5 +1,4 @@
-
-
+import React from 'react';
 function Loader(props){
 
   let cls = props.isLoading? "loader active" : "loader inactive";

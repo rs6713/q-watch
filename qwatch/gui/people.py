@@ -707,7 +707,7 @@ class PersonPage(ttk.Frame):
         )
         # If character, display actor they are portrayed by
         if self.is_character:
-            if person.get("ACTOR_ID", None) is not None:
+            if person.get("ACTOR_ID", None) is not None and person['ACTOR_ID'] in [a['ID'] for a in self.actors]:
 
                 actor = [a for a in self.actors if a["ID"]
                          == person["ACTOR_ID"]][0]

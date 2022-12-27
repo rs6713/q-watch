@@ -1,4 +1,4 @@
-
+import React from 'react';
 function Switch({state, setState, onMessage, offMessage}){
 
   return <div className="Switch">

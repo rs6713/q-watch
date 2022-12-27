@@ -1,5 +1,5 @@
+import React from 'react';
 import Image from './Image';
-
 
 function Gallery({images}){
   return <div className="Gallery">

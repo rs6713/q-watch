@@ -1,4 +1,4 @@
-
+import React from 'react';
 
 function Quote({quote}){
   if(quote === null || quote === undefined || quote.length === 0){

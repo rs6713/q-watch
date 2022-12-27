@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState, useEffect} from 'react';
 import {ReactComponent as SearchIcon} from '../../static/icons/search.svg'
 import {Link} from 'react-router-dom';

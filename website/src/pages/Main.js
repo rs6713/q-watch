@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState } from 'react';
 import Image from './components/Image';
 import {Link} from 'react-router-dom';

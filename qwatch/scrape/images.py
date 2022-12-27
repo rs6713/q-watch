@@ -33,7 +33,7 @@ def scrape_movie_images(movie_title: str, movie_year: int = None, limit: int = 5
 
     # Download Images
     logger.info(
-        "Downloading %d images for movie: %s", limit, movie_title
+        "Downloading %d images for movie: %s, search term: %s", limit, movie_title, search_term
     )
 
     config = dict(
@@ -41,8 +41,8 @@ def scrape_movie_images(movie_title: str, movie_year: int = None, limit: int = 5
         keywords=search_term,
         # image_directory,
         output_directory=OUTPUT_DIR,
-        chromedriver='path/chromedriver',
-        print_urls=False,
+        chromedriver='E:/Projects/scraping/chromedriver.exe',  # 'path/chromedriver',
+        print_urls=True,
         print_size=False,
         print_paths=False,
         #format = gif,
