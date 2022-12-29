@@ -75,7 +75,10 @@ class IMDBScraper(object):
                 year_movies) else None
 
         if self.movie_id is not None:
-            self.movie_properties = self.cinema_goer.get_movie(self.movie_id)
+            self.movie_properties = self.cinema_goer.get_movie(
+                self.movie_id,
+                ['main', 'plot', 'synopsis', 'taglines']
+            )
             logging.debug("Selected %s", str(movies[0]))
 
             # Get IMDB Main page
@@ -128,14 +131,15 @@ class IMDBScraper(object):
             "YEAR": self.movie_properties.get("year", None) if year is None else year,
             "TITLE": self.movie_properties.get("original title", None),
             "COUNTRY": self.movie_properties.get("countries", [None])[0],
-            "BIO": self.get_bio(),
+            "BIO": ((self.movie_properties['plot'][0] if len(self.movie_properties['plot']) else '') + (self.get_bio() or '')) or None,
             **self.get_people(),
             "QUOTES": self.get_quotes(),
             "SOURCES": self.get_sources(),
+            'TAGLINES': '\n'.join(self.movie_properties.get('taglines', [])),
             "URLS": [
                 self.movie_url
             ],
-            'IMDB_ID': self.movie_id
+            'IMDB_ID': int(self.movie_id)
         }
 
     def get_bio(self):
@@ -321,6 +325,7 @@ class IMDBScraper(object):
         """
         def override(member):
             plot = self.movie_properties.get("plot outline", "")
+            plot += ' '.join(self.movie_properties.get('synopsis', []))
             if "name" not in member.currentRole:
                 return False
             return get_first_name(member.currentRole["name"]) in plot
@@ -337,23 +342,45 @@ class IMDBScraper(object):
         with engine.connect() as conn:
             role_members = {
                 get_id(conn, "ROLES", "Actor"): self.clip_cast(self.movie_properties.get("cast", [])),
-                get_id(conn, "ROLES", "Director"): self.movie_properties.get("writer", [])[: self.NUM_WRITER_SCRAPE],
-                get_id(conn, "ROLES", "Writer"): self.movie_properties.get("director", [])[: self.NUM_DIRECTOR_SCRAPE]
+                get_id(conn, "ROLES", "Director"): self.movie_properties.get("director", [])[: self.NUM_WRITER_SCRAPE],
+                get_id(conn, "ROLES", "Writer"): self.movie_properties.get("writer", [])[: self.NUM_DIRECTOR_SCRAPE]
             }
             actor_id = get_id(conn, "ROLES", "Actor")
 
         people = []
         for role, members in role_members.items():
-            people += [
-                {
-                    "ID": uuid.uuid4().int & (1 << 64)-1,
-                    "FIRST_NAME": get_first_name(member["name"]),
-                    "LAST_NAME": get_last_name(member["name"]),
-                    "ROLE": role
-                }
-                for i, member in enumerate(members)
-                if member.get("name", False)
-            ]
+            for i, member in enumerate(members):
+                if member.get('name', False):
+                    member_props = {}
+                    if member.get('personID', False):
+                        try:
+                            member_props = self.cinema_goer.get_person(
+                                str(member['personID'])
+                            )
+                            member_props = {
+                                'IMDB_ID': member['personID'],
+                                'BIO': member['bio'],
+                                'DOB': member['birth date'],
+                                'HEADSHOT': member['headshot']
+                            }
+                        except:
+                            logger.warning(
+                                'Failed to get Person %s from IMDB',
+                                member['personID']
+                            )
+                    else:
+                        logger.info('Member %s has no imdb entry',
+                                    member['name'])
+
+                    people += [
+                        {
+                            "ID": uuid.uuid4().int & (1 << 64)-1,
+                            "FIRST_NAME": get_first_name(member["name"]),
+                            "LAST_NAME": get_last_name(member["name"]),
+                            "ROLE": role,
+                            **member_props
+                        }
+                    ]
 
         people = pd.DataFrame(people).groupby(["FIRST_NAME", "LAST_NAME"]).agg(
             {"ID": "first", "ROLE": list}).reset_index()
@@ -365,7 +392,10 @@ class IMDBScraper(object):
             "DOB": "",
             "SEXUALITY": None,
             "BIO": "",
-            "TRANSGENDER": None
+            "TRANSGENDER": None,
+            'HEADSHOT': '',
+            'NATIONALITY': '',
+            'IMDB_ID': None,
         }
         with engine.connect() as conn:
             people = pd.DataFrame([{

@@ -576,7 +576,8 @@ class PersonPage(ttk.Frame):
                 "DOB": "",
                 "SEXUALITY": None,
                 "BIO": "",
-                "TRANSGENDER": None
+                "TRANSGENDER": None,
+                "NATIONALITY": "",
             }
             people = pd.DataFrame(
                 [{**default_person, **person} for person in self.people]
@@ -675,6 +676,10 @@ class PersonPage(ttk.Frame):
         if not self.is_character:
             descriptors.append(person.get("DOB", "") or "[DOB UNKNOWN]")
             descriptors.append(self.get_options(person, "ROLE"))
+
+            descriptors.append(
+                person.get("NATIONALITY", "") or "[NATIONALITY UNKNOWN]"
+            )
         else:
             descriptors.append(self.get_options(person, 'CAREER'))
 
@@ -906,6 +911,7 @@ class CreatePerson(tk.Toplevel):
                 **self.person,
                 "DOB": self.dob.get(),
                 "ROLE": self.role_menu.get_selected_options(),
+                "NATIONALITY": self.nationality.get("1.0", tk.END),
             }
 
         # Temporary unique identifier, approximate, non-zero risk of collision
@@ -946,6 +952,17 @@ class CreatePerson(tk.Toplevel):
                           padx=(0, 10), pady=(0, 5))
             if "DOB" in self.person:
                 self.dob.insert(0, self.person["DOB"])
+
+            ttk.Label(self, text="Nationality").grid(
+                column=0, row=3, sticky=tk.W)
+            self.nationality = ttk.Entry(
+                self, width=30
+            )
+            self.nationality.grid(column=1, row=3, sticky=tk.W,
+                                  padx=(0, 10), pady=(0, 5))
+            if "NATIONALITY" in self.person:
+                self.dob.insert(0, self.person["NATIONALITY"])
+
         else:
             ttk.Label(self, text="Hair Color").grid(
                 column=0, row=2, sticky=tk.W)
@@ -980,8 +997,8 @@ class CreatePerson(tk.Toplevel):
             default=self.person.get("DISABILITY", [])
         )
         self.disability_menu.pack(side="left", fill=tk.X, expand=True)
-
-        button_frame.grid(column=0, row=3, pady=(10, 0),
+        offset = int(not self.is_character)
+        button_frame.grid(column=0, row=3 + offset, pady=(10, 0),
                           rowspan=1, columnspan=4, sticky="ew")
 
         #########################################################
@@ -1011,6 +1028,7 @@ class CreatePerson(tk.Toplevel):
                 level2, "Roles", self.OPTIONS["ROLE"],
                 default=self.person.get("ROLE", []))
             self.role_menu.pack(side="left", fill=tk.X, expand=True)
+
         else:
             self.career_menu = MenuSingleSelector(
                 level2, "Careers", self.OPTIONS["CAREER"], default=self.person.get("CAREER", None)
@@ -1025,13 +1043,14 @@ class CreatePerson(tk.Toplevel):
             main_btn.pack(
                 side="left", fill=tk.X, expand=True, padx=(0, 5))
 
-        level2.grid(column=0, row=4, pady=(5, 0),
+        level2.grid(column=0, row=4 + offset, pady=(5, 0),
                     rowspan=1, columnspan=4, sticky="ew")
 
         self.bio = tk.Text(
             self, height=3, width=5
         )
-        self.bio.grid(row=5, pady=(5, 0), column=0, columnspan=4, sticky="ew")
+        self.bio.grid(row=5 + offset, pady=(5, 0),
+                      column=0, columnspan=4, sticky="ew")
 
         ###################################################
         # Control Panel

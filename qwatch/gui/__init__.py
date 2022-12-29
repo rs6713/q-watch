@@ -237,9 +237,6 @@ class MovieWindow():
         "RUNTIME",
         "TRAILER",
     ]
-    static_movie_props = {
-        'IMDB_ID': None
-    }
 
     def get_movie_properties(self):
         """ Getting possible movie properties """
@@ -521,6 +518,10 @@ class MovieWindow():
             "NUM_DIRECTOR_SCRAPE": tk.StringVar(value="2"),
             "NUM_QUOTES_SCRAPE": tk.StringVar(value="6"),
             "OPEN_URLS": tk.IntVar(value=1),
+        }
+        self.static_movie_props = {
+            'IMDB_ID': None,
+            'TAGLINES': None,
         }
         self.configure_menu()
 

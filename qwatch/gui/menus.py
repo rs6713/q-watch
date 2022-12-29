@@ -22,6 +22,7 @@ class MenuSingleSelector(ttk.Menubutton):
         self.configure(menu=menu)
         self.menu = menu
         self.labels = {}
+        self.name = name
 
         # Variable can be passed in from external
         if var is None:
@@ -29,7 +30,14 @@ class MenuSingleSelector(ttk.Menubutton):
         else:
             self.selected_variable = var
 
-        for _, option in options.iterrows():
+        # Update menu label
+        self.selected_variable.trace(
+            'w', self.set_menu_label
+        )
+
+        sort_cols = [c for c in ['LABEL', 'SUB_LABEL'] if c in options.columns]
+
+        for _, option in options.sort_values(sort_cols).iterrows():
             label = f"{option.LABEL} - {option.SUB_LABEL or 'NULL'}" if "SUB_LABEL" in option.index else option.LABEL
 
             self.labels[option.ID] = label
@@ -44,11 +52,13 @@ class MenuSingleSelector(ttk.Menubutton):
         if default is not None:
             self.selected_variable.set(default)
 
-        if self.selected_variable.get() and self.selected_variable.get() != -1:
-            self.set_menu_label()
+        self.set_menu_label()
 
-    def set_menu_label(self):
-        self.configure(text=self.labels[self.selected_variable.get()])
+    def set_menu_label(self, *args):
+        if self.selected_variable.get() and self.selected_variable.get() != -1:
+            self.configure(text=self.labels[self.selected_variable.get()])
+        else:
+            self.configure(text=self.name)
 
     def get_selected_option(self):
         if self.selected_variable.get() in self.labels.keys():
@@ -87,7 +97,8 @@ class MenuMultiSelector(ttk.Menubutton):
                 )
 
         self.options = {}
-        for _, option in options.iterrows():
+        sort_cols = [c for c in ['LABEL', 'SUB_LABEL'] if c in options.columns]
+        for _, option in options.sort_values(sort_cols).iterrows():
             var = tk.IntVar(value=0) if (
                 default is None or option.ID not in default) else tk.IntVar(value=1)
 
