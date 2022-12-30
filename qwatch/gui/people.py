@@ -605,7 +605,12 @@ class PersonPage(ttk.Frame):
 
         else:
             self.people = [] if people is None else people.to_dict("records")
-            logger.info("Loading people\n%s", str(self.people))
+            logger.info(
+                "Loading people:%s",
+                ', '.join([
+                    f'{p["FIRST_NAME"]} {p["LAST_NAME"]}' for p in self.people
+                ])
+            )
             self.actors = None
         self.refresh_ui()
 
@@ -724,10 +729,10 @@ class PersonPage(ttk.Frame):
                 row=2, column=0, padx=5, pady=(0, 5), sticky="w"
             )
 
-        # Character / Actor BIO
-        ttk.Label(personFrame, text=person.get("BIO", "")).grid(
-            row=3, column=0, padx=5, pady=5, sticky="w"
-        )
+        # # Character / Actor BIO
+        # ttk.Label(personFrame, text=person.get("BIO", "")).grid(
+        #     row=3, column=0, padx=5, pady=5, sticky="w"
+        # )
 
         ################################################
         # Command Panel - Edit/Remove Person/Character
@@ -911,7 +916,7 @@ class CreatePerson(tk.Toplevel):
                 **self.person,
                 "DOB": self.dob.get(),
                 "ROLE": self.role_menu.get_selected_options(),
-                "NATIONALITY": self.nationality.get("1.0", tk.END),
+                "NATIONALITY": self.nationality.get(),
             }
 
         # Temporary unique identifier, approximate, non-zero risk of collision
@@ -976,14 +981,14 @@ class CreatePerson(tk.Toplevel):
 
         self.sexuality_menu = MenuSingleSelector(
             button_frame, "Sexuality", self.OPTIONS["SEXUALITY"],
-            default=self.person.get("SEXUALITY", None)
+            default=self.person.get("SEXUALITY", 9)
         )
         self.sexuality_menu.pack(
             side="left", fill=tk.X, expand=True, padx=(0, 5))
 
         self.gender_menu = MenuSingleSelector(
             button_frame, "Gender", self.OPTIONS["GENDER"],
-            default=self.person.get("GENDER", None))
+            default=self.person.get("GENDER", 6))
         self.gender_menu.pack(side="left", fill=tk.X, expand=True, padx=(0, 5))
 
         self.ethnicity_menu = MenuMultiSelector(
@@ -1018,7 +1023,7 @@ class CreatePerson(tk.Toplevel):
             )
 
         self.transgender_menu = MenuSingleSelector(
-            level2, "Trans Status", self.OPTIONS["TRANSGENDER"], default=self.person.get("TRANSGENDER", None)
+            level2, "Trans Status", self.OPTIONS["TRANSGENDER"], default=self.person.get("TRANSGENDER", 1)
         )
         self.transgender_menu.pack(
             side="left", fill=tk.X, expand=True, padx=(0, 5))
@@ -1051,6 +1056,9 @@ class CreatePerson(tk.Toplevel):
         )
         self.bio.grid(row=5 + offset, pady=(5, 0),
                       column=0, columnspan=4, sticky="ew")
+
+        if "BIO" in self.person:
+            self.bio.insert(tk.END, self.person["BIO"])
 
         ###################################################
         # Control Panel

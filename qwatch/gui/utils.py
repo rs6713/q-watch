@@ -376,6 +376,9 @@ class EditableList(ttk.Frame):
                         )
 
                     if entry_type == "DROPDOWN":
+                        if int(item[col].get()) not in [int(i) for i in self.options[col].ID.values]:
+                            item[col].set(-1)
+
                         MenuSingleSelector(
                             item_frame, col, self.options[col], var=item[col]
                         ).pack(side=tk.TOP, anchor="w", padx=5, pady=(0, 5))

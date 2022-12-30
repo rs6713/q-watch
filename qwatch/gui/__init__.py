@@ -461,7 +461,8 @@ class MovieWindow():
         """ Update contents of UI with self.movie."""
 
         logger.info(
-            f"Updating Movie Contents \n{describe_obj(movie)}")
+            f"Updating UI Contents with Movie: {movie['TITLE'] if 'TITLE' in movie else 'None'}")
+        logger.debug('%s', describe_obj(movie))
 
         for k in self.movie.keys():
             if k in movie:

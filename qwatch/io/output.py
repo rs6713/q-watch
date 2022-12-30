@@ -4,6 +4,7 @@ import logging
 import numbers
 import os
 from pathlib import Path
+import re
 import shutil
 from typing import Dict, List, Optional, Tuple
 
@@ -136,8 +137,10 @@ def preprocess_movie(movie: Dict) -> Dict:
         img_dir = os.path.join(
             Path(__name__).parent.parent.parent,
             "website", "src", "static", "movie-pictures")
-        img_name = movie["TITLE"].lower().replace(
-            " ", "-") + "_" + str(movie["YEAR"])
+        img_name = re.sub(
+            '[^A-Za-z0-9\-\_\s]+', '-',
+            movie['TITLE'].lower()
+        ) + "_" + str(movie["YEAR"])
 
         # Determine next image numeric id
         existing_imgs = [
@@ -150,6 +153,7 @@ def preprocess_movie(movie: Dict) -> Dict:
         else:
             existing_img_n = 0
 
+        new_images = []
         for image in movie["IMAGES"]:
             try:
                 # If image does not pre-exist copy to movie-pictures dir
@@ -164,12 +168,13 @@ def preprocess_movie(movie: Dict) -> Dict:
                         f"-{existing_img_n:03d}.{ext}"
                     existing_img_n += 1
                     logger.info("Copying image to %s", image["FILENAME"])
+                    new_images.append(image)
             except Exception as e:
-                logger.warning(
-                    "Failed to copy over image: %s to %s",
-                    image["FILENAME"], dst
+                logger.error(
+                    "Failed to copy over image: %s to %s\n: %s",
+                    image["FILENAME"], dst, str(image)
                 )
-                continue
+        movie['IMAGES'] = new_images
 
     return movie
 
@@ -206,7 +211,7 @@ def update_entry_by_id_list(conn: Connection, table_name: str, id_list: List[int
     List[int]
         ID's of rows associated with match criteria, post db insertions/deletions
     """
-    logger.info("update_entry_by_id_list Saving/Updating %d entries in %s with match criteria \n  %s",
+    logger.info("Saving/Updating %d entries in %s with match criteria \n  %s",
                 len((id_list or [])), table_name, str(match_criteria))
     prop = table_name.split("_")[-1]
 
@@ -220,8 +225,8 @@ def update_entry_by_id_list(conn: Connection, table_name: str, id_list: List[int
             entry["ID"] for entry in existing_entries
             if entry[f"{prop}_ID"] not in id_list
         ]
-        logger.info("Deleting %d entries in %s",
-                    len(removed_entries), table_name)
+        logger.debug("Deleting %d entries in %s",
+                     len(removed_entries), table_name)
         for entry_id in removed_entries:
             remove_entry(conn, table_name, ID=entry_id)
 
@@ -232,8 +237,8 @@ def update_entry_by_id_list(conn: Connection, table_name: str, id_list: List[int
             ]
         ]
         # Update / Add New Entries
-        logger.info("Adding %d entries %s",
-                    len(id_list or []), id_list)
+        logger.debug("Adding %d entries %s",
+                     len(id_list or []), id_list)
         for entry in id_list:
             # Allows for overlapping properties
             new_entry = {f"{prop}_ID": entry, **match_criteria}
@@ -241,8 +246,8 @@ def update_entry_by_id_list(conn: Connection, table_name: str, id_list: List[int
                 add_update_entry(conn, table_name, **new_entry)
             ]
     else:
-        logger.info(
-            "Removing all entries in %s that match %s",
+        logger.warning(
+            "Not items in ID list. Removing all entries in %s that match %s",
             table_name, describe_obj(match_criteria)
         )
         # Remove all existing entries
@@ -322,8 +327,8 @@ def update_entry_list(conn: Connection, table_name: str, entry_list: List[Dict],
             ]
     else:
         # Remove all existing entries
-        logger.info(
-            "Removing all entries in %s associated with %s",
+        logger.warning(
+            "No entry list. So Removing all existing entries in %s associated with %s",
             table_name,
             describe_obj(match_criteria)
         )
@@ -465,15 +470,20 @@ def save_movie(conn: Connection, movie: Dict) -> int:
         ######################################
         # Save Quotes after character mappings
         ######################################
-        logger.info("Character ID Mappings %s", str(character_id_mappings))
-        logger.info("Quotes %s", str(movie["QUOTES"]))
+        logger.debug("Character ID Mappings %s", str(character_id_mappings))
         if movie.get("QUOTES", None) is not None and len(movie["QUOTES"]):
             for quote in movie["QUOTES"]:
                 if quote["CHARACTER_ID"] is not None and quote["CHARACTER_ID"] > 0:
-                    quote["CHARACTER_ID"] = character_id_mappings[quote["CHARACTER_ID"]]
+                    if quote['CHARACTER_ID'] not in character_id_mappings:
+                        logger.error(
+                            'Quote Character ID %d not in character_id_mappings', quote['CHARACTER_ID'])
+                        quote['CHARACTER_ID'] = None
+                    else:
+                        quote["CHARACTER_ID"] = character_id_mappings[quote["CHARACTER_ID"]]
+
                 else:
                     quote["CHARACTER_ID"] = None
-            logger.debug("Quotes %s", str(movie["QUOTES"]))
+
             _ = update_entry_list(
                 conn, f"MOVIE_QUOTE", movie["QUOTES"], MOVIE_ID=movie_id
             )
@@ -568,7 +578,7 @@ def remove_entry(conn: Connection, table_name: str, return_prop=None, **properti
     -------
     (Optional) Specified Property of deleted row entries in table.
     """
-    logger.info(
+    logger.debug(
         "Deleting entry from %s, with props: %s",
         table_name, str(properties)
     )
@@ -621,7 +631,7 @@ def remove_entry(conn: Connection, table_name: str, return_prop=None, **properti
             "website", "src", "static", "movie-pictures"
         )
         for img in imgs:
-            logger.info("Deleting file %s", os.path.join(img_dir, img))
+            logger.warning("Deleting file %s", os.path.join(img_dir, img))
             os.remove(os.path.join(img_dir, img))
 
     delete_query = delete(table).where(

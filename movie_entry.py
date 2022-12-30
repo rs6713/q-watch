@@ -1,11 +1,15 @@
 import logging
+import warnings
+
+import coloredlogs
+
 from qwatch.gui import MovieWindow
 
-import warnings
+
 warnings.filterwarnings("ignore")
 
 logger = logging.getLogger("qwatch")
-loglvl = logging.DEBUG
+loglvl = logging.INFO
 
 logger.setLevel(loglvl)
 ch = logging.StreamHandler()
@@ -14,7 +18,11 @@ formatter = logging.Formatter(
     '%(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s'
 )
 ch.setFormatter(formatter)
+if (logger.hasHandlers()):
+    logger.handlers.clear()
 logger.addHandler(ch)
+
+coloredlogs.install(level='INFO', logger=logger)
 
 # logging.basicConfig(
 #     level=logging.DEBUG,

@@ -52,9 +52,11 @@ class ImagePanel(ttk.Frame):
         # Select default background image
         self.default_image_container = ttk.Frame(self.controlPanel)
         self.default_image_container.pack(side="top", fill=tk.X, expand=True)
-        MenuSingleSelector(
-            self.default_image_container, "Default Image", self.process_options(images), var=self.default_image
-        ).pack(side="top", fill=tk.X, expand=True)
+
+        if self.process_options(images).shape[0]:
+            MenuSingleSelector(
+                self.default_image_container, "Default Image", self.process_options(images), var=self.default_image
+            ).pack(side="top", fill=tk.X, expand=True)
 
         ttk.Button(
             self.controlPanel,
@@ -160,9 +162,11 @@ class ImagePanel(ttk.Frame):
         # Reload image selector
         for widgets in self.default_image_container.winfo_children():
             widgets.destroy()
-        MenuSingleSelector(
-            self.default_image_container, "Default Image", self.process_options(images), var=self.default_image
-        ).pack(side="top", fill=tk.X, expand=True)
+
+        if self.process_options(images).shape[0]:
+            MenuSingleSelector(
+                self.default_image_container, "Default Image", self.process_options(images), var=self.default_image
+            ).pack(side="top", fill=tk.X, expand=True)
 
     def get_items(self) -> pd.DataFrame:
         items = pd.DataFrame([{

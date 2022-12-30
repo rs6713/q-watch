@@ -94,6 +94,9 @@ class WIKIScraper(object):
             prop_val = self._get_infobox_property(prop)
             if prop_val:
                 key = prop.upper().replace(" ", "_")
+
+                if self.NAME_MAP.get(key, key) == 'RUNTIME':
+                    prop_val = prop_val.split(' minutes')[0]
                 movie[self.NAME_MAP.get(key, key)] = prop_val
 
         return movie

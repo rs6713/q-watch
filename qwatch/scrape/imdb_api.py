@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 from selenium import webdriver
 
-from qwatch.io.input import get_person_if_exists, get_id, _get_movie_labels
+from qwatch.io.input import get_person_if_exists, get_id, _get_movie_labels, get_entries
 from qwatch.io import _create_engine
 from qwatch.utils import get_first_name, get_last_name
 
@@ -54,6 +54,17 @@ class IMDBScraper(object):
         )
 
         self.cinema_goer = Cinemagoer()
+
+        engine = _create_engine()
+        with engine.connect() as conn:
+            self.known_actors, _ = get_entries(conn, "PEOPLE", return_properties=[
+                'FIRST_NAME', 'LAST_NAME'])
+            self.known_actors = [
+                a['FIRST_NAME'] + ' ' + a['LAST_NAME']
+                for a in self.known_actors
+            ]
+            logger.debug('Known Actors %d: %s', len(
+                self.known_actors), str(self.known_actors[:5]))
 
     def search(self, movie_title: str, year: int = None):
         logger.info("Performing IMDB Search for %s year %s",
@@ -127,7 +138,7 @@ class IMDBScraper(object):
             "LANGUAGE": ", ".join([lc.upper() for lc in self.movie_properties.get("language codes", [])]),
             "GENRES": self.get_genres(),
             **self.get_box_office(),
-            "RUNNING_TIME": self.movie_properties.get("runtimes", [None])[0],
+            "RUNNING_TIME": self.movie_properties.get("runtimes", [''])[0].split(' minutes')[0],
             "YEAR": self.movie_properties.get("year", None) if year is None else year,
             "TITLE": self.movie_properties.get("original title", None),
             "COUNTRY": self.movie_properties.get("countries", [None])[0],
@@ -179,7 +190,7 @@ class IMDBScraper(object):
                 budget = budgets[0]
 
         return {
-            "BUDGET": budget,
+            "BUDGET": (budget or '').replace(' (estimated)', ''),
             "BOX_OFFICE": box_office
         }
 
@@ -326,8 +337,13 @@ class IMDBScraper(object):
         def override(member):
             plot = self.movie_properties.get("plot outline", "")
             plot += ' '.join(self.movie_properties.get('synopsis', []))
+
+            if member.get('name', -1) in self.known_actors:
+                return True
+
             if "name" not in member.currentRole:
                 return False
+
             return get_first_name(member.currentRole["name"]) in plot
 
         return [
@@ -352,21 +368,25 @@ class IMDBScraper(object):
             for i, member in enumerate(members):
                 if member.get('name', False):
                     member_props = {}
-                    if member.get('personID', False):
+                    if member.__dict__.get('personID', False):
                         try:
                             member_props = self.cinema_goer.get_person(
-                                str(member['personID'])
+                                str(member.__dict__['personID'])
                             )
                             member_props = {
-                                'IMDB_ID': member['personID'],
-                                'BIO': member['bio'],
-                                'DOB': member['birth date'],
-                                'HEADSHOT': member['headshot']
+                                'IMDB_ID': member_props['imdbID'],
+                                'BIO': member_props['bio'],
+                                'DOB': member_props['birth date'],
+                                'HEADSHOT': member_props['headshot']
                             }
+                            logger.info(
+                                'Member props %s : %s',
+                                member['name'], str(member_props)
+                            )
                         except:
                             logger.warning(
                                 'Failed to get Person %s from IMDB',
-                                member['personID']
+                                member.__dict__['personID']
                             )
                     else:
                         logger.info('Member %s has no imdb entry',
@@ -383,7 +403,14 @@ class IMDBScraper(object):
                     ]
 
         people = pd.DataFrame(people).groupby(["FIRST_NAME", "LAST_NAME"]).agg(
-            {"ID": "first", "ROLE": list}).reset_index()
+            {
+                "ID": "first",
+                "ROLE": list,
+                'DOB': 'first',
+                'BIO': 'first',
+                'HEADSHOT': 'first',
+                'IMDB_ID': 'first'
+            }).reset_index()
 
         default_person = {
             "DISABILITY": [],
