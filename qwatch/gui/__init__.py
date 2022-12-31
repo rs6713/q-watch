@@ -454,7 +454,7 @@ class MovieWindow():
 
         engine = _create_engine()
         with engine.connect() as conn:
-            logger.info("Saving constructed movie object:\n%s", str(movie))
+            logger.debug("Saving constructed movie object:\n%s", str(movie))
             self.movie["ID"].set(save_movie(conn, movie))
 
     def update_contents(self, movie: Dict) -> None:

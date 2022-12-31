@@ -157,7 +157,7 @@ def preprocess_movie(movie: Dict) -> Dict:
         for image in movie["IMAGES"]:
             try:
                 # If image does not pre-exist copy to movie-pictures dir
-                if image["ID"] is None or not image["ID"] or image["ID"] == -1:
+                if (image["ID"] is None) or (not image["ID"]) or (image["ID"] == -1):
                     ext = image["FILENAME"].split(".")[-1]
                     dst = os.path.join(
                         img_dir,
@@ -169,12 +169,20 @@ def preprocess_movie(movie: Dict) -> Dict:
                     existing_img_n += 1
                     logger.info("Copying image to %s", image["FILENAME"])
                     new_images.append(image)
+                else:
+                    new_images.append(image)
             except Exception as e:
                 logger.error(
                     "Failed to copy over image: %s to %s\n: %s",
                     image["FILENAME"], dst, str(image)
                 )
+        if len(new_images or []) != len(movie['IMAGES'] or []):
+            logger.error(
+                '%d images were failed to be copied.',
+                (len(movie['IMAGES'] or []) - len(new_images or []))
+            )
         movie['IMAGES'] = new_images
+        
 
     return movie
 
@@ -401,7 +409,8 @@ def save_movie(conn: Connection, movie: Dict) -> int:
         logger.info("Saving %d PEOPLE", len(movie.get("PEOPLE", [])))
         # Person
         for person in movie.get("PEOPLE", []):
-            logger.info("Saving person %s", str(person))
+            logger.info("Saving person %s %s",
+                        person['FIRST_NAME'], person['LAST_NAME'])
             # Existing ID, not generated
             if isinstance(person["ID"], numbers.Number) and len(str(person["ID"])) < 15:
                 person["ID"] = int(person["ID"])

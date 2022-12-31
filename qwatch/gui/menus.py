@@ -66,6 +66,11 @@ class MenuSingleSelector(ttk.Menubutton):
         else:
             return None
 
+    def destroy(self, *args, **kwargs):
+        for ti in self.selected_variable.trace_vinfo():
+            self.selected_variable.trace_vdelete(*ti)
+        super().destroy(*args, **kwargs)
+
 
 class MenuMultiSelector(ttk.Menubutton):
     def __init__(self, parent, name, options, default: List[int] = None, descrip_var=None, **kwargs):
