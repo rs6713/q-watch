@@ -53,134 +53,6 @@
     animation: 0.5s ease-in-out 0s 1 slideInCenter;
   }
 
-  #ControlPanel {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    width: 100%;
-    padding-top: 1.5em;
-    padding-bottom: 1em;
-    box-sizing: border-box;
-
-    #FiltersToggle {
-      padding: 1em 1em;
-    }
-    #Sort,
-    #FiltersToggle {
-      background-color: $FONT_COLOR_LIGHTEST;
-      border-radius: 0.5em;
-      line-height: 1em;
-      font-weight: bold;
-      flex-shrink: 0;
-      cursor: pointer;
-      position: relative;
-      z-index: 1;
-      svg {
-        height: 1em;
-        position: relative;
-        top: 0.1em;
-      }
-      div {
-        width: 6em;
-        padding: 1em;
-        svg {
-          float: right;
-        }
-      }
-    }
-    #Sort ul {
-      margin: 0;
-      padding-left: 0;
-      position: absolute;
-      top: 100%;
-      left: -1px;
-      display: none;
-
-      background-color: $FONT_COLOR_LIGHTEST;
-      border-radius: 0em 0em 0.5em 0.5em;
-      overflow: hidden;
-      width: 100%;
-
-      li {
-        word-break: keep-all;
-
-        text-decoration: none;
-        border-top: 1px solid $FONT_COLOR_LIGHT;
-        padding: 1em 1em;
-        list-style-type: none;
-        font-weight: normal;
-      }
-      li:first-child {
-        border-top: none;
-      }
-
-      li:hover {
-        background-color: $FONT_COLOR_LIGHT;
-      }
-      li.active {
-        font-weight: bold;
-      }
-    }
-    #Sort:hover {
-      border-radius: 0.5em 0.5em 0em 0em;
-      ul {
-        display: block;
-
-        border: 1px solid $FONT_COLOR_LIGHT;
-      }
-
-      div svg {
-        transform: rotate(180deg);
-      }
-    }
-
-    #FiltersToggle:hover {
-      background-color: $FONT_COLOR_LIGHT;
-    }
-    #FiltersToggle.active {
-      background-color: $FONT_COLOR_LIGHT;
-      font-weight: bold;
-    }
-
-    #FiltersToggle svg {
-      padding-right: 0.5em;
-    }
-    #Sort svg {
-      height: 0.8em;
-      top: 0.1em;
-      padding-left: 0.5em;
-    }
-
-    #Categories {
-      display: flex;
-      flex-direction: row;
-      flex: 1 1;
-      overflow-x: scroll;
-      padding-left: 1em;
-      padding-right: 1em;
-      box-sizing: border-box;
-
-      div {
-        display: inline-block;
-        word-wrap: none;
-        white-space: nowrap;
-        padding: 1em 1em;
-        color: $FONT_COLOR_SUB;
-        cursor: pointer;
-      }
-      div.active {
-        color: $FONT_COLOR_DEFAULT;
-        font-weight: bold;
-      }
-      div:hover {
-        color: $FONT_COLOR_DEFAULT;
-      }
-    }
-    ::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
   .movietile:hover {
     transform: scale(1.05);
     box-shadow: 0 0px 0.5em rgb(0 0 0 / 50%);
@@ -290,6 +162,134 @@
         top: $screenshot_height * 0.05;
       }
     }
+  }
+}
+
+#ControlPanel {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  padding-top: 1.5em;
+  padding-bottom: 1em;
+  box-sizing: border-box;
+
+  #FiltersToggle {
+    padding: 1em 1em;
+  }
+  #Options,
+  #FiltersToggle {
+    background-color: $FONT_COLOR_LIGHTEST;
+    border-radius: 0.5em;
+    line-height: 1em;
+    font-weight: bold;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    svg {
+      height: 1em;
+      position: relative;
+      top: 0.1em;
+    }
+    div {
+      width: 6em;
+      padding: 1em;
+      svg {
+        float: right;
+      }
+    }
+  }
+  #Options ul {
+    margin: 0;
+    padding-left: 0;
+    position: absolute;
+    top: 100%;
+    left: -1px;
+    display: none;
+
+    background-color: $FONT_COLOR_LIGHTEST;
+    border-radius: 0em 0em 0.5em 0.5em;
+    overflow: hidden;
+    width: 100%;
+
+    li {
+      word-break: keep-all;
+
+      text-decoration: none;
+      border-top: 1px solid $FONT_COLOR_LIGHT;
+      padding: 1em 1em;
+      list-style-type: none;
+      font-weight: normal;
+    }
+    li:first-child {
+      border-top: none;
+    }
+
+    li:hover {
+      background-color: $FONT_COLOR_LIGHT;
+    }
+    li.active {
+      font-weight: bold;
+    }
+  }
+  #Options:hover {
+    border-radius: 0.5em 0.5em 0em 0em;
+    ul {
+      display: block;
+
+      border: 1px solid $FONT_COLOR_LIGHT;
+    }
+
+    div svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  #FiltersToggle:hover {
+    background-color: $FONT_COLOR_LIGHT;
+  }
+  #FiltersToggle.active {
+    background-color: $FONT_COLOR_LIGHT;
+    font-weight: bold;
+  }
+
+  #FiltersToggle svg {
+    padding-right: 0.5em;
+  }
+  #Options svg {
+    height: 0.8em;
+    top: 0.1em;
+    padding-left: 0.5em;
+  }
+
+  #Categories {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1;
+    overflow-x: scroll;
+    padding-left: 1em;
+    padding-right: 1em;
+    box-sizing: border-box;
+
+    div {
+      display: inline-block;
+      word-wrap: none;
+      white-space: nowrap;
+      padding: 1em 1em;
+      color: $FONT_COLOR_SUB;
+      cursor: pointer;
+    }
+    div.active {
+      color: $FONT_COLOR_DEFAULT;
+      font-weight: bold;
+    }
+    div:hover {
+      color: $FONT_COLOR_DEFAULT;
+    }
+  }
+  ::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -420,7 +420,7 @@
     $grid_repeat: repeat(2, 1fr)
   );
 
-  #Browse #ControlPanel {
+  #ControlPanel {
     position: relative;
     display: block;
     margin-bottom: 2em;
@@ -448,7 +448,7 @@
     #FiltersToggle {
       float: right;
     }
-    #Sort {
+    #Options {
       float: left;
     }
   }

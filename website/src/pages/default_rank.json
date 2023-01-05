@@ -1,0 +1,2052 @@
+[
+  {
+      "BOX_OFFICE": "",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 52,
+      "TITLE": "Elisa y Marcela",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2019,
+      "sort_key": 0
+  },
+  {
+      "BOX_OFFICE": "",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 58,
+      "TITLE": "The Things You Think I'm Thinking",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2020,
+      "sort_key": 0
+  },
+  {
+      "BOX_OFFICE": "",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1067,
+      "TITLE": "The Half of It",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2020,
+      "sort_key": 0
+  },
+  {
+      "BOX_OFFICE": "",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 3,
+              "LABEL": "Horror/Thriller"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1071,
+      "TITLE": "Jennifer's Body",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2009,
+      "sort_key": 0
+  },
+  {
+      "BOX_OFFICE": "",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1091,
+      "TITLE": "Bloomington",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2010,
+      "sort_key": 0
+  },
+  {
+      "BOX_OFFICE": "",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1101,
+      "TITLE": "Mädchen in Uniform",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1958,
+      "sort_key": 0
+  },
+  {
+      "BOX_OFFICE": "",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 8,
+              "LABEL": "Documentary"
+          }
+      ],
+      "ID": 1108,
+      "TITLE": "A Secret Love",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2020,
+      "sort_key": 0
+  },
+  {
+      "BOX_OFFICE": "",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 3,
+              "LABEL": "Horror/Thriller"
+          }
+      ],
+      "ID": 1111,
+      "TITLE": "They/Them",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          },
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2022,
+      "sort_key": 0
+  },
+  {
+      "BOX_OFFICE": "",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 1,
+              "LABEL": "Sci-Fi/Fantasy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1120,
+      "TITLE": "San Junipero",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2016,
+      "sort_key": 0
+  },
+  {
+      "BOX_OFFICE": "",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 8,
+              "LABEL": "Documentary"
+          }
+      ],
+      "ID": 1125,
+      "TITLE": "Disclosure: Trans Lives on Screen",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2020,
+      "sort_key": 0
+  },
+  {
+      "BOX_OFFICE": "$1403",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 9,
+              "LABEL": "Action/Adventure"
+          }
+      ],
+      "ID": 57,
+      "TITLE": "Drool",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2009,
+      "sort_key": 1403
+  },
+  {
+      "BOX_OFFICE": "$1,989",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1093,
+      "TITLE": "The Watermelon Woman",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1996,
+      "sort_key": 1989
+  },
+  {
+      "BOX_OFFICE": "$6877",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 51,
+      "TITLE": "Duck Butter",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2018,
+      "sort_key": 6877
+  },
+  {
+      "BOX_OFFICE": "$15,122",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1124,
+      "TITLE": "The Olivia Experiment",
+      "TYPES": [
+          {
+              "ID": 6,
+              "LABEL": "Ace/Aro"
+          }
+      ],
+      "YEAR": 2012,
+      "sort_key": 15122
+  },
+  {
+      "BOX_OFFICE": "$15,151",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1109,
+      "TITLE": "Cloudburst",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2011,
+      "sort_key": 15151
+  },
+  {
+      "BOX_OFFICE": "$16,080",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1123,
+      "TITLE": "Straight Up",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          },
+          {
+              "ID": 6,
+              "LABEL": "Ace/Aro"
+          }
+      ],
+      "YEAR": 2019,
+      "sort_key": 16080
+  },
+  {
+      "BOX_OFFICE": "$18,766",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1075,
+      "TITLE": "My Days of Mercy",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2017,
+      "sort_key": 18766
+  },
+  {
+      "BOX_OFFICE": "$20,441",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1081,
+      "TITLE": "Boy Meets Girl",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2014,
+      "sort_key": 20441
+  },
+  {
+      "BOX_OFFICE": "$40,945",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 45,
+      "TITLE": "I Can't Think Straight",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2008,
+      "sort_key": 40945
+  },
+  {
+      "BOX_OFFICE": "$58,755",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1100,
+      "TITLE": "The Pass",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2016,
+      "sort_key": 58755
+  },
+  {
+      "BOX_OFFICE": "$78,957",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1095,
+      "TITLE": "Concussion",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2013,
+      "sort_key": 78957
+  },
+  {
+      "BOX_OFFICE": "$97,446",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          }
+      ],
+      "ID": 1070,
+      "TITLE": "D.E.B.S.",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2004,
+      "sort_key": 97446
+  },
+  {
+      "BOX_OFFICE": "$123,699",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1092,
+      "TITLE": "Appropriate Behavior",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2014,
+      "sort_key": 123698.99999999999
+  },
+  {
+      "BOX_OFFICE": "$136,049",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1099,
+      "TITLE": "Bedrooms and Hallways",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 1998,
+      "sort_key": 136049
+  },
+  {
+      "BOX_OFFICE": "$181,316",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 54,
+      "TITLE": "Rafiki",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2018,
+      "sort_key": 181316
+  },
+  {
+      "BOX_OFFICE": "$187,430",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 10,
+              "LABEL": "Musical"
+          }
+      ],
+      "ID": 1059,
+      "TITLE": "The Prom",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2020,
+      "sort_key": 187430
+  },
+  {
+      "BOX_OFFICE": "$205,878",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1060,
+      "TITLE": "The World to Come",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2020,
+      "sort_key": 205878
+  },
+  {
+      "BOX_OFFICE": "$292,577",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1121,
+      "TITLE": "All Over Me",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1997,
+      "sort_key": 292577
+  },
+  {
+      "BOX_OFFICE": "$314,106",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1103,
+      "TITLE": "Shiva Baby",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2020,
+      "sort_key": 314106
+  },
+  {
+      "BOX_OFFICE": "$396,596",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1110,
+      "TITLE": "Kiss Me (Kyss Mig)",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2011,
+      "sort_key": 396596
+  },
+  {
+      "BOX_OFFICE": "$396,897",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 42,
+      "TITLE": "Lost and Delirious",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2001,
+      "sort_key": 396897
+  },
+  {
+      "BOX_OFFICE": "$599,523",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1098,
+      "TITLE": "The Fluffer",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2001,
+      "sort_key": 599523
+  },
+  {
+      "BOX_OFFICE": "$628,258",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 48,
+      "TITLE": "Water Lillies",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2007,
+      "sort_key": 628257.9999999999
+  },
+  {
+      "BOX_OFFICE": "$769,552",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 55,
+      "TITLE": "Pariah",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2011,
+      "sort_key": 769552.0000000001
+  },
+  {
+      "BOX_OFFICE": "$786,000",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 40,
+      "TITLE": "When Night Is Falling",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1995,
+      "sort_key": 786000
+  },
+  {
+      "BOX_OFFICE": "$840,099",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1119,
+      "TITLE": "Tangerine",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2015,
+      "sort_key": 840099
+  },
+  {
+      "BOX_OFFICE": "$844,281",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1066,
+      "TITLE": "Habitación en Roma (Room in Rome)",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2010,
+      "sort_key": 844281
+  },
+  {
+      "BOX_OFFICE": "$930,000",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1112,
+      "TITLE": "Margarita with a Straw",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2014,
+      "sort_key": 930000
+  },
+  {
+      "BOX_OFFICE": "$944,479",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1096,
+      "TITLE": "Gray Matters",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2006,
+      "sort_key": 944479
+  },
+  {
+      "BOX_OFFICE": "$1,018,995",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 56,
+      "TITLE": "The Purple Sea: Viola di mare",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2009,
+      "sort_key": 1018995
+  },
+  {
+      "BOX_OFFICE": "$1,207,841",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1113,
+      "TITLE": "The Way He Looks",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2014,
+      "sort_key": 1207841
+  },
+  {
+      "BOX_OFFICE": "$1,236,518",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1068,
+      "TITLE": "Saving Face",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2004,
+      "sort_key": 1236518
+  },
+  {
+      "BOX_OFFICE": "$1,400,000",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 46,
+      "TITLE": "Ammonite",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2020,
+      "sort_key": 1400000
+  },
+  {
+      "BOX_OFFICE": "$1,437,501",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 49,
+      "TITLE": "Tomboy",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2011,
+      "sort_key": 1437501
+  },
+  {
+      "BOX_OFFICE": "$1,700,000",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1076,
+      "TITLE": "Freeheld",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2015,
+      "sort_key": 1700000
+  },
+  {
+      "BOX_OFFICE": "$1,908,425",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1069,
+      "TITLE": "Professor Marston and the Wonder Women",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 5,
+              "LABEL": "Polyamory"
+          }
+      ],
+      "YEAR": 2017,
+      "sort_key": 1908425
+  },
+  {
+      "BOX_OFFICE": "$2,405,285",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1094,
+      "TITLE": "Go Fish",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1994,
+      "sort_key": 2405285
+  },
+  {
+      "BOX_OFFICE": "$2,492,088",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1084,
+      "TITLE": "Desert Hearts",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1985,
+      "sort_key": 2492088
+  },
+  {
+      "BOX_OFFICE": "$2,600,000",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          }
+      ],
+      "ID": 3,
+      "TITLE": "But I'm a Cheerleader",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1999,
+      "sort_key": 2600000
+  },
+  {
+      "BOX_OFFICE": "$2,635,305",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 43,
+      "TITLE": "Imagine Me & You",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2005,
+      "sort_key": 2635305
+  },
+  {
+      "BOX_OFFICE": "$3,000,000",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1118,
+      "TITLE": "The Children's Hour",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1961,
+      "sort_key": 3000000
+  },
+  {
+      "BOX_OFFICE": "$3,802,260",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 3,
+              "LABEL": "Horror/Thriller"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 9,
+              "LABEL": "Action/Adventure"
+          }
+      ],
+      "ID": 1122,
+      "TITLE": "Bound",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1996,
+      "sort_key": 3802260
+  },
+  {
+      "BOX_OFFICE": "$3,839,364",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1079,
+      "TITLE": "A Fantastic Woman (Una mujer fantástica)",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2017,
+      "sort_key": 3839364
+  },
+  {
+      "BOX_OFFICE": "$4,200,000",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1090,
+      "TITLE": "Loving Annabelle",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2006,
+      "sort_key": 4200000
+  },
+  {
+      "BOX_OFFICE": "$5,525,665",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 3,
+              "LABEL": "Horror/Thriller"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1107,
+      "TITLE": "Tár",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2022,
+      "sort_key": 5525665
+  },
+  {
+      "BOX_OFFICE": "$5,672,311",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1085,
+      "TITLE": "Personal Best",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1982,
+      "sort_key": 5672311
+  },
+  {
+      "BOX_OFFICE": "$7,928,149",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1074,
+      "TITLE": "Boy Erased",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2018,
+      "sort_key": 7928149
+  },
+  {
+      "BOX_OFFICE": "$8,003,180",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1077,
+      "TITLE": "Disobedience",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2017,
+      "sort_key": 8003180
+  },
+  {
+      "BOX_OFFICE": "$10,013,424",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 41,
+      "TITLE": "Kissing Jessica Stein",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2001,
+      "sort_key": 10013424
+  },
+  {
+      "BOX_OFFICE": "$10,067,879",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 47,
+      "TITLE": "Portrait of a lady on fire",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2019,
+      "sort_key": 10067879
+  },
+  {
+      "BOX_OFFICE": "$12,021,272",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1097,
+      "TITLE": "Chasing Amy",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1997,
+      "sort_key": 12021272
+  },
+  {
+      "BOX_OFFICE": "$14,300,000",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1064,
+      "TITLE": "Colette",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 5,
+              "LABEL": "Polyamory"
+          }
+      ],
+      "YEAR": 2018,
+      "sort_key": 14300000
+  },
+  {
+      "BOX_OFFICE": "$15,151,744",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1058,
+      "TITLE": "Transamerica",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2005,
+      "sort_key": 15151744
+  },
+  {
+      "BOX_OFFICE": "$19,465,835",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 44,
+      "TITLE": "Blue is the Warmest Color",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2013,
+      "sort_key": 19465835
+  },
+  {
+      "BOX_OFFICE": "$24,959,607",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1104,
+      "TITLE": "Booksmart",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2019,
+      "sort_key": 24959607
+  },
+  {
+      "BOX_OFFICE": "$27,000,000",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1062,
+      "TITLE": "Boys Don't Cry",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 1999,
+      "sort_key": 27000000
+  },
+  {
+      "BOX_OFFICE": "$33,384,127",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1072,
+      "TITLE": "The Perks of Being a Wallflower",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2012,
+      "sort_key": 33384127
+  },
+  {
+      "BOX_OFFICE": "$41,888,660",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 53,
+      "TITLE": "Call Me by Your Name",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2017,
+      "sort_key": 41888660
+  },
+  {
+      "BOX_OFFICE": "$42,843,521",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1073,
+      "TITLE": "Carol",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2015,
+      "sort_key": 42843521
+  },
+  {
+      "BOX_OFFICE": "$55,198,285",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1063,
+      "TITLE": "Dallas Buyers Club",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          },
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2013,
+      "sort_key": 55198285
+  },
+  {
+      "BOX_OFFICE": "$64,191,523",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 50,
+      "TITLE": "The Danish Girl",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2015,
+      "sort_key": 64191523
+  },
+  {
+      "BOX_OFFICE": "$95,918,706",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1078,
+      "TITLE": "The Favourite",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2018,
+      "sort_key": 95918706
+  },
+  {
+      "BOX_OFFICE": "$114,487,040",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 3,
+              "LABEL": "Horror/Thriller"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 10,
+              "LABEL": "Musical"
+          }
+      ],
+      "ID": 1102,
+      "TITLE": "The Rocky Horror Picture Show",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          },
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 1975,
+      "sort_key": 114487040
+  },
+  {
+      "BOX_OFFICE": "$178,062,759",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1105,
+      "TITLE": "Brokeback Mountain",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2005,
+      "sort_key": 178062759.00000003
+  },
+  {
+      "BOX_OFFICE": "$206,678,440",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1082,
+      "TITLE": "Philadelphia",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 1993,
+      "sort_key": 206678440
+  },
+  {
+      "BOX_OFFICE": "$402,264,843",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 10,
+              "LABEL": "Musical"
+          }
+      ],
+      "ID": 1115,
+      "TITLE": "Mamma Mia! Here We Go Again",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2018,
+      "sort_key": 402264843
+  },
+  {
+      "BOX_OFFICE": "$609,841,637",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 10,
+              "LABEL": "Musical"
+          }
+      ],
+      "ID": 1065,
+      "TITLE": "Mamma Mia!",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2008,
+      "sort_key": 609841637
+  }
+]

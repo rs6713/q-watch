@@ -29,7 +29,6 @@ function DropDownFilter({filter, updateFilters, filters}){
   }
 
   function getItemClass(item){
-    console.log(filters)
     if(filters[filter['id']] !== undefined && filters[filter['id']].indexOf(item) !== -1){
       return 'active DropDownOption'
     }

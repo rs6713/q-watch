@@ -5,7 +5,8 @@ import {
   Routes
 } from 'react-router-dom';
 import Main from './pages/Main';
-import Browse from './pages/Browse'
+import Browse from './pages/Browse';
+import Rank from './pages/Rank';
 import Movie from './pages/Movie';
 import Menu from './pages/components/Menu';
 import './App.scss';
@@ -22,6 +23,7 @@ class App extends Component {
           <Routes>
             <Route exact path='/' element={<Main />} />
             <Route exact path='/browse' element={<Browse />} />
+            <Route exact path='/rankings' element={<Rank />} />
             <Route exact path='/movies/:id' element={<Movie />} /> 
           </Routes>
           <Menu />

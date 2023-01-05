@@ -1,0 +1,23 @@
+@import "../scss/defaults.scss";
+
+.GraphPage {
+  overflow-x: hidden;
+  max-height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .Graph::-webkit-scrollbar {
+    display: none;
+  }
+  .Graph {
+    flex: 1 1;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}

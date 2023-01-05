@@ -4,7 +4,7 @@ import Footer from './components/Footer';
 import Filters from './components/Filters';
 import Labels from './components/Labels';
 import MovieList from './components/MovieList';
-import Sort from './components/Sort';
+import Options from './components/Options';
 import Indexer from './components/Indexer';
 
 
@@ -12,7 +12,14 @@ import {ReactComponent as Filter} from '../static/icons/filter.svg'
 
 
 
-
+const SORT = {
+  "Most Popular": ["NUM_RATING", -1],
+  "Least Popular": ["NUM_RATING", 1],
+  "Highest Rating": ["AVG_RATING", -1],
+  "Lowest Rating": ["AVG_RATING", 1],
+  "Most Recent Release": ["YEAR", -1],
+  "Least Recent Release": ["YEAR", 1],
+}
 
 function Browse(){
 
@@ -24,40 +31,64 @@ function Browse(){
   const [nIndexes, setNIndexes] = useState(null);
   const [nMatches, setNMatches] = useState(null);
 
-  // Data Fetching Called at criteria updates
+
+  function get_movies(){
+    if(criteria !== null){
+      fetch('/api/movies', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'cache-control': 'no-store',
+        },
+        body: JSON.stringify({
+          "criteria": criteria,
+          "sort": sort,
+          "index": index
+        })//this.state.filterCriteria
+      }).then(res => res.json()).then(data => {
+        setMovies(data["data"]);
+        setNIndexes(data["n_indexes"]);
+        setNMatches(data["n_matches"]);
+      })
+    }
+  }
+
   useEffect(() => {
-    // Loading is true while movies are null
+    console.log('Setting sort', sort)
+    setMovies(null);
+    if(index != 1){
+      setIndex(1);
+    }else{
+      get_movies();
+    }
+  }, [sort])
+
+  useEffect(() => {
+    console.log('Setting criteria', criteria)
     setMovies(null);
     setNIndexes(null);
     setNMatches(null);
-    console.log(criteria)
+    if(index != 1){
+      setIndex(1);
+    }else{
+      get_movies();
+    }
+  }, [criteria])
 
-    fetch('/api/movies', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'cache-control': 'no-store',
-      },
-      body: JSON.stringify({
-        "criteria": criteria,
-        "sort": sort,
-        "index": index
-      })//this.state.filterCriteria
-    }).then(res => res.json()).then(data => {
-      setMovies(data["data"]);
-      setNIndexes(data["n_indexes"]);
-      setNMatches(data["n_matches"]);
-    })
-  }, [criteria, sort, index]);
-
+  // Data Fetching Called at criteria updates
   useEffect(() => {
-    setIndex(1);
-  }, [criteria, sort])
+    console.log('Setting index ', index)
+    setMovies(null);
+    // Loading is true while movies are null
+    get_movies();
+  }, [index]);
+
+
 
   function updateCriteria(update){
 
-    let newCriteria = {...criteria, ...update}
+    let newCriteria = criteria === null? {...update} : {...criteria, ...update}
 
     // Cancelled criteria are removed
     for(let key in newCriteria){
@@ -77,7 +108,7 @@ function Browse(){
       <Filters active={filterActive} nMatches={nMatches} updateFilters={updateCriteria} filters={criteria} />
       
       <div id="ControlPanel">
-        <Sort updateSort={setSort} sort={sort} />
+        <Options name='Sort' updateOption={setSort} option={sort} options={SORT} />
         <Labels labelType="GENRES" updateLabel={updateCriteria}/>
         
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>

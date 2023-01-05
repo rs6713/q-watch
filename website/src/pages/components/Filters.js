@@ -147,7 +147,7 @@ function Filters({active, nMatches, updateFilters, filters}){
   const [config, setConfig] = useState(baseConfig)
   useEffect(() => {
     fetch('/api/movie/labels').then(res => res.json()).then(data => {
-      console.log(Object.keys(data))
+      console.log('Calling api movie labels', Object.keys(data))
       let temp_config = {...config, 'filterSections': []}
 
       for(let section of config['filterSections']){
@@ -178,7 +178,7 @@ function Filters({active, nMatches, updateFilters, filters}){
           temp_config['filterSections'].push(section)
         }
       }
-
+      
       setConfig(temp_config)
     });
   }, [])
