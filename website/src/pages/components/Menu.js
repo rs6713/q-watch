@@ -23,7 +23,7 @@ function Menu(){
               <span>Browse</span>
             </div>
           </Link>
-          <Link to={"/rankings"} className="link">
+          <Link to={"/rankings"} className={"link" + (useLocation().pathname == "/rankings"? ' active' : ' inactive')}>
             <div>
             <Rank title="" />
               <span>Rankings</span>

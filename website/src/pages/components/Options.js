@@ -48,7 +48,7 @@ function Options({name, updateOption, option, options, multi}){
 
   return (
     <div id="Options">
-      <div>{name} <Caret/></div>
+      <div><span>{name}</span> <Caret/></div>
       <ul id="Options">
         {Object.keys(options).map(key => (
           <li key={key} className={optionMatch(option, key) ? 'active' : ''} onClick={()=>{clickOption(key)}}>{key}</li>

@@ -4,11 +4,16 @@
   // your SCSS here, e.g.
   #Browse #MovieList #BrowseResults,
   .footer,
-  #Browse #ControlPanel {
+  #ControlPanel {
     padding-left: $side_padding;
     padding-right: $side_padding;
   }
   #Movie #MovieContainer {
+    margin-left: $side_padding;
+    margin-right: $side_padding;
+  }
+
+  .Graph {
     margin-left: $side_padding;
     margin-right: $side_padding;
   }
@@ -48,7 +53,7 @@
 
 @media (max-width: $WIDTH_SMALL_SCREEN) {
   @include width_styling($side_padding: 3vw);
-  #Browse #ControlPanel #Categories {
+  #ControlPanel #Categories {
     width: 94vw;
     margin-left: 3vw;
     margin-right: 3vw;
@@ -70,7 +75,7 @@
     max-width: 90vw;
   }
 
-  #Browse #ControlPanel #Categories {
+  #ControlPanel #Categories {
     width: 90vw;
     margin-left: 5vw;
     margin-right: 5vw;

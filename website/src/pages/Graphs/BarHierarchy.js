@@ -1,11 +1,10 @@
 import React, { Component, useState, useEffect, useRef} from 'react';
 import * as d3 from 'd3';
 
-const BARSTEP = 27;
 const DURATION = 750;
-const BARPADDING = 3 / BARSTEP;
-const MARGIN = ({top: 30, right: 30, bottom: 0, left: 100})
-const color = d3.scaleOrdinal([true, false], ["steelblue", "#aaa"])
+
+const color = d3.scaleOrdinal([true, false], ["#cc81dd", "#85f2e8"])
+var fontSize, BARSTEP, BARPADDING, MARGIN, BARGAP;
 
 const createRoot = (data, sort_ascending) => {
   console.log('Create root data: ', data)
@@ -32,6 +31,12 @@ function cartesian(...args) {
 }
 
 const createHierarchicalData = (data, name_var, value_var, grouping_vars, label_vars) => {
+  fontSize = parseFloat(getComputedStyle(document.getElementById('ControlPanel')).fontSize);
+  BARSTEP = 2 * fontSize;
+  BARPADDING = 3/fontSize;
+  MARGIN = ({top: 2 * fontSize, right: 2 * fontSize, bottom: 0, left: 15 * fontSize})
+
+
   let dataHierarchy = [];
   if(grouping_vars === null || grouping_vars.length === 0){
     for(let item of data){
@@ -83,7 +88,8 @@ function bar(svg, down, d, selector) {
       .attr("class", "enter")
       .attr("transform", `translate(0,${MARGIN.top + BARSTEP * BARPADDING})`)
       .attr("text-anchor", "end")
-      .style("font", "10px sans-serif");
+      .style("font", `${fontSize}px Futura PT`);
+      
 
   const bar = g.selectAll("g")
     .data(d.children)
@@ -255,7 +261,7 @@ let yAxis = g => g
 let xAxis = g => g
   .attr("class", "x-axis")
   .attr("transform", `translate(0,${MARGIN.top})`)
-  //.call(d3.axisTop(x).ticks(width / 80, "s"))
+  .call(d3.axisTop(x).ticks(width / 80, "s"))
   .call(g => (g.selection ? g.selection() : g).select(".domain").remove())
 
 
@@ -267,7 +273,6 @@ let xAxis = g => g
 
   let root = createRoot(hierarchy_data, sort_ascending);
 
-
   let height = (() => {
     var max = 1;
     //root.each
@@ -275,10 +280,23 @@ let xAxis = g => g
     console.log('Max', max)
     return max * BARSTEP + MARGIN.top + MARGIN.bottom;
   })();
-  let width = 500;
+
+  let container = document.getElementsByClassName('Graph')[0];
+  var cs = getComputedStyle(container);
+  var paddingX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+  var paddingY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+
+  
+  console.log('Fontsize ', fontSize)
+  let width = container.clientWidth - paddingX;
   var x = d3.scaleLinear().range([MARGIN.left, width - MARGIN.right])
+  
+  
 
   x.domain([0, root.value]);
+
+  let minHeight = container.clientHeight - paddingY;
+  height = Math.max(height, minHeight);
 
   console.log('Height: ', height)
 
@@ -309,7 +327,7 @@ let xAxis = g => g
 
 
   return (
-      <svg width="100%"
+      <svg id='BarHierarchy'
         ref={ref}
       />
   )
