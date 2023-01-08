@@ -18,6 +18,24 @@ const RANK_OPTIONS = {
   "Budget": "BUDGET",
 }
 
+const SUMMARY_OPTIONS = {
+  "BOX_OFFICE": {
+    "Total": 'sum',
+    "Average": 'mean'
+  },
+  "BUDGET": {
+    "Total": 'sum',
+    "Average": 'mean'
+  },
+  "RATING": {
+    "Average": 'mean'
+  },
+  "POPULARITY": {
+    "Average": 'mean'
+  }
+
+}
+
 const GROUP_OPTIONS = {
   "LGBTQ+ Identity": "TYPES",
   "Genre": "GENRES",
@@ -35,6 +53,7 @@ function Rank(){
   const [nMatches, setNMatches] = useState(null);
   const [criteria, setCriteria] = useState({});
   const [group, setGroup] = useState([])
+  const [summary, setSummary] = useState("sum");
 
   function get_movies(){
     fetch('/api/movies', {
@@ -47,7 +66,7 @@ function Rank(){
       body: JSON.stringify({
         "criteria": criteria,
         "sort": [rank, ascending ? 1 : -1],
-        "properties": ['TITLE', 'YEAR', 'TYPES', rank, 'GENRES', 'REPRESENTATIONS']
+        "properties": ['TITLE', 'YEAR', 'TYPES', ...Object.values(RANK_OPTIONS), 'GENRES', 'REPRESENTATIONS']
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
       console.log(data["data"])
@@ -58,10 +77,10 @@ function Rank(){
 
   useEffect(() => {
     console.log('Setting rank ', rank, ' criteria', criteria)
-    // setMovies(null);
-    // setNMatches(null);
-    // get_movies();
-  }, [rank, criteria])
+    setMovies(null);
+    setNMatches(null);
+    get_movies();
+  }, [criteria])
 
   function updateCriteria(update){
 
@@ -78,6 +97,11 @@ function Rank(){
     )
   }
 
+  function updateRank(x){
+    setRank(x)
+    setSummary(SUMMARY_OPTIONS[x])
+  }
+
   return (
     <div id="Rankings" className="page GraphPage">
       {filterActive && <div className="cover" onClick={()=>{setFilterActive(false)}} />}
@@ -85,8 +109,9 @@ function Rank(){
       <Filters active={filterActive} nMatches={nMatches} updateFilters={updateCriteria} filters={criteria} />
 
       <div id="ControlPanel">
-        <Options updateOption={setRank} option={rank} name='Ranking' options={RANK_OPTIONS} />
+        <Options updateOption={updateRank} option={rank} name='Ranking' options={RANK_OPTIONS} />
         <Options updateOption={setGroup} option={group} name='Grouping' options={GROUP_OPTIONS} multi={true}/>
+        <Options updateOption={setSummary} option={summary} name='Summary' options={SUMMARY_OPTIONS[rank]}/>
         <Switch state={ascending} setState={setAscending} onMessage={<div>Ascending Order</div>} offMessage={<div>Descending Order</div>} />
         <Switch state={ignoreZeros} setState={setIgnoreZeros} onMessage={<div>Ignore Zeros/Unknown</div>} offMessage={<div>Show All</div>} />
         <div className='filler' />
@@ -96,7 +121,7 @@ function Rank(){
       <div className='Graph'>
         <Loader isLoading={movies === null} />
         {movies !== null && 
-        <BarHierarchy dataset={movies.filter(movie => movie.sort_key !== 0 || !ignoreZeros)} sort_ascending={ascending} grouping_vars={group} name_var={'TITLE'} label_vars={['YEAR']} value_var={rank} />
+        <BarHierarchy dataset={movies.filter(movie => movie.sort_key !== 0 || !ignoreZeros)} sort_ascending={ascending} grouping_vars={group} name_var={'TITLE'} label_vars={['YEAR']} value_var={rank} summary_var={summary} />
         }
       </div>
       <Footer />

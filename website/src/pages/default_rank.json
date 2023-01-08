@@ -1,6 +1,974 @@
 [
   {
+      "BOX_OFFICE": "$2,600,000",
+      "BUDGET": "$1,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          }
+      ],
+      "ID": 3,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "Butch Characters",
+              "ID": 5,
+              "LABEL": "Butch"
+          },
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          }
+      ],
+      "TITLE": "But I'm a Cheerleader",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1999
+  },
+  {
+      "BOX_OFFICE": "$786,000",
+      "BUDGET": "",
+      "COUNTRY": "Canada",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 40,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          }
+      ],
+      "TITLE": "When Night Is Falling",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1995
+  },
+  {
+      "BOX_OFFICE": "$10,013,424",
+      "BUDGET": "$1,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 41,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Jewish Characters",
+              "ID": 8,
+              "LABEL": "Jewish"
+          }
+      ],
+      "TITLE": "Kissing Jessica Stein",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2001
+  },
+  {
+      "BOX_OFFICE": "$396,897",
+      "BUDGET": "",
+      "COUNTRY": "Canada",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 42,
+      "REPRESENTATIONS": null,
+      "TITLE": "Lost and Delirious",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2001
+  },
+  {
+      "BOX_OFFICE": "$2,635,305",
+      "BUDGET": "$7900000",
+      "COUNTRY": "United Kingdom",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 43,
+      "REPRESENTATIONS": null,
+      "TITLE": "Imagine Me & You",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2005
+  },
+  {
+      "BOX_OFFICE": "$19,465,835",
+      "BUDGET": "€4,000,000",
+      "COUNTRY": "France",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 44,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Butch Characters",
+              "ID": 5,
+              "LABEL": "Butch"
+          },
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          }
+      ],
+      "TITLE": "Blue is the Warmest Color",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2013
+  },
+  {
+      "BOX_OFFICE": "$40,945",
+      "BUDGET": "",
+      "COUNTRY": "United Kingdom",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 45,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "POC Characters loving POC Characters",
+              "ID": 10,
+              "LABEL": "POC Love"
+          }
+      ],
+      "TITLE": "I Can't Think Straight",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2008
+  },
+  {
+      "BOX_OFFICE": "$1,400,000",
+      "BUDGET": "$13,400,000",
+      "COUNTRY": "United Kingdom",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 46,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          },
+          {
+              "DESCRIP": "Characters with Mental Health Issues",
+              "ID": 12,
+              "LABEL": "Mental Health"
+          }
+      ],
+      "TITLE": "Ammonite",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2020
+  },
+  {
+      "BOX_OFFICE": "$10,067,879",
+      "BUDGET": "€4,860,000",
+      "COUNTRY": "France",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 47,
+      "REPRESENTATIONS": null,
+      "TITLE": "Portrait of a lady on fire",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2019
+  },
+  {
+      "BOX_OFFICE": "$628,258",
+      "BUDGET": "€1,700,000",
+      "COUNTRY": "France",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 48,
+      "REPRESENTATIONS": null,
+      "TITLE": "Water Lillies",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2007
+  },
+  {
+      "BOX_OFFICE": "$1,437,501",
+      "BUDGET": "€1,000,000",
+      "COUNTRY": "France",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 49,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          }
+      ],
+      "TITLE": "Tomboy",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2011
+  },
+  {
+      "BOX_OFFICE": "$64,191,523",
+      "BUDGET": "$15,000,000",
+      "COUNTRY": "Denmark",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 50,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          },
+          {
+              "DESCRIP": "Characters with Mental Health Issues",
+              "ID": 12,
+              "LABEL": "Mental Health"
+          }
+      ],
+      "TITLE": "The Danish Girl",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2015
+  },
+  {
+      "BOX_OFFICE": "$6877",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 51,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          }
+      ],
+      "TITLE": "Duck Butter",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2018
+  },
+  {
+      "BOX_OFFICE": "",
+      "BUDGET": "",
+      "COUNTRY": "Spain",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 52,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          }
+      ],
+      "TITLE": "Elisa y Marcela",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2019
+  },
+  {
+      "BOX_OFFICE": "$41,888,660",
+      "BUDGET": "€4,000,000",
+      "COUNTRY": "Italy",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 53,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Jewish Characters",
+              "ID": 8,
+              "LABEL": "Jewish"
+          }
+      ],
+      "TITLE": "Call Me by Your Name",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2017
+  },
+  {
+      "BOX_OFFICE": "$181,316",
+      "BUDGET": "",
+      "COUNTRY": "Kenya",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 54,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Black Characters loving Black Characters",
+              "ID": 1,
+              "LABEL": "Black Love"
+          },
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "Butch Characters",
+              "ID": 5,
+              "LABEL": "Butch"
+          },
+          {
+              "DESCRIP": "POC Characters loving POC Characters",
+              "ID": 10,
+              "LABEL": "POC Love"
+          }
+      ],
+      "TITLE": "Rafiki",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2018
+  },
+  {
+      "BOX_OFFICE": "$769,552",
+      "BUDGET": "$450,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 55,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Black Characters loving Black Characters",
+              "ID": 1,
+              "LABEL": "Black Love"
+          },
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "Butch Characters",
+              "ID": 5,
+              "LABEL": "Butch"
+          },
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          },
+          {
+              "DESCRIP": "POC Characters loving POC Characters",
+              "ID": 10,
+              "LABEL": "POC Love"
+          }
+      ],
+      "TITLE": "Pariah",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2011
+  },
+  {
+      "BOX_OFFICE": "$1,018,995",
+      "BUDGET": "",
+      "COUNTRY": "Italy",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 56,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          }
+      ],
+      "TITLE": "The Purple Sea: Viola di mare",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2009
+  },
+  {
+      "BOX_OFFICE": "$1403",
+      "BUDGET": "$1,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 9,
+              "LABEL": "Action/Adventure"
+          }
+      ],
+      "ID": 57,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "POC Characters loving POC Characters",
+              "ID": 10,
+              "LABEL": "POC Love"
+          }
+      ],
+      "TITLE": "Drool",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2009
+  },
+  {
+      "BOX_OFFICE": "",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 58,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "Disabled Characters",
+              "ID": 4,
+              "LABEL": "Disability"
+          }
+      ],
+      "TITLE": "The Things You Think I'm Thinking",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2020
+  },
+  {
+      "BOX_OFFICE": "$15,151,744",
+      "BUDGET": "$1,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1058,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Jewish Characters",
+              "ID": 8,
+              "LABEL": "Jewish"
+          }
+      ],
+      "TITLE": "Transamerica",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2005
+  },
+  {
+      "BOX_OFFICE": "$187,430",
+      "BUDGET": "$18,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 10,
+              "LABEL": "Musical"
+          }
+      ],
+      "ID": 1059,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          }
+      ],
+      "TITLE": "The Prom",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2020
+  },
+  {
+      "BOX_OFFICE": "$205,878",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1060,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Characters with Mental Health Issues",
+              "ID": 12,
+              "LABEL": "Mental Health"
+          }
+      ],
+      "TITLE": "The World to Come",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2020
+  },
+  {
+      "BOX_OFFICE": "$27,000,000",
+      "BUDGET": "$2,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1062,
+      "REPRESENTATIONS": null,
+      "TITLE": "Boys Don't Cry",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 1999
+  },
+  {
+      "BOX_OFFICE": "$55,198,285",
+      "BUDGET": "$5,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1063,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Disabled Characters",
+              "ID": 4,
+              "LABEL": "Disability"
+          }
+      ],
+      "TITLE": "Dallas Buyers Club",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          },
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2013
+  },
+  {
+      "BOX_OFFICE": "$14,300,000",
+      "BUDGET": "$7,000,000",
+      "COUNTRY": "United Kingdom",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1064,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Butch Characters",
+              "ID": 5,
+              "LABEL": "Butch"
+          },
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          }
+      ],
+      "TITLE": "Colette",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 5,
+              "LABEL": "Polyamory"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2018
+  },
+  {
       "BOX_OFFICE": "$609,841,637",
+      "BUDGET": "$52,000,000",
+      "COUNTRY": "Greece",
       "GENRES": [
           {
               "DESCRIP": null,
@@ -32,11 +1000,43 @@
               "LABEL": "Gay"
           }
       ],
-      "YEAR": 2008,
-      "sort_key": 609841637
+      "YEAR": 2008
   },
   {
-      "BOX_OFFICE": "$402,264,843",
+      "BOX_OFFICE": "$844,281",
+      "BUDGET": "",
+      "COUNTRY": "Italy",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1066,
+      "REPRESENTATIONS": null,
+      "TITLE": "Habitación en Roma (Room in Rome)",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2010
+  },
+  {
+      "BOX_OFFICE": "",
+      "BUDGET": "",
+      "COUNTRY": "United States",
       "GENRES": [
           {
               "DESCRIP": null,
@@ -50,24 +1050,507 @@
           },
           {
               "DESCRIP": null,
-              "ID": 10,
-              "LABEL": "Musical"
+              "ID": 7,
+              "LABEL": "Drama"
           }
       ],
-      "ID": 1115,
+      "ID": 1067,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "POC Characters loving POC Characters",
+              "ID": 10,
+              "LABEL": "POC Love"
+          }
+      ],
+      "TITLE": "The Half of It",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2020
+  },
+  {
+      "BOX_OFFICE": "$1,236,518",
+      "BUDGET": "$2,500,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1068,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "POC Characters loving POC Characters",
+              "ID": 10,
+              "LABEL": "POC Love"
+          }
+      ],
+      "TITLE": "Saving Face",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2004
+  },
+  {
+      "BOX_OFFICE": "$1,908,425",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1069,
       "REPRESENTATIONS": null,
-      "TITLE": "Mamma Mia! Here We Go Again",
+      "TITLE": "Professor Marston and the Wonder Women",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 5,
+              "LABEL": "Polyamory"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2017
+  },
+  {
+      "BOX_OFFICE": "$97,446",
+      "BUDGET": "$3,500,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          }
+      ],
+      "ID": 1070,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          }
+      ],
+      "TITLE": "D.E.B.S.",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2004
+  },
+  {
+      "BOX_OFFICE": "",
+      "BUDGET": "$16,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 3,
+              "LABEL": "Horror/Thriller"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1071,
+      "REPRESENTATIONS": null,
+      "TITLE": "Jennifer's Body",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2009
+  },
+  {
+      "BOX_OFFICE": "$33,384,127",
+      "BUDGET": "$13,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1072,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Characters with Mental Health Issues",
+              "ID": 12,
+              "LABEL": "Mental Health"
+          }
+      ],
+      "TITLE": "The Perks of Being a Wallflower",
       "TYPES": [
           {
               "ID": 1,
               "LABEL": "Gay"
           }
       ],
-      "YEAR": 2018,
-      "sort_key": 402264843
+      "YEAR": 2012
+  },
+  {
+      "BOX_OFFICE": "$42,843,521",
+      "BUDGET": "$11,800,000",
+      "COUNTRY": "United Kingdom",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1073,
+      "REPRESENTATIONS": null,
+      "TITLE": "Carol",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2015
+  },
+  {
+      "BOX_OFFICE": "$7,928,149",
+      "BUDGET": "$11,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1074,
+      "REPRESENTATIONS": null,
+      "TITLE": "Boy Erased",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2018
+  },
+  {
+      "BOX_OFFICE": "$18,766",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1075,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Characters with Mental Health Issues",
+              "ID": 12,
+              "LABEL": "Mental Health"
+          }
+      ],
+      "TITLE": "My Days of Mercy",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2017
+  },
+  {
+      "BOX_OFFICE": "$1,700,000",
+      "BUDGET": "$7,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1076,
+      "REPRESENTATIONS": null,
+      "TITLE": "Freeheld",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2015
+  },
+  {
+      "BOX_OFFICE": "$8,003,180",
+      "BUDGET": "$6,000,000",
+      "COUNTRY": "United Kingdom",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1077,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Jewish Characters",
+              "ID": 8,
+              "LABEL": "Jewish"
+          }
+      ],
+      "TITLE": "Disobedience",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2017
+  },
+  {
+      "BOX_OFFICE": "$95,918,706",
+      "BUDGET": "$15,000,000",
+      "COUNTRY": "United Kingdom",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1078,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Disabled Characters",
+              "ID": 4,
+              "LABEL": "Disability"
+          },
+          {
+              "DESCRIP": "Plus-Sized Characters",
+              "ID": 11,
+              "LABEL": "Plus-Sized"
+          },
+          {
+              "DESCRIP": "Characters with Mental Health Issues",
+              "ID": 12,
+              "LABEL": "Mental Health"
+          }
+      ],
+      "TITLE": "The Favourite",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2018
+  },
+  {
+      "BOX_OFFICE": "$3,839,364",
+      "BUDGET": "",
+      "COUNTRY": "Chile",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1079,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "POC Characters loving POC Characters",
+              "ID": 10,
+              "LABEL": "POC Love"
+          }
+      ],
+      "TITLE": "A Fantastic Woman (Una mujer fantástica)",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2017
+  },
+  {
+      "BOX_OFFICE": "$20,441",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1081,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Plus-Sized Characters",
+              "ID": 11,
+              "LABEL": "Plus-Sized"
+          }
+      ],
+      "TITLE": "Boy Meets Girl",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2014
   },
   {
       "BOX_OFFICE": "$206,678,440",
+      "BUDGET": "$26,000,000",
+      "COUNTRY": "United States",
       "GENRES": [
           {
               "DESCRIP": null,
@@ -84,11 +1567,12 @@
               "LABEL": "Gay"
           }
       ],
-      "YEAR": 1993,
-      "sort_key": 206678440
+      "YEAR": 1993
   },
   {
-      "BOX_OFFICE": "$178,062,759",
+      "BOX_OFFICE": "$2,492,088",
+      "BUDGET": "$1,250,000",
+      "COUNTRY": "United States",
       "GENRES": [
           {
               "DESCRIP": null,
@@ -101,20 +1585,432 @@
               "LABEL": "Drama"
           }
       ],
-      "ID": 1105,
+      "ID": 1084,
       "REPRESENTATIONS": null,
-      "TITLE": "Brokeback Mountain",
+      "TITLE": "Desert Hearts",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1985
+  },
+  {
+      "BOX_OFFICE": "$5,672,311",
+      "BUDGET": "$16,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1085,
+      "REPRESENTATIONS": null,
+      "TITLE": "Personal Best",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 1982
+  },
+  {
+      "BOX_OFFICE": "$4,200,000",
+      "BUDGET": "$1,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1090,
+      "REPRESENTATIONS": null,
+      "TITLE": "Loving Annabelle",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2006
+  },
+  {
+      "BOX_OFFICE": "",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1091,
+      "REPRESENTATIONS": null,
+      "TITLE": "Bloomington",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2010
+  },
+  {
+      "BOX_OFFICE": "$123,699",
+      "BUDGET": "",
+      "COUNTRY": "United Kingdom",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1092,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          }
+      ],
+      "TITLE": "Appropriate Behavior",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2014
+  },
+  {
+      "BOX_OFFICE": "$1,989",
+      "BUDGET": "$300,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1093,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "Butch Characters",
+              "ID": 5,
+              "LABEL": "Butch"
+          }
+      ],
+      "TITLE": "The Watermelon Woman",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1996
+  },
+  {
+      "BOX_OFFICE": "$2,405,285",
+      "BUDGET": "$15,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1094,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Butch Characters",
+              "ID": 5,
+              "LABEL": "Butch"
+          },
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          }
+      ],
+      "TITLE": "Go Fish",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1994
+  },
+  {
+      "BOX_OFFICE": "$78,957",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1095,
+      "REPRESENTATIONS": null,
+      "TITLE": "Concussion",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 2013
+  },
+  {
+      "BOX_OFFICE": "$944,479",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1096,
+      "REPRESENTATIONS": null,
+      "TITLE": "Gray Matters",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2006
+  },
+  {
+      "BOX_OFFICE": "$12,021,272",
+      "BUDGET": "$250,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1097,
+      "REPRESENTATIONS": null,
+      "TITLE": "Chasing Amy",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1997
+  },
+  {
+      "BOX_OFFICE": "$599,523",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1098,
+      "REPRESENTATIONS": null,
+      "TITLE": "The Fluffer",
       "TYPES": [
           {
               "ID": 1,
               "LABEL": "Gay"
           }
       ],
-      "YEAR": 2005,
-      "sort_key": 178062759.00000003
+      "YEAR": 2001
+  },
+  {
+      "BOX_OFFICE": "$136,049",
+      "BUDGET": "£3,000,000",
+      "COUNTRY": "United Kingdom",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1099,
+      "REPRESENTATIONS": null,
+      "TITLE": "Bedrooms and Hallways",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 1998
+  },
+  {
+      "BOX_OFFICE": "$58,755",
+      "BUDGET": "",
+      "COUNTRY": "United Kingdom",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1100,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          }
+      ],
+      "TITLE": "The Pass",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2016
+  },
+  {
+      "BOX_OFFICE": "",
+      "BUDGET": "",
+      "COUNTRY": "Germany",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1101,
+      "REPRESENTATIONS": null,
+      "TITLE": "Mädchen in Uniform",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1958
   },
   {
       "BOX_OFFICE": "$114,487,040",
+      "BUDGET": "$1,200,000",
+      "COUNTRY": "United Kingdom",
       "GENRES": [
           {
               "DESCRIP": null,
@@ -164,1445 +2060,12 @@
               "LABEL": "Bisexual"
           }
       ],
-      "YEAR": 1975,
-      "sort_key": 114487040
-  },
-  {
-      "BOX_OFFICE": "$95,918,706",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1078,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Disabled Characters",
-              "ID": 4,
-              "LABEL": "Disability"
-          },
-          {
-              "DESCRIP": "Plus-Sized Characters",
-              "ID": 11,
-              "LABEL": "Plus-Sized"
-          },
-          {
-              "DESCRIP": "Characters with Mental Health Issues",
-              "ID": 12,
-              "LABEL": "Mental Health"
-          }
-      ],
-      "TITLE": "The Favourite",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2018,
-      "sort_key": 95918706
-  },
-  {
-      "BOX_OFFICE": "$64,191,523",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 50,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          },
-          {
-              "DESCRIP": "Characters with Mental Health Issues",
-              "ID": 12,
-              "LABEL": "Mental Health"
-          }
-      ],
-      "TITLE": "The Danish Girl",
-      "TYPES": [
-          {
-              "ID": 4,
-              "LABEL": "Transgender"
-          }
-      ],
-      "YEAR": 2015,
-      "sort_key": 64191523
-  },
-  {
-      "BOX_OFFICE": "$55,198,285",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1063,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Disabled Characters",
-              "ID": 4,
-              "LABEL": "Disability"
-          }
-      ],
-      "TITLE": "Dallas Buyers Club",
-      "TYPES": [
-          {
-              "ID": 1,
-              "LABEL": "Gay"
-          },
-          {
-              "ID": 4,
-              "LABEL": "Transgender"
-          }
-      ],
-      "YEAR": 2013,
-      "sort_key": 55198285
-  },
-  {
-      "BOX_OFFICE": "$42,843,521",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1073,
-      "REPRESENTATIONS": null,
-      "TITLE": "Carol",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2015,
-      "sort_key": 42843521
-  },
-  {
-      "BOX_OFFICE": "$41,888,660",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 53,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Jewish Characters",
-              "ID": 8,
-              "LABEL": "Jewish"
-          }
-      ],
-      "TITLE": "Call Me by Your Name",
-      "TYPES": [
-          {
-              "ID": 1,
-              "LABEL": "Gay"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2017,
-      "sort_key": 41888660
-  },
-  {
-      "BOX_OFFICE": "$33,384,127",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 5,
-              "LABEL": "Cult Classic"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1072,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Characters with Mental Health Issues",
-              "ID": 12,
-              "LABEL": "Mental Health"
-          }
-      ],
-      "TITLE": "The Perks of Being a Wallflower",
-      "TYPES": [
-          {
-              "ID": 1,
-              "LABEL": "Gay"
-          }
-      ],
-      "YEAR": 2012,
-      "sort_key": 33384127
-  },
-  {
-      "BOX_OFFICE": "$27,000,000",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1062,
-      "REPRESENTATIONS": null,
-      "TITLE": "Boys Don't Cry",
-      "TYPES": [
-          {
-              "ID": 4,
-              "LABEL": "Transgender"
-          }
-      ],
-      "YEAR": 1999,
-      "sort_key": 27000000
-  },
-  {
-      "BOX_OFFICE": "$24,959,607",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          }
-      ],
-      "ID": 1104,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Plus-Sized Characters",
-              "ID": 11,
-              "LABEL": "Plus-Sized"
-          }
-      ],
-      "TITLE": "Booksmart",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2019,
-      "sort_key": 24959607
-  },
-  {
-      "BOX_OFFICE": "$19,465,835",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 44,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Butch Characters",
-              "ID": 5,
-              "LABEL": "Butch"
-          },
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          }
-      ],
-      "TITLE": "Blue is the Warmest Color",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2013,
-      "sort_key": 19465835
-  },
-  {
-      "BOX_OFFICE": "$15,151,744",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1058,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Jewish Characters",
-              "ID": 8,
-              "LABEL": "Jewish"
-          }
-      ],
-      "TITLE": "Transamerica",
-      "TYPES": [
-          {
-              "ID": 4,
-              "LABEL": "Transgender"
-          }
-      ],
-      "YEAR": 2005,
-      "sort_key": 15151744
-  },
-  {
-      "BOX_OFFICE": "$14,300,000",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1064,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Butch Characters",
-              "ID": 5,
-              "LABEL": "Butch"
-          },
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          }
-      ],
-      "TITLE": "Colette",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 5,
-              "LABEL": "Polyamory"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2018,
-      "sort_key": 14300000
-  },
-  {
-      "BOX_OFFICE": "$12,021,272",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1097,
-      "REPRESENTATIONS": null,
-      "TITLE": "Chasing Amy",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 1997,
-      "sort_key": 12021272
-  },
-  {
-      "BOX_OFFICE": "$10,067,879",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 47,
-      "REPRESENTATIONS": null,
-      "TITLE": "Portrait of a lady on fire",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2019,
-      "sort_key": 10067879
-  },
-  {
-      "BOX_OFFICE": "$10,013,424",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          }
-      ],
-      "ID": 41,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Jewish Characters",
-              "ID": 8,
-              "LABEL": "Jewish"
-          }
-      ],
-      "TITLE": "Kissing Jessica Stein",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2001,
-      "sort_key": 10013424
-  },
-  {
-      "BOX_OFFICE": "$8,003,180",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1077,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Jewish Characters",
-              "ID": 8,
-              "LABEL": "Jewish"
-          }
-      ],
-      "TITLE": "Disobedience",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2017,
-      "sort_key": 8003180
-  },
-  {
-      "BOX_OFFICE": "$7,928,149",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1074,
-      "REPRESENTATIONS": null,
-      "TITLE": "Boy Erased",
-      "TYPES": [
-          {
-              "ID": 1,
-              "LABEL": "Gay"
-          }
-      ],
-      "YEAR": 2018,
-      "sort_key": 7928149
-  },
-  {
-      "BOX_OFFICE": "$5,672,311",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1085,
-      "REPRESENTATIONS": null,
-      "TITLE": "Personal Best",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 1982,
-      "sort_key": 5672311
-  },
-  {
-      "BOX_OFFICE": "$5,525,665",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 3,
-              "LABEL": "Horror/Thriller"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1107,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Characters with Mental Health Issues",
-              "ID": 12,
-              "LABEL": "Mental Health"
-          }
-      ],
-      "TITLE": "Tár",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2022,
-      "sort_key": 5525665
-  },
-  {
-      "BOX_OFFICE": "$4,200,000",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1090,
-      "REPRESENTATIONS": null,
-      "TITLE": "Loving Annabelle",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2006,
-      "sort_key": 4200000
-  },
-  {
-      "BOX_OFFICE": "$3,839,364",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1079,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "POC Characters loving POC Characters",
-              "ID": 10,
-              "LABEL": "POC Love"
-          }
-      ],
-      "TITLE": "A Fantastic Woman (Una mujer fantástica)",
-      "TYPES": [
-          {
-              "ID": 4,
-              "LABEL": "Transgender"
-          }
-      ],
-      "YEAR": 2017,
-      "sort_key": 3839364
-  },
-  {
-      "BOX_OFFICE": "$3,802,260",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 3,
-              "LABEL": "Horror/Thriller"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 5,
-              "LABEL": "Cult Classic"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 9,
-              "LABEL": "Action/Adventure"
-          }
-      ],
-      "ID": 1122,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Butch Characters",
-              "ID": 5,
-              "LABEL": "Butch"
-          },
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          }
-      ],
-      "TITLE": "Bound",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 1996,
-      "sort_key": 3802260
-  },
-  {
-      "BOX_OFFICE": "$3,000,000",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 5,
-              "LABEL": "Cult Classic"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1118,
-      "REPRESENTATIONS": null,
-      "TITLE": "The Children's Hour",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 1961,
-      "sort_key": 3000000
-  },
-  {
-      "BOX_OFFICE": "$2,635,305",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          }
-      ],
-      "ID": 43,
-      "REPRESENTATIONS": null,
-      "TITLE": "Imagine Me & You",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2005,
-      "sort_key": 2635305
-  },
-  {
-      "BOX_OFFICE": "$2,600,000",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 5,
-              "LABEL": "Cult Classic"
-          }
-      ],
-      "ID": 3,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "Butch Characters",
-              "ID": 5,
-              "LABEL": "Butch"
-          },
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          }
-      ],
-      "TITLE": "But I'm a Cheerleader",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 1999,
-      "sort_key": 2600000
-  },
-  {
-      "BOX_OFFICE": "$2,492,088",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1084,
-      "REPRESENTATIONS": null,
-      "TITLE": "Desert Hearts",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 1985,
-      "sort_key": 2492088
-  },
-  {
-      "BOX_OFFICE": "$2,405,285",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1094,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Butch Characters",
-              "ID": 5,
-              "LABEL": "Butch"
-          },
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          }
-      ],
-      "TITLE": "Go Fish",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 1994,
-      "sort_key": 2405285
-  },
-  {
-      "BOX_OFFICE": "$1,908,425",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1069,
-      "REPRESENTATIONS": null,
-      "TITLE": "Professor Marston and the Wonder Women",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 5,
-              "LABEL": "Polyamory"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2017,
-      "sort_key": 1908425
-  },
-  {
-      "BOX_OFFICE": "$1,700,000",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1076,
-      "REPRESENTATIONS": null,
-      "TITLE": "Freeheld",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2015,
-      "sort_key": 1700000
-  },
-  {
-      "BOX_OFFICE": "$1,437,501",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 49,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          }
-      ],
-      "TITLE": "Tomboy",
-      "TYPES": [
-          {
-              "ID": 4,
-              "LABEL": "Transgender"
-          }
-      ],
-      "YEAR": 2011,
-      "sort_key": 1437501
-  },
-  {
-      "BOX_OFFICE": "$1,400,000",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 46,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          },
-          {
-              "DESCRIP": "Characters with Mental Health Issues",
-              "ID": 12,
-              "LABEL": "Mental Health"
-          }
-      ],
-      "TITLE": "Ammonite",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2020,
-      "sort_key": 1400000
-  },
-  {
-      "BOX_OFFICE": "$1,236,518",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1068,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "POC Characters loving POC Characters",
-              "ID": 10,
-              "LABEL": "POC Love"
-          }
-      ],
-      "TITLE": "Saving Face",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2004,
-      "sort_key": 1236518
-  },
-  {
-      "BOX_OFFICE": "$1,207,841",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1113,
-      "REPRESENTATIONS": null,
-      "TITLE": "The Way He Looks",
-      "TYPES": [
-          {
-              "ID": 1,
-              "LABEL": "Gay"
-          }
-      ],
-      "YEAR": 2014,
-      "sort_key": 1207841
-  },
-  {
-      "BOX_OFFICE": "$1,018,995",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 56,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          }
-      ],
-      "TITLE": "The Purple Sea: Viola di mare",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2009,
-      "sort_key": 1018995
-  },
-  {
-      "BOX_OFFICE": "$944,479",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          }
-      ],
-      "ID": 1096,
-      "REPRESENTATIONS": null,
-      "TITLE": "Gray Matters",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2006,
-      "sort_key": 944479
-  },
-  {
-      "BOX_OFFICE": "$930,000",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1112,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "Disabled Characters",
-              "ID": 4,
-              "LABEL": "Disability"
-          }
-      ],
-      "TITLE": "Margarita with a Straw",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2014,
-      "sort_key": 930000
-  },
-  {
-      "BOX_OFFICE": "$844,281",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1066,
-      "REPRESENTATIONS": null,
-      "TITLE": "Habitación en Roma (Room in Rome)",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2010,
-      "sort_key": 844281
-  },
-  {
-      "BOX_OFFICE": "$840,099",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1119,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          }
-      ],
-      "TITLE": "Tangerine",
-      "TYPES": [
-          {
-              "ID": 4,
-              "LABEL": "Transgender"
-          }
-      ],
-      "YEAR": 2015,
-      "sort_key": 840099
-  },
-  {
-      "BOX_OFFICE": "$786,000",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 40,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          }
-      ],
-      "TITLE": "When Night Is Falling",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 1995,
-      "sort_key": 786000
-  },
-  {
-      "BOX_OFFICE": "$769,552",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 55,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Black Characters loving Black Characters",
-              "ID": 1,
-              "LABEL": "Black Love"
-          },
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "Butch Characters",
-              "ID": 5,
-              "LABEL": "Butch"
-          },
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          },
-          {
-              "DESCRIP": "POC Characters loving POC Characters",
-              "ID": 10,
-              "LABEL": "POC Love"
-          }
-      ],
-      "TITLE": "Pariah",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2011,
-      "sort_key": 769552.0000000001
-  },
-  {
-      "BOX_OFFICE": "$628,258",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 48,
-      "REPRESENTATIONS": null,
-      "TITLE": "Water Lillies",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2007,
-      "sort_key": 628257.9999999999
-  },
-  {
-      "BOX_OFFICE": "$599,523",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1098,
-      "REPRESENTATIONS": null,
-      "TITLE": "The Fluffer",
-      "TYPES": [
-          {
-              "ID": 1,
-              "LABEL": "Gay"
-          }
-      ],
-      "YEAR": 2001,
-      "sort_key": 599523
-  },
-  {
-      "BOX_OFFICE": "$396,897",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 42,
-      "REPRESENTATIONS": null,
-      "TITLE": "Lost and Delirious",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2001,
-      "sort_key": 396897
-  },
-  {
-      "BOX_OFFICE": "$396,596",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1110,
-      "REPRESENTATIONS": null,
-      "TITLE": "Kiss Me (Kyss Mig)",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2011,
-      "sort_key": 396596
+      "YEAR": 1975
   },
   {
       "BOX_OFFICE": "$314,106",
+      "BUDGET": "",
+      "COUNTRY": "United States",
       "GENRES": [
           {
               "DESCRIP": null,
@@ -1639,21 +2102,45 @@
               "LABEL": "Bisexual"
           }
       ],
-      "YEAR": 2020,
-      "sort_key": 314106
+      "YEAR": 2020
   },
   {
-      "BOX_OFFICE": "$292,577",
+      "BOX_OFFICE": "$24,959,607",
+      "BUDGET": "$6,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1104,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Plus-Sized Characters",
+              "ID": 11,
+              "LABEL": "Plus-Sized"
+          }
+      ],
+      "TITLE": "Booksmart",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2019
+  },
+  {
+      "BOX_OFFICE": "$178,062,759",
+      "BUDGET": "$14,000,000",
+      "COUNTRY": "United States",
       "GENRES": [
           {
               "DESCRIP": null,
               "ID": 2,
               "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 5,
-              "LABEL": "Cult Classic"
           },
           {
               "DESCRIP": null,
@@ -1661,26 +2148,55 @@
               "LABEL": "Drama"
           }
       ],
-      "ID": 1121,
+      "ID": 1105,
       "REPRESENTATIONS": null,
-      "TITLE": "All Over Me",
+      "TITLE": "Brokeback Mountain",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2005
+  },
+  {
+      "BOX_OFFICE": "$5,525,665",
+      "BUDGET": "$35,000,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 3,
+              "LABEL": "Horror/Thriller"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1107,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Characters with Mental Health Issues",
+              "ID": 12,
+              "LABEL": "Mental Health"
+          }
+      ],
+      "TITLE": "Tár",
       "TYPES": [
           {
               "ID": 2,
               "LABEL": "Lesbian"
           }
       ],
-      "YEAR": 1997,
-      "sort_key": 292577
+      "YEAR": 2022
   },
   {
-      "BOX_OFFICE": "$205,878",
+      "BOX_OFFICE": "",
+      "BUDGET": "",
+      "COUNTRY": "United States",
       "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
           {
               "DESCRIP": null,
               "ID": 6,
@@ -1690,441 +2206,39 @@
               "DESCRIP": null,
               "ID": 7,
               "LABEL": "Drama"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 8,
+              "LABEL": "Documentary"
           }
       ],
-      "ID": 1060,
+      "ID": 1108,
       "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Characters with Mental Health Issues",
-              "ID": 12,
-              "LABEL": "Mental Health"
-          }
-      ],
-      "TITLE": "The World to Come",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2020,
-      "sort_key": 205878
-  },
-  {
-      "BOX_OFFICE": "$187,430",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 10,
-              "LABEL": "Musical"
-          }
-      ],
-      "ID": 1059,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          }
-      ],
-      "TITLE": "The Prom",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2020,
-      "sort_key": 187430
-  },
-  {
-      "BOX_OFFICE": "$181,316",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 54,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Black Characters loving Black Characters",
-              "ID": 1,
-              "LABEL": "Black Love"
-          },
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
           {
               "DESCRIP": "Butch Characters",
               "ID": 5,
               "LABEL": "Butch"
           },
           {
-              "DESCRIP": "POC Characters loving POC Characters",
-              "ID": 10,
-              "LABEL": "POC Love"
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
           }
       ],
-      "TITLE": "Rafiki",
+      "TITLE": "A Secret Love",
       "TYPES": [
           {
               "ID": 2,
               "LABEL": "Lesbian"
           }
       ],
-      "YEAR": 2018,
-      "sort_key": 181316
-  },
-  {
-      "BOX_OFFICE": "$136,049",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          }
-      ],
-      "ID": 1099,
-      "REPRESENTATIONS": null,
-      "TITLE": "Bedrooms and Hallways",
-      "TYPES": [
-          {
-              "ID": 1,
-              "LABEL": "Gay"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 1998,
-      "sort_key": 136049
-  },
-  {
-      "BOX_OFFICE": "$123,699",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1092,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          }
-      ],
-      "TITLE": "Appropriate Behavior",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2014,
-      "sort_key": 123698.99999999999
-  },
-  {
-      "BOX_OFFICE": "$97,446",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 5,
-              "LABEL": "Cult Classic"
-          }
-      ],
-      "ID": 1070,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          }
-      ],
-      "TITLE": "D.E.B.S.",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2004,
-      "sort_key": 97446
-  },
-  {
-      "BOX_OFFICE": "$78,957",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1095,
-      "REPRESENTATIONS": null,
-      "TITLE": "Concussion",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2013,
-      "sort_key": 78957
-  },
-  {
-      "BOX_OFFICE": "$58,755",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1100,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          }
-      ],
-      "TITLE": "The Pass",
-      "TYPES": [
-          {
-              "ID": 1,
-              "LABEL": "Gay"
-          }
-      ],
-      "YEAR": 2016,
-      "sort_key": 58755
-  },
-  {
-      "BOX_OFFICE": "$40,945",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 45,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "POC Characters loving POC Characters",
-              "ID": 10,
-              "LABEL": "POC Love"
-          }
-      ],
-      "TITLE": "I Can't Think Straight",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2008,
-      "sort_key": 40945
-  },
-  {
-      "BOX_OFFICE": "$20,441",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1081,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Plus-Sized Characters",
-              "ID": 11,
-              "LABEL": "Plus-Sized"
-          }
-      ],
-      "TITLE": "Boy Meets Girl",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 4,
-              "LABEL": "Transgender"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2014,
-      "sort_key": 20441
-  },
-  {
-      "BOX_OFFICE": "$18,766",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1075,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Characters with Mental Health Issues",
-              "ID": 12,
-              "LABEL": "Mental Health"
-          }
-      ],
-      "TITLE": "My Days of Mercy",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2017,
-      "sort_key": 18766
-  },
-  {
-      "BOX_OFFICE": "$16,080",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          }
-      ],
-      "ID": 1123,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "Disabled Characters",
-              "ID": 4,
-              "LABEL": "Disability"
-          },
-          {
-              "DESCRIP": "Characters with Mental Health Issues",
-              "ID": 12,
-              "LABEL": "Mental Health"
-          }
-      ],
-      "TITLE": "Straight Up",
-      "TYPES": [
-          {
-              "ID": 1,
-              "LABEL": "Gay"
-          },
-          {
-              "ID": 6,
-              "LABEL": "Ace/Aro"
-          }
-      ],
-      "YEAR": 2019,
-      "sort_key": 16080
+      "YEAR": 2020
   },
   {
       "BOX_OFFICE": "$15,151",
+      "BUDGET": "",
+      "COUNTRY": "United States",
       "GENRES": [
           {
               "DESCRIP": null,
@@ -2172,137 +2286,27 @@
               "LABEL": "Lesbian"
           }
       ],
-      "YEAR": 2011,
-      "sort_key": 15151
+      "YEAR": 2011
   },
   {
-      "BOX_OFFICE": "$15,122",
+      "BOX_OFFICE": "$396,596",
+      "BUDGET": "",
+      "COUNTRY": "Sweden",
       "GENRES": [
           {
               "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
           }
       ],
-      "ID": 1124,
+      "ID": 1110,
       "REPRESENTATIONS": null,
-      "TITLE": "The Olivia Experiment",
-      "TYPES": [
-          {
-              "ID": 6,
-              "LABEL": "Ace/Aro"
-          }
-      ],
-      "YEAR": 2012,
-      "sort_key": 15122
-  },
-  {
-      "BOX_OFFICE": "$6877",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 51,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          }
-      ],
-      "TITLE": "Duck Butter",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2018,
-      "sort_key": 6877
-  },
-  {
-      "BOX_OFFICE": "$1,989",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1093,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "Butch Characters",
-              "ID": 5,
-              "LABEL": "Butch"
-          }
-      ],
-      "TITLE": "The Watermelon Woman",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 1996,
-      "sort_key": 1989
-  },
-  {
-      "BOX_OFFICE": "$1403",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 9,
-              "LABEL": "Action/Adventure"
-          }
-      ],
-      "ID": 57,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "POC Characters loving POC Characters",
-              "ID": 10,
-              "LABEL": "POC Love"
-          }
-      ],
-      "TITLE": "Drool",
+      "TITLE": "Kiss Me (Kyss Mig)",
       "TYPES": [
           {
               "ID": 2,
@@ -2313,250 +2317,12 @@
               "LABEL": "Bisexual"
           }
       ],
-      "YEAR": 2009,
-      "sort_key": 1403
+      "YEAR": 2011
   },
   {
       "BOX_OFFICE": "",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 52,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          }
-      ],
-      "TITLE": "Elisa y Marcela",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 4,
-              "LABEL": "Transgender"
-          }
-      ],
-      "YEAR": 2019,
-      "sort_key": 0
-  },
-  {
-      "BOX_OFFICE": "",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 58,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "Disabled Characters",
-              "ID": 4,
-              "LABEL": "Disability"
-          }
-      ],
-      "TITLE": "The Things You Think I'm Thinking",
-      "TYPES": [
-          {
-              "ID": 1,
-              "LABEL": "Gay"
-          }
-      ],
-      "YEAR": 2020,
-      "sort_key": 0
-  },
-  {
-      "BOX_OFFICE": "",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 2,
-              "LABEL": "Romance"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1067,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "LGBT POC Characters",
-              "ID": 2,
-              "LABEL": "QTIPOC"
-          },
-          {
-              "DESCRIP": "POC Characters loving POC Characters",
-              "ID": 10,
-              "LABEL": "POC Love"
-          }
-      ],
-      "TITLE": "The Half of It",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2020,
-      "sort_key": 0
-  },
-  {
-      "BOX_OFFICE": "",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 3,
-              "LABEL": "Horror/Thriller"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 4,
-              "LABEL": "Comedy"
-          }
-      ],
-      "ID": 1071,
-      "REPRESENTATIONS": null,
-      "TITLE": "Jennifer's Body",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          },
-          {
-              "ID": 7,
-              "LABEL": "Bisexual"
-          }
-      ],
-      "YEAR": 2009,
-      "sort_key": 0
-  },
-  {
-      "BOX_OFFICE": "",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1091,
-      "REPRESENTATIONS": null,
-      "TITLE": "Bloomington",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2010,
-      "sort_key": 0
-  },
-  {
-      "BOX_OFFICE": "",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          }
-      ],
-      "ID": 1101,
-      "REPRESENTATIONS": null,
-      "TITLE": "Mädchen in Uniform",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 1958,
-      "sort_key": 0
-  },
-  {
-      "BOX_OFFICE": "",
-      "GENRES": [
-          {
-              "DESCRIP": null,
-              "ID": 6,
-              "LABEL": "Period-Piece"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 7,
-              "LABEL": "Drama"
-          },
-          {
-              "DESCRIP": null,
-              "ID": 8,
-              "LABEL": "Documentary"
-          }
-      ],
-      "ID": 1108,
-      "REPRESENTATIONS": [
-          {
-              "DESCRIP": "Butch Characters",
-              "ID": 5,
-              "LABEL": "Butch"
-          },
-          {
-              "DESCRIP": "Gender-Non Conforming Characters",
-              "ID": 9,
-              "LABEL": "Gender Non-Conformity"
-          }
-      ],
-      "TITLE": "A Secret Love",
-      "TYPES": [
-          {
-              "ID": 2,
-              "LABEL": "Lesbian"
-          }
-      ],
-      "YEAR": 2020,
-      "sort_key": 0
-  },
-  {
-      "BOX_OFFICE": "",
+      "BUDGET": "",
+      "COUNTRY": "United States",
       "GENRES": [
           {
               "DESCRIP": null,
@@ -2592,11 +2358,174 @@
               "LABEL": "Transgender"
           }
       ],
-      "YEAR": 2022,
-      "sort_key": 0
+      "YEAR": 2022
+  },
+  {
+      "BOX_OFFICE": "$930,000",
+      "BUDGET": "$850,000",
+      "COUNTRY": "India",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1112,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "Disabled Characters",
+              "ID": 4,
+              "LABEL": "Disability"
+          }
+      ],
+      "TITLE": "Margarita with a Straw",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 2014
+  },
+  {
+      "BOX_OFFICE": "$1,207,841",
+      "BUDGET": "$519,200",
+      "COUNTRY": "Brazil",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1113,
+      "REPRESENTATIONS": null,
+      "TITLE": "The Way He Looks",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2014
+  },
+  {
+      "BOX_OFFICE": "$402,264,843",
+      "BUDGET": "$75,000,000",
+      "COUNTRY": "Greece",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 10,
+              "LABEL": "Musical"
+          }
+      ],
+      "ID": 1115,
+      "REPRESENTATIONS": null,
+      "TITLE": "Mamma Mia! Here We Go Again",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          }
+      ],
+      "YEAR": 2018
+  },
+  {
+      "BOX_OFFICE": "$3,000,000",
+      "BUDGET": "$3,600,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 6,
+              "LABEL": "Period-Piece"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1118,
+      "REPRESENTATIONS": null,
+      "TITLE": "The Children's Hour",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1961
+  },
+  {
+      "BOX_OFFICE": "$840,099",
+      "BUDGET": "$100,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1119,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          }
+      ],
+      "TITLE": "Tangerine",
+      "TYPES": [
+          {
+              "ID": 4,
+              "LABEL": "Transgender"
+          }
+      ],
+      "YEAR": 2015
   },
   {
       "BOX_OFFICE": "",
+      "BUDGET": "",
+      "COUNTRY": "United Kingdom",
       "GENRES": [
           {
               "DESCRIP": null,
@@ -2628,11 +2557,160 @@
               "LABEL": "Bisexual"
           }
       ],
-      "YEAR": 2016,
-      "sort_key": 0
+      "YEAR": 2016
+  },
+  {
+      "BOX_OFFICE": "$292,577",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 7,
+              "LABEL": "Drama"
+          }
+      ],
+      "ID": 1121,
+      "REPRESENTATIONS": null,
+      "TITLE": "All Over Me",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          }
+      ],
+      "YEAR": 1997
+  },
+  {
+      "BOX_OFFICE": "$3,802,260",
+      "BUDGET": "$4,500,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 3,
+              "LABEL": "Horror/Thriller"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 5,
+              "LABEL": "Cult Classic"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 9,
+              "LABEL": "Action/Adventure"
+          }
+      ],
+      "ID": 1122,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "Butch Characters",
+              "ID": 5,
+              "LABEL": "Butch"
+          },
+          {
+              "DESCRIP": "Gender-Non Conforming Characters",
+              "ID": 9,
+              "LABEL": "Gender Non-Conformity"
+          }
+      ],
+      "TITLE": "Bound",
+      "TYPES": [
+          {
+              "ID": 2,
+              "LABEL": "Lesbian"
+          },
+          {
+              "ID": 7,
+              "LABEL": "Bisexual"
+          }
+      ],
+      "YEAR": 1996
+  },
+  {
+      "BOX_OFFICE": "$16,080",
+      "BUDGET": "$250,000",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 2,
+              "LABEL": "Romance"
+          },
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1123,
+      "REPRESENTATIONS": [
+          {
+              "DESCRIP": "LGBT POC Characters",
+              "ID": 2,
+              "LABEL": "QTIPOC"
+          },
+          {
+              "DESCRIP": "Disabled Characters",
+              "ID": 4,
+              "LABEL": "Disability"
+          },
+          {
+              "DESCRIP": "Characters with Mental Health Issues",
+              "ID": 12,
+              "LABEL": "Mental Health"
+          }
+      ],
+      "TITLE": "Straight Up",
+      "TYPES": [
+          {
+              "ID": 1,
+              "LABEL": "Gay"
+          },
+          {
+              "ID": 6,
+              "LABEL": "Ace/Aro"
+          }
+      ],
+      "YEAR": 2019
+  },
+  {
+      "BOX_OFFICE": "$15,122",
+      "BUDGET": "",
+      "COUNTRY": "United States",
+      "GENRES": [
+          {
+              "DESCRIP": null,
+              "ID": 4,
+              "LABEL": "Comedy"
+          }
+      ],
+      "ID": 1124,
+      "REPRESENTATIONS": null,
+      "TITLE": "The Olivia Experiment",
+      "TYPES": [
+          {
+              "ID": 6,
+              "LABEL": "Ace/Aro"
+          }
+      ],
+      "YEAR": 2012
   },
   {
       "BOX_OFFICE": "",
+      "BUDGET": "",
+      "COUNTRY": "United States",
       "GENRES": [
           {
               "DESCRIP": null,
@@ -2670,7 +2748,6 @@
               "LABEL": "Transgender"
           }
       ],
-      "YEAR": 2020,
-      "sort_key": 0
+      "YEAR": 2020
   }
 ]

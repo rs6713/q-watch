@@ -4,8 +4,10 @@ import itertools
 import logging
 import math
 import random
+import re
 from typing import Dict, List
 
+from currency_converter import CurrencyConverter
 from flask import Flask, request
 from markupsafe import escape
 import numpy as np
@@ -504,9 +506,34 @@ def get_movie_list():
 
     # Sort movies according to sort
     if sort is not None:
+        def convert_sort(obj, key):
+
+            if key in ['BUDGET', 'BOX_OFFICE']:
+                currency_maps = {
+                    '$': 'USD',
+                    '£': 'GBP',
+                    '€': 'EUR'
+                }
+                currency = [c for c in currency_maps if c in obj[key]]
+                if len(currency) == 1:
+                    c = CurrencyConverter()
+                    return c.convert(
+                        int(re.sub(r'[^0-9]', '', obj[key])),
+                        currency_maps[currency[0]],
+                        'USD',
+                        # f'{obj["YEAR"]}-01-01'
+                    )
+
+                else:
+                    return 0
+            return obj[key]
+
+        for movie in movies:
+            movie['sort_key'] = convert_sort(movie, sort[0])
+
         movies = sorted(
             movies,
-            key=lambda o: o[sort[0]],
+            key=lambda movie: movie['sort_key'],
             reverse=sort[1] == -1
         )
 

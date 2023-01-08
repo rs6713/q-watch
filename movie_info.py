@@ -21,6 +21,21 @@ from selenium import webdriver
 from qwatch.scrape.imdb_api import IMDBScraper
 
 scraper = IMDBScraper()
+# %%
+movie_title = 'blue is the warmest color'
+cinema_goer = Cinemagoer()
+
+movie_properties = {}
+movies = cinema_goer.search_movie(movie_title)
+
+movie_id = movies[0].movieID if len(movies) else None
+
+# %%
+movie_properties = cinema_goer.get_movie(
+    movie_id,
+    ['main', 'plot', 'synopsis', 'taglines']
+)
+
 
 # %%
 movie_title = 'blue is the warmest color'

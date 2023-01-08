@@ -7,11 +7,10 @@ const color = d3.scaleOrdinal([true, false], ["#cc81dd", "#85f2e8"])
 var fontSize, BARSTEP, BARPADDING, MARGIN, BARGAP;
 
 const createRoot = (data, sort_ascending) => {
-  console.log('Create root data: ', data)
+  console.log('Create root data: ', d3.hierarchy(data))
   return  d3.hierarchy(data)
     .sum(d => d.value)
-    .sort((a, b) => (b.value - a.value) * (sort_ascending ? -1 : 1))
-    .eachAfter(d => d.index = d.parent ? d.parent.index = d.parent.index + 1 || 0 : 0)
+
 }
 
 function cartesian(...args) {
@@ -79,7 +78,7 @@ const createHierarchicalData = (data, name_var, value_var, grouping_vars, label_
   return {name: 'root', children: dataHierarchy}
 }
 
-const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_vars, value_var}) => {
+const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_vars, value_var, summary_var}) => {
   const ref = useRef();
   useEffect(() => {
   
@@ -105,7 +104,7 @@ function bar(svg, down, d, selector) {
 
   bar.append("rect")
       .attr("x", x(0))
-      .attr("width", d => x(d.value) - x(0))
+      .attr("width", d => x(d.score) - x(0))
       .attr("height", BARSTEP * (1 - BARPADDING));
 
   return g;
@@ -150,7 +149,7 @@ function down(svg, d) {
       .attr("transform", stagger());
 
   // Update the x-scale domain.
-  x.domain([0, d3.max(d.children, d => d.value)]);
+  x.domain([0, d3.max(d.children, d => d.score)]);
 
   // Update the x-axis.
   svg.selectAll(".x-axis").transition(transition2)
@@ -166,7 +165,7 @@ function down(svg, d) {
       .attr("fill-opacity", 1)
     .transition(transition2)
       .attr("fill", d => color(!!d.children))
-      .attr("width", d => x(d.value) - x(0));
+      .attr("width", d => x(d.score) - x(0));
 }
 
 function up(svg, d) {
@@ -184,7 +183,7 @@ function up(svg, d) {
       .attr("class", "exit");
 
   // Update the x-scale domain.
-  x.domain([0, d3.max(d.parent.children, d => d.value)]);
+  x.domain([0, d3.max(d.parent.children, d => d.score)]);
 
   // Update the x-axis.
   svg.selectAll(".x-axis").transition(transition1)
@@ -200,7 +199,7 @@ function up(svg, d) {
 
   // Transition exiting rects to the new scale and fade to parent color.
   exit.selectAll("rect").transition(transition1)
-      .attr("width", d => x(d.value) - x(0))
+      .attr("width", d => x(d.score) - x(0))
       .attr("fill", color(true));
 
   // Transition exiting text to fade out.
@@ -228,7 +227,7 @@ function up(svg, d) {
       .attr("fill", d => color(!!d.children))
       .attr("fill-opacity", p => p === d ? 0 : null)
     .transition(transition2)
-      .attr("width", d => x(d.value) - x(0))
+      .attr("width", d => x(d.score) - x(0))
       .on("end", function(p) { d3.select(this).attr("fill-opacity", 1); });
 }
 
@@ -236,7 +235,7 @@ function stack(i) {
   let value = 0;
   return d => {
     const t = `translate(${x(value) - x(0)},${BARSTEP * i})`;
-    value += d.value;
+    value += d.score;
     return t;
   };
 }
@@ -245,7 +244,7 @@ function stagger() {
   let value = 0;
   return (d, i) => {
     const t = `translate(${x(value) - x(0)},${BARSTEP * i})`;
-    value += d.value;
+    value += d.score;
     return t;
   };
 }
@@ -290,10 +289,31 @@ let xAxis = g => g
   console.log('Fontsize ', fontSize)
   let width = container.clientWidth - paddingX;
   var x = d3.scaleLinear().range([MARGIN.left, width - MARGIN.right])
-  
+
   
 
-  x.domain([0, root.value]);
+  console.log(summary_var)
+  function calculateScore(object){
+    object.scores = [];
+    if(object.children){
+      console.log(object.children)
+      for(let child of object.children){
+        object.scores.push(calculateScore(child));
+      }
+      object.score =  object.scores.reduce((a, b) => a + b, 0) / (summary_var == 'mean' ? object.scores.length : 1)
+      return object.score;
+    }else{
+      object.score = object.value
+      return object.score;
+    }
+  }
+
+  calculateScore(root)
+  root = root.sort((a, b) => (b.score - a.score) * (sort_ascending ? -1 : 1))
+  .eachAfter(d => d.index = d.parent ? d.parent.index = d.parent.index + 1 || 0 : 0)
+  
+  x.domain([0, root.score]);
+
 
   let minHeight = container.clientHeight - paddingY;
   height = Math.max(height, minHeight);

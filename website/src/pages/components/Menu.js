@@ -31,13 +31,13 @@ function Menu(){
           </Link>
           <hr />
           <h3>The State of Queer Cinema</h3>
-          <Link to={"/visualizations/overtime"} className="link">
+          <Link to={"/visualizations/overtime"} className={"link" + (useLocation().pathname == "/visualizations/overtime"? ' active' : ' inactive')}>
             <div>
               <Time title="" />
               <span>Over Time</span>
             </div>
           </Link>
-          <Link to={"/visualizations/bycountry"} className="link">
+          <Link to={"/visualizations/bycountry"} className={"link" + (useLocation().pathname == "/visualizations/bycountry"? ' active' : ' inactive')}>
             <div>
               <World title="" />
               <span>By Country</span>

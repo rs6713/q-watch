@@ -6,6 +6,8 @@ import {
 } from 'react-router-dom';
 import Main from './pages/Main';
 import Browse from './pages/Browse';
+import OverTime from './pages/OverTime';
+import Country from './pages/Country';
 import Rank from './pages/Rank';
 import Movie from './pages/Movie';
 import Menu from './pages/components/Menu';
@@ -25,6 +27,8 @@ class App extends Component {
             <Route exact path='/browse' element={<Browse />} />
             <Route exact path='/rankings' element={<Rank />} />
             <Route exact path='/movies/:id' element={<Movie />} /> 
+            <Route exact path="/visualizations/overtime" element={<OverTime />} /> 
+            <Route exact path="/visualizations/bycountry" element={<Country />} /> 
           </Routes>
           <Menu />
         </Router>
