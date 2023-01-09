@@ -64,7 +64,7 @@
     .SliderOptions {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: space-around;
 
       img.icon {
         height: 3em;
@@ -135,6 +135,9 @@
 }
 
 #Filters {
+  > div {
+    overflow-x: hidden;
+  }
   .Switch {
     margin-top: 1em;
   }

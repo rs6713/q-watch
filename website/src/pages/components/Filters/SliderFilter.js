@@ -3,7 +3,8 @@ import {useEffect, useState} from 'react';
 import {Icon} from '../Image'
 import Switch from '../Switch'
 
-function SliderFilter({filter, updateFilters, filters}){
+function SliderFilter({filter, updateFilters, filters, randomIdx}){
+
   
   const [toggleActive, setToggleActive] = useState(false);
   const [toggleLeft, setToggleLeft] = useState(0);
@@ -12,24 +13,19 @@ function SliderFilter({filter, updateFilters, filters}){
     filter !== null && filter.filters !== null ? filter.filters[filter.filters.length-1]: null
   )
 
-  useEffect(() =>{
-    setSnapPosition();
-  }, [selectedOption])
 
   useEffect(()=>{
     chooseOption(selectedOption)
   }, [atLeast])
 
-  if(selectedOption === null){
-    return <></>
-  }
-
   function chooseOption(option){
     setSelectedOption(option);
+    setSnapPosition(option);
     
     var validIds = [];
+    console.log('Selected Option:', option)
     if(filter.type === 'slider'){
-      console.log('Selected Option:', option)
+      
       for(let filterOption of filter.filters){
         console.log(filterOption.ID, option.ID)
         if(filterOption.ID === option.ID){
@@ -49,7 +45,7 @@ function SliderFilter({filter, updateFilters, filters}){
     if(filter.type === 'rangeslider'){
       updateFilters({[filter['id']]: {
         'TYPE': atLeast? 'GREATER_THAN': 'LESS_THAN',
-        'VALUE': option.ID
+        'VALUE': option.ID,
       }})
     }
   }
@@ -67,25 +63,32 @@ function SliderFilter({filter, updateFilters, filters}){
   }
 
   function moveToggle(e){
+    
     if(toggleActive){
+      console.log('movetoggle')
       var rect = document.getElementById('bar').getBoundingClientRect();
       var x = e.clientX - rect.left;
-
+      console.log(x)
       setToggleLeft(
         `${x}px`
       )
+    }else{
+      console.log('move toggle no active')
     }
   }
 
+  let nearestOptionIdx = null;
   function releaseToggle(e){
+    
     if(toggleActive){
       // Snap toggle to nearest choice
       // Choose that element
       let nearestDistance = 10000;
-      let nearestOptionIdx = null;
+      
       var i = 0;
       for(let option of filter.filters){
-        let optionX = document.getElementById(option.ID).getBoundingClientRect();
+        console.log(String(option.ID + randomIdx))
+        let optionX = document.getElementById(String(option.ID + randomIdx)).getBoundingClientRect();
         optionX = (optionX.left + optionX.right) / 2;
         if(Math.abs(e.clientX - optionX) < nearestDistance){
           nearestOptionIdx = i;
@@ -93,7 +96,8 @@ function SliderFilter({filter, updateFilters, filters}){
         }
         i = i + 1;
       }
-
+      document.removeEventListener('mousemove', moveToggle);
+      document.removeEventListener('mouseup', releaseToggle);
       setToggleActive(false);
       chooseOption(filter.filters[nearestOptionIdx]);
     }
@@ -101,9 +105,9 @@ function SliderFilter({filter, updateFilters, filters}){
 
 
 
-  function setSnapPosition(){
+  function setSnapPosition(selectedOption){
     if(selectedOption !== null){
-      let optionX = document.getElementById(selectedOption.ID).getBoundingClientRect();
+      let optionX = document.getElementById(String(selectedOption.ID + randomIdx)).getBoundingClientRect();
       let sliderLeft = document.getElementById('bar').getBoundingClientRect().left;
       let toggleWidth = document.getElementById('toggle').clientWidth;
 
@@ -125,14 +129,53 @@ function SliderFilter({filter, updateFilters, filters}){
       'left': 0
     }
   }
+  let mm, mu, mo;
+  useEffect(()=>{
+    if(toggleActive){
+      document.addEventListener('mousemove', moveToggle);
+      document.addEventListener('mouseup', releaseToggle);
+    }
+      //document.addEventListener('mouseout', releaseToggle);
+    // }else{
+    //   console.log('removing movetoggle')
+    //   document.removeEventListener('mouemove', moveToggle)
+    // }
+    // }else{
 
+    //     console.log('Event Listeners removing')
+    //     //document.removeEventListener('mousemove', moveToggle);
+    //     document.removeEventListener('mouseup', releaseToggle);
+    //     document.removeEventListener('mouseout', releaseToggle);
+        
+
+    // }
+
+
+    // return function (){
+    //   document.removeEventListener(mm);
+    //   document.removeEventListener(mu);
+    //   document.removeEventListener(mo);
+    // }
+  }, [toggleActive])//toggleActive
+
+
+  if(selectedOption === null){
+    return <></>
+  }
   let optionDescription = selectedOption.LABEL?<><h3>{selectedOption.LABEL}</h3>
   <p>{selectedOption.DESCRIP}</p></> : null;
 
+
+
+  //document.onMouseUp = releaseToggle;
+  //document.onmouseout = releaseToggle;
+  //document.onmousemove = moveToggle;
+  //onMouseMove={moveToggle} 
+  //onMouseUp={releaseToggle}
   return (
     <div className='SliderFilter'>
       <h2>{filter.title}</h2>
-      <div className='Slider' onMouseMove={moveToggle} onMouseUp={releaseToggle}>
+      <div className='Slider' >
         {optionDescription}
         <div id='bar'>
           <div id='barOverlay' style={getBarStyle()} />
@@ -140,7 +183,7 @@ function SliderFilter({filter, updateFilters, filters}){
         </div>
         <div className='SliderOptions'>
         {filter.filters.map((option) => {
-          return <div className={getOptionClass(option)} id={option.ID} key={option.ID} onClick={()=>chooseOption(option)}>
+          return <div className={getOptionClass(option)} id={String(option.ID + randomIdx)} key={option.ID} onClick={()=>chooseOption(option)}>
               {option.ICON && Icon(option.ICON, 'icon')}
               {!option.ICON && option.ID}
             </div>

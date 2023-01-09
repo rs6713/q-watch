@@ -15,11 +15,6 @@ function RangeSliderFilter({filter, updateFilters}){
 
   var options = _.range(filter.range[0], filter.range[1], filter.step)
 
-  useEffect(()=>{
-    if(filter !== null && filter.range !== null){
-      chooseOption(filter.range[1])
-    }
-  }, [filter])
 
   useEffect(() =>{
     setSnapPosition();

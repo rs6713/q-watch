@@ -30,7 +30,7 @@ function OverTime(){
 
   const [filterActive, setFilterActive] = useState(false);
   const [rank, setRank] = useState("BOX_OFFICE");
-  const [movies, setMovies] = useState(DEFAULT_MOVIES);
+  const [movies, setMovies] = useState(null);
   const [nMatches, setNMatches] = useState(null);
   const [criteria, setCriteria] = useState({});
   const [group, setGroup] = useState(["GENRES"])
@@ -50,6 +50,7 @@ function OverTime(){
     )
   }
   function get_movies(){
+    console.log('Fetching movies with criteria: ', criteria)
     fetch('/api/movies', {
       method: 'POST',
       headers: {
@@ -59,7 +60,7 @@ function OverTime(){
       },
       body: JSON.stringify({
         "criteria": criteria,
-        "properties": ['TITLE', 'YEAR', 'TYPES', 'COUNTRY', 'BOX_OFFICE', 'BUDGET', 'GENRES', 'REPRESENTATIONS']
+        "properties": ['TITLE', 'YEAR', 'TYPES', 'BOX_OFFICE', 'BUDGET', 'GENRES', 'REPRESENTATIONS']
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
       console.log(data["data"])
@@ -69,11 +70,12 @@ function OverTime(){
   }
 
   useEffect(() => {
-    // console.log('Setting rank ', rank, ' criteria', criteria)
-    // setMovies(null);
-    // setNMatches(null);
-    // get_movies();
+    setMovies(null);
+    setNMatches(null);
+    get_movies();
   }, [criteria])
+
+  let value_var = ['BOX_OFFICE', 'BUDGET'].indexOf(rank) !== -1? (rank + '_USD') : rank;
 
   return (
     <div id="OverTime" className="page GraphPage">
@@ -91,7 +93,7 @@ function OverTime(){
       <div className='Graph'>
         <Loader isLoading={movies === null} />
         {movies !== null && 
-        <BarRace data={movies} grouping_vars={group} name_var={'TITLE'} label_vars={['YEAR']} value_var={rank} />
+        <BarRace data={movies} grouping_vars={group} name_var={'TITLE'} label_vars={['YEAR']} value_var={value_var} />
         }
       </div>
       <Footer />

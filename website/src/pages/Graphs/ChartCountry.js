@@ -150,8 +150,6 @@ const ChartCountry = ({dataset, value_var}) => {
     }
     let grouped_data = Array.from(d3.rollup(dataset, d => d.map(m => value_var !== 'COUNT' ? m[value_var]: 1).reduce((a, b)=> a+b), d => d.COUNTRY)).map(
       ([country, total]) => ({'name': (rename[country] || country), 'value': total})
-
-      
     )
     console.log(grouped_data)
   
@@ -170,14 +168,14 @@ const ChartCountry = ({dataset, value_var}) => {
       width: SVGdimensions['width']
     })
     //chart.scales.color
-    console.log( Legend(chart.scales.color, {title: "Number of Movies"}))
-    let key = Legend(chart.scales.color, {title: "Number of Movies"})
-    //console.log(key)
+    // console.log( Legend(chart.scales.color, {title: "Number of Movies"}))
+    // let key = Legend(chart.scales.color, {title: "Number of Movies"})
+    // //console.log(key)
 
     return _ => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [])
+  }, [value_var, dataset])
 
 
   return (

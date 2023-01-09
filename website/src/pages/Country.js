@@ -83,7 +83,7 @@ function Country(){
       <div className='Graph'>
         <Loader isLoading={movies === null} />
         {movies !== null && 
-        <ChartCountry dataset={movies} value_var={rank} />
+          <ChartCountry dataset={movies} value_var={rank} />
         }
       </div>
       <Footer />

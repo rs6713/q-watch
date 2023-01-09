@@ -19,7 +19,7 @@ const BarRace = ({data, grouping_vars, name_var, label_vars, value_var}) => {
     width: 0
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     function handleResize() {
 
       graphContainer = document.getElementsByClassName('Graph')[0];
@@ -42,6 +42,10 @@ const BarRace = ({data, grouping_vars, name_var, label_vars, value_var}) => {
     }
   }, [])
 
+  React.useEffect(() => {
+
+  console.log('Value var: ', value_var, ' group var: ', grouping_vars)
+  console.log(data)
   let year_data = d3.merge(
     Array.from(
         d3.map(data, d => (
@@ -93,18 +97,6 @@ const BarRace = ({data, grouping_vars, name_var, label_vars, value_var}) => {
     .rangeRound([margin.top, margin.top + barSize * (n + 1 + 0.1)])
     .padding(0.1)
 
-
-  // console.log(
-  //   Array.from(d3.rollup(year_data, 
-  //     //([d]) => d,
-  //     d1 => d1 ,
-  //     // (d1, d2) => ({
-  //     // 'VALUE': d1 !== undefined ? d2 !== undefined? d1.VALUE + d2.VALUE: d1.VALUE : 0
-  //     // //'VALUE':d.map(o => o.VALUE).reduce((a, b) => a+b),
-  //     // //'TITLE': d1.TITLE.length ? (!!d1.TITLE.forEach ? [...d1.TITLE] : [d1.TITLE]): [d2.TITLE],//]d1? [...d1.TITLE, d2.TITLE] : [d2.TITLE]
-  //     // }),
-  //   d => +d.YEAR, d => d.GROUP))
-  // )
   let years = Array.from(d3.rollup(year_data, d => d, d => +d.YEAR, d => d.GROUP))
     .map(([year, data]) => [new Date(`${year}-01-01`), data])
     .sort(([a], [b]) => d3.ascending(a, b))
@@ -129,8 +121,6 @@ const BarRace = ({data, grouping_vars, name_var, label_vars, value_var}) => {
     let ka, a, kb, b;
     let group_totals = {};
     for ([[ka, a], [kb, b]] of d3.pairs(years)) {
-      console.log(ka, kb)
-      console.log(a)
       for (let i = 0; i < k; ++i) {
         const t = i / k;
         let new_group_values = rank(group => {
@@ -292,7 +282,7 @@ const BarRace = ({data, grouping_vars, name_var, label_vars, value_var}) => {
   }
   start_run();
 
-
+  }, [data, grouping_vars, name_var, ])
   return (
     <svg id='BarRace'
       ref={ref}

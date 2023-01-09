@@ -61,7 +61,7 @@ const baseConfig = {
           title: "Rating",
           id: "AVG_RATING",
           type: "rangeslider",
-          filters: _.range(1, 5.5, 0.5).map((i) => ({'ID': i})),
+          filters: _.range(1, 6, 1).map((i) => ({'ID': i})),
           onMessage: "I'd like to 'Ask! The! Audience!'",
           offMessage: "I'm a Garbage boi, nomnom, thankyou for the tasty trash, my favouriteee."
           //range: [0, 210],
@@ -167,7 +167,7 @@ function Filters({active, nMatches, updateFilters, filters}){
             if(['slider', 'bubble', 'dropdown'].indexOf(filter['type'])!== -1 && Object.keys(data).indexOf(filterLabel)!==-1){
 
               filter_section['filters'].push(
-                {...filter, 'filters': data[filterLabel]}
+                {...filter, 'filters': data[filterLabel].sort((a, b) => a.ID - b.ID)}
               )
             }else{
               filter_section['filters'].push(filter)
@@ -200,7 +200,7 @@ function Filters({active, nMatches, updateFilters, filters}){
           ))}
         </div>
       }
-      { ["slider", "rangeslider"].indexOf(filter.type) !== -1 && filter.filters !== null && <SliderFilter updateFilters={updateFilters} filter={filter} filters={filters} />}
+      { ["slider", "rangeslider"].indexOf(filter.type) !== -1 && filter.filters !== null && <SliderFilter updateFilters={updateFilters} filter={filter} filters={filters} randomIdx={parseInt(Math.random() * 100000)}/>}
 
       {filter.type === 'dropdown' && <DropDownFilter updateFilters={updateFilters} filter={filter} filters={filters}/>}
       {
