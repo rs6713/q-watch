@@ -10,15 +10,19 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
   const [toggleLeft, setToggleLeft] = useState(0);
   const [atLeast, setAtLeast] = useState(false);
   const [selectedOption, setSelectedOption] = useState(
-    filter !== null && filter.filters !== null ? filter.filters[filter.filters.length-1]: null
+    filter !== null && filter.filters !== null  ? filter.filters[filter.filters.length-1]: null
   )
-
+  const [active, setActive] = useState(false)
 
   useEffect(()=>{
-    chooseOption(selectedOption)
+    console.log('choosing option due to atleast')
+    if(active){
+      chooseOption(selectedOption)
+    }
   }, [atLeast])
 
   function chooseOption(option){
+    setActive(true)
     setSelectedOption(option);
     setSnapPosition(option);
     
@@ -36,7 +40,7 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
         }
         validIds.push(filterOption.ID)
       }
-      console.log('ValidIds: ', validIds)
+      console.log(filter.title, 'ValidIds: ', validIds)
       updateFilters({[filter['id']]: {
         'TYPE': atLeast? 'EXCLUDE': 'INCLUDE',
         'VALUE': validIds
@@ -104,7 +108,6 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
   }
 
 
-
   function setSnapPosition(selectedOption){
     if(selectedOption !== null){
       let optionX = document.getElementById(String(selectedOption.ID + randomIdx)).getBoundingClientRect();
@@ -165,6 +168,12 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
   let optionDescription = selectedOption.LABEL?<><h3>{selectedOption.LABEL}</h3>
   <p>{selectedOption.DESCRIP}</p></> : null;
 
+  function mouseDown(){
+    if(!active){
+      setActive(true);
+    }
+    setToggleActive(true)
+  }
 
 
   //document.onMouseUp = releaseToggle;
@@ -174,12 +183,14 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
   //onMouseUp={releaseToggle}
   return (
     <div className='SliderFilter'>
-      <h2>{filter.title}</h2>
+      <h2>
+        {filter.title}
+      </h2>
       <div className='Slider' >
         {optionDescription}
         <div id='bar'>
           <div id='barOverlay' style={getBarStyle()} />
-          <div id='toggle' onMouseDown={()=>{setToggleActive(true)}}  style={{'left': toggleLeft}}></div>
+          <div id='toggle' onMouseDown={mouseDown}  style={{'left': toggleLeft}}></div>
         </div>
         <div className='SliderOptions'>
         {filter.filters.map((option) => {
@@ -189,7 +200,7 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
             </div>
           })}
         </div>
-        <Switch state={atLeast} setState={setAtLeast} onMessage={filter.onMessage} offMessage={filter.offMessage}/>
+        <Switch state={atLeast} setState={setAtLeast} onMessage={<div>{filter.onMessage}</div>} offMessage={<div>{filter.offMessage}</div>}/>
       </div>
     </div>
   )

@@ -24,7 +24,7 @@ function Labels({labelType, updateLabel}){
 
   return (
     <div id="Categories">
-        <div className={label==null? 'active': ''} onClick={()=>{chooseLabel(null)}}>All</div>
+        {labels.length ? <div className={label==null? 'active': ''} onClick={()=>{chooseLabel(null)}}>All</div> : <></>}
         {labels.map(l => (
           <div key={l['ID']} className={label === l["ID"]? 'active' : ''} onClick={()=>{chooseLabel(l['ID'])}} >{l['LABEL']}</div>
         ))}

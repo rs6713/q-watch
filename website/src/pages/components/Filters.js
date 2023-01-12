@@ -5,6 +5,7 @@ import {ReactComponent as Minus} from '../../static/icons/minus.svg'
 import BubbleFilter from './Filters/BubbleFilter';
 import SliderFilter from './Filters/SliderFilter';
 import DropDownFilter from './Filters/DropdownFilter'
+import Loader from './Loader'
 
 const _ = require("lodash"); 
 
@@ -72,9 +73,10 @@ const baseConfig = {
           title: "Runtime",
           id: "RUNTIME",
           type: "rangeslider",
-          filters: _.range(0, 181, 15).map((i) => ({'ID': i})),
+          filters: _.range(0, 121, 15).map((i) => ({'ID': i})),
           onMessage: 'Come on... I need time to cuddle',
-          offMessage: "What does Sarah Paulson and my attention have in common? I'll never hold them..."
+          offMessage: "What does Sarah Paulson and my attention have in common? I'll never hold them...",
+          //turnOffAble: true
           //range: [0, 210],
           //step: 10,
           //filters: null
@@ -94,6 +96,16 @@ const baseConfig = {
           filters: null,
           type: 'dropdown',
           placeholder: 'Select the Primary Country of the Movie'
+        },
+        {
+          title: "Tags",
+          id: "TAGS",
+          expandable: true,
+          warning: "For those particulaarr cravings",
+          subtitle: null,
+          type: "bubble",
+          filters:null,
+          switchType:'include'
         },
       ]
     },
@@ -118,7 +130,8 @@ const baseConfig = {
       ],
       type: "bubble",
       filters: null,
-      switchType:'include'
+      switchType:'include',
+      
     },
     // {
     //   title: "Can't find what you're looking for?",
@@ -144,13 +157,13 @@ function Filters({active, nMatches, updateFilters, filters}){
   action --> to call with list
 
   */
-  const [config, setConfig] = useState(baseConfig)
+  const [config, setConfig] = useState(null)
   useEffect(() => {
     fetch('/api/movie/labels').then(res => res.json()).then(data => {
       console.log('Calling api movie labels', Object.keys(data))
-      let temp_config = {...config, 'filterSections': []}
+      let temp_config = {...baseConfig, 'filterSections': []}
 
-      for(let section of config['filterSections']){
+      for(let section of baseConfig['filterSections']){
 
         let sectionLabel = Object.keys(section).indexOf('dataLabel') === -1? section['id'] : section['dataLabel']
         if(sectionLabel !== null && Object.keys(data).indexOf(sectionLabel)!= -1){
@@ -200,19 +213,27 @@ function Filters({active, nMatches, updateFilters, filters}){
           ))}
         </div>
       }
-      { ["slider", "rangeslider"].indexOf(filter.type) !== -1 && filter.filters !== null && <SliderFilter updateFilters={updateFilters} filter={filter} filters={filters} randomIdx={parseInt(Math.random() * 100000)}/>}
+      { ["slider", "rangeslider"].indexOf(filter.type) !== -1 && filter.filters !== null && <SliderFilter updateFilters={updateFilters} filter={filter} filters={filters} randomIdx={parseInt(Math.random() * 100000)} />}
 
       {filter.type === 'dropdown' && <DropDownFilter updateFilters={updateFilters} filter={filter} filters={filters}/>}
       {
         filter.type === 'subfilters' && 
-          <div>
+          <div className='filterSection'>
             <h2>{filter.title}</h2>
             {filter.filters.map(generateFilter)}
           </div>
       }
-      
-
     </div>
+  }
+
+  if(config === null){
+    return (
+      <div id="Filters" className={active? "active": "inactive"}>
+        
+        <h1>{baseConfig.title}</h1>
+        <Loader isLoading={true}/>
+      </div>
+    )
   }
 
 
@@ -220,6 +241,7 @@ function Filters({active, nMatches, updateFilters, filters}){
   return (
 
     <div id="Filters" className={active? "active": "inactive"}>
+      
       <h1>{config.title} <span>({nMatches} Matches)</span></h1>
       <div>
         {config.filterSections.map(generateFilter)}

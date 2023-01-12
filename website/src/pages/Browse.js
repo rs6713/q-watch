@@ -7,10 +7,7 @@ import MovieList from './components/MovieList';
 import Options from './components/Options';
 import Indexer from './components/Indexer';
 
-
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
-
-
 
 const SORT = {
   "Most Popular": ["NUM_RATING", -1],
@@ -25,11 +22,12 @@ function Browse(){
 
   const [filterActive, setFilterActive] = useState(false);
   const [movies, setMovies] = useState(null);
-  const [criteria, setCriteria] = useState({});
-  const [sort, setSort] = useState(["YEAR", -1]);
+  const [sort, setSort] = useState(SORT['Most Recent Release']);
   const [index, setIndex] = useState(1);
+  const [criteria, setCriteria] = useState({});
   const [nIndexes, setNIndexes] = useState(null);
   const [nMatches, setNMatches] = useState(null);
+  const [labelsLoaded, setLabelsLoaded] = useState(false);
 
 
   function get_movies(){
@@ -56,11 +54,13 @@ function Browse(){
 
   useEffect(() => {
     console.log('Setting sort', sort)
-    setMovies(null);
-    if(index != 1){
-      setIndex(1);
-    }else{
-      get_movies();
+    if(movies != null){
+      setMovies(null);
+      if(index != 1){
+        setIndex(1);
+      }else{
+        get_movies();
+      }
     }
   }, [sort])
 
@@ -79,9 +79,11 @@ function Browse(){
   // Data Fetching Called at criteria updates
   useEffect(() => {
     console.log('Setting index ', index)
-    setMovies(null);
-    // Loading is true while movies are null
-    get_movies();
+    if(movies != null){
+      setMovies(null);
+      // Loading is true while movies are null
+      get_movies();
+    }
   }, [index]);
 
 
@@ -106,10 +108,10 @@ function Browse(){
       {filterActive && <div className="cover" onClick={()=>{setFilterActive(false)}} />}
 
       <Filters active={filterActive} nMatches={nMatches} updateFilters={updateCriteria} filters={criteria} />
-      
+
       <div id="ControlPanel">
         <Options name='Sort' updateOption={setSort} option={sort} options={SORT} />
-        <Labels labelType="GENRES" updateLabel={updateCriteria}/>
+        <Labels labelType="GENRES" updateLabel={updateCriteria} setLoaded={setLabelsLoaded}/>
         
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
       </div>
