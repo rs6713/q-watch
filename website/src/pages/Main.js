@@ -3,15 +3,25 @@ import { useEffect, useState } from 'react';
 import Image from './components/Image';
 import {Link} from 'react-router-dom';
 import Search from '../pages/components/Search';
+import Options from './components/Options'
+import PieChart from './Graphs/PieChart'
 import '../App.scss'
 
 const PHRASES = [
   "**I will go down with this ship.... (screams in Dido)**",
   "Come for the lesbians. Stay for the lesbians.",
 ]
+const COUNT_CATEGORIES = {
+  'LGBTQIA+ Categories': 'LGBTQIA+ Categories',
+  'Genres': 'Genres',
+  'Tropes / Triggers': 'Tropes / Triggers',
+  'Representations': 'Representations'
+}
 
 function Main(){
   const [movieGif, setMovieGif] = useState(null);
+  const [movieCounts, setMovieCounts] = useState(null);
+  const [countCategory, setCountCategory] = useState('LGBTQIA+ Categories')
 
   //Data Fetching Called once at mount/dismount
   useEffect(() => {
@@ -24,6 +34,30 @@ function Main(){
       setMovieGif(data);
     })
   }, []);
+
+  useEffect(() => {
+    fetch('/api/movies/count', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'cache-control': 'no-store',
+      },
+      body: JSON.stringify({
+        "groups": {
+          'LGBTQIA+ Categories': ['TYPES'],
+          'Genres': ['GENRES'],
+          'Tropes / Triggers': ["TROPE_TRIGGERS"],
+          'Representations': ['REPRESENTATIONS']
+        }
+      })//this.state.filterCriteria
+    }).then(res => res.json()).then(data => {
+      console.log(data)
+      setMovieCounts(data)
+    })
+  }, []);
+
+
 
   var backgroundDiv = <div className="background"></div>
   if(movieGif !== null){
@@ -50,6 +84,43 @@ function Main(){
           </div>
         }
       </div>
+      <div id='Welcome' className='block'>
+        <div>
+          <h2>Find<br></br>Yourself</h2>
+          <p>Q-Watch was created with the goal of helping LGBTQIA+ persons, find the movies that not only fit their preferred genre, but has characters that look and love like them. <br/><br/>As always, we stand on the shoulders of giants; there is a plethora of hidden gems in our history, we hope to help you find stories new <b>and old</b> that satisfy your <span className='explainer'><b><i>quavings</i></b><span>queer cravings</span> </span>. </p>
+        </div>
+        <div>
+
+        </div>
+      </div>
+      <div id='Understand' className='block'>
+        <div>
+          <div id="ControlPanel">
+            <Options name='Category' updateOption={setCountCategory} option={countCategory} options={COUNT_CATEGORIES} />
+          </div>
+          <PieChart dataset={movieCounts} dataChoice={countCategory}/>
+        </div>
+        <div>
+          {movieCounts !== null && <h2>{movieCounts['TOTAL']} MOVIES AND COUNTING</h2>}
+        </div>
+      </div>
+      <div className='centerblock'>
+        <p>Creating a searchable archive of Queer media, presented us with the unique opportunity to analyse the state of Queer Cinema. It is a myth that progress is linear, and guaranteed, and as more money is injected into LGBT entertainment than ever before, we want to understand our changing landscape. Who exactly is benefiting the most from these investments, and what parts of LGBT representation are still being neglected? We are constantly adding new movies to expand our archive, to make our data analysis more representative of the true state of global Queer Cinema. </p>
+
+      </div>
+
+
+      <div id='Disclaimers' className='block'>
+        <div>
+
+        </div>
+        <div>
+          <p>Disclaimer: This dataset was generated in a semi-automated fashion using a combination of web-scraping and manual data entry. Due to time constraints it was not possible for every movie to be watched before it was categorised. Old or indie-production movies often have less data available online. We tried our best but please, if you see a TAG/ Descriptor that seems innappropriate, it probably was a mistake, let us know and email us at <b>qwatch.gmail.com</b></p>
+          <p>If you take issue </p>
+        </div>
+      </div>
+
+
     </div>
   )
 }
