@@ -43,6 +43,19 @@ function Menu(){
               <span>By Country</span>
             </div>
           </Link>
+
+          <Link>
+            <div>
+              <World title="" />
+              <span>FAQ</span>
+            </div>
+          </Link>
+          <Link>
+            <div>
+              <World title="" />
+              <span>Disclaimers</span>
+            </div>
+          </Link>
         </div>
       </div>
     )

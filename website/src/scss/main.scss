@@ -18,6 +18,7 @@
 .explainer {
   position: relative;
   cursor: pointer;
+  z-index: 10;
   > span {
     display: none;
     white-space: nowrap;
@@ -38,10 +39,27 @@
     display: block;
   }
 }
+#Main .leftblock {
+  #ControlPanel {
+    padding-left: 0;
+    padding-right: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+}
 
-#Understand .Graph {
-  height: 30em;
-  padding: 0em 2em 0em 2em;
+#Understand {
+  > div:first-child {
+    position: relative;
+  }
+  .Graph {
+    //height: 30em;
+    padding: 0em 2em 0em 2em;
+    margin: 0;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
 
 .block {
@@ -50,7 +68,21 @@
   > div {
     display: inline-block;
     width: 50%;
+    box-sizing: border-box;
   }
+}
+
+#Analytics {
+  //color: $FONT_COLOR_LIGHTEST;
+  font-weight: bold;
+  background-color: $ACCENT_COLOR1;
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
+
+.centerblock {
+  color: $FONT_COLOR_DEFAULT;
+  text-align: center;
 }
 
 #Understand {
@@ -73,10 +105,19 @@
 
   > div:last-child {
     background-color: white;
+
+    img {
+      width: 50%;
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translateY(-50%) translateX(-50%);
+    }
   }
 
   > div:first-child {
-    padding: 6em 6em 6em 6em;
+    padding-top: 6em;
+    padding-bottom: 6em;
     text-align: justify;
 
     > h2 {

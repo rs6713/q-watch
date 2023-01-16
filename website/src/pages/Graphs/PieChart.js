@@ -50,11 +50,11 @@ const PieChart = ({dataset, dataChoice}) => {
     }
     const svg = d3.select(ref.current)
 
-    let height = SVGdimensions['minHeight']
+    let height = SVGdimensions['width']//SVGdimensions['minHeight']
     let width = SVGdimensions['width']
 
     const fontSize = parseFloat(getComputedStyle(document.getElementById('PieChart').parentElement).fontSize);
-    let multiplier = 6
+    let multiplier = 5
     let margin = fontSize * multiplier;
 
     svg.attr("width", width)

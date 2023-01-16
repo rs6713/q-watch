@@ -7,6 +7,7 @@ import random
 import re
 from typing import Dict, List
 
+import coloredlogs
 from currency_converter import CurrencyConverter
 from flask import Flask, request
 from markupsafe import escape
@@ -32,7 +33,8 @@ from qwatch.io.utils import (
 )
 
 logger = logging.getLogger("qwatch")
-loglvl = logging.DEBUG
+loglvl = logging.INFO
+
 logger.setLevel(loglvl)
 ch = logging.StreamHandler()
 ch.setLevel(loglvl)
@@ -40,7 +42,11 @@ formatter = logging.Formatter(
     '%(asctime)s | %(levelname)s | %(module)s | %(funcName)s | %(message)s'
 )
 ch.setFormatter(formatter)
+if (logger.hasHandlers()):
+    logger.handlers.clear()
 logger.addHandler(ch)
+
+coloredlogs.install(level='INFO', logger=logger)
 
 # Setup DB
 engine = _create_engine()
@@ -57,6 +63,8 @@ movie_source_table = Table('MOVIE_SOURCE', metadata, autoload=True)
 movie_source_vote_table = Table('MOVIE_SOURCE_VOTE', metadata, autoload=True)
 movie_trope_trigger_table = Table(
     'MOVIE_TROPE_TRIGGER', metadata, autoload=True)
+movie_tag_table = Table(
+    'MOVIE_TAG', metadata, autoload=True)
 movie_representation_table = Table(
     'MOVIE_REPRESENTATION', metadata, autoload=True)
 movie_genre_table = Table('MOVIE_GENRE', metadata, autoload=True)
@@ -66,7 +74,7 @@ app = Flask(__name__)
 # Default Values
 MOVIE_QUALITIES = ["ID", "COUNTRY", "YEAR", "LANGUAGE",
                    "BOX_OFFICE", "BUDGET", "INTENSITY", "AGE"]
-MOVIE_LABELS = ["GENRE", "TYPE", "TROPE_TRIGGER", "REPRESENTATION"]
+MOVIE_LABELS = ["GENRE", "TYPE", "TROPE_TRIGGER", "REPRESENTATION", "TAG"]
 
 # Create Label Mappings
 LABEL_MAPPINGS = {}
@@ -439,7 +447,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
     return movies
 
 
-@app.route('/api/count/movies', methods=["POST"])
+@app.route('/api/movies/count', methods=["POST"])
 def get_count_matching_movies() -> int:
     """
     With filters, get count of movies that match request.
@@ -449,10 +457,59 @@ def get_count_matching_movies() -> int:
         groupby: e.g. COUNTRY, YEAR, GENRE
     }
     """
-    criteria = request.get_json()
-    movie_ids = get_matching_movies(criteria, properties=["ID"])
+    criteria = request.get_json().get("criteria", {})
+    groups = request.get_json().get("groups", {})
 
-    return len(movie_ids)
+    props = list(set(itertools.chain.from_iterable(groups.values())))
+
+    movies = get_matching_movies(criteria, properties=["ID", *props])
+
+    logger.info(movies[0].keys())
+
+    if not groups:
+        return convert_to_json({'TOTAL': len(movies)})
+
+    counts = {'TOTAL': len(movies)}
+    for group_name, group_cols in groups.items():
+        logger.info(f'{group_name}, {group_cols}')
+        new_movies = []
+        for movie in movies:
+            if len(group_cols) > 1:
+                movie['group'] = list(itertools.product(
+                    *[
+                        list(set(movie[c])) if isinstance(
+                            movie[c], list) else [movie[c]]
+                        for c in group_cols
+                    ]
+                ))
+                movie['group'] = [
+                    ', '.join([_.LABEL if isinstance(
+                        _, dict) else _ for _ in g])
+                    for g in movie['group']
+                ]
+            else:
+                if movie[group_cols[0]] is not None:
+                    movie['group'] = [
+                        p['LABEL'] if isinstance(p, dict) else p for p in movie[group_cols[0]]
+                    ]
+                else:
+                    movie['group'] = None
+
+            if movie['group'] is not None:
+                for p in set(movie['group']):
+                    new_movies.append(
+                        {
+                            'ID': movie['ID'],
+                            'group': p
+                        }
+                    )
+
+        logger.info(new_movies[:5])
+        counts[group_name] = pd.DataFrame(new_movies).groupby(
+            by='group').ID.count().to_dict()
+
+    logger.info(counts)
+    return convert_to_json(counts)
 
 
 @app.route('/api/movie/<int:movie_id>')
@@ -468,6 +525,35 @@ def get_movie_by_id(movie_id: int):
     # )
 
     return convert_to_json(movie)
+
+
+def convert_to_usd(obj, key):
+
+    if key not in ['BUDGET', 'BOX_OFFICE']:
+        raise ValueError(
+            'Conversion to USD can only be on currency-based columns')
+    if obj[key] is None or len(obj[key]) == 0:
+        return 0
+
+    currency_maps = {
+        '$': 'USD',
+        '£': 'GBP',
+        '€': 'EUR'
+    }
+    currency = [c for c in currency_maps if c in obj[key]]
+    if len(currency) == 1:
+        c = CurrencyConverter()
+        return c.convert(
+            int(re.sub(r'[^0-9]', '', obj[key])),
+            currency_maps[currency[0]],
+            'USD',
+            # f'{obj["YEAR"]}-01-01'
+        )
+
+    else:
+        logger.warning('Failed to convert to USD COLUMN %s: %s',
+                       key, str(obj[key]))
+        return 0
 
 
 @app.route('/api/movies', methods=["POST"])
@@ -504,32 +590,20 @@ def get_movie_list():
         return {"data": [], "n_indexes": 0, "n_matches": 0}
     n_indexes = math.ceil(len(movies) / results_per_index)
 
+    # Create numerical representations of budget/box_offices in USD
+    for movie in movies:
+        for col in ['BUDGET', 'BOX_OFFICE']:
+            if col in movie:
+                movie[f'{col}_USD'] = convert_to_usd(movie, col)
+
     # Sort movies according to sort
     if sort is not None:
-        def convert_sort(obj, key):
-
-            if key in ['BUDGET', 'BOX_OFFICE']:
-                currency_maps = {
-                    '$': 'USD',
-                    '£': 'GBP',
-                    '€': 'EUR'
-                }
-                currency = [c for c in currency_maps if c in obj[key]]
-                if len(currency) == 1:
-                    c = CurrencyConverter()
-                    return c.convert(
-                        int(re.sub(r'[^0-9]', '', obj[key])),
-                        currency_maps[currency[0]],
-                        'USD',
-                        # f'{obj["YEAR"]}-01-01'
-                    )
-
-                else:
-                    return 0
-            return obj[key]
 
         for movie in movies:
-            movie['sort_key'] = convert_sort(movie, sort[0])
+            sort_col = sort[0]
+            if sort_col in ['BOX_OFFICE', 'BUDGET']:
+                sort_col += '_USD'
+            movie['sort_key'] = movie[sort_col]
 
         movies = sorted(
             movies,

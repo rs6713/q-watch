@@ -193,7 +193,7 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_str
         if val["TYPE"] == "GREATER_THAN":
             return col >= val['VALUE']
         if val["TYPE"] == "LESS_THAN":
-            return col <= val["VALUE"]
+            return or_(col <= val["VALUE"], col == None)
         if val["TYPE"] == "INCLUDE":
             if is_string_agg:
                 rule = or_ if (

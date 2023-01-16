@@ -19,6 +19,33 @@
   }
 }
 
+@mixin main_width_styling($side_padding) {
+  #Main {
+    .centerblock {
+      padding-left: calc((50vw - 2 * $side_padding) / 2 + $side_padding);
+      padding-right: calc((50vw - 2 * $side_padding) / 2 + $side_padding);
+    }
+    .block {
+      > div:first-child,
+      > div:last-child {
+        padding-left: $side_padding;
+        padding-right: $side_padding;
+      }
+    }
+    .leftblock {
+      padding-left: $side_padding;
+      padding-right: $side_padding;
+    }
+
+    .footer {
+      padding-left: $side_padding;
+      padding-right: $side_padding;
+    }
+  }
+}
+
+@include main_width_styling($side_padding: 5vw);
+
 @include width_styling($side_padding: 15vw);
 
 #Filters {
