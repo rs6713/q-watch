@@ -10,5 +10,68 @@
     flex: 1 1;
     background-color: white;
     overflow-y: scroll;
+    padding-left: 0em;
+    padding-right: 0em;
+
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+
+    .dropdown {
+      list-style: none;
+      border-bottom: 1px solid $FONT_COLOR_DEFAULT;
+      padding: 0em 0em;
+      margin-left: 5vw;
+      margin-right: 5vw;
+      padding-bottom: 1em;
+
+      h3 {
+        svg {
+          float: right;
+          height: 1em;
+          cursor: pointer;
+        }
+        margin-bottom: 0;
+      }
+      div {
+        max-height: 0em;
+        overflow-y: hidden;
+        transition-property: max-height;
+        transition-duration: 0.5s;
+        transition-timing-function: ease-out;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      div.active {
+        max-height: 100px;
+      }
+      p {
+        padding-top: 1em;
+      }
+    }
+  }
+  > div::-webkit-scrollbar {
+    display: none;
+  }
+  h2 {
+    font-size: $FONT_SIZE_TITLE;
+    background-color: white;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 1em;
+    padding-bottom: 0em;
+  }
+  > h3 {
+    font-size: $FONT_SIZE_MED;
+    font-weight: lighter;
+    background-color: white;
+    margin: 0;
+    padding-top: 0.5em;
+    padding-bottom: 2em;
+  }
+
+  h2,
+  > h3 {
+    padding-left: 5vw;
+    padding-right: 5vw;
   }
 }

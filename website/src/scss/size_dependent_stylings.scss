@@ -21,6 +21,10 @@
     margin-left: $side_padding;
     margin-right: $side_padding;
   }
+  #faq > h3 {
+    margin-left: $side_padding;
+    margin-right: $side_padding;
+  }
   #faq > div:first-of-type {
     margin-left: $side_padding;
     margin-right: $side_padding;
@@ -30,8 +34,8 @@
 @mixin main_width_styling($side_padding) {
   #Main {
     .centerblock {
-      padding-left: calc((50vw - 2 * $side_padding) / 2 + $side_padding);
-      padding-right: calc((50vw - 2 * $side_padding) / 2 + $side_padding);
+      padding-left: $side_padding;
+      padding-right: $side_padding;
     }
     .block {
       > div:first-child,

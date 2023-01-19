@@ -1,6 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import Footer from './components/Footer'
+import {ReactComponent as Plus} from '../static/icons/plus.svg'
+import {ReactComponent as Minus} from '../static/icons/minus.svg'
+
 
 const question_answers = [
   [
@@ -53,18 +56,32 @@ const question_answers = [
   ]
 ]
 
+function DropDown({title, contents}){
+
+  const [active, setActive] = useState(false);
+
+  return (
+    <div className='dropdown'>
+      <h3>
+        <span>{title}</span>
+        {active && <Minus title="" aria-label={"Click to hide answer"} onClick={()=>{setActive(false)}}/>}
+        {!active && <Plus title="" aria-label={"Click to see answer"} onClick={()=>{setActive(true)}}/>}
+      </h3>
+      <div className={active ? 'active': ''}>
+        <p>{contents}</p>
+      </div>
+    </div>
+  )
+}
+
 function FAQ(){
 
   return (
     <div className='page' id='faq'>
-      <h2>FAQ</h2>
+      <h2>Frequently Asked Questions</h2>
+      <h3>Ya nosey parkers youu</h3>
       <div>
-        <ul>
-          {question_answers.map((qa, _) => <li>
-            <h3>{qa[0]}</h3>
-            <p>{qa[1]}</p>
-          </li>)}
-        </ul>
+        {question_answers.map((qa, _) => <DropDown title={qa[0]} contents={qa[1]} />)}
       </div>
       <Footer />
     </div>

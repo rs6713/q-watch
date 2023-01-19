@@ -9,6 +9,11 @@ import PieChart from './Graphs/PieChart'
 import '../App.scss'
 import Bisexual from '../static/images/person-bisexual.png'
 
+import {ReactComponent as Query} from '../static/icons/query.svg'
+import {ReactComponent as Graph} from '../static/icons/graph.svg'
+import {ReactComponent as Movie} from '../static/icons/movie.svg'
+
+
 const PHRASES = [
   "**I will go down with this ship.... (screams in Dido)**",
   "Come for the lesbians. Stay for the lesbians.",
@@ -110,20 +115,24 @@ function Main(){
         </div>
       </div>
       <div className='centerblock' id='Analytics'>
-        <p>Creating a searchable archive of Queer media, presented us with the unique opportunity to evaluate the state of Queer Cinema. <br/><br/>It is a myth that progress is linear, and guaranteed, and as more money is injected into LGBT entertainment than ever before, we want to understand our changing landscape. Who exactly is benefiting the most from these investments, and what parts of LGBT representation are still being neglected?<br /> <br/>We are constantly adding new movies to expand our archive, to make our data analysis more representative of the true state of global Queer Cinema. </p>
-
-      </div>
-
-
-      <div id='Disclaimers' className='block'>
         <div>
-
+          <Query/>
+          <p>
+          Creating a searchable archive of Queer media, presented us with the unique opportunity to evaluate the state of Queer Cinema. <br/><br/>It is a myth that progress is linear, and guaranteed.
+          </p>
         </div>
         <div>
-          <p>Disclaimer: This dataset was generated in a semi-automated fashion using a combination of web-scraping and manual data entry. Due to time constraints it was not possible for every movie to be watched before it was categorised. Old or indie-production movies often have less data available online. We tried our best but please, if you see a TAG/ Descriptor that seems innappropriate, it probably was a mistake, let us know and email us at <b>qwatch.gmail.com</b></p>
-          <p>If you take issue </p>
+          <Graph/>
+          <p>
+          As more money is injected into LGBT entertainment than ever before, we want to understand our changing landscape. <br/><br/>Who exactly is benefiting the most from these investments, and what parts of LGBT representation are still being neglected?
+          </p>
+        </div>
+        <div>
+          <Movie/>
+          <p>We are constantly adding new movies to expand our archive, to make our data analysis more representative of the true state of global Queer Cinema.</p>
         </div>
       </div>
+
         <Footer />
 
     </div>

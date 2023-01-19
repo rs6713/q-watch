@@ -1,5 +1,9 @@
 @import "../scss/defaults.scss";
 
+.filler {
+  flex: 1;
+}
+
 .GraphPage {
   overflow-x: hidden;
   max-height: 100vh;
@@ -11,9 +15,6 @@
     > #Options,
     > .Switch {
       margin-right: 1em;
-    }
-    .filler {
-      flex: 1;
     }
   }
 

@@ -73,11 +73,37 @@
 }
 
 #Analytics {
-  //color: $FONT_COLOR_LIGHTEST;
-  font-weight: bold;
-  background-color: $ACCENT_COLOR1;
-  padding-top: 2em;
-  padding-bottom: 2em;
+  background-color: $FONT_COLOR_LIGHTEST;
+  padding-top: 5em;
+  padding-bottom: 5em;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+
+  > div {
+    svg {
+      height: 10vw;
+      fill: $ACCENT_COLOR3; //$FONT_COLOR_DEFAULT;
+      //fill: $FONT_COLOR_LIGHTEST;
+      //fill: url(#ffflux-gradient);
+      // fill: linear-gradient(
+      //   90deg,
+      //   rgba(255, 255, 255, 1) 0%,
+      //   rgba(255, 152, 255, 1) 49%,
+      //   rgba(126, 237, 255, 1) 100%
+      // );
+      margin-bottom: 2em;
+    }
+    p {
+      font-size: $FONT_SIZE_DEFAULT;
+      text-align: center;
+    }
+    margin-right: 5vw;
+  }
+  > div:last-child {
+    margin-right: 0;
+  }
 }
 
 .centerblock {

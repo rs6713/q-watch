@@ -4,7 +4,7 @@ import {interpolateRainbow, interpolateWarm} from 'd3-scale-chromatic';
 
 const MAX_CATEGORIES = 10
 const MIN_PERCENT = 0
-const MIN_ABSOLUTE = 0
+const MIN_ABSOLUTE = 3
 
 const PieChart = ({dataset, dataChoice}) => {
   const ref = useRef();

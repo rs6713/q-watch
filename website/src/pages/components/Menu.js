@@ -46,7 +46,8 @@ function Menu(){
               <span>By Country</span>
             </div>
           </Link>
-
+          {/* <div className='filler' /> */}
+          <span>
           <Link to={"/faq"} className={"link" + (useLocation().pathname == "/faq"? ' active' : ' inactive')}>
             <div>
               <Question title="" />
@@ -59,7 +60,9 @@ function Menu(){
               <span>Disclaimers</span>
             </div>
           </Link>
+          </span>
         </div>
+        
       </div>
     )
 
