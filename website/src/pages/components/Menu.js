@@ -6,6 +6,9 @@ import {ReactComponent as World} from '../../static/icons/world2.svg'
 import {ReactComponent as Rank} from '../../static/icons/rank.svg'
 import {ReactComponent as Time} from '../../static/icons/time.svg'
 import {ReactComponent as Hamburger} from '../../static/icons/menu.svg'
+import {ReactComponent as Question} from '../../static/icons/question.svg'
+import {ReactComponent as Note} from '../../static/icons/note.svg'
+
 
 function Menu(){
     return (
@@ -44,15 +47,15 @@ function Menu(){
             </div>
           </Link>
 
-          <Link>
+          <Link to={"/faq"} className={"link" + (useLocation().pathname == "/faq"? ' active' : ' inactive')}>
             <div>
-              <World title="" />
+              <Question title="" />
               <span>FAQ</span>
             </div>
           </Link>
-          <Link>
+          <Link to={"/disclaimers"} className={"link" + (useLocation().pathname == "/disclaimers"? ' active' : ' inactive')}>
             <div>
-              <World title="" />
+              <Note title="" />
               <span>Disclaimers</span>
             </div>
           </Link>

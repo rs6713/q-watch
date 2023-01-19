@@ -1,0 +1,14 @@
+@import "../scss/defaults.scss";
+
+#faq {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: hidden;
+
+  > div:first-of-type {
+    flex: 1 1;
+    background-color: white;
+    overflow-y: scroll;
+  }
+}

@@ -17,6 +17,14 @@
     margin-left: $side_padding;
     margin-right: $side_padding;
   }
+  #faq > h2 {
+    margin-left: $side_padding;
+    margin-right: $side_padding;
+  }
+  #faq > div:first-of-type {
+    margin-left: $side_padding;
+    margin-right: $side_padding;
+  }
 }
 
 @mixin main_width_styling($side_padding) {

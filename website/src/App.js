@@ -11,6 +11,7 @@ import Country from './pages/Country';
 import Rank from './pages/Rank';
 import Movie from './pages/Movie';
 import Menu from './pages/components/Menu';
+import FAQ from './pages/FAQ';
 import './App.scss';
 
 class App extends Component {
@@ -29,6 +30,7 @@ class App extends Component {
             <Route exact path='/movies/:id' element={<Movie />} /> 
             <Route exact path="/visualizations/overtime" element={<OverTime />} /> 
             <Route exact path="/visualizations/bycountry" element={<Country />} /> 
+            <Route exact path="/faq" element={<FAQ />} />
           </Routes>
           <Menu />
         </Router>
