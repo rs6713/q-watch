@@ -14,16 +14,16 @@ import DEFAULT_MOVIES from './default_rank.json';
 const RANK_OPTIONS = {
   "Popularity": "NUM_RATING",
   "Rating": "AVG_RATING",
-  "Box Office": "BOX_OFFICE",
-  "Budget": "BUDGET",
+  "Box Office ($)": "BOX_OFFICE_USD",
+  "Budget ($)": "BUDGET_USD",
 }
 
 const SUMMARY_OPTIONS = {
-  "BOX_OFFICE": {
+  "BOX_OFFICE_USD": {
     "Total": 'sum',
     "Average": 'mean'
   },
-  "BUDGET": {
+  "BUDGET_USD": {
     "Total": 'sum',
     "Average": 'mean'
   },
@@ -48,8 +48,8 @@ function Rank(){
   const [filterActive, setFilterActive] = useState(false);
   const [ascending, setAscending] = useState(false);
   const [ignoreZeros, setIgnoreZeros] = useState(true);
-  const [rank, setRank] = useState("BOX_OFFICE");
-  const [movies, setMovies] = useState(DEFAULT_MOVIES);
+  const [rank, setRank] = useState("BOX_OFFICE_USD");
+  const [movies, setMovies] = useState(null);
   const [nMatches, setNMatches] = useState(null);
   const [criteria, setCriteria] = useState({});
   const [group, setGroup] = useState([])

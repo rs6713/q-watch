@@ -1,0 +1,51 @@
+@import "../scss/defaults.scss";
+
+#opinion {
+  background-color: $ACCENT_COLOR4;
+  border-radius: 1em;
+  padding: 1em 3em;
+  width: 100%;
+  font-weight: bold;
+  box-sizing: border-box;
+  text-align: center;
+  margin-top: 1em;
+  position: relative;
+
+  svg {
+    height: 1em;
+    position: absolute;
+    top: 0.5em;
+  }
+  svg#quoteleft {
+    left: 1em;
+  }
+  svg#quoteright {
+    right: 1em;
+  }
+}
+
+#aside {
+  span {
+    line-height: 1em;
+  }
+  .button {
+    font-size: 0.5em;
+    padding: 0.5em 1em;
+    position: relative;
+    top: 0.75em;
+    transform: translateY(-50%);
+    margin-right: 1em;
+    line-height: 1em;
+  }
+}
+
+.button {
+  padding: 1em 2em;
+  display: inline-block;
+  text-align: center;
+  color: $FONT_COLOR_LIGHTEST;
+  background-color: $FONT_COLOR_DEFAULT;
+  font-weight: bold;
+  border-radius: 3em;
+  cursor: pointer;
+}

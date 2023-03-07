@@ -5,8 +5,10 @@ import Gallery from './components/Gallery';
 import Loader from './components/Loader';
 import Rating from './components/Rating';
 import Quote from './components/Quote';
+import Opinion from './components/Opinion';
 import {formatRuntime} from '../utils.js';
 import Bubbles from './components/Bubbles';
+import Button from './components/Button';
 import ExpandableBubbles from './components/ExpandableBubbles'
 import {sourceDisclaimer} from '../constants'
 import Source from './components/Source';
@@ -37,14 +39,17 @@ function useWindowDimensions() {
   return windowDimensions;
 }
 
+
+
 function Movie(props){
  
   var path = window.location.href.split("/")
 
   const [id, setId] = useState(path[path.length-1])
-  const [playTrailer, setPlayTrailer] = useState(false);
+
   const [movie, setMovie] = useState(null);
   const { pageHeight, pageWidth } = useWindowDimensions();
+  const [showTrailer, setShowTrailer] = useState(false);
   //const [randomMovieId, setRandomMovieId] = useState(3)
 
   function pickRandomMovie(){
@@ -66,6 +71,7 @@ function Movie(props){
     })
   }
 
+
   // Data Fetching Called once at mount/dismount
   useEffect(() => {
     fetch(`/api/movie/${id}`, {
@@ -74,6 +80,7 @@ function Movie(props){
         'cache-control': 'no-store',
       }
     }).then(res => res.json()).then(data => {
+      console.log(data);
       setMovie(data);
     })
   }, [id]);
@@ -86,17 +93,24 @@ function Movie(props){
 
   if(movie !== null){
     content = (<div id="MovieContainer">
+
       <div id="MovieContents">
         <div id="MovieTitle">
           <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} />
           <h1>{movie.TITLE}</h1>
+          <Bubbles items={movie.TAGS} />
           <h2>
             {formatRuntime(movie.RUNTIME)}&nbsp;&#9679;&nbsp;
             {movie.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
             {movie.LANGUAGE}&nbsp;&#9679;&nbsp;
             {movie.COUNTRY}
           </h2>
-          <div id="aside">{movie.YEAR}</div>
+          
+          <div id="aside">
+            {movie.IMDB_ID && <a target='_blank' href={'https://www.imdb.com/title/tt'+movie.IMDB_ID}><Button onClick={()=>{}} text='IMDB' /></a>}
+            {movie.TRAILER && <Button onClick={()=>{setShowTrailer(!showTrailer)}} text='Trailer' />}
+            <span>{movie.YEAR}</span>
+          </div>
         </div>
         <div id="MovieParts">
           <p>{movie.SUMMARY}</p>
@@ -118,7 +132,9 @@ function Movie(props){
           } */}
           <ExpandableBubbles items={movie.TROPE_TRIGGERS} aside="(Potential for upsetting content/spoilers)" title="Trope/Trigger Warnings" expandable={true}/>
           <ExpandableBubbles items={movie.REPRESENTATIONS} title="Representation Matters" expandable={false} />
+          <Opinion opinion={movie.OPINION}/>
           <Quote quote={movie.quote}/>
+
           {pageWidth < largeScreenWidth && <Gallery images={movie.IMAGES} />}
         </div>
         
@@ -140,12 +156,12 @@ function Movie(props){
         </div>
 
         {
-          playTrailer && 
-            <div className="cover" onClick={()=>{setPlayTrailer(false)}} />
+          showTrailer && 
+            <div className="cover" onClick={()=>{setShowTrailer(false)}} />
         }
         {
-          playTrailer && movie.trailer && 
-          <iframe className="trailer" src={movie.TRAILER} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          showTrailer && movie.TRAILER && 
+          <iframe className="trailer" src={movie.TRAILER.replace('/watch?v=', '/embed/')} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           autoPlay={true} allowFullScreen></iframe>
         }
         {content}

@@ -38,9 +38,33 @@ const baseConfig = {
       switchType: 'include'
     },
     {
-      title: "Movie Qualities",
-      type: 'subfilters',
-      filters: [
+      title: "Representation Matters",
+      id: "REPRESENTATIONS",
+      warning: "See yourself on the bigscreen.",
+      subtitle: "We have tried our best, but if you feel we are missing filters here, please let us know, email us at q-watch.gmail.com.",
+      disclaimers: [
+        "Unfortunately some options may be missing or extremely broad, due to a lack of representation in the media itself.",
+        "Representation here, guarantees presence, but not good representation: see tropes/trigger warnings."
+      ],
+      type: "bubble",
+      filters: null,
+      switchType:'include',
+      
+    },
+    {
+      title: "Tropes / Trigger Warnings",
+      id: "TROPE_TRIGGERS",
+      expandable: true,
+      warning: "IMPLIED SPOILERS",
+      subtitle: "Early mainstream, queer media was messy at best. Select the tropes you wish to avoid.",
+      type: "bubble",
+      filters:null,
+      switchType:'exclude'
+    },
+    // {
+    //   title: "Movie Qualities",
+    //   type: 'subfilters',
+    //   filters: [
         {
           title: "Age Range",
           id: "AGE",
@@ -107,32 +131,10 @@ const baseConfig = {
           filters:null,
           switchType:'include'
         },
-      ]
-    },
-    {
-      title: "Tropes / Trigger Warnings",
-      id: "TROPE_TRIGGERS",
-      expandable: true,
-      warning: "IMPLIED SPOILERS",
-      subtitle: "Early mainstream, queer media was messy at best. Select the tropes you wish to avoid.",
-      type: "bubble",
-      filters:null,
-      switchType:'exclude'
-    },
-    {
-      title: "Representation Matters",
-      id: "REPRESENTATIONS",
-      warning: "See yourself on the bigscreen.",
-      subtitle: "We have tried our best, but if you feel we are missing filters here, please let us know, email us at q-watch.gmail.com.",
-      disclaimers: [
-        "Unfortunately some options may be missing or extremely broad, due to a lack of representation in the media itself.",
-        "Representation here, guarantees presence, but not good representation: see tropes/trigger warnings."
-      ],
-      type: "bubble",
-      filters: null,
-      switchType:'include',
-      
-    },
+    //   ]
+    // },
+
+
     // {
     //   title: "Can't find what you're looking for?",
     //   subtitle: "Unfortunately Queer cinema (like most media) can be majority homogeneous. Allowing these options, may help you find more movies for specific demographics/story types",
@@ -168,7 +170,7 @@ function Filters({active, nMatches, updateFilters, filters}){
         let sectionLabel = Object.keys(section).indexOf('dataLabel') === -1? section['id'] : section['dataLabel']
         if(sectionLabel !== null && Object.keys(data).indexOf(sectionLabel)!= -1){
           temp_config['filterSections'].push(
-            {...section, 'filters': data[sectionLabel]}
+            {...section, 'filters': data[sectionLabel].sort((a, b) => a.ID - b.ID)}
           )
         }else if(section['type'] === 'subfilters'){
           let filter_section = {...section, 'filters': []}
@@ -178,7 +180,7 @@ function Filters({active, nMatches, updateFilters, filters}){
 
             // If is slider subfilter with options in data
             if(['slider', 'bubble', 'dropdown'].indexOf(filter['type'])!== -1 && Object.keys(data).indexOf(filterLabel)!==-1){
-
+              console.log('Sorting ' + filter['type'])
               filter_section['filters'].push(
                 {...filter, 'filters': data[filterLabel].sort((a, b) => a.ID - b.ID)}
               )

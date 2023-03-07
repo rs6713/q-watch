@@ -40,7 +40,9 @@ function Choropleth(data, {
 
   // Compute default domains.
   if (domain === undefined) domain = d3.extent(V);
-  console.log('Domain: ', domain, ' Range: ', range)
+  domain[0] = Math.max(domain[0], 1)
+  console.log('Domain: ', domain)
+  
   // Construct scales.
   const color = scale(domain, range);
   if (color.unknown && unknown !== undefined) color.unknown(unknown);
@@ -82,6 +84,7 @@ function Choropleth(data, {
     .join("path")
       .attr("fill", (d, i) => color(V[Im.get(If[i])]))
       .attr("d", path)
+      .attr("cursor", "pointer")
     .append("title")
       .text((d, i) => title(d, Im.get(If[i])));
 
@@ -138,8 +141,7 @@ const ChartCountry = ({dataset, value_var}) => {
         .attr("pointer-events", "all")
         .attr("width", SVGdimensions['width'])
         .attr("height", height)
-        .attr("cursor", "pointer")
-  
+
     // let grouped_data = [
     //   {'name': 'United Kingdom', [value_var]: 10}
     // ]

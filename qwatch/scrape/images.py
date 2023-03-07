@@ -1,9 +1,23 @@
 """ Scrape images associated with movie from google image search."""
-import logging
-import pathlib
-import os
+
 from typing import List
-from google_images_download import google_images_download
+import os
+import pathlib
+import logging
+
+import sys
+from os.path import dirname
+try:
+    # new_dir = os.path.join(pathlib.Path(
+    #     __file__).parent.parent.absolute(), "google-images-download")
+    # print(new_dir)
+    # sys.path.append(new_dir)
+    from .bing_scraper import googleimagesdownload
+except Exception as e:
+    raise ImportError('Oh no', e)
+
+#from google_images_download import google_images_download
+
 
 logger = logging.getLogger(__name__)
 
@@ -33,25 +47,35 @@ def scrape_movie_images(movie_title: str, movie_year: int = None, limit: int = 5
 
     # Download Images
     logger.info(
-        "Downloading %d images for movie: %s, search term: %s", limit, movie_title, search_term
+        "Downloading %d images for movie: %s, search term: %s, to %s", limit, movie_title, search_term, OUTPUT_DIR
     )
 
     config = dict(
         limit=limit,
-        keywords=search_term,
+        url='https://www.bing.com/images/search?q=%s' % search_term.replace(
+            ' ', '%20'),
         # image_directory,
         output_directory=OUTPUT_DIR,
         chromedriver='E:/Projects/scraping/chromedriver.exe',  # 'path/chromedriver',
-        print_urls=True,
-        print_size=False,
-        print_paths=False,
+        download=True
+        # print_urls=False,
+        # silent_mode=True,
+        # print_size=False,
+        # print_paths=False,
         #format = gif,
     )
 
-    response = google_images_download.googleimagesdownload()
-    absolute_image_paths = response.download(config)
+    # --search 'honeybees on flowers' - -limit 10 - -download - -chromedriver ./chromedriver
 
-    return absolute_image_paths[0][search_term]
+    # response = google_images_download.googleimagesdownload()
+    # absolute_image_paths = response.download(config)
+
+    response = googleimagesdownload()
+    # wrapping response in a variable just for consistency
+    absolute_image_paths, errors = response.download(config)
+    logger.info('Downloaded Image Paths: %s', str(absolute_image_paths))
+
+    return list(absolute_image_paths.values())[0]  # [0][search_term]
 
 # from PIL import Image
 # for filename in absolute_image_paths[0][query]:

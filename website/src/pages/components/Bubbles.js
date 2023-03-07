@@ -23,6 +23,7 @@ function Bubbles({items, clickAction, id}){
         items.map((item, i) => (
           <div className={"bubble" + (activeItems[i]? " active": "")} title={item.DESCRIP || ""} onClick={chooseItem(item.ID, i)} key={i}>
             {typeof item === 'string' ? item : item.LABEL}
+            {typeof item !== 'string' && Object.keys(item).indexOf('MAIN') !== -1 && item.MAIN === 0 ? '*' : ''}
           </div>
         )
       )}

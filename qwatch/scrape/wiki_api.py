@@ -34,6 +34,7 @@ class WIKIScraper(object):
         # "Directed by",
         # "Written by",
         self.wiki_url = None
+        self.options = options
 
     def search(self, movie_title: str, year: int = None):
         logger.info("Performing Wiki Search for %s year %s",
@@ -74,7 +75,7 @@ class WIKIScraper(object):
                 self.wiki_url
             ],
             **self.get_movie_infobox_properties(),
-            "PEOPLE": self.get_people()
+            "PEOPLE": (self.get_people() if self.options['FETCH_PEOPLE'].get() else None)
         }
 
     def get_people(self):
@@ -104,9 +105,10 @@ class WIKIScraper(object):
     def _get_infobox_property(self, property: str):
         """ Get information from wikipedia infobox"""
         infobox = self.page.find("table", {"class": "infobox"})
-        found = infobox.find("th", string=property)
-        if found is not None:
-            val = found.find_next_siblings("td")
-            if len(val) > 0:
-                return val[0].text
+        if infobox is not None:
+            found = infobox.find("th", string=property)
+            if found is not None:
+                val = found.find_next_siblings("td")
+                if len(val) > 0:
+                    return val[0].text
         return ""

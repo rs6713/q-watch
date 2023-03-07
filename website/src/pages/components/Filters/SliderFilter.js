@@ -4,7 +4,7 @@ import {Icon} from '../Image'
 import Switch from '../Switch'
 
 function SliderFilter({filter, updateFilters, filters, randomIdx}){
-
+  console.log('Slider: ', filter.filters)
   
   const [toggleActive, setToggleActive] = useState(false);
   const [toggleLeft, setToggleLeft] = useState(0);

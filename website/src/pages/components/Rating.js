@@ -9,6 +9,11 @@ import {ReactComponent as Rainbow} from '../../static/icons/rainbow.svg';
 
 export function getIcon(movieTypes){
   var Icon = Rainbow;
+
+  if(movieTypes == null){
+    return Icon;
+  }
+
   // Selection of Icon
   for(let typ of movieTypes){
     if(typ.LABEL == "Lesbian"){

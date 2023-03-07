@@ -519,6 +519,7 @@ class MovieWindow():
             "NUM_DIRECTOR_SCRAPE": tk.StringVar(value="2"),
             "NUM_QUOTES_SCRAPE": tk.StringVar(value="6"),
             "OPEN_URLS": tk.IntVar(value=1),
+            "FETCH_PEOPLE": tk.IntVar(value=0)
         }
         self.static_movie_props = {
             'IMDB_ID': None,

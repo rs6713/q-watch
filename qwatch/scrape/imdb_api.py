@@ -142,8 +142,8 @@ class IMDBScraper(object):
             "YEAR": self.movie_properties.get("year", None) if year is None else year,
             "TITLE": self.movie_properties.get("original title", None),
             "COUNTRY": self.movie_properties.get("countries", [None])[0],
-            "BIO": ((self.movie_properties['plot'][0] if len(self.movie_properties['plot']) else '') + (self.get_bio() or '')) or None,
-            **self.get_people(),
+            "BIO": ((self.movie_properties['plot'][0] if len(self.movie_properties.get('plot', [])) else '') + (self.get_bio() or '')) or None,
+            **(self.get_people() if self.FETCH_PEOPLE else {}),
             "QUOTES": self.get_quotes(),
             "SOURCES": self.get_sources(),
             'TAGLINES': '\n'.join(self.movie_properties.get('taglines', [])),
@@ -198,7 +198,7 @@ class IMDBScraper(object):
         """ Get quotes from imdb quotes page. Try match back to recorded characters."""
         character_names = {
             f'{c["FIRST_NAME"]} {c["LAST_NAME"]}': c["ID"]
-            for c in self.characters
+            for c in getattr(self, 'characters', [])
         }
 
         quotes = self.quotes_soup.find("div", id="quotes_content"

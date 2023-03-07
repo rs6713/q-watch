@@ -387,11 +387,12 @@ page.find("h2", string="Cast").find_next_sibling(
 def get_info(property):
     """ Get information from wikipedia infobox"""
     infobox = page.find("table", {"class": "infobox"})
-    found = infobox.find("th", string=property)
-    if found is not None:
-        val = found.find_next_siblings("td")
-        if len(val) > 0:
-            return val[0].text
+    if infobox is not None:
+        found = infobox.find("th", string=property)
+        if found is not None:
+            val = found.find_next_siblings("td")
+            if len(val) > 0:
+                return val[0].text
     return ""
 
 

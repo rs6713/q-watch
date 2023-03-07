@@ -15,8 +15,8 @@ import {ReactComponent as Filter} from '../static/icons/filter.svg'
 
 const RANK_OPTIONS = {
   "Count": "COUNT",
-  "Box Office": "BOX_OFFICE",
-  "Budget": "BUDGET",
+  "Box Office ($)": "BOX_OFFICE_USD",
+  "Budget ($)": "BUDGET_USD",
 }
 
 
@@ -29,7 +29,7 @@ const GROUP_OPTIONS = {
 function OverTime(){
 
   const [filterActive, setFilterActive] = useState(false);
-  const [rank, setRank] = useState("BOX_OFFICE");
+  const [rank, setRank] = useState("BOX_OFFICE_USD");
   const [movies, setMovies] = useState(null);
   const [nMatches, setNMatches] = useState(null);
   const [criteria, setCriteria] = useState({});

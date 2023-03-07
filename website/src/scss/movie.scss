@@ -81,6 +81,21 @@
 
       #MovieTitle {
         flex: 0 1;
+
+        .bubbles {
+          font-size: $FONT_SIZE_DEFAULT;
+          .bubble {
+            padding: 0.5em 1em;
+            border-radius: 3em;
+            font-size: 1em;
+
+            color: $FONT_COLOR_LIGHTEST;
+            background-color: $ACCENT_COLOR3;
+            font-weight: normal;
+            border-radius: 3em;
+          }
+        }
+
         .rating {
           width: 15em;
           fill: $ACCENT_COLOR3;

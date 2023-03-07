@@ -15,8 +15,8 @@ import {ReactComponent as Filter} from '../static/icons/filter.svg'
 
 const RANK_OPTIONS = {
   "Count": "COUNT",
-  "Box Office": "BOX_OFFICE",
-  "Budget": "BUDGET",
+  "Box Office ($)": "BOX_OFFICE_USD",
+  "Budget ($)": "BUDGET_USD",
 }
 
 
@@ -24,7 +24,7 @@ function Country(){
 
   const [filterActive, setFilterActive] = useState(false);
   const [rank, setRank] = useState('COUNT');
-  const [movies, setMovies] = useState(DEFAULT_MOVIES);
+  const [movies, setMovies] = useState(null);
   const [nMatches, setNMatches] = useState(null);
   const [criteria, setCriteria] = useState({});
 
@@ -42,6 +42,7 @@ function Country(){
       newCriteria
     )
   }
+
   function get_movies(){
     fetch('/api/movies', {
       method: 'POST',
@@ -52,7 +53,7 @@ function Country(){
       },
       body: JSON.stringify({
         "criteria": criteria,
-        "properties": ['TITLE', 'YEAR', 'COUNTRY', 'BOX_OFFICE', 'BUDGET']
+        "properties": ['TITLE', 'YEAR', 'COUNTRY', 'BOX_OFFICE_USD', 'BUDGET_USD']
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
       console.log(data["data"])
@@ -63,9 +64,9 @@ function Country(){
 
   useEffect(() => {
     console.log('Setting rank ', rank, ' criteria', criteria)
-    // setMovies(null);
-    // setNMatches(null);
-    // get_movies();
+    setMovies(null);
+    setNMatches(null);
+    get_movies();
   }, [criteria])
 
   return (
@@ -75,7 +76,7 @@ function Country(){
       <Filters active={filterActive} nMatches={nMatches} updateFilters={updateCriteria} filters={criteria} />
 
       <div id="ControlPanel">
-        <Options updateOption={setRank} option={rank} name='Ranking' options={RANK_OPTIONS} />
+        <Options updateOption={setRank} option={rank} name='Ranking' options={RANK_OPTIONS} multi={false}/>
         <div className='filler' />
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
       </div>

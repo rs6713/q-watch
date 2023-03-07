@@ -75,6 +75,10 @@ app = Flask(__name__)
 MOVIE_QUALITIES = ["ID", "COUNTRY", "YEAR", "LANGUAGE",
                    "BOX_OFFICE", "BUDGET", "INTENSITY", "AGE"]
 MOVIE_LABELS = ["GENRE", "TYPE", "TROPE_TRIGGER", "REPRESENTATION", "TAG"]
+MOVIE_LABELS_EXTRAS = {
+    'TYPE': ['EXPLICIT'],
+    'REPRESENTATION': ['MAIN']
+}
 
 # Create Label Mappings
 LABEL_MAPPINGS = {}
@@ -309,12 +313,19 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                 TableAggregate(
                     table_name=f'MOVIE_{prop}',
                     aggs=[
-                        Aggregate(f'{prop}_ID', f'{prop}S', 'string')
+                        Aggregate(f'{prop}_ID', f'{prop}S', 'string'),
+                        *[
+                            Aggregate(e, f'{prop}S_{e}', 'string')
+                            for e in MOVIE_LABELS_EXTRAS.get(prop, [])
+                        ]
                     ],
                     groups=["MOVIE_ID"],
                     criteria=None
                 ),
-                return_properties=[f'{prop}S'],
+                return_properties=[f'{prop}S', *[
+                    f'{prop}S_{e}'
+                    for e in MOVIE_LABELS_EXTRAS.get(prop, [])
+                ]],
                 base_table_prop='ID', join_table_prop='MOVIE_ID',
                 isouter=True
             )
@@ -437,8 +448,15 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
         for label in MOVIE_LABELS:
             if ((return_properties is None or f"{label}S" in return_properties) and movie[f"{label}S"] is not None):
                 movie[f"{label}S"] = [
-                    LABEL_MAPPINGS[f"{label}S"][i]
-                    for i in movie[f"{label}S"]
+                    {
+                        **LABEL_MAPPINGS[f"{label}S"][i],
+                        **{
+                            e: movie[f'{label}S_{e}'][index]
+                            for e in MOVIE_LABELS_EXTRAS.get(label, [])
+                            if f'{label}S_{e}' in movie
+                        }
+                    }
+                    for index, i in enumerate(movie[f"{label}S"])
                 ]
         for label in ["INTENSITY", "AGE"]:
             if return_properties is None or label in return_properties:
