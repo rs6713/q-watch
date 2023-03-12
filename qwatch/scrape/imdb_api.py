@@ -150,7 +150,7 @@ class IMDBScraper(object):
             "URLS": [
                 self.movie_url
             ],
-            'IMDB_ID': int(self.movie_id)
+            'IMDB_ID': str(self.movie_id)
         }
 
     def get_bio(self):
@@ -374,7 +374,7 @@ class IMDBScraper(object):
                                 str(member.__dict__['personID'])
                             )
                             member_props = {
-                                'IMDB_ID': member_props['imdbID'],
+                                'IMDB_ID': str(member_props['imdbID']),
                                 'BIO': member_props['bio'],
                                 'DOB': member_props['birth date'],
                                 'HEADSHOT': member_props['headshot']
@@ -422,7 +422,7 @@ class IMDBScraper(object):
             "TRANSGENDER": None,
             'HEADSHOT': '',
             'NATIONALITY': '',
-            'IMDB_ID': None,
+            'IMDB_ID': '',
         }
         with engine.connect() as conn:
             people = pd.DataFrame([{

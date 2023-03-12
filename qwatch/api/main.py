@@ -608,24 +608,12 @@ def get_movie_list():
         return {"data": [], "n_indexes": 0, "n_matches": 0}
     n_indexes = math.ceil(len(movies) / results_per_index)
 
-    # Create numerical representations of budget/box_offices in USD
-    for movie in movies:
-        for col in ['BUDGET', 'BOX_OFFICE']:
-            if col in movie:
-                movie[f'{col}_USD'] = convert_to_usd(movie, col)
-
     # Sort movies according to sort
     if sort is not None:
 
-        for movie in movies:
-            sort_col = sort[0]
-            if sort_col in ['BOX_OFFICE', 'BUDGET']:
-                sort_col += '_USD'
-            movie['sort_key'] = movie[sort_col]
-
         movies = sorted(
             movies,
-            key=lambda movie: movie['sort_key'],
+            key=lambda movie: movie[sort[0]],
             reverse=sort[1] == -1
         )
 

@@ -1,8 +1,12 @@
 import React from "react";
 
 
-export function Icon(name, className){
+export function Icon({name, label, className}){
   try{
+    if(label === undefined){
+      label='';
+    }
+    console.log('trying to get icon: ', name)
     const svgIcon = require(`../../static/icons/${name}.svg`);
 
     // const Icon = require(`../../static/icons/${name}.svg`).default
@@ -12,7 +16,7 @@ export function Icon(name, className){
       return <></>
     }
 
-    return <img src={svgIcon} className={className} />
+    return <img src={svgIcon} title={label} className={className} />
     return svgIcon.default
     return <svg>
         <use xlinkHref={`../../static/icons/${name}.svg`} className={className} fill="currentColor" stroke="currentColor"></use>

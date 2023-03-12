@@ -12,6 +12,7 @@ import {ReactComponent as Filter} from '../static/icons/filter.svg'
 import DEFAULT_MOVIES from './default_rank.json';
 
 const RANK_OPTIONS = {
+  "Count": "COUNT",
   "Popularity": "NUM_RATING",
   "Rating": "AVG_RATING",
   "Box Office ($)": "BOX_OFFICE_USD",
@@ -32,6 +33,9 @@ const SUMMARY_OPTIONS = {
   },
   "POPULARITY": {
     "Average": 'mean'
+  },
+  "COUNT": {
+    "Total": "sum"
   }
 
 }
@@ -56,6 +60,8 @@ function Rank(){
   const [summary, setSummary] = useState("sum");
 
   function get_movies(){
+    let properties =  ['TITLE', 'YEAR', 'TYPES', ...Object.values(RANK_OPTIONS), 'GENRES', 'REPRESENTATIONS'];
+    properties.splice(properties.indexOf('COUNT'), 1) 
     fetch('/api/movies', {
       method: 'POST',
       headers: {
@@ -66,7 +72,7 @@ function Rank(){
       body: JSON.stringify({
         "criteria": criteria,
         "sort": [rank, ascending ? 1 : -1],
-        "properties": ['TITLE', 'YEAR', 'TYPES', ...Object.values(RANK_OPTIONS), 'GENRES', 'REPRESENTATIONS']
+        "properties": properties
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
       console.log(data["data"])
@@ -121,7 +127,7 @@ function Rank(){
       <div className='Graph'>
         <Loader isLoading={movies === null} />
         {movies !== null && 
-        <BarHierarchy dataset={movies.filter(movie => movie.sort_key !== 0 || !ignoreZeros)} sort_ascending={ascending} grouping_vars={group} name_var={'TITLE'} label_vars={['YEAR']} value_var={rank} summary_var={summary} />
+        <BarHierarchy dataset={movies.filter(movie => movie[rank] !== 0 || !ignoreZeros)} sort_ascending={ascending} grouping_vars={group} name_var={'TITLE'} label_vars={['YEAR']} value_var={rank} summary_var={summary} />
         }
       </div>
       <Footer />

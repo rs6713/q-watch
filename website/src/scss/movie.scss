@@ -108,6 +108,12 @@
         > h2 {
           font-weight: normal;
           margin-bottom: 2em;
+
+          img {
+            height: 1em;
+            margin-right: 0.1em;
+            cursor: pointer;
+          }
         }
         > div#aside {
           position: absolute;

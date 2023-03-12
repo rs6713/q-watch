@@ -13,6 +13,7 @@ import ExpandableBubbles from './components/ExpandableBubbles'
 import {sourceDisclaimer} from '../constants'
 import Source from './components/Source';
 import styles from '../scss/defaults.scss';
+import {Icon} from './components/Image'
 
 import {ReactComponent as ReturnMovie} from '../static/icons/return.svg';
 import {ReactComponent as ShuffleMovie} from '../static/icons/shuffle.svg';
@@ -103,7 +104,8 @@ function Movie(props){
             {formatRuntime(movie.RUNTIME)}&nbsp;&#9679;&nbsp;
             {movie.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
             {movie.LANGUAGE}&nbsp;&#9679;&nbsp;
-            {movie.COUNTRY}
+            {movie.COUNTRY}&nbsp;&#9679;&nbsp;
+            {movie.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}
           </h2>
           
           <div id="aside">
@@ -114,7 +116,7 @@ function Movie(props){
         </div>
         <div id="MovieParts">
           <p>{movie.SUMMARY}</p>
-          <Bubbles items={movie.GENRES} />
+          {/* <Bubbles items={movie.GENRES} /> */}
           {/* {movie.SOURCES.length > 0 &&
             <div id="findMe">
               <h2>

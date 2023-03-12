@@ -195,7 +195,7 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
         <div className='SliderOptions'>
         {filter.filters.map((option) => {
           return <div className={getOptionClass(option)} id={String(option.ID + randomIdx)} key={option.ID} onClick={()=>chooseOption(option)}>
-              {option.ICON && Icon(option.ICON, 'icon')}
+              {option.ICON && <Icon name={option.ICON} className={'icon'} label={option.LABEL} />}
               {!option.ICON && option.ID}
             </div>
           })}

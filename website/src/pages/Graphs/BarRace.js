@@ -56,7 +56,7 @@ const BarRace = ({data, grouping_vars, name_var, label_vars, value_var}) => {
             lbls => ({
               'GROUP': lbls.join(', '),
               'YEAR': d.YEAR,
-              'VALUE': d.sort_key,
+              'VALUE': d[value_var],
               'TITLE': d.TITLE
             })
         ))

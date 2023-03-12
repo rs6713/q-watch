@@ -4,6 +4,7 @@ import Legend from "d3-color-legend"
 
 import * as topojson from 'topojson-client';
 import world from '../../static/json/countries-50m.json'
+import resizeGraph from './utils'
 
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
@@ -17,8 +18,8 @@ function Choropleth(data, {
   scale = d3.scaleSequentialLog,// d3.scaleSequential, // type of color scale
   domain, // [min, max] values; input of color scale
   range = d3.interpolateBlues, // output of color scale
-  width = 640, // outer width, in pixels
-  height, // outer height, in pixels
+  width = 1200, // outer width, in pixels
+  container_height, // outer height, in pixels
   projection, // a D3 projection; null for pre-projected geometry
   features, // a GeoJSON feature collection
   featureId = d => d.id, // given a feature, returns its id
@@ -31,6 +32,7 @@ function Choropleth(data, {
   strokeLinejoin = "round", // stroke line join for borders
   strokeWidth, // stroke width for borders
   strokeOpacity, // stroke opacity for borders
+  margin = {'top': 0, 'left': 0, 'right': 0, 'bottom': 0}
 } = {}) {
   // Compute values.
   const N = d3.map(data, id);
@@ -56,35 +58,36 @@ function Choropleth(data, {
     const O = d3.map(data, d => d);
     title = (f, i) => T(f, O[i]);
   }
-
+  console.log(width, margin.left, margin.right, outline)
   // Compute the default height. If an outline object is specified, scale the projection to fit
   // the width, and then compute the corresponding height.
-  if (height === undefined) {
-    if (outline === undefined) {
-      height = 400;
-    } else {
-      const [[x0, y0], [x1, y1]] = d3.geoPath(projection.fitWidth(width, outline)).bounds(outline);
-      const dy = Math.ceil(y1 - y0), l = Math.min(Math.ceil(x1 - x0), dy);
-      projection.scale(projection.scale() * (l - 1) / l).precision(0.2);
-      height = dy;
-    }
-  }
+
+  const [[x0, y0], [x1, y1]] = d3.geoPath(
+    projection.fitWidth(width, outline) //outline
+  ).bounds(outline);
+  const dy = Math.ceil(y1 - y0), l = Math.min(Math.ceil(x1 - x0), dy);
+  projection.scale(projection.scale() * (l - 1) / l).precision(0.2);
+  let height = dy;
+
 
   // Construct a path generator.
   const path = d3.geoPath(projection);
 
-  if (outline != null) svg.append("path")
-      .attr("fill", fill)
-      .attr("stroke", "currentColor")
-      .attr("d", path(outline));
+  // if (outline != null) svg.append("path")
+  //     .attr("fill", fill)
+  //     .attr("stroke", "currentColor")
+  //     .attr("d", path(outline))
 
+  console.log('container height ', container_height, ' height ', height)
   svg.append("g")
     .selectAll("path")
     .data(features.features)
     .join("path")
       .attr("fill", (d, i) => color(V[Im.get(If[i])]))
       .attr("d", path)
+      .attr("transform", "translate(0," + (margin.top + ((container_height - margin.top - height) / 2 )) + ")")
       .attr("cursor", "pointer")
+      //.attr('dy',1000)
     .append("title")
       .text((d, i) => title(d, Im.get(If[i])));
 
@@ -96,7 +99,8 @@ function Choropleth(data, {
       .attr("stroke-linejoin", strokeLinejoin)
       .attr("stroke-width", strokeWidth)
       .attr("stroke-opacity", strokeOpacity)
-      .attr("d", path(borders));
+      .attr("d", path(borders))
+      .attr("transform", "translate(0," + (margin.top + ((container_height - margin.top - height) / 2 )) + ")")
 
   return Object.assign(svg.node(), {scales: {color}});
 }
@@ -104,33 +108,25 @@ function Choropleth(data, {
 const ChartCountry = ({dataset, value_var}) => {
   const ref = useRef();
 
-  let graphContainer;
-  var graphStyle;
+  var title = `Country Ranking by ${value_var}`
 
+
+
+
+  var fontSize = parseFloat(getComputedStyle(document.getElementById('ControlPanel')).fontSize);
+  const MARGIN = ({top: 4 * fontSize, right: 2 * fontSize, left: 4 * fontSize})
 
   const [SVGdimensions, setSVGdimensions] = React.useState({ 
-    minHeight: 0,
+    height: 0,
     width: 0
   })
 
+  React.useEffect(resizeGraph(setSVGdimensions), []);
+
   React.useEffect(() => {
-    graphContainer = document.getElementsByClassName('Graph')[0];
-    graphStyle = getComputedStyle(graphContainer);
-    function handleResize() {
-
-      var paddingX = parseFloat(graphStyle.paddingLeft) + parseFloat(graphStyle.paddingRight);
-      var paddingY = parseFloat(graphStyle.paddingTop) + parseFloat(graphStyle.paddingBottom);
-
-      setSVGdimensions({
-        minHeight: graphContainer.clientHeight - paddingY,
-        width: graphContainer.clientWidth - paddingX
-      })
-    }
-    window.addEventListener('resize', handleResize)
-    handleResize();
 
     const svg = d3.select(ref.current)
-    let height = SVGdimensions['minHeight']
+    let height = SVGdimensions['height']
     svg.selectAll("*").remove();
     svg.attr("width", SVGdimensions['width'])
       .attr("height", height)
@@ -141,6 +137,16 @@ const ChartCountry = ({dataset, value_var}) => {
         .attr("pointer-events", "all")
         .attr("width", SVGdimensions['width'])
         .attr("height", height)
+
+    // Title
+    svg.append("text")
+    .attr("x", (SVGdimensions['width'] / 2))         
+    .attr("y", (MARGIN.top / 2) - (fontSize / 2))
+    .attr("text-anchor", "middle")  
+    .style("text-decoration", "underline")  
+    .attr("font-size", fontSize)
+    .attr("fill", "black")
+    .text(title);
 
     // let grouped_data = [
     //   {'name': 'United Kingdom', [value_var]: 10}
@@ -167,17 +173,18 @@ const ChartCountry = ({dataset, value_var}) => {
       featureId: d => d.properties.name, // i.e., not ISO 3166-1 numeric
       borders: countrymesh,
       projection: d3.geoEqualEarth(),// d3.geoMercator(),// 
-      width: SVGdimensions['width']
+      width: SVGdimensions['width'],
+      container_height: SVGdimensions['height'],
+      margin: MARGIN,
+      outline: undefined
     })
     //chart.scales.color
     // console.log( Legend(chart.scales.color, {title: "Number of Movies"}))
     // let key = Legend(chart.scales.color, {title: "Number of Movies"})
     // //console.log(key)
 
-    return _ => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [value_var, dataset])
+    
+  }, [value_var, dataset, SVGdimensions])
 
 
   return (
