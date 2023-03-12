@@ -8,10 +8,6 @@ const color = d3.scaleOrdinal([true, false], ["#cc81dd", "#85f2e8"])
 var BARSTEP, BARPADDING, BARGAP, MARGIN;
 
 
-const createRoot = (data, sort_ascending) => {
-  return  d3.hierarchy(data)
-    .sum(d => d.value)
-}
 
 function cartesian(...args) {
   var r = [], max = args.length-1;
@@ -232,31 +228,7 @@ function bar(svg, down, d, selector, fontSize, x, xAxis) {
   return g;
 }
 
-const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_vars, value_var, summary_var}) => {
-  const ref = useRef();
-
-  var fontSize = parseFloat(getComputedStyle(document.getElementById('ControlPanel')).fontSize);
-  BARSTEP = 2 * fontSize;
-  BARPADDING = 3 / fontSize;
-  MARGIN = ({top: 4 * fontSize, right: 2 * fontSize, bottom: 0, left: 10 * fontSize})
-
-
-  var title = `Ranking ${label_vars} by ${summary_var} ${value_var}`
-
-  const [SVGdimensions, setSVGdimensions] = React.useState({ 
-    height: 0,
-    width: 0
-  })
-  React.useEffect(resizeGraph(setSVGdimensions), []);
-
-
-  useEffect(() => {
-  
-
-
-
-
-function up(svg, d) {
+function up(svg, d, fontSize, x, xAxis) {
   if (!d.parent || !svg.selectAll(".exit").empty()) return;
 
   // Rebind the current node to the background.
@@ -319,113 +291,126 @@ function up(svg, d) {
       .on("end", function(p) { d3.select(this).attr("fill-opacity", 1); });
 }
 
-
-
-let yAxis = g => g
-    .attr("class", "y-axis")
-    .attr("transform", `translate(${MARGIN.left + 0.5},0)`)
-    .call(g => g.append("line")
-        .attr("stroke", "currentColor")
-        .attr("y1", MARGIN.top)
-        .attr("y2", height - MARGIN.bottom))
-
-let xAxis = g => g
-  .attr("class", "x-axis")
-  .attr("transform", `translate(0,${MARGIN.top})`)
-  .call(d3.axisTop(x).ticks(SVGdimensions['width'] / 80, "s"))
-  .call(g => (g.selection ? g.selection() : g).select(".domain").remove())
-
-
-  console.log(sort_ascending, grouping_vars, name_var, label_vars, value_var)
-  console.log(dataset[0])
-  
-
-  let hierarchy_data = createHierarchicalData(dataset, name_var, value_var, grouping_vars, label_vars)
-
-  let root = createRoot(hierarchy_data, sort_ascending);
-
-  let height = (() => {
-    var max = 1;
-    //root.each
-    root.each(d => d.children && (max = Math.max(max, d.children.length)));
-    console.log('Max', max)
-    return max * BARSTEP + MARGIN.top + MARGIN.bottom;
-  })();
-
-  // let container = document.getElementsByClassName('Graph')[0];
-  // var cs = getComputedStyle(container);
-  // var paddingX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-  // var paddingY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-
-
-  // let width = container.clientWidth - paddingX;
-  // var x = d3.scaleLinear().range([MARGIN.left, width - MARGIN.right])
-  var x = d3.scaleLinear().range([MARGIN.left, SVGdimensions['width'] - MARGIN.right])
-
-  function calculateScore(object){
-    object.scores = [];
-    if(object.children){
-      console.log(object.children)
-      for(let child of object.children){
-        object.scores.push(calculateScore(child));
-      }
-      object.score =  object.scores.reduce((a, b) => a + b, 0) / (summary_var == 'mean' ? object.scores.length : 1)
-      return object.score;
-    }else{
-      object.score = object.value 
-      return object.score;
+function calculateScore(object, summary_var){
+  object.scores = [];
+  if(object.children){
+    console.log(object.children)
+    for(let child of object.children){
+      object.scores.push(calculateScore(child));
     }
+    object.score =  object.scores.reduce((a, b) => a + b, 0) / (summary_var == 'mean' ? object.scores.length : 1)
+    return object.score;
+  }else{
+    object.score = object.value 
+    return object.score;
   }
+}
 
-  calculateScore(root)
-  root = root.sort((a, b) => (b.score - a.score) * (sort_ascending ? -1 : 1))
-  .eachAfter(d => d.index = d.parent ? d.parent.index = d.parent.index + 1 || 0 : 0)
+const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_vars, value_var, summary_var}) => {
+  const ref = useRef();
+
+  // Establish margin, barspacing according to fontsize on page.
+  var fontSize = parseFloat(getComputedStyle(document.getElementById('ControlPanel')).fontSize);
+  BARSTEP = 2 * fontSize;
+  BARPADDING = 3 / fontSize;
+  MARGIN = ({top: 4 * fontSize, right: 2 * fontSize, bottom: 0, left: 10 * fontSize})
+
+
+  var title = `Ranking ${label_vars} by ${summary_var} ${value_var}`
+
+  // Control dimensions of graph as page resizes.
+  const [SVGdimensions, setSVGdimensions] = React.useState({ 
+    height: 0,
+    width: 0
+  })
+  React.useEffect(resizeGraph(setSVGdimensions), []);
+
+  useEffect(() => {
+
+    let yAxis = g => g
+        .attr("class", "y-axis")
+        .attr("transform", `translate(${MARGIN.left + 0.5},0)`)
+        .call(g => g.append("line")
+            .attr("stroke", "currentColor")
+            .attr("y1", MARGIN.top)
+            .attr("y2", height - MARGIN.bottom))
+
+    let xAxis = g => g
+      .attr("class", "x-axis")
+      .attr("transform", `translate(0,${MARGIN.top})`)
+      .call(d3.axisTop(x).ticks(SVGdimensions['width'] / 80, "s"))
+      .call(g => (g.selection ? g.selection() : g).select(".domain").remove())
   
-  x.domain([0, root.score]);
 
-  //let minHeight = container.clientHeight - paddingY;
-  height = Math.max(height, SVGdimensions['height']);
+    let hierarchy_data = createHierarchicalData(dataset, name_var, value_var, grouping_vars, label_vars)
+    let root = d3.hierarchy(hierarchy_data).sum(d => d.value)
 
-  console.log('Height: ', height)
+    // Graph height, required so page covers all children
+    let height = (() => {
+      var max = 1;
+      //root.each
+      root.each(d => d.children && (max = Math.max(max, d.children.length)));
+      console.log('Max', max)
+      return max * BARSTEP + MARGIN.top + MARGIN.bottom;
+    })();
+    height = Math.max(height, SVGdimensions['height']);
 
-  const svg = d3.select(ref.current)
-  svg.selectAll("*").remove();
-  svg.attr("width", SVGdimensions['width'])
-    .attr("height", height)
 
-  // Graph Background
-  svg.append("rect")
-      .attr("class", "background")
-      .attr("fill", "white")
-      .attr("pointer-events", "all")
-      .attr("width", SVGdimensions['width'])
+    // let container = document.getElementsByClassName('Graph')[0];
+    // var cs = getComputedStyle(container);
+    // var paddingX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+    // var paddingY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+
+
+    
+    // Calculate and add .score attribute, sum of all children, or own value
+    calculateScore(root, summary_var)
+    root = root.sort((a, b) => (b.score - a.score) * (sort_ascending ? -1 : 1))
+    .eachAfter(d => d.index = d.parent ? d.parent.index = d.parent.index + 1 || 0 : 0)
+    
+    // let width = container.clientWidth - paddingX;
+    // var x = d3.scaleLinear().range([MARGIN.left, width - MARGIN.right])
+    var x = d3.scaleLinear().range([MARGIN.left, SVGdimensions['width'] - MARGIN.right])
+    x.domain([0, root.score]);
+
+
+    const svg = d3.select(ref.current)
+    svg.selectAll("*").remove();
+    svg.attr("width", SVGdimensions['width'])
       .attr("height", height)
-      .attr("cursor", "pointer")
-      .on("click", (event, d) => up(svg, d));
 
-  // Title
-  svg.append("text")
-  .attr("x", (SVGdimensions['width'] / 2))         
-  .attr("y", (MARGIN.top / 2) - (fontSize / 2))
-  .attr("text-anchor", "middle")  
-  .style("text-decoration", "underline")  
-  .attr("font-size", fontSize)
-  .attr("fill", "black")
-  .text(title);
+    // Graph Background
+    svg.append("rect")
+        .attr("class", "background")
+        .attr("fill", "white")
+        .attr("pointer-events", "all")
+        .attr("width", SVGdimensions['width'])
+        .attr("height", height)
+        .attr("cursor", "pointer")
+        .on("click", (event, d) => up(svg, d, fontSize, x, xAxis));
 
-  // x axis
-  svg.append("g")
-      .call(xAxis);
+    // Title
+    svg.append("text")
+    .attr("x", (SVGdimensions['width'] / 2))         
+    .attr("y", (MARGIN.top / 2) - (fontSize / 2))
+    .attr("text-anchor", "middle")  
+    .style("text-decoration", "underline")  
+    .attr("font-size", fontSize)
+    .attr("fill", "black")
+    .text(title);
 
-  // y axis
-  svg.append("g")
-      .call(yAxis);
+    // x axis
+    svg.append("g")
+        .call(xAxis);
 
-  // how to navigate down the hierarchy
-  down(svg, root, x, xAxis, fontSize);
+    // y axis
+    svg.append("g")
+        .call(yAxis);
 
-}, [dataset, sort_ascending, grouping_vars]);
+    // how to navigate down the hierarchy
+    down(svg, root, x, xAxis, fontSize);
 
+  }, [dataset, sort_ascending, grouping_vars, SVGdimensions]);
 
 
   return (
