@@ -97,7 +97,7 @@ function Movie(props){
 
       <div id="MovieContents">
         <div id="MovieTitle">
-          <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} />
+          <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} votable={true}/>
           <h1>{movie.TITLE}</h1>
           <Bubbles items={movie.TAGS} />
           <h2>

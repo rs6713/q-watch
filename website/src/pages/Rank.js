@@ -105,7 +105,7 @@ function Rank(){
 
   function updateRank(x){
     setRank(x)
-    setSummary(SUMMARY_OPTIONS[x])
+    setSummary(SUMMARY_OPTIONS[x][Object.keys(SUMMARY_OPTIONS[x])[0]])
   }
 
   return (

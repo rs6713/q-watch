@@ -217,6 +217,7 @@
 
     li {
       word-break: keep-all;
+      border-radius: 0em;
 
       text-decoration: none;
       border-top: 1px solid $FONT_COLOR_LIGHT;
@@ -237,10 +238,17 @@
   }
   #Options:hover {
     border-radius: 0.5em 0.5em 0em 0em;
+    > div {
+      border-radius: 0.5em 0.5em 0em 0em;
+    }
     ul {
       display: block;
-
+      border-radius: 0em 0em 0.5em 0.5em;
       border: 1px solid $FONT_COLOR_LIGHT;
+
+      li {
+        border-radius: 0;
+      }
     }
 
     div svg {

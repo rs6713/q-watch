@@ -18,6 +18,7 @@ from sqlalchemy import (
     Column,
     or_,
     not_,
+    Float
 )
 from sqlalchemy.engine import (
     Connection,
@@ -28,6 +29,7 @@ from sqlalchemy.engine import (
 from sqlalchemy.orm import aliased
 import sqlalchemy
 from sqlalchemy.sql.expression import Alias, cast
+
 
 from qwatch.utils import describe_obj
 from qwatch.io.utils import (
@@ -136,7 +138,7 @@ def get_table_aggregate(conn: Connection, table_name: str, groups: List[str], ag
                 sqlalchemy.literal_column("','")
             ).label(agg.label)
         if agg.func == "mean":
-            return func.avg(table.c[agg.property]).label(agg.label)
+            return func.avg(cast(table.c[agg.property], Float)).label(agg.label)
         if agg.func == "sum":
             return func.sum(table.c[agg.property]).label(agg.label)
         if agg.func == "count":

@@ -29,7 +29,6 @@ function wrap(text, width) {
   let i = 0;
   let maxWrap = 0;
   text.each(function() {
-    console.log('Text ', d3.select(this).text().split(/\s+/).reverse())
     let wrapped_text = false;
     var text = d3.select(this),
         words = text.text().split(/\s+/).reverse(),
@@ -46,7 +45,7 @@ function wrap(text, width) {
         if (maxWrap > 0){
           maxWrap = 0;
         }
-    console.log('dy ', dy, ' lineHeight ', lineHeight)
+
     while (word = words.pop()) {
       line.push(word);
       tspan.text(line.join(" "));
@@ -123,7 +122,7 @@ const createHierarchicalData = (data, name_var, value_var, grouping_vars, label_
   return {name: 'root', children: dataHierarchy}
 }
 
-function down(svg, d, x, xAxis, fontSize) {
+function down(svg, svgX, d, x, xAxis, fontSize) {
   if (!d.children || d3.active(svg.node())) return;
 
   // Rebind the current node to the background.
@@ -131,6 +130,8 @@ function down(svg, d, x, xAxis, fontSize) {
 
   // Define two sequenced transitions.
   const transition1 = svg.transition().duration(DURATION);
+  //const transition1X = svgX.transition().duration(DURATION);
+  const transition2X = svgX.transition().duration(DURATION).delay(DURATION);
   const transition2 = transition1.transition();
 
   // Mark any currently-displayed bars as exiting.
@@ -148,7 +149,7 @@ function down(svg, d, x, xAxis, fontSize) {
 
   // Enter the new bars for the clicked-on data.
   // Per above, entering bars are immediately visible.
-  const enter = bar(svg, down, d, ".y-axis", fontSize, x, xAxis)
+  const enter = bar(svg, svgX, down, d, ".y-axis", fontSize, x, xAxis)
       .attr("fill-opacity", 0);
 
   // Have the text fade-in, even though the bars are visible.
@@ -165,7 +166,7 @@ function down(svg, d, x, xAxis, fontSize) {
   x.domain([0, d3.max(d.children, d => d.score)]);
 
   // Update the x-axis.
-  svg.selectAll(".x-axis").transition(transition2)
+  svgX.selectAll(".x-axis").transition(transition2X)
       .call(xAxis);
 
   // Transition entering bars to the new x-scale.
@@ -199,10 +200,10 @@ function stagger(x) {
   };
 }
 
-function bar(svg, down, d, selector, fontSize, x, xAxis) {
+function bar(svg, svgX, down, d, selector, fontSize, x, xAxis) {
   const g = svg.insert("g", selector)
       .attr("class", "enter")
-      .attr("transform", `translate(0,${MARGIN.top + BARSTEP * BARPADDING})`)
+      .attr("transform", `translate(0,${BARSTEP * BARPADDING})`)
       .attr("text-anchor", "end")
       .style("font", `${fontSize}px Futura PT`);
       
@@ -211,14 +212,14 @@ function bar(svg, down, d, selector, fontSize, x, xAxis) {
     .data(d.children)
     .join("g")
       .attr("cursor", d => !d.children ? null : "pointer")
-      .on("click", (event, d) => down(svg, d, x, xAxis, fontSize));
+      .on("click", (event, d) => down(svg, svgX, d, x, xAxis, fontSize));
 
   bar.append("text")
       .attr("x", MARGIN.left - 6)
       .attr("y", BARSTEP * (1 - BARPADDING) / 2)
       .attr("dy", ".35em")
       .text(d => d.data.name)
-      .call(wrap, MARGIN.left);
+      .call(wrap, MARGIN.left - 6);
 
   bar.append("rect")
       .attr("x", x(0))
@@ -228,7 +229,7 @@ function bar(svg, down, d, selector, fontSize, x, xAxis) {
   return g;
 }
 
-function up(svg, d, fontSize, x, xAxis) {
+function up(svg, svgX, d, fontSize, x, xAxis) {
   if (!d.parent || !svg.selectAll(".exit").empty()) return;
 
   // Rebind the current node to the background.
@@ -236,6 +237,7 @@ function up(svg, d, fontSize, x, xAxis) {
 
   // Define two sequenced transitions.
   const transition1 = svg.transition().duration(DURATION);
+  const transition1X = svgX.transition().duration(DURATION);
   const transition2 = transition1.transition();
 
   // Mark any currently-displayed bars as exiting.
@@ -246,7 +248,7 @@ function up(svg, d, fontSize, x, xAxis) {
   x.domain([0, d3.max(d.parent.children, d => d.score)]);
 
   // Update the x-axis.
-  svg.selectAll(".x-axis").transition(transition1)
+  svgX.selectAll(".x-axis").transition(transition1X)
       .call(xAxis);
 
   // Transition exiting bars to the new x-scale.
@@ -269,7 +271,7 @@ function up(svg, d, fontSize, x, xAxis) {
       .remove();
 
   // Enter the new bars for the clicked-on data's parent.
-  const enter = bar(svg, down, d.parent, ".exit", fontSize, x, xAxis)
+  const enter = bar(svg, svgX, down, d.parent, ".exit", fontSize, x, xAxis)
       .attr("fill-opacity", 0);
 
   enter.selectAll("g")
@@ -296,27 +298,29 @@ function calculateScore(object, summary_var){
   if(object.children){
     console.log(object.children)
     for(let child of object.children){
-      object.scores.push(calculateScore(child));
+      object.scores.push(calculateScore(child, summary_var));
     }
-    object.score =  object.scores.reduce((a, b) => a + b, 0) / (summary_var == 'mean' ? object.scores.length : 1)
+
+    object.score = object.scores.reduce((a, b) => a + b, 0) / (summary_var == 'mean' ? object.scores.length : 1)
     return object.score;
   }else{
-    object.score = object.value 
+    object.score = object.value
     return object.score;
   }
 }
 
 const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_vars, value_var, summary_var}) => {
-  const ref = useRef();
+  const refX = useRef();
+  const refGraph = useRef();
 
   // Establish margin, barspacing according to fontsize on page.
   var fontSize = parseFloat(getComputedStyle(document.getElementById('ControlPanel')).fontSize);
   BARSTEP = 2 * fontSize;
   BARPADDING = 3 / fontSize;
-  MARGIN = ({top: 4 * fontSize, right: 2 * fontSize, bottom: 0, left: 10 * fontSize})
+  MARGIN = ({top: 4 * fontSize, right: 2 * fontSize, bottom: 0, left: 12 * fontSize})
 
 
-  var title = `Ranking ${label_vars} by ${summary_var} ${value_var}`
+  var title = `Ranking ${grouping_vars} by ${summary_var} ${value_var}`
 
   // Control dimensions of graph as page resizes.
   const [SVGdimensions, setSVGdimensions] = React.useState({ 
@@ -332,7 +336,7 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
         .attr("transform", `translate(${MARGIN.left + 0.5},0)`)
         .call(g => g.append("line")
             .attr("stroke", "currentColor")
-            .attr("y1", MARGIN.top)
+            .attr("y1", 0)
             .attr("y2", height - MARGIN.bottom))
 
     let xAxis = g => g
@@ -340,7 +344,6 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
       .attr("transform", `translate(0,${MARGIN.top})`)
       .call(d3.axisTop(x).ticks(SVGdimensions['width'] / 80, "s"))
       .call(g => (g.selection ? g.selection() : g).select(".domain").remove())
-  
 
     let hierarchy_data = createHierarchicalData(dataset, name_var, value_var, grouping_vars, label_vars)
     let root = d3.hierarchy(hierarchy_data).sum(d => d.value)
@@ -348,36 +351,50 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
     // Graph height, required so page covers all children
     let height = (() => {
       var max = 1;
-      //root.each
-      root.each(d => d.children && (max = Math.max(max, d.children.length)));
-      console.log('Max', max)
-      return max * BARSTEP + MARGIN.top + MARGIN.bottom;
+      return root.children.length * (BARSTEP + BARPADDING) + MARGIN.bottom;
     })();
-    height = Math.max(height, SVGdimensions['height']);
-
-
-    // let container = document.getElementsByClassName('Graph')[0];
-    // var cs = getComputedStyle(container);
-    // var paddingX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-    // var paddingY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-
+    height = Math.max(height, SVGdimensions['height'] - MARGIN.top - fontSize);
 
     
     // Calculate and add .score attribute, sum of all children, or own value
     calculateScore(root, summary_var)
+    console.log(root, summary_var)
     root = root.sort((a, b) => (b.score - a.score) * (sort_ascending ? -1 : 1))
     .eachAfter(d => d.index = d.parent ? d.parent.index = d.parent.index + 1 || 0 : 0)
     
     // let width = container.clientWidth - paddingX;
     // var x = d3.scaleLinear().range([MARGIN.left, width - MARGIN.right])
     var x = d3.scaleLinear().range([MARGIN.left, SVGdimensions['width'] - MARGIN.right])
-    x.domain([0, root.score]);
+    console.log(root.score)
+    x.domain([0, Math.max(root.score)]);
+
+    const svgX = d3.select(refX.current)
+    // Title
+    svgX.selectAll('*').remove();
+    svgX.attr('width', SVGdimensions['width']);
+    svgX.attr('height', MARGIN.top + fontSize);
+    svgX.append('rect').attr('class', 'background').attr('fill', 'white')
+    .attr('width', SVGdimensions['width'])
+    .attr('height', MARGIN.top + fontSize)
 
 
-    const svg = d3.select(ref.current)
+    svgX.append("text")
+    .attr("x", (SVGdimensions['width'] / 2))         
+    .attr("y", (MARGIN.top / 2) - (fontSize / 2))
+    .attr("text-anchor", "middle")  
+    .style("text-decoration", "underline")
+    .attr("font-size", fontSize)
+    .attr("fill", "black")
+    .text(title);
+
+    // x axis
+    svgX.append("g")
+    .call(xAxis);
+
+    const svg = d3.select(refGraph.current)
     svg.selectAll("*").remove();
     svg.attr("width", SVGdimensions['width'])
-      .attr("height", height)
+      .attr("height", height) // height)
 
     // Graph Background
     svg.append("rect")
@@ -385,38 +402,33 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
         .attr("fill", "white")
         .attr("pointer-events", "all")
         .attr("width", SVGdimensions['width'])
-        .attr("height", height)
+        .attr("height", height)// height)
+        //.attr("viewBox", "0 0 "+ toString(SVGdimensions['width']) + ' ' + toString(SVGdimensions['height'] - MARGIN.top - fontSize))
         .attr("cursor", "pointer")
-        .on("click", (event, d) => up(svg, d, fontSize, x, xAxis));
-
-    // Title
-    svg.append("text")
-    .attr("x", (SVGdimensions['width'] / 2))         
-    .attr("y", (MARGIN.top / 2) - (fontSize / 2))
-    .attr("text-anchor", "middle")  
-    .style("text-decoration", "underline")  
-    .attr("font-size", fontSize)
-    .attr("fill", "black")
-    .text(title);
-
-    // x axis
-    svg.append("g")
-        .call(xAxis);
+        .on("click", (event, d) => up(svg, svgX, d, fontSize, x, xAxis));
 
     // y axis
     svg.append("g")
         .call(yAxis);
 
     // how to navigate down the hierarchy
-    down(svg, root, x, xAxis, fontSize);
+    //down(svg, root, x, xAxis, fontSize);
+    down(svg, svgX, root, x, xAxis, fontSize);
 
-  }, [dataset, sort_ascending, grouping_vars, SVGdimensions]);
+  }, [dataset, sort_ascending, grouping_vars, SVGdimensions, summary_var]);
 
 
   return (
-      <svg id='BarHierarchy'
-        ref={ref}
+    <div id = 'BarHierarchy'>
+      <svg id='BarHierarchyX'
+        ref={refX}
       />
+      <div id='BarHierarchyGraph'>
+        <svg
+          ref={refGraph}
+        />
+      </div>
+    </div>
   )
 }
 

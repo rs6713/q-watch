@@ -11,6 +11,33 @@
   display: flex;
   flex-direction: column;
 
+  #BarHierarchyGraph {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background-color: white;
+    svg {
+      overflow-y: visible;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  #BarHierarchyGraph::-webkit-scrollbar {
+    display: none;
+  }
+
+  #BarHierarchy {
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    background-color: white;
+    #BarHierarchyX {
+      overflow: visible;
+    }
+  }
+
   #ControlPanel {
     > #Options,
     > .Switch {
@@ -23,7 +50,7 @@
   }
   .Graph {
     flex: 1 1;
-    overflow-y: scroll;
+    overflow-y: hidden;
     display: flex;
     flex-direction: column;
     margin-bottom: 1em;
