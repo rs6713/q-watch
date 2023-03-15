@@ -1,29 +1,52 @@
 @import "./defaults.scss";
 
 .source:hover #voter {
-  display: block;
+  display: flex;
 }
 
 .source {
   position: relative;
+  margin-left: 1.5em;
+  margin-right: 2em;
   img {
     height: 3em;
     width: auto;
   }
-  #votes {
+  #region {
     position: absolute;
-    right: 0;
+    left: 0;
     top: 0;
     font-size: $FONT_SIZE_DEFAULT;
     font-weight: bold;
     background-color: $FONT_COLOR_LIGHT;
     border-radius: 100%;
-    padding: 0.5em;
+    transform: translateY(-50%) translateX(-50%);
+    width: 2.5em;
+    height: 2.5em;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 1em;
+    padding: 0.75em 0em;
+  }
+  #votes {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 2.5em;
+    height: 2.5em;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 1em;
+    padding: 0.75em 0em;
+    font-size: $FONT_SIZE_DEFAULT;
+    font-weight: bold;
+    background-color: $FONT_COLOR_LIGHT;
+    border-radius: 100%;
     transform: translateY(-50%) translateX(50%);
   }
 
   #voter.active {
-    display: block;
+    display: flex;
   }
 
   #voter {

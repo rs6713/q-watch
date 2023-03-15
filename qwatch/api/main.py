@@ -296,7 +296,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
     Get movie ids of movies that match criteria
     - qualities: values on MOVIES entries, e.g. YEAR, BOX_OFFICE
     - labels: many-to_many labels assigned to movies e.g. representations
-    - writers: writers associated with 
+    - writers: writers associated with
     """
     logger.info(
         "Retrieving movies that match criteria: %s",
@@ -361,6 +361,18 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             return_properties=["IMAGES"],
             base_table_prop="ID", join_table_prop="MOVIE_ID",
             isouter=False
+        ),
+        TableJoin(
+            TableAggregate(
+                table_name="MOVIE_SOURCE",
+                aggs=[
+                    Aggregate('ID', 'SOURCES', 'string')
+                ],
+                groups=["MOVIE_ID"]
+            ),
+            return_properties=["SOURCES"],
+            base_table_prop="ID", join_table_prop="MOVIE_ID",
+            isouter=True
         )
     ])
 
@@ -433,11 +445,51 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                         movie["FILENAME"] = images[0]["FILENAME"]
                         movie["CAPTION"] = images[0]["CAPTION"]
 
+    if return_properties is None or 'SOURCES' in return_properties and len(movie['SOURCES']):
+        source_query = MovieEntries('MOVIE_SOURCE', 'MOVIE_SOURCE', joins=[
+            TableJoin(
+                "SOURCES",
+                return_properties=["LABEL", "URL", "REGION", "IMAGE"],
+                base_table_prop='SOURCE_ID', join_table_prop='ID',
+                isouter=False
+            ),
+            TableJoin(
+                TableAggregate(
+                    table_name="MOVIE_SOURCE_VOTE",
+                    aggs=[
+                        Aggregate('ID', 'VOTES', 'string')
+                    ],
+                    groups=["MOVIE_SOURCE_ID"]
+                ),
+                return_properties=["VOTES"],
+                base_table_prop="ID", join_table_prop="MOVIE_SOURCE_ID",
+                isouter=True
+            )
+        ])
+
+        for movie in movies:
+            with engine.begin() as conn:
+                movie['SOURCES'] = get_entries(
+                    conn, source_query.table,
+                    return_properties=None,
+                    joins=source_query.joins,
+                    return_format="listdict",
+                    ID=(movie['SOURCES'] or [])
+                )[0]
+                for source in (movie['SOURCES'] or []):
+                    source['VOTES'] = get_entries(
+                        conn, 'MOVIE_SOURCE_VOTE',
+                        ID=(source['VOTES'] or []),
+                        return_properties=['VOTE', 'DATE', 'ID']
+                    )[0]
+
     if return_properties is None or "IMAGES" in return_properties:
         for movie in movies:
             with engine.begin() as conn:
+                print('IMAGES: ', movie['IMAGES'])
                 movie["IMAGES"] = get_entries(
-                    conn, "MOVIE_IMAGE", ID=movie["IMAGES"]
+                    conn, "MOVIE_IMAGE",
+                    ID=(movie["IMAGES"] or [])
                 )[0]
 
     for movie in movies:
@@ -465,7 +517,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
     return movies
 
 
-@app.route('/api/movies/count', methods=["POST"])
+@ app.route('/api/movies/count', methods=["POST"])
 def get_count_matching_movies() -> int:
     """
     With filters, get count of movies that match request.
@@ -530,7 +582,7 @@ def get_count_matching_movies() -> int:
     return convert_to_json(counts)
 
 
-@app.route('/api/movie/<int:movie_id>')
+@ app.route('/api/movie/<int:movie_id>')
 def get_movie_by_id(movie_id: int):
     """ Return movie that is associated with ID."""
     movie_id = int(movie_id)
@@ -574,7 +626,7 @@ def convert_to_usd(obj, key):
         return 0
 
 
-@app.route('/api/movies', methods=["POST"])
+@ app.route('/api/movies', methods=["POST"])
 def get_movie_list():
     """
     Get movie list using posted criteria.
@@ -636,7 +688,7 @@ def get_movie_list():
     #     genre = request.args.get('genre')
 
 
-@app.route('/api/gif/random', methods=['GET'])
+@ app.route('/api/gif/random', methods=['GET'])
 def get_random_gif():
     """ Get random gif. """
     with engine.begin() as conn:
@@ -662,7 +714,7 @@ def get_random_gif():
         return convert_to_json(chosen_random_gif)
 
 
-@app.route('/api/movie/random', methods=["POST"])
+@ app.route('/api/movie/random', methods=["POST"])
 def get_random_movie():
     """ Return information of random movie. """
     properties = request.get_json().get("properties", None)
@@ -683,7 +735,7 @@ def get_random_movie():
     return convert_to_json(movie)
 
 
-@app.route('/api/movie/rating/', methods=["POST"])
+@ app.route('/api/movie/rating/', methods=["POST"])
 def save_movie_rating() -> int:
     """ Save rating for movie. """
     movie_id = int(request.form.get('movie_id'))
@@ -719,14 +771,21 @@ def save_movie_rating() -> int:
     return json.dumps({'success': True, "movie_rating_id": movie_rating_id}), 200
 
 
-@app.route('/api/source/vote/')
+@ app.route('/api/source/vote', methods=['POST'])
 def save_movie_source_vote() -> int:
     """ Up/down vote a movie source. """
-    movie_source_id = int(request.form.get('movie_source_id'))
-    vote = int(request.form.get('vote'))
-    movie_source_vote_id = request.form.get('movie_source_vote_id', None)
+    movie_source_id = int(request.get_json()['movie_source_id'])
+    vote = int(request.get_json()['vote'])
+    movie_source_vote_id = request.get_json().get('movie_source_vote_id', -1)
+    if movie_source_vote_id == -1:
+        movie_source_vote_id = None
     if movie_source_vote_id is not None:
         movie_source_vote_id = int(movie_source_vote_id)
+
+    logger.info(
+        'Saving vote %d for movie source %d, with existing vote id %d',
+        vote, movie_source_id, movie_source_vote_id
+    )
 
     if not (vote in [-1, 0, 1]):
         return json.dumps({'success': False}), 400
@@ -758,7 +817,7 @@ def get_matching_movies_archive(criteria: Dict, properties: List[str] = None) ->
     Get movie ids of movies that match criteria
     - qualities: values on MOVIES entries, e.g. YEAR, BOX_OFFICE
     - labels: many-to_many labels assigned to movies e.g. representations
-    - writers: writers associated with 
+    - writers: writers associated with
     """
     if properties is None:
         return_properties = ["ID"]

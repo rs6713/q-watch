@@ -117,21 +117,17 @@ function Movie(props){
         <div id="MovieParts">
           <p>{movie.SUMMARY}</p>
           {/* <Bubbles items={movie.GENRES} /> */}
-          {/* {movie.SOURCES.length > 0 &&
+          {movie.SOURCES && movie.SOURCES.length > 0 &&
             <div id="findMe">
               <h2>
                 Find Me On
-                {movie.TRAILER && <span id="watchTrailer" onClick={()=>{setPlayTrailer(true)}}>
-                  Watch Trailer
-                </span>
-                }
               </h2>
               <span className="disclaimer">({sourceDisclaimer})</span>
               <div>
-                {movie.SOURCES.map((source, i) => <Source key={i} id={source.ID} />)}
+                {movie.SOURCES.map((source, i) => <Source key={i} source={source} />)}
               </div>
             </div>
-          } */}
+          }
           <ExpandableBubbles items={movie.TROPE_TRIGGERS} aside="(Potential for upsetting content/spoilers)" title="Trope/Trigger Warnings" expandable={true}/>
           <ExpandableBubbles items={movie.REPRESENTATIONS} title="Representation Matters" expandable={false} />
           <Opinion opinion={movie.OPINION}/>

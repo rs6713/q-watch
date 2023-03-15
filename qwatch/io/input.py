@@ -250,7 +250,7 @@ def is_valid_id(ID: Union[List[int], int]):
 
     passes = True
     for i in ID:
-        passes = passes and i != 1 and i
+        passes = passes and i != -1 and i
     return passes
 
 
