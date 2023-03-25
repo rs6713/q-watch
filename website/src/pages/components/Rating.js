@@ -66,6 +66,8 @@ function Rating({id, rating, rotated, movieTypes, votable}){
     }
   }
 
+  var rotateClass = [Bicycle].indexOf(Icon) != -1 ? ' norotate': '';
+
   var classname = "yourvote";
   if((!active && vote < rating) || (active && newVote < rating) || !rating){
     classname += " front";
@@ -84,7 +86,7 @@ function Rating({id, rating, rotated, movieTypes, votable}){
 
 
   return (
-    <div className="rating" onMouseLeave={()=>{setActive(false)}} onMouseEnter={()=>{setActive(true)}} onClick={()=>{setVote(newVote)}}>
+    <div className={"rating" + rotateClass} onMouseLeave={()=>{setActive(false)}} onMouseEnter={()=>{setActive(true)}} onClick={()=>{setVote(newVote)}}>
       {yourVote}
       {!rating && votable && <div>
           {[...Array(maxRating)].map((_, idx) => {
@@ -101,7 +103,7 @@ function Rating({id, rating, rotated, movieTypes, votable}){
           return <div key={idx} onMouseOver={() => {setNewVote(idx+1)}}><Icon style={{visibility: 'hidden'}} /></div>
         }
         if (Math.ceil(rating) == (1+idx)){
-          if(rotated){
+          if(rotated ){ //|| ([Bicycle].indexOf(Icon) != -1)
             return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon style={{clipPath: 'inset(0 '+ (rating - Math.floor(rating))*100 + '% 0 0)'}} /></div>
           }else{
             return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon style={{clipPath: 'inset(0 0 '+ (rating - Math.floor(rating))*100 + '% 0)'}} /></div>

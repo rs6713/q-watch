@@ -5,6 +5,7 @@
 
 /website/.pnp
 .pnp.js
+*.mdf
 
 # Production/Build
 /website/build

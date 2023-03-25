@@ -46,6 +46,8 @@ class IMDBScraper(object):
                 setattr(self, option, int(var.get()))
 
         options = webdriver.ChromeOptions()
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+
         # options.add_argument('--headless')
         # executable_path param is not needed if you updated PATH
         self.browser = webdriver.Chrome(

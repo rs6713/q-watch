@@ -70,7 +70,20 @@
     box-shadow: 0 0px 0.5em rgb(0 0 0 / 20%);
     cursor: pointer;
     transition: 0.25s ease-out !important;
-
+    .rating.norotate {
+      // transform: none;
+      svg {
+        transform-origin: bottom right;
+        transform: rotate(90deg) translate(0, 150%);
+        /* transform: rotate(90deg); */
+        /* margin-top: 50%; */
+        margin-right: -50%;
+      }
+      > div > div {
+        padding: 50% 0;
+        height: 0;
+      }
+    }
     .rating {
       position: absolute;
       transform: rotate(-90deg) translateX(-100%);

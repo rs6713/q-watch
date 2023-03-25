@@ -9,8 +9,7 @@ from qwatch.gui import MovieWindow
 warnings.filterwarnings("ignore")
 
 logger = logging.getLogger("qwatch")
-loglvl = logging.INFO
-
+loglvl = logging.DEBUG
 logger.setLevel(loglvl)
 ch = logging.StreamHandler()
 ch.setLevel(loglvl)
@@ -22,7 +21,7 @@ if (logger.hasHandlers()):
     logger.handlers.clear()
 logger.addHandler(ch)
 
-coloredlogs.install(level='INFO', logger=logger)
+coloredlogs.install(level='DEBUG', logger=logger)
 
 # logging.basicConfig(
 #     level=logging.DEBUG,
