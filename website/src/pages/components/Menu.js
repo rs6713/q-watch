@@ -8,6 +8,7 @@ import {ReactComponent as Time} from '../../static/icons/time.svg'
 import {ReactComponent as Hamburger} from '../../static/icons/menu.svg'
 import {ReactComponent as Question} from '../../static/icons/question.svg'
 import {ReactComponent as Note} from '../../static/icons/note.svg'
+import {ReactComponent as Graph} from '../../static/icons/graph.svg'
 
 
 function Menu(){
@@ -24,6 +25,12 @@ function Menu(){
             <div>
               <Grid title=""/>
               <span>Browse</span>
+            </div>
+          </Link>
+          <Link to={"/overview"} className={"link" + (useLocation().pathname == "/overview"? ' active' : ' inactive')}>
+            <div>
+              <Graph title=""/>
+              <span>Overview</span>
             </div>
           </Link>
           <Link to={"/rankings"} className={"link" + (useLocation().pathname == "/rankings"? ' active' : ' inactive')}>

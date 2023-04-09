@@ -541,26 +541,39 @@ def get_count_matching_movies() -> int:
 
     counts = {'TOTAL': len(movies)}
     for group_name, group_cols in groups.items():
-        logger.info(f'{group_name}, {group_cols}')
         new_movies = []
         for movie in movies:
             if len(group_cols) > 1:
-                movie['group'] = list(itertools.product(
-                    *[
-                        list(set(movie[c])) if isinstance(
-                            movie[c], list) else [movie[c]]
-                        for c in group_cols
+                try:
+                    movie['group'] = list(itertools.product(
+                        *[
+                            list(set([
+                                _['LABEL'] if isinstance(_, dict)
+                                else _
+                                for _ in movie[c]
+                            ])) if isinstance(
+                                movie[c], list) else [movie[c]]
+                            for c in group_cols
+                        ]
+                    ))
+                    movie['group'] = [
+                        ', '.join([str(_) for _ in g])
+                        for g in movie['group']
                     ]
-                ))
-                movie['group'] = [
-                    ', '.join([_.LABEL if isinstance(
-                        _, dict) else _ for _ in g])
-                    for g in movie['group']
-                ]
+                except Exception as e:
+                    logger.info(str(e))
+                    logger.info(str(group_cols))
+                    logger.info(str([movie[c] for c in group_cols]))
+                    raise e
             else:
                 if movie[group_cols[0]] is not None:
+                    movie['group'] = (
+                        movie[group_cols[0]]
+                        if isinstance(movie[group_cols[0]], list)
+                        else [movie[group_cols[0]]]
+                    )
                     movie['group'] = [
-                        p['LABEL'] if isinstance(p, dict) else p for p in movie[group_cols[0]]
+                        p['LABEL'] if isinstance(p, dict) else p for p in movie['group']
                     ]
                 else:
                     movie['group'] = None
@@ -574,11 +587,9 @@ def get_count_matching_movies() -> int:
                         }
                     )
 
-        logger.info(new_movies[:5])
         counts[group_name] = pd.DataFrame(new_movies).groupby(
             by='group').ID.count().to_dict()
 
-    logger.info(counts)
     return convert_to_json(counts)
 
 

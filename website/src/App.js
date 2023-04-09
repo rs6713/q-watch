@@ -10,6 +10,7 @@ import OverTime from './pages/OverTime';
 import Country from './pages/Country';
 import Rank from './pages/Rank';
 import Movie from './pages/Movie';
+import StateOfQueerCinema from './pages/Overview';
 import Menu from './pages/components/Menu';
 import FAQ from './pages/FAQ';
 import Disclaimers from './pages/Disclaimers';
@@ -26,6 +27,7 @@ class App extends Component {
         <Router basename={process.env.PUBLIC_URL}>
           <Routes>
             <Route exact path='/' element={<Main />} />
+            <Route exact path='/overview' element={<StateOfQueerCinema/>} />
             <Route exact path='/browse' element={<Browse />} />
             <Route exact path='/rankings' element={<Rank />} />
             <Route exact path='/movies/:id' element={<Movie />} /> 

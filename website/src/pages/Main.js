@@ -22,7 +22,11 @@ const COUNT_CATEGORIES = {
   'LGBTQIA+ Categories': 'LGBTQIA+ Categories',
   'Genres': 'Genres',
   'Tropes / Triggers': 'Tropes / Triggers',
-  'Representations': 'Representations'
+  'Representations': 'Representations',
+  'Age': 'Age',
+  'Intensity': 'Intensity',
+  'Country': 'Country',
+  'Tag': 'Tag'
 }
 
 function Main(){
@@ -55,7 +59,11 @@ function Main(){
           'LGBTQIA+ Categories': ['TYPES'],
           'Genres': ['GENRES'],
           'Tropes / Triggers': ["TROPE_TRIGGERS"],
-          'Representations': ['REPRESENTATIONS']
+          'Representations': ['REPRESENTATIONS'],
+          'Age': ['AGE'],
+          'Intensity': ['INTENSITY'],
+          'Country': ['COUNTRY'],
+          'Tag': ['TAGS']
         }
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
