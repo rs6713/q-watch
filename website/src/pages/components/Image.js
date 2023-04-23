@@ -6,7 +6,6 @@ export function Icon({name, label, className}){
     if(label === undefined){
       label='';
     }
-    console.log('trying to get icon: ', name)
     const svgIcon = require(`../../static/icons/${name}.svg`);
 
     // const Icon = require(`../../static/icons/${name}.svg`).default
@@ -36,9 +35,9 @@ function Image(name, caption){
     // If the image doesn't exist. return null
     if (!image){
       const default_image = require(`../../static/movie-pictures/default_pride.png`);
-      return <img src={default_image} alt={caption} />
+      return <img src={default_image} alt={caption} key={image}/>
     }
-    return <img src={image} alt={caption} />
+    return <img src={image} alt={caption} key={image}/>
     
 
     // return <div style={{backgroundImage: image}} className={classname} alt={caption}/>
@@ -46,7 +45,7 @@ function Image(name, caption){
     console.log(`Image with name "${name}" does not exist`);
     
     const default_image = require(`../../static/movie-pictures/default_pride.png`);
-    return <img src={default_image} alt={caption}  />
+    return <img src={default_image} alt={caption}  key={default_image}/>
   }
 };
 

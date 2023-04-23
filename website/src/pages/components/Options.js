@@ -10,7 +10,6 @@ function Options({name, updateOption, option, options, multi}){
         if(option.indexOf(options[optionKey]) !== -1){
           let newOption = [];
           for(let opt of option){
-            console.log(opt, options[optionKey])
             if(opt !== options[optionKey]){
               newOption.push(opt)
             }

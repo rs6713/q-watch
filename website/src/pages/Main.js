@@ -7,12 +7,17 @@ import Options from './components/Options'
 import Footer from './components/Footer'
 import PieChart from './Graphs/PieChart'
 import '../App.scss'
-import Bisexual from '../static/images/person-bisexual.png'
+import Lgbt from '../static/images/group-lgbt.png'
+import HTMLString from 'react-html-string';
 
 import {ReactComponent as Query} from '../static/icons/query.svg'
 import {ReactComponent as Graph} from '../static/icons/graph.svg'
 import {ReactComponent as Movie} from '../static/icons/movie.svg'
-
+import {Icon} from './components/Image'
+import Rating from './components/Rating';
+import {formatRuntime} from '../utils.js';
+import Bubbles from './components/Bubbles';
+import Counter from './components/Counter';
 
 const PHRASES = [
   "**I will go down with this ship.... (screams in Dido)**",
@@ -27,12 +32,27 @@ const COUNT_CATEGORIES = {
   'Intensity': 'Intensity',
   'Country': 'Country',
   'Tag': 'Tag'
+
 }
 
 function Main(){
   const [movieGif, setMovieGif] = useState(null);
+  const [movieFeatured, setMovieFeatured] = useState(null);
   const [movieCounts, setMovieCounts] = useState(null);
   const [countCategory, setCountCategory] = useState('LGBTQIA+ Categories')
+  const [scrollActive, setScrollActive] = useState(true);
+
+  // Data Fetching Called once at mount/dismount
+  useEffect(() => {
+    fetch(`/api/movie/featured`, {
+      method: 'GET',
+      headers: {
+        'cache-control': 'no-store',
+      }
+    }).then(res => res.json()).then(data => {
+      setMovieFeatured(data);
+    })
+  }, []);
 
   //Data Fetching Called once at mount/dismount
   useEffect(() => {
@@ -47,6 +67,8 @@ function Main(){
   }, []);
 
   useEffect(() => {
+    
+
     fetch('/api/movies/count', {
       method: 'POST',
       headers: {
@@ -67,12 +89,10 @@ function Main(){
         }
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
-      console.log(data)
       setMovieCounts(data)
     })
+    
   }, []);
-
-
 
   var backgroundDiv = <div className="background"></div>
   if(movieGif !== null){
@@ -80,7 +100,10 @@ function Main(){
       {Image(movieGif.FILENAME, movieGif.CAPTION)}
     </div>
   }
-  
+
+  function scroll(){
+    document.getElementById("Welcome").scrollIntoView({behavior:"smooth", block: "start"});
+  }
 
   return (
     <div id="Main" className="page">
@@ -98,17 +121,50 @@ function Main(){
             </Link>
           </div>
         }
+        <div className="arrow" onClick={scroll}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </div>
       <div id='Welcome' className='block'>
         <div>
-          <h2>Find<br></br>Yourself</h2>
+          <h2 className='bubbletext'>Find Yourself</h2>
           <p><b>Q-Watch was created with the goal of helping LGBTQIA+ persons, find the movies that not only fit their preferred genre, but has characters that look, live and love like them. </b><br/><br/>As always, we stand on the shoulders of giants; there is a plethora of hidden gems in our history, we hope to help you find stories new <b>and old</b> that satisfy your <span className='explainer'><b><i>quavings</i></b><span>queer cravings</span> </span>. </p>
         </div>
         <div>
-          <img src={Bisexual} alt="Bisexual Person watching Bisexual Movies" />;
+          <img src={Lgbt} alt="LGBT Group of people watching LGBT Movies" />
         </div>
       </div>
-      <div className='leftblock'>
+      {movieFeatured && 
+      <div id='Featured'>
+        <Link to={"/movies/"+movieFeatured.ID}>
+        <div className='block'>
+          <h2 className='bubbletext'>Movie Of The Week</h2>
+          <div>
+            {Image(movieFeatured.FILENAME, movieFeatured.CAPTION)}
+            <Rating rating={movieFeatured.AVG_RATING} rotated={true} id={movieFeatured.ID} movieTypes={movieFeatured.TYPES} votable={false}/>
+          </div>
+          <div className='info'>
+            
+            <h2>{movieFeatured.TITLE}</h2>
+            <h3>
+              {formatRuntime(movieFeatured.RUNTIME)}&nbsp;&#9679;&nbsp;
+              {movieFeatured.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
+              {movieFeatured.LANGUAGE}&nbsp;&#9679;&nbsp;
+              {movieFeatured.COUNTRY}&nbsp;&#9679;&nbsp;
+              {movieFeatured.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}
+            </h3>
+            <Bubbles items={movieFeatured.REPRESENTATIONS} />
+            
+            <HTMLString html={'<p>'+movieFeatured.DESCRIP + '</p>'}/>
+          </div>
+        </div>
+        </Link>
+      </div>
+      
+      }
+      <div className='leftblock' id='ControlPanelContainer'>
         <div id="ControlPanel">
           <Options name='Category' updateOption={setCountCategory} option={countCategory} options={COUNT_CATEGORIES} />
         </div>
@@ -119,9 +175,13 @@ function Main(){
           <PieChart dataset={movieCounts} dataChoice={countCategory}/>
         </div>
         <div>
-          {movieCounts !== null && <h2>{movieCounts['TOTAL']} MOVIES AND COUNTING</h2>}
+          {movieCounts !== null && <h2 className='bubbletext'>
+            <span><span className='bg'></span><Counter total={movieCounts['TOTAL']}/></span> MOVIES AND COUNTING</h2>}
         </div>
       </div>
+
+
+      
       
       <div className='centerblock' id='Analytics'>
         <div>

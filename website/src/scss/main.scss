@@ -5,10 +5,15 @@
   overflow-x: hidden;
   max-height: 100vh;
   overflow-y: scroll;
+  background-color: white;
 
   /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+
+  h2 {
+    font-family: $FONT_LOGO;
+  }
 }
 
 #Main.page::-webkit-scrollbar {
@@ -74,6 +79,7 @@
 
 #Analytics {
   background-color: $FONT_COLOR_LIGHTEST;
+
   padding-top: 5em;
   padding-bottom: 5em;
 
@@ -97,7 +103,8 @@
     }
     p {
       font-size: $FONT_SIZE_DEFAULT;
-      text-align: center;
+      text-align: justify;
+      text-align-last: center;
     }
     width: 30%;
   }
@@ -111,43 +118,202 @@
   text-align: center;
 }
 
+#ControlPanelContainer {
+  background-color: $PRIMARY_COLOR;
+}
 #Understand {
+  background-color: $PRIMARY_COLOR;
   > div:last-child {
     h2 {
-      color: white;
-      font-size: 6em;
+      color: black;
+      font-size: 5em;
       white-space: wrap;
+      -webkit-text-fill-color: $FONT_COLOR_LIGHTEST;
+      position: relative;
+      z-index: 2;
+      > span {
+        position: relative;
+        z-index: -1;
+        > .bg {
+          z-index: -1;
+          position: absolute;
+          background-color: $ACCENT_COLOR3;
+          border-radius: 3em;
+          padding: 0.1em 0.5em;
+          width: 100%;
+          height: 100%;
+          left: 50%;
+          top: 50%;
+          transform: translateY(-50%) translateX(-50%);
+        }
+      }
     }
   }
 }
 
-#Welcome {
-  background-color: $ACCENT_COLOR3;
-  color: white;
+.bubbletext {
+  text-emphasis: outline;
+  font-family: $FONT_LOGO;
+}
 
-  h2 {
-    font-size: 5em;
-  }
+#Featured {
+  position: relative;
 
-  > div:last-child {
-    background-color: white;
+  margin-bottom: 5vw;
 
-    img {
+  .block {
+    max-height: 50em;
+    min-height: 25em;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    cursor: pointer;
+
+    margin-top: 0;
+    box-sizing: border-box;
+    background-color: $ACCENT_COLOR1;
+    border-radius: 3em;
+    margin-top: 0;
+    overflow: hidden;
+    .info {
+      display: flex;
+      flex-direction: column;
+      overflow-y: hidden;
+
+      .bubbles {
+        font-size: $FONT_SIZE_DEFAULT;
+        .bubble {
+          padding: 0.5em 1em;
+          border-radius: 3em;
+          font-size: 1em;
+
+          color: $FONT_COLOR_LIGHTEST;
+          background-color: $ACCENT_COLOR3;
+          font-weight: normal;
+          border-radius: 3em;
+        }
+      }
+
+      p {
+        flex: 1 0;
+        overflow-y: scroll;
+        text-align: justify;
+      }
+      p::-webkit-scrollbar {
+        display: none;
+      }
+
+      h2 {
+        font-family: "Futura PT";
+        margin-top: 2em;
+        margin-bottom: 0em;
+      }
+      h3 {
+        font-size: 1em;
+        font-weight: normal;
+      }
+    }
+    > div:first-of-type {
       width: 50%;
       position: relative;
-      top: 50%;
-      left: 50%;
-      transform: translateY(-50%) translateX(-50%);
+      > img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+      .rating {
+        // position: absolute;
+        // bottom: 0;
+        // transform: translateY(-1em) translateX(-50%);
+        // width: 50%;
+        // left: 50%;
+        div svg {
+          fill: $FONT_COLOR_LIGHTEST;
+          paint-order: fill stroke;
+          stroke: $FONT_COLOR_DEFAULT;
+          stroke-width: 1.5em;
+          stroke-linejoin: round;
+          overflow: visible;
+        }
+      }
+      .rating {
+        position: absolute;
+        transform: rotate(-90deg) translateX(-100%);
+        transform-origin: 0% 0%;
+        top: calc(50% - 11em);
+        left: 1em;
+        width: 22em;
+      }
     }
-  }
-
-  > div:first-child {
-    padding-top: 6em;
-    padding-bottom: 6em;
-    text-align: justify;
+    h3 {
+      img {
+        height: 1em;
+        width: auto;
+        display: inline-block;
+        margin-right: 0.3em;
+      }
+    }
 
     > h2 {
-      margin-top: 0em;
+      position: absolute;
+      color: $FONT_COLOR_LIGHTEST;
+      font-size: 5em;
+      z-index: 1;
+      -webkit-text-fill-color: $ACCENT_COLOR3; //transparent;
+      top: 0;
+      left: 50%;
+      transform: translateY(-70%) translateX(-50%);
+      margin: 0;
+      white-space: nowrap;
+      line-height: 0.8em;
+    }
+  }
+}
+
+#Main {
+  .bubbletext {
+    //color: $FONT_COLOR_LIGHTEST;
+    //-webkit-text-fill-color: $ACCENT_COLOR3;
+    -webkit-text-stroke: 3px;
+
+    text-shadow: -6px 0 black, 0 5px black, 0px 0 black, 0 0px black;
+  }
+}
+
+#Main.page {
+  #Welcome {
+    color: $FONT_COLOR_LIGHTEST;
+    margin-bottom: 6em;
+
+    h2.bubbletext {
+      font-size: 5em;
+      color: black;
+      -webkit-text-fill-color: $FONT_COLOR_LIGHTEST;
+      text-shadow: -3px 0 black, 0 3px black, 0px 0 black, 0 0px black;
+    }
+
+    > div:last-child {
+      background-color: $FONT_COLOR_LIGHTEST;
+
+      img {
+        width: 100%;
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%);
+      }
+    }
+
+    > div:first-child {
+      background-color: $ACCENT_COLOR3;
+      border-radius: 0em 0em 2em 0em;
+
+      padding-top: 6em;
+      padding-bottom: 6em;
+      text-align: justify;
+
+      > h2 {
+        margin-top: 0em;
+      }
     }
   }
 }
@@ -157,6 +323,46 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+
+  .arrow {
+    cursor: pointer;
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+  }
+  .arrow span {
+    display: block;
+    width: 1.5vw;
+    height: 1.5vw;
+    border-bottom: 5px solid white;
+    border-right: 5px solid white;
+    transform: rotate(45deg);
+    margin: -10px;
+    animation: animate 2s infinite;
+  }
+
+  .arrow span:nth-child(2) {
+    animation-delay: -0.2s;
+  }
+
+  .arrow span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+
+  @keyframes animate {
+    0% {
+      opacity: 0;
+      transform: rotate(45deg) translate(-20px, -20px);
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: rotate(45deg) translate(20px, 20px);
+    }
+  }
 
   #MovieInfo {
     position: absolute;
@@ -176,7 +382,6 @@
   }
 
   .background {
-    position: absolute;
     top: 0;
     left: 0;
     background-position: center;
@@ -190,6 +395,7 @@
     img {
       min-height: 100%;
       min-width: 100%;
+
       position: absolute;
       top: 0;
       left: 0;
@@ -219,8 +425,110 @@
   }
 }
 /*background-image: url("../static/movie-gifs/imagine-me-and-you-000.gif");*/
+@media (max-width: $WIDTH_LARGE_SCREEN) {
+  #Main {
+    #Understand {
+      h2 {
+        font-size: 5em;
+      }
+    }
+  }
+}
+
+@media (max-width: $WIDTH_SMALL_SCREEN) {
+  #Welcome.block {
+    flex-direction: column;
+
+    > div {
+      width: 100%;
+    }
+  }
+
+  #Welcome.block {
+    > div {
+      img {
+        display: inline-block;
+        transform: none;
+        left: 0;
+        width: 60%;
+      }
+    }
+    > div:first-child {
+      padding-bottom: 3em;
+    }
+    > div:last-child {
+      text-align: center;
+      padding: 0em 0em 4em 0em;
+      background-color: $ACCENT_COLOR3;
+    }
+  }
+
+  #Main #Understand {
+    h2 {
+      font-size: 4em;
+    }
+  }
+
+  #Analytics.centerblock {
+    display: grid;
+    grid-template: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 1em;
+    column-gap: 3em;
+
+    > div {
+      width: auto;
+    }
+
+    > div:last-child {
+      position: relative;
+      left: 50%;
+    }
+  }
+}
 
 @media (max-width: $WIDTH_TABLET) {
+  #TitlePage #Title {
+    h1 {
+      font-size: calc($FONT_SIZE_TITLE * 1.5);
+    }
+  }
+  #Main {
+    #Understand.block {
+      flex-direction: column;
+
+      > div {
+        width: 100%;
+      }
+    }
+    #Understand {
+      .Graph {
+        width: 80%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      h2 {
+        font-size: 4em;
+        text-align: center;
+        margin-top: 0.5em;
+      }
+    }
+  }
+
+  #Main .centerblock {
+    flex-direction: column;
+  }
+
+  #Welcome.block {
+    > div {
+      img {
+        width: 80%;
+      }
+    }
+  }
+}
+
+@media (max-width: $WIDTH_MOBILE) {
   #TitlePage #Title {
     position: inherit;
     width: 100%;
@@ -231,9 +539,55 @@
       font-size: calc($FONT_SIZE_TITLE * 1.5);
     }
   }
-}
+  #Analytics.centerblock {
+    display: flex;
+    flex-direction: column;
 
-@media (max-width: $WIDTH_MOBILE) {
+    > div {
+      width: auto;
+      padding-left: 3em;
+      padding-right: 3em;
+
+      svg {
+        height: 20vw;
+        margin-top: 2em;
+        margin-bottom: 0em;
+      }
+    }
+    > div:last-child {
+      position: relative;
+      left: 0%;
+    }
+  }
+
+  #Main #Understand {
+    .Graph {
+      width: 100%;
+    }
+    h2 {
+      font-size: 3em;
+      margin-top: 0em;
+    }
+  }
+  #Welcome.block {
+    > div:first-child {
+      padding-top: 4em;
+      padding-bottom: 2em;
+    }
+    > div {
+      img {
+        width: 100%;
+      }
+      h2 {
+        font-size: 3em;
+      }
+    }
+
+    > div:last-child {
+      padding: 0em 0em 2em 0em;
+    }
+  }
+
   #TitlePage {
     #Title {
       h1 {

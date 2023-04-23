@@ -17,8 +17,8 @@ function MovieList({movies}){
       
     </div>
   }else{
-    content = movies.map(movie => (
-      <MovieTile movie={movie} />
+    content = movies.map((movie, idx) => (
+      <MovieTile movie={movie} key={idx}/>
     ))
   }
 

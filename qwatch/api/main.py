@@ -593,6 +593,57 @@ def get_count_matching_movies() -> int:
     return convert_to_json(counts)
 
 
+@ app.route('/api/movie/featured')
+def get_movie_featured():
+    """ Return movie that is associated with ID."""
+    this_week = (
+        datetime.date.today() - datetime.timedelta(days=datetime.date.today().weekday())
+    )
+
+    logger.info('Getting featured movie occuring in week %s',
+                this_week.strftime('%Y-%m-%d'))
+
+    with engine.begin() as conn:
+        featured_movie = get_entries(
+            conn,
+            'FEATURED_MOVIE',
+            return_properties=[
+                'MOVIE_ID',
+                'DESCRIP'
+            ],
+            START_WEEK=this_week
+        )[0]
+        if not len(featured_movie):
+            logger.info('No featured movie matching start_week %s',
+                        this_week.strftime('%Y-%m-%d'))
+            return {}
+
+        properties = [
+            "TITLE",
+            "YEAR",
+            "FILENAME", "CAPTION",
+            "AVG_RATING", "NUM_RATING",
+            "GENRES", "TYPES", "AGE", "RUNTIME",
+            "TAGS", "LANGUAGE", "COUNTRY",
+            "REPRESENTATIONS"
+        ]
+        movie_props = get_matching_movies(
+            {'ID': featured_movie[0]['MOVIE_ID']},
+            properties=properties
+        )[0]
+        if not len(movie_props):
+            logger.warning('No movie matching featured movie id: %d',
+                           featured_movie[0]['MOVIE_ID'])
+            return {}
+
+        print(movie_props)
+        movie_props = {
+            **movie_props,
+            'DESCRIP': featured_movie[0]['DESCRIP']
+        }
+    return convert_to_json(movie_props)
+
+
 @ app.route('/api/movie/<int:movie_id>')
 def get_movie_by_id(movie_id: int):
     """ Return movie that is associated with ID."""
@@ -601,6 +652,7 @@ def get_movie_by_id(movie_id: int):
     movie = get_matching_movies(
         dict(ID=movie_id)
     )[0]
+
     # movie = get_movie(
     #     conn, movie_id
     # )

@@ -14,6 +14,8 @@ import {sourceDisclaimer} from '../constants'
 import Source from './components/Source';
 import styles from '../scss/defaults.scss';
 import {Icon} from './components/Image'
+import HTMLString from 'react-html-string';
+
 
 import {ReactComponent as ReturnMovie} from '../static/icons/return.svg';
 import {ReactComponent as ShuffleMovie} from '../static/icons/shuffle.svg';
@@ -105,7 +107,7 @@ function Movie(props){
             {movie.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
             {movie.LANGUAGE}&nbsp;&#9679;&nbsp;
             {movie.COUNTRY}&nbsp;&#9679;&nbsp;
-            {movie.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}
+            {movie.GENRES.map((genre, idx) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} key={idx}/>)}
           </h2>
           
           <div id="aside">
@@ -115,7 +117,8 @@ function Movie(props){
           </div>
         </div>
         <div id="MovieParts">
-          <p>{movie.SUMMARY}</p>
+          <HTMLString html={'<p>'+movie.SUMMARY + '</p>'}/>
+
           {/* <Bubbles items={movie.GENRES} /> */}
           {movie.SOURCES && movie.SOURCES.length > 0 &&
             <div id="findMe">

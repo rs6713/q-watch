@@ -66,7 +66,11 @@ function Rating({id, rating, rotated, movieTypes, votable}){
     }
   }
 
-  var rotateClass = [Bicycle].indexOf(Icon) != -1 ? ' norotate': '';
+  var rotateClass = '';
+  if([Bicycle].indexOf(Icon) != -1){
+    rotateClass = ' norotate';
+  }
+  
 
   var classname = "yourvote";
   if((!active && vote < rating) || (active && newVote < rating) || !rating){
@@ -77,7 +81,7 @@ function Rating({id, rating, rotated, movieTypes, votable}){
   var yourVote = <></>;
   if(vote !== null || active){
     yourVote = <div className={classname} aria-label={"Your current vote is: " + (active? newVote : vote)}>
-      {[...Array(maxRating)].map((_, idx) => <div onMouseOver={() => {setNewVote(idx + 1)}}>
+      {[...Array(maxRating)].map((_, idx) => <div onMouseOver={() => {setNewVote(idx + 1)}} key={idx}>
           <Icon key={idx} style={{visibility: (active? newVote : vote) > idx ? 'visible':'hidden'}} />
         </div>)
       }

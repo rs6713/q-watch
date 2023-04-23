@@ -4,8 +4,7 @@ import {Icon} from '../Image'
 import Switch from '../Switch'
 
 function SliderFilter({filter, updateFilters, filters, randomIdx}){
-  console.log('Slider: ', filter.filters)
-  
+
   const [toggleActive, setToggleActive] = useState(false);
   const [toggleLeft, setToggleLeft] = useState(0);
   const [atLeast, setAtLeast] = useState(false);
@@ -15,7 +14,6 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
   const [active, setActive] = useState(false)
 
   useEffect(()=>{
-    console.log('choosing option due to atleast')
     if(active){
       chooseOption(selectedOption)
     }
@@ -27,11 +25,9 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
     setSnapPosition(option);
     
     var validIds = [];
-    console.log('Selected Option:', option)
     if(filter.type === 'slider'){
       
       for(let filterOption of filter.filters){
-        console.log(filterOption.ID, option.ID)
         if(filterOption.ID === option.ID){
           if(!atLeast){
             validIds.push(filterOption.ID)
@@ -40,7 +36,7 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
         }
         validIds.push(filterOption.ID)
       }
-      console.log(filter.title, 'ValidIds: ', validIds)
+
       updateFilters({[filter['id']]: {
         'TYPE': atLeast? 'EXCLUDE': 'INCLUDE',
         'VALUE': validIds
@@ -69,15 +65,11 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
   function moveToggle(e){
     
     if(toggleActive){
-      console.log('movetoggle')
       var rect = document.getElementById('bar').getBoundingClientRect();
       var x = e.clientX - rect.left;
-      console.log(x)
       setToggleLeft(
         `${x}px`
       )
-    }else{
-      console.log('move toggle no active')
     }
   }
 
@@ -91,7 +83,6 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
       
       var i = 0;
       for(let option of filter.filters){
-        console.log(String(option.ID + randomIdx))
         let optionX = document.getElementById(String(option.ID + randomIdx)).getBoundingClientRect();
         optionX = (optionX.left + optionX.right) / 2;
         if(Math.abs(e.clientX - optionX) < nearestDistance){

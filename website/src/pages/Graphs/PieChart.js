@@ -74,18 +74,16 @@ const PieChart = ({dataset, dataChoice}) => {
 
     let newDataList = [];
     let other = 0;
-    console.log(dataList)
+
     let total = dataList.reduce((a, b) => a.length === 2? a[1] + b[1] : a+b[1])
-    console.log('Total', total)
     if(dataList.length > MAX_CATEGORIES){
       other = dataList.slice(MAX_CATEGORIES).reduce((a, b) => a.length === 2? a[1] + b[1] : a+b[1])
       j = MAX_CATEGORIES - 1
     }
-    console.log(j, dataList)
+
     while(((dataList[j][1]/total*100) < MIN_PERCENT || dataList[j][1] < MIN_ABSOLUTE) && j>=0 && dataList[j][1] ){
       other = other + dataList[j--][1]
     }
-    console.log(other)
 
     let init_j = j + 1;
     while (i < j)
@@ -128,7 +126,6 @@ const PieChart = ({dataset, dataChoice}) => {
     .value(function(d) {return d[1]; })
     .sort(function(a, b) { return d3.ascending(a.key, b.key);} ) // This make sure that group order remains the same in the pie chart
   const data_ready = pie(Object.entries(data))
-  console.log('Data ready:', data_ready)
 
   // map to data
   const u = g.selectAll("path")
@@ -171,7 +168,6 @@ const PieChart = ({dataset, dataChoice}) => {
   .selectAll("tspan")
   .data(d => {
     return `${d.data[0]}\n${formatValue(d.data[1])}`.split('\n');
-    //console.log(lines)
     //return (d.endAngle - d.startAngle) > 0.25 ? lines : lines.split(/\n/).slice(0, 1);
   })
   .join("tspan")
@@ -182,11 +178,9 @@ const PieChart = ({dataset, dataChoice}) => {
   .attr("y", (_, i) => `${i * 1.1}em`)
 
   function wrap(text, width) {
-    console.log('Text', text)
     let i = 0;
     let maxWrap = 0;
     text.each(function() {
-      console.log('Text ', d3.select(this).text().split(/\s+/).reverse())
       var text = d3.select(this),
           words = text.text().split(/\s+/).reverse(),
           num = text.text().split(/\s+/)[-1],
@@ -200,7 +194,6 @@ const PieChart = ({dataset, dataChoice}) => {
           if (maxWrap > 0){
             maxWrap = 0;
           }
-      console.log('dy ', dy, ' lineHeight ', lineHeight)
       while (word = words.pop()) {
         line.push(word);
         tspan.text(line.join(" "));

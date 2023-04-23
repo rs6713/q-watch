@@ -106,15 +106,13 @@
       overflow: hidden;
 
       img {
-        min-width: 100%;
-        min-height: 100%;
-        width: auto;
-        height: auto;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: inherit !important;
       }
       // background-size: cover;
       // background-clip: padding-box;
@@ -293,8 +291,8 @@
     flex-direction: row;
     flex: 1 1;
     overflow-x: scroll;
-    padding-left: 1em;
-    padding-right: 1em;
+    margin-left: 1em;
+    margin-right: 1em;
     box-sizing: border-box;
 
     div {
@@ -455,7 +453,7 @@
       justify-content: space-between;
       top: 5em;
       left: 0;
-      width: 100%;
+      width: calc(100% - 6vw);
       box-sizing: border-box;
       overflow-x: scroll;
 
@@ -495,4 +493,10 @@
     $gap: 5vw,
     $grid_repeat: repeat(1, 1fr)
   );
+
+  #Browse #ControlPanel {
+    #Categories {
+      width: calc(100% - 10vw);
+    }
+  }
 }
