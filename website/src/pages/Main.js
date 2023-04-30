@@ -185,21 +185,35 @@ function Main(){
       
       <div className='centerblock' id='Analytics'>
         <div>
-          <Query/>
+          <div>
+            <Query/>
+            <span className='left'><span/></span>
+            <span className='right'><span/></span>
+          </div>
           <h2>The Opportunity</h2>
           <p>
           Creating a searchable archive of Queer media, presented us with the unique opportunity to evaluate the state of Queer Cinema. <br/><br/>It is a myth that progress is linear, and guaranteed.
           </p>
+          
         </div>
+  
         <div>
-          <Graph/>
+          <div>
+            <Graph/>
+            <span className='left'><span/></span>
+            <span className='right'><span/></span>
+          </div>
           <h2>Our Goals</h2>
           <p>
           As more money is injected into LGBT entertainment than ever before, we want to understand our changing landscape. <br/><br/>Who exactly is benefiting the most from these investments, and what parts of LGBT representation are still being neglected?
           </p>
         </div>
         <div>
-          <Movie/>
+          <div>
+            <Movie/>
+            <span className='left'><span/></span>
+            <span className='right'><span/></span>
+          </div>
           <h2>What's Next?</h2>
           <p>We are constantly adding new movies to expand our archive, to make our data analysis more representative of the true state of global Queer Cinema.</p>
         </div>

@@ -54,6 +54,7 @@
 }
 
 #Understand {
+  padding-bottom: 6em;
   > div:first-child {
     position: relative;
   }
@@ -80,26 +81,74 @@
 #Analytics {
   background-color: $FONT_COLOR_LIGHTEST;
 
-  padding-top: 5em;
+  padding-top: 0em;
   padding-bottom: 5em;
 
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  > div:nth-child(1) > div {
+    padding-top: 2em;
+  }
+  > div:nth-child(2) > div {
+    padding-top: 8em;
+  }
+  > div:nth-child(3) > div {
+    padding-top: 5em;
+  }
 
   > div {
-    svg {
-      height: 10vw;
-      fill: $ACCENT_COLOR3; //$FONT_COLOR_DEFAULT;
-      //fill: $FONT_COLOR_LIGHTEST;
-      //fill: url(#ffflux-gradient);
-      // fill: linear-gradient(
-      //   90deg,
-      //   rgba(255, 255, 255, 1) 0%,
-      //   rgba(255, 152, 255, 1) 49%,
-      //   rgba(126, 237, 255, 1) 100%
-      // );
-      margin-bottom: 2em;
+    > div {
+      width: auto;
+      display: inline-block;
+      border-radius: 0 0 8em 8em;
+      padding: 0em 3em 3em 3em;
+      background-color: $PRIMARY_COLOR;
+
+      position: relative;
+      > span.right {
+        right: 0;
+        transform: translateX(100%);
+        span {
+          border-radius: 50% 0 0 0;
+        }
+      }
+      > span.left {
+        left: 0;
+        transform: translateX(-100%);
+        span {
+          border-radius: 0 50% 0 0;
+        }
+      }
+      > span {
+        display: block;
+        width: 5em;
+        height: 5em;
+        position: absolute;
+        top: 0;
+
+        background-color: $PRIMARY_COLOR;
+        span {
+          display: block;
+          width: 100%;
+          height: 100%;
+          background-color: white;
+        }
+      }
+
+      svg {
+        height: 10vw;
+        fill: $ACCENT_COLOR3; //$FONT_COLOR_DEFAULT;
+        //fill: $FONT_COLOR_LIGHTEST;
+        //fill: url(#ffflux-gradient);
+        // fill: linear-gradient(
+        //   90deg,
+        //   rgba(255, 255, 255, 1) 0%,
+        //   rgba(255, 152, 255, 1) 49%,
+        //   rgba(126, 237, 255, 1) 100%
+        // );
+        margin-bottom: 2em;
+      }
     }
     p {
       font-size: $FONT_SIZE_DEFAULT;
