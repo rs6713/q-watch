@@ -2,40 +2,8 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import Footer from './components/Footer'
 import PieChart from './Graphs/PieChart'
+import {PercentDelta, PercentAlert, thresholdStatement} from './components/Delta';
 
-
-function PercentAlert({dataset, dataChoice, value, valueStatement, qualifier}){
-
-  let percent = '?'
-  var statement = '';
-
-  
-
-  try{
-    if(Array.isArray(value)){
-      let total = dataset['TOTAL']
-      let subtotal = value.map(v=> dataset[dataChoice][v]).reduce((a,b)=> a+b)
-      percent = (subtotal / total * 100).toFixed(2)
-    }else{
-      let total = dataset['TOTAL']
-      let subtotal = dataset[dataChoice][value]
-      percent = (subtotal / total * 100).toFixed(2)
-    }
-  }catch(err){
-
-  }
-
-  if(qualifier === undefined){
-    qualifier = percent < 50? 'Only' : 'Over'
-  }
-
-
-  return (
-    <h2>
-      {qualifier} {percent}% of movies {valueStatement || ('have ' + value)}
-    </h2>
-  )
-}
 
 function StateOfQueerCinema(){
   const [movies, setMovies] = useState(null);
@@ -125,9 +93,9 @@ function StateOfQueerCinema(){
     <div id='StateOfQueerCinema' className='page'>
       <div id='Race' className='block'>
         
-        <PercentAlert dataset={movieCounts} dataChoice='Representations' value='QTIPOC' />
-        <PercentAlert dataset={movieCounts} dataChoice='Representations' value='Plus-Sized' />
-        <PercentAlert dataset={movieCounts} dataChoice='Representations' value='POC Love' />
+        <PercentAlert dataset={movieCounts} dataChoice='Representations' value='QTIPOC' statement={thresholdStatement(50)}/>
+        <PercentAlert dataset={movieCounts} dataChoice='Representations' value='Plus-Sized' statement={thresholdStatement(50)}/>
+        <PercentAlert dataset={movieCounts} dataChoice='Representations' value='POC Love' statement={thresholdStatement(50)}/>
       </div>
       <div>
         <PercentAlert dataset={movieCounts}

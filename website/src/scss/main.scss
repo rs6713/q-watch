@@ -20,6 +20,83 @@
   display: none;
 }
 
+@keyframes scrollStats {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100%));
+  }
+}
+#statsContainer {
+  margin-bottom: 5em;
+  user-select: none;
+
+  white-space: nowrap;
+  > div {
+    white-space: nowrap;
+    width: 100%;
+    overflow-x: hidden;
+    > div {
+      display: inline-block;
+      animation: scrollStats 30s linear infinite;
+    }
+  }
+}
+
+h3.delta {
+  font-size: 2em;
+  margin-left: 1em;
+  margin-right: 1em;
+  display: inline-block;
+
+  > div {
+    text-align: center;
+    font-size: 1.5em;
+    position: relative;
+    height: 1.5em;
+    svg {
+      max-width: 1em;
+      max-height: 1em;
+      position: relative;
+      bottom: 0.333em;
+      transform: translateY(50%);
+      margin-right: 0.333em;
+    }
+    fill: $FONT_COLOR_SUB;
+    color: $FONT_COLOR_SUB;
+  }
+  > span {
+    div:first-child {
+      font-size: 1.5em;
+    }
+    div:last-child {
+      color: $FONT_COLOR_SUB;
+      font-weight: normal;
+      font-size: 0.5em;
+      width: min-content;
+      min-width: 100%;
+      white-space: break-spaces;
+    }
+  }
+}
+h3.delta.up {
+  > div:first-child {
+    fill: $ACCENT_AFFIRM;
+    color: $ACCENT_AFFIRM;
+  }
+}
+h3.delta.down {
+  > div:first-child {
+    fill: $ACCENT_DENY;
+    color: $ACCENT_DENY;
+  }
+  svg {
+    transform: rotate(180deg) translateY(50%);
+    top: 0.5em;
+  }
+}
+
 .explainer {
   position: relative;
   cursor: pointer;
@@ -213,8 +290,6 @@
   .block {
     max-height: 50em;
     min-height: 25em;
-    margin-left: 5vw;
-    margin-right: 5vw;
     cursor: pointer;
 
     margin-top: 0;
@@ -331,7 +406,7 @@
 #Main.page {
   #Welcome {
     color: $FONT_COLOR_LIGHTEST;
-    margin-bottom: 6em;
+    margin-bottom: 2em;
 
     h2.bubbletext {
       font-size: 5em;
@@ -372,7 +447,7 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-
+  user-select: none;
   .arrow {
     cursor: pointer;
     position: absolute;

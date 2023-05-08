@@ -18,6 +18,7 @@ import Rating from './components/Rating';
 import {formatRuntime} from '../utils.js';
 import Bubbles from './components/Bubbles';
 import Counter from './components/Counter';
+import {PercentDelta} from './components/Delta';
 
 const PHRASES = [
   "**I will go down with this ship.... (screams in Dido)**",
@@ -50,7 +51,9 @@ function Main(){
         'cache-control': 'no-store',
       }
     }).then(res => res.json()).then(data => {
-      setMovieFeatured(data);
+      if(Object.keys(data).length > 0){
+        setMovieFeatured(data);
+      }
     })
   }, []);
 
@@ -85,10 +88,14 @@ function Main(){
           'Age': ['AGE'],
           'Intensity': ['INTENSITY'],
           'Country': ['COUNTRY'],
-          'Tag': ['TAGS']
+          'Tag': ['TAGS'],
+          'Year': ['YEAR'],
+          'Representation_Year': ['REPRESENTATIONS', 'YEAR'],
+          'Type_Year': ['TYPES', 'YEAR']
         }
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
+      console.log(data)
       setMovieCounts(data)
     })
     
@@ -104,6 +111,57 @@ function Main(){
   function scroll(){
     document.getElementById("Welcome").scrollIntoView({behavior:"smooth", block: "start"});
   }
+
+  let marqueeContent = <div>
+  {movieCounts && <PercentDelta 
+    dataset={movieCounts}
+    dataChoice='Year'
+    value2={[2022, 2021, 2020, 2019, 2018]}
+    value1={[2017, 2016, 2015, 2014, 2013]}
+    statement='5 Year LGBTQIA+'
+    substatement='How many movies were released in 2018-22 compared to 2013-17?'
+  />}
+  {movieCounts && <PercentDelta 
+    dataset={movieCounts}
+    dataChoice='Year'
+    value2={2022}
+    value1={2021}
+    statement='2022 LGBTQIA+'
+    substatement='How many movies were released in 2022 compared to 2021?'
+  />}
+  {movieCounts && <PercentDelta 
+    dataset={movieCounts}
+    dataChoice='Representation_Year'
+    value2={['QTIPOC, 2022', 'QTIPOC, 2021', 'QTIPOC, 2020']}
+    value1={['QTIPOC, 2019', 'QTIPOC, 2018', 'QTIPOC, 2017']}
+    statement='3 Year QTIPOC'
+    substatement='How many movies had 1+ QTIPOC Characters in 2020-22 compared to 2017-19?'
+  />}
+  {movieCounts && <PercentDelta 
+    dataset={movieCounts}
+    dataChoice='Representation_Year'
+    value2={['Black Love, 2022', 'Black Love, 2021', 'Black Love, 2020', 'Black Love, 2019', 'Black Love, 2018']}
+    value1={['Black Love, 2017', 'Black Love, 2016', 'Black Love, 2015', 'Black Love, 2014', 'Black Love, 2013']}
+    statement='5 Year Black Love'
+    substatement='How many movies centered Black Love in 2018-22 compared to 2013-17?'
+  />}
+  {movieCounts && <PercentDelta 
+    dataset={movieCounts}
+    dataChoice='Representation_Year'
+    value2={['Disability, 2022', 'Disability, 2021', 'Disability, 2020', 'Disability, 2019', 'Disability, 2018']}
+    value1={['Disability, 2017', 'Disability, 2016', 'Disability, 2015', 'Disability, 2014', 'Disability, 2013']}
+    statement='5 Year Disability'
+    substatement='How many movies had characters with disabilities in 2018-22 compared to 2013-17?'
+  />}
+  {movieCounts && <PercentDelta 
+    dataset={movieCounts}
+    dataChoice='Type_Year'
+    value2={['Transgender, 2022', 'Transgender, 2021', 'Transgender, 2020']}
+    value1={['Transgender, 2019', 'Transgender, 2018', 'Transgender, 2017']}
+    statement='3 Year Transgender'
+    substatement='How many movies had transgender characters in 2020-22 compared to 2017-19?'
+  />}
+  </div>
 
   return (
     <div id="Main" className="page">
@@ -134,6 +192,12 @@ function Main(){
         </div>
         <div>
           <img src={Lgbt} alt="LGBT Group of people watching LGBT Movies" />
+        </div>
+      </div>
+      <div id='statsContainer'>
+        <div>
+          {/* aria-hidden="true" for screenreaders second time */}
+        {marqueeContent}{marqueeContent}
         </div>
       </div>
       {movieFeatured && 

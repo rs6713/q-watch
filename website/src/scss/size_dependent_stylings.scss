@@ -31,32 +31,42 @@
   }
 }
 
-@mixin main_width_styling($side_padding) {
+@mixin main_width_styling($side_padding_inner, $side_padding_outer) {
   #Main {
     .centerblock {
-      padding-left: $side_padding;
-      padding-right: $side_padding;
+      padding-left: $side_padding_outer;
+      padding-right: $side_padding_outer;
     }
-    .block {
-      > div:first-child,
+    > .block {
+      > div:first-child {
+        padding-left: $side_padding_outer;
+        padding-right: $side_padding_inner;
+      }
       > div:last-child {
-        padding-left: $side_padding;
-        padding-right: $side_padding;
+        padding-left: $side_padding_inner;
+        padding-right: $side_padding_outer;
       }
     }
     .leftblock {
-      padding-left: $side_padding;
-      padding-right: $side_padding;
+      padding-left: $side_padding_outer;
+      padding-right: $side_padding_inner;
     }
 
     .footer {
-      padding-left: $side_padding;
-      padding-right: $side_padding;
+      padding-left: $side_padding_outer;
+      padding-right: $side_padding_outer;
+    }
+    #Featured {
+      margin-left: $side_padding_outer;
+      margin-right: $side_padding_outer;
     }
   }
 }
 
-@include main_width_styling($side_padding: 5vw);
+@include main_width_styling(
+  $side_padding_inner: 5vw,
+  $side_padding_outer: 10vw
+);
 
 @include width_styling($side_padding: 15vw);
 
@@ -66,6 +76,10 @@
 
 @media (max-width: $WIDTH_LARGEST_SCREEN) {
   @include width_styling($side_padding: 8vw);
+  @include main_width_styling(
+    $side_padding_outer: 8vw,
+    $side_padding_inner: 5vw
+  );
   #Movie {
     #MovieControls {
       width: 8vw;
