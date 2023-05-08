@@ -200,11 +200,11 @@ function Main(){
         {marqueeContent}{marqueeContent}
         </div>
       </div>
+      {movieFeatured && <h2 className='bubbletext'>Movie Of The Week</h2>}
       {movieFeatured && 
+      <Link to={"/movies/"+movieFeatured.ID}>
       <div id='Featured'>
-        <Link to={"/movies/"+movieFeatured.ID}>
         <div className='block'>
-          <h2 className='bubbletext'>Movie Of The Week</h2>
           <div>
             {Image(movieFeatured.FILENAME, movieFeatured.CAPTION)}
             <Rating rating={movieFeatured.AVG_RATING} rotated={true} id={movieFeatured.ID} movieTypes={movieFeatured.TYPES} votable={false}/>
@@ -223,11 +223,14 @@ function Main(){
             
             <HTMLString html={'<p>'+movieFeatured.DESCRIP + '</p>'}/>
           </div>
+          </div>
+          
         </div>
-        </Link>
-      </div>
+        <div id='bg'/>
+      </Link>
       
       }
+      
       <div className='leftblock' id='ControlPanelContainer'>
         <div id="ControlPanel">
           <Options name='Category' updateOption={setCountCategory} option={countCategory} options={COUNT_CATEGORIES} />

@@ -29,8 +29,10 @@
   }
 }
 #statsContainer {
-  margin-bottom: 5em;
+  margin-top: 2em;
+  margin-bottom: 2em;
   user-select: none;
+  text-align: center;
 
   white-space: nowrap;
   > div {
@@ -282,113 +284,142 @@ h3.delta.down {
   font-family: $FONT_LOGO;
 }
 
-#Featured {
+#Main > h2.bubbletext {
+  // position: absolute;
+  color: $FONT_COLOR_LIGHTEST;
+  width: fit-content;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+  background-color: $ACCENT_COLOR1; // $PRIMARY_COLOR;
+  font-size: 5em;
+  text-align: center;
   position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  // z-index: 1;
+  // top: 0;
+  // left: 50%;
+  // transform: translateY(-70%) translateX(-50%);
+  margin: 0;
+  white-space: nowrap;
+  line-height: 0.8em;
 
-  margin-bottom: 5vw;
+  text-shadow: -3px 0 black, 0 3px black, 0px 0 black, 0 0px black;
+  -webkit-text-fill-color: $FONT_COLOR_LIGHTEST; // $ACCENT_COLOR3;
+  color: black; //$FONT_COLOR_LIGHTEST;
+  //box-shadow: -0.1em 0 black, 0 0em black, 0px -0.1em black, 0.1em 0px black;
+  //outline: 0.5em solid black;
+  border: 0.1em solid black;
+  border-bottom-width: 0;
+}
 
-  .block {
-    max-height: 50em;
-    min-height: 25em;
-    cursor: pointer;
+#Featured {
+  max-height: 50em;
+  min-height: 25em;
+  border: 1em solid $ACCENT_COLOR1;
+  background-color: $ACCENT_COLOR1;
+  cursor: pointer;
+  border-radius: 5em; // 5em 0 0;
+  //box-shadow: -0.5em 0 black, 0 0.5em black, 0px -0.5em black, 0.5em 0px black;
+  outline: 0.5em solid black;
+  margin-bottom: 2em;
 
-    margin-top: 0;
-    box-sizing: border-box;
-    background-color: $ACCENT_COLOR1;
+  margin-top: 0;
+  box-sizing: border-box;
+  //background-color: $ACCENT_COLOR1;
+  //border-radius: 3em;
+  overflow: hidden;
+  padding: 1em;
+
+  > .block {
     border-radius: 3em;
-    margin-top: 0;
+    background-color: white;
     overflow: hidden;
-    .info {
-      display: flex;
-      flex-direction: column;
-      overflow-y: hidden;
+    //padding: 1em;
+    border: 1em solid white;
+    outline: 1em solid $ACCENT_COLOR3;
+  }
+  .info {
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
 
-      .bubbles {
-        font-size: $FONT_SIZE_DEFAULT;
-        .bubble {
-          padding: 0.5em 1em;
-          border-radius: 3em;
-          font-size: 1em;
-
-          color: $FONT_COLOR_LIGHTEST;
-          background-color: $ACCENT_COLOR3;
-          font-weight: normal;
-          border-radius: 3em;
-        }
-      }
-
-      p {
-        flex: 1 0;
-        overflow-y: scroll;
-        text-align: justify;
-      }
-      p::-webkit-scrollbar {
-        display: none;
-      }
-
-      h2 {
-        font-family: "Futura PT";
-        margin-top: 2em;
-        margin-bottom: 0em;
-      }
-      h3 {
+    .bubbles {
+      font-size: $FONT_SIZE_DEFAULT;
+      .bubble {
+        padding: 0.5em 1em;
+        border-radius: 3em;
         font-size: 1em;
+
+        color: $FONT_COLOR_LIGHTEST;
+        background-color: $ACCENT_COLOR3;
         font-weight: normal;
+        border-radius: 3em;
       }
     }
-    > div:first-of-type {
-      width: 50%;
-      position: relative;
-      > img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-      }
-      .rating {
-        // position: absolute;
-        // bottom: 0;
-        // transform: translateY(-1em) translateX(-50%);
-        // width: 50%;
-        // left: 50%;
-        div svg {
-          fill: $FONT_COLOR_LIGHTEST;
-          paint-order: fill stroke;
-          stroke: $FONT_COLOR_DEFAULT;
-          stroke-width: 1.5em;
-          stroke-linejoin: round;
-          overflow: visible;
-        }
-      }
-      .rating {
-        position: absolute;
-        transform: rotate(-90deg) translateX(-100%);
-        transform-origin: 0% 0%;
-        top: calc(50% - 11em);
-        left: 1em;
-        width: 22em;
-      }
+
+    p {
+      flex: 1 0;
+      overflow-y: scroll;
+      text-align: justify;
+    }
+    p::-webkit-scrollbar {
+      display: none;
+    }
+
+    h2 {
+      font-family: "Futura PT";
+      margin-top: 0em;
+      margin-bottom: 0em;
+      font-size: 3em;
     }
     h3 {
-      img {
-        height: 1em;
-        width: auto;
-        display: inline-block;
-        margin-right: 0.3em;
+      font-size: 1em;
+      font-weight: normal;
+    }
+  }
+  .block > div:first-of-type {
+    width: 50%;
+    position: relative;
+    > img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+    .rating {
+      // position: absolute;
+      // bottom: 0;
+      // transform: translateY(-1em) translateX(-50%);
+      // width: 50%;
+      // left: 50%;
+      div svg {
+        fill: $FONT_COLOR_LIGHTEST;
+        paint-order: fill stroke;
+        stroke: $FONT_COLOR_DEFAULT;
+        stroke-width: 1.5em;
+        stroke-linejoin: round;
+        overflow: visible;
       }
     }
-
-    > h2 {
+    .rating {
       position: absolute;
-      color: $FONT_COLOR_LIGHTEST;
-      font-size: 5em;
-      z-index: 1;
-      -webkit-text-fill-color: $ACCENT_COLOR3; //transparent;
-      top: 0;
-      left: 50%;
-      transform: translateY(-70%) translateX(-50%);
-      margin: 0;
-      white-space: nowrap;
-      line-height: 0.8em;
+      transform: rotate(-90deg) translateX(-100%);
+      transform-origin: 0% 0%;
+      top: calc(50% - 11em);
+      left: 1em;
+      width: 22em;
+    }
+  }
+  h3 {
+    img {
+      height: 1em;
+      width: auto;
+      display: inline-block;
+      margin-right: 0.3em;
     }
   }
 }
@@ -398,15 +429,30 @@ h3.delta.down {
     //color: $FONT_COLOR_LIGHTEST;
     //-webkit-text-fill-color: $ACCENT_COLOR3;
     -webkit-text-stroke: 3px;
-
+    z-index: 5;
     text-shadow: -6px 0 black, 0 5px black, 0px 0 black, 0 0px black;
+  }
+}
+
+#Main > a {
+  z-index: 2;
+  position: relative;
+  #bg {
+    position: absolute;
+    z-index: -1;
+    background-color: $PRIMARY_COLOR;
+    width: 100vw;
+    left: 0;
+    top: 50%;
+    height: 60%;
+    //border-radius: 5em 5em 0 0;
   }
 }
 
 #Main.page {
   #Welcome {
     color: $FONT_COLOR_LIGHTEST;
-    margin-bottom: 2em;
+    margin-bottom: 0em;
 
     h2.bubbletext {
       font-size: 5em;

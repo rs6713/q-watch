@@ -59,6 +59,18 @@
     #Featured {
       margin-left: $side_padding_outer;
       margin-right: $side_padding_outer;
+
+      > div > div:first-child {
+        //padding-left: $side_padding_outer;
+        padding-right: $side_padding_inner/2;
+      }
+      > div > div:last-child {
+        padding-right: $side_padding_inner/2;
+      }
+      // > div:last-child {
+      //   padding-left: $side_padding_inner;
+      //   padding-right: $side_padding_outer;
+      // }
     }
   }
 }
@@ -89,6 +101,10 @@
 
 @media (max-width: $WIDTH_LARGE_SCREEN) {
   @include width_styling($side_padding: 3vw);
+  @include main_width_styling(
+    $side_padding_outer: 3vw,
+    $side_padding_inner: 3vw
+  );
   #MenuContainer .hamburger {
     display: none;
   }
