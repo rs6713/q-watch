@@ -9,6 +9,17 @@ import Indexer from './components/Indexer';
 
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
 
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  NavLink,
+  useNavigate,
+  createSearchParams,
+  useSearchParams
+} from 'react-router-dom';
+
 const SORT = {
   "Most Popular": ["NUM_RATING", -1],
   "Least Popular": ["NUM_RATING", 1],
@@ -20,14 +31,45 @@ const SORT = {
 
 function Browse(){
 
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   const [filterActive, setFilterActive] = useState(false);
   const [movies, setMovies] = useState(null);
-  const [sort, setSort] = useState(SORT['Most Recent Release']);
-  const [index, setIndex] = useState(1);
-  const [criteria, setCriteria] = useState({});
+  const sort = searchParams.get('sort') || 'Most Recent Release';
+  const index = parseInt(searchParams.get('index') || 1);
+  const [criteria, setCriteria] = useState({
+
+  });
   const [nIndexes, setNIndexes] = useState(null);
   const [nMatches, setNMatches] = useState(null);
   const [labelsLoaded, setLabelsLoaded] = useState(false);
+
+  function createParams(options){
+    let params = {
+      'index': index,
+      'sort': sort,
+      ...options
+    }
+    return `?${createSearchParams(params)}`
+  }
+
+  function updateIndex(index){
+    navigate({pathname: '/browse', search: createParams({'index':index}) })
+  }
+
+  function updateSort(sort){
+    navigate({pathname: '/browse', search: createParams({'sort':sort}) })
+  }
+
+  
+  // console.log(searchParams);
+
+  
+  //   navigate({
+  //     pathname: '/browse',
+  //     search: `?${createSearchParams(criteria)}`,
+  //   });
 
 
   function get_movies(){
@@ -41,7 +83,7 @@ function Browse(){
         },
         body: JSON.stringify({
           "criteria": criteria,
-          "sort": sort,
+          "sort": SORT[sort],
           "index": index
         })//this.state.filterCriteria
       }).then(res => res.json()).then(data => {
@@ -52,36 +94,34 @@ function Browse(){
     }
   }
 
-  useEffect(() => {
-    if(movies != null){
-      setMovies(null);
-      if(index != 1){
-        setIndex(1);
-      }else{
-        get_movies();
-      }
-    }
-  }, [sort])
+  // useEffect(() => {
+  //   if(movies != null){
+  //     setMovies(null);
+  //     if(index != 1){
+  //       setIndex(1);
+  //     }else{
+  //       get_movies();
+  //     }
+  //   }
+  // }, [sort])
 
   useEffect(() => {
     setMovies(null);
     setNIndexes(null);
     setNMatches(null);
-    if(index != 1){
-      setIndex(1);
-    }else{
-      get_movies();
-    }
+    
+    get_movies();
+    
   }, [criteria])
 
   // Data Fetching Called at criteria updates
-  useEffect(() => {
-    if(movies != null){
-      setMovies(null);
-      // Loading is true while movies are null
-      get_movies();
-    }
-  }, [index]);
+  // useEffect(() => {
+  //   if(movies != null){
+  //     setMovies(null);
+  //     // Loading is true while movies are null
+  //     get_movies();
+  //   }
+  // }, [index]);
 
 
 
@@ -107,14 +147,14 @@ function Browse(){
       <Filters active={filterActive} nMatches={nMatches} updateFilters={updateCriteria} filters={criteria} />
 
       <div id="ControlPanel">
-        <Options name='Sort' updateOption={setSort} option={sort} options={SORT} />
+        <Options name='Sort' updateOption={updateSort} option={sort} options={ Object.keys(SORT)} />
         <Labels labelType="GENRES" updateLabel={updateCriteria} setLoaded={setLabelsLoaded}/>
         
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
       </div>
       <div id="MovieList">
         <MovieList movies={movies} />
-        <Indexer nIndexes={nIndexes} updateIndex={setIndex} index={index} />
+        <Indexer nIndexes={nIndexes} updateIndex={updateIndex} index={index} />
       </div>
       <Footer />
     </div>

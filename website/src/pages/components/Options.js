@@ -4,9 +4,12 @@ import {useState} from 'react';
 
 
 function Options({name, updateOption, option, options, multi}){
-  function clickOption(optionKey){
+  let isArray = Array.isArray(options)
+
+  function clickDictOption(optionKey){
     if(multi === true){
       if(option !== null){
+
         if(option.indexOf(options[optionKey]) !== -1){
           let newOption = [];
           for(let opt of option){
@@ -26,7 +29,30 @@ function Options({name, updateOption, option, options, multi}){
     }
   }
 
-  function optionMatch(option, key){
+  function clickOption(newOption){
+    if(multi === true){
+      if(option !== null){
+
+        if(option.indexOf(newOption) !== -1){
+          let newOptions = [];
+          for(let opt of option){
+            if(opt !== newOption){
+              newOptions.push(opt)
+            }
+          }
+          updateOption(newOptions);
+        }else{
+          updateOption([...option, newOption]);
+        }
+      }else{
+        updateOption([newOption]);
+      }
+    }else{
+      updateOption(newOption);
+    }
+  }
+
+  function optionDictMatch(option, key){
 
     if(multi === true){
       if(option === null){
@@ -43,6 +69,35 @@ function Options({name, updateOption, option, options, multi}){
     }
   }
 
+  function optionMatch(option, newOption){
+
+    if(multi === true){
+      if(option === null){
+        return false;
+      }
+      for(let opt of option){
+        if(opt === newOption){
+          return true;
+        }
+      }
+      return false;
+    }else{
+      return (option === newOption)
+    }
+  }
+
+  if(isArray){
+    return (
+      <div id="Options">
+        <div><span>{name}</span> <Caret/></div>
+        <ul id="Options">
+          {options.map(o => (
+            <li key={o} className={optionMatch(option, o) ? 'active' : ''} onClick={()=>{clickOption(o)}}>{o}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
   
 
   return (
@@ -50,7 +105,7 @@ function Options({name, updateOption, option, options, multi}){
       <div><span>{name}</span> <Caret/></div>
       <ul id="Options">
         {Object.keys(options).map(key => (
-          <li key={key} className={optionMatch(option, key) ? 'active' : ''} onClick={()=>{clickOption(key)}}>{key}</li>
+          <li key={key} className={optionDictMatch(option, key) ? 'active' : ''} onClick={()=>{clickDictOption(key)}}>{key}</li>
         ))}
       </ul>
     </div>
