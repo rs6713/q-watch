@@ -1,9 +1,9 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
 
-function Labels({labelType, updateLabel}){
+function Labels({labelType, updateLabel, label}){
   const [labels, setLabels] = useState([]);
-  const [label, setLabel] = useState(null);
+  label = label || null
 
   // Fetching labels called once at mount
   useEffect(() => {
@@ -15,11 +15,9 @@ function Labels({labelType, updateLabel}){
   const labelName = labelType.slice(0, -1)
 
   function chooseLabel(lbl){
-    setLabel(lbl);
     updateLabel({
       [labelType]: lbl
     })
-    console.log(labelName, lbl)
   }
 
   return (

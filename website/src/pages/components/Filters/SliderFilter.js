@@ -1,17 +1,70 @@
 import React from 'react';
 import {useEffect, useState} from 'react';
+import Filters from '../Filters';
 import {Icon} from '../Image'
 import Switch from '../Switch'
 
-function SliderFilter({filter, updateFilters, filters, randomIdx}){
+function SliderFilter({
+  filter,
+  updateFilters,
+  filters,
+  randomIdx}){
 
   const [toggleActive, setToggleActive] = useState(false);
-  const [toggleLeft, setToggleLeft] = useState(0);
-  const [atLeast, setAtLeast] = useState(false);
+  
+  let currentSelectedOption = getSelectedOption();
+  console.log('SliderFilter currentselectedoption: ', filter['id'], currentSelectedOption)
+  const atLeast = currentSelectedOption[1];
   const [selectedOption, setSelectedOption] = useState(
-    filter !== null && filter.filters !== null  ? filter.filters[filter.filters.length-1]: null
+    currentSelectedOption[0]
   )
   const [active, setActive] = useState(false)
+  console.log('Current selected option 0: ', currentSelectedOption[0])
+  const [toggleLeft, setToggleLeft] = useState(
+    currentSelectedOption[0]? getOptionTogglePosition(currentSelectedOption[0]) : 0
+  );
+  // if(filters[filter['id']]){
+  //   setSnapPosition(selectedOption)
+  // }
+
+  useEffect(()=>{
+    let cso = getSelectedOption();
+    setSelectedOption(cso[0]);
+    //setAtLeast = cso[1]
+  }, [filters, filter])
+  useEffect(() => {
+    setToggleLeft(
+      getOptionTogglePosition(selectedOption)
+    )
+  }, [selectedOption])
+
+  console.log('SlideFilter: ', filter,  filter['id'], filters[filter['id']])
+
+  function getSelectedOption(){
+    let currentOption = filters[filter['id']];
+    if(currentOption){
+      console.log('selected slidefilter: ', currentOption)
+
+      //atLeast? 'EXCLUDE': 'INCLUDE',
+      let top_id = Array.isArray(currentOption['VALUE'])?Math.max(...currentOption['VALUE']): currentOption['VALUE']
+      console.log('Available filters: ', filter.filters, top_id)
+      let topOption = filter.filters.filter(f=> f.ID == top_id)[0]
+      console.log('Topoption: ', topOption)
+      if(filter['type'] === 'slider' ){
+        return [
+          topOption,
+          currentOption['TYPE'] == 'INCLUDE' ? false: true // atLeast
+        ]
+      }
+      if(filter['type'] === 'rangeslider'){
+        return [
+          topOption,
+          currentOption['TYPE'] == 'LESS_THAN' ? false: true // atLeast
+        ]
+      }
+    }
+    return [filter && filter.filters ? filter.filters[filter.filters.length - 1]: null, false]
+  }
 
   useEffect(()=>{
     if(active){
@@ -19,11 +72,7 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
     }
   }, [atLeast])
 
-  function chooseOption(option){
-    setActive(true)
-    setSelectedOption(option);
-    setSnapPosition(option);
-    
+  function updateFiltersOption(option, atLeast){
     var validIds = [];
     if(filter.type === 'slider'){
       
@@ -50,9 +99,21 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
     }
   }
 
+  function chooseOption(option){
+    setActive(true)
+    setSelectedOption(option);
+    setSnapPosition(option);
+
+    updateFiltersOption(option, atLeast)
+
+  }
+  function setAtLeast(atLeast){
+    updateFiltersOption(selectedOption, atLeast)
+  }
+
   function getOptionClass(option){
     let cls = 'SliderOption';
-    if(option.ID === selectedOption.ID){
+    if(selectedOption && option.ID === selectedOption.ID){
       cls += " active"
     }
     if(option.ICON){
@@ -98,16 +159,21 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
     }
   }
 
+  function getOptionTogglePosition(selectedOption){
+    if(selectedOption && document.getElementById('bar') && document.getElementById(String(selectedOption.ID + randomIdx))){
+    let optionX = document.getElementById(String(selectedOption.ID + randomIdx)).getBoundingClientRect();
+    let sliderLeft = document.getElementById('bar').getBoundingClientRect().left;
+    let toggleWidth = document.getElementById('toggle').clientWidth;
+    return  `${(optionX.left + optionX.right) / 2 - sliderLeft - (toggleWidth/2)}px`
+    }
+  }
+
 
   function setSnapPosition(selectedOption){
     if(selectedOption !== null){
-      let optionX = document.getElementById(String(selectedOption.ID + randomIdx)).getBoundingClientRect();
-      let sliderLeft = document.getElementById('bar').getBoundingClientRect().left;
-      let toggleWidth = document.getElementById('toggle').clientWidth;
 
-      
       setToggleLeft(
-        `${(optionX.left + optionX.right) / 2 - sliderLeft - (toggleWidth/2)}px`
+       getOptionTogglePosition(selectedOption)
       )
     }
   }
@@ -153,10 +219,11 @@ function SliderFilter({filter, updateFilters, filters, randomIdx}){
   }, [toggleActive])//toggleActive
 
 
-  if(selectedOption === null){
+  if(selectedOption === null || !filter.filters){
     return <></>
   }
-  let optionDescription = selectedOption.LABEL?<><h3>{selectedOption.LABEL}</h3>
+  console.log('Trying ot generate optiondescription: ', selectedOption)
+  let optionDescription = selectedOption && selectedOption.LABEL?<><h3>{selectedOption.LABEL}</h3>
   <p>{selectedOption.DESCRIP}</p></> : null;
 
   function mouseDown(){

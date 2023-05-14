@@ -3,19 +3,21 @@ import {useEffect, useState} from 'react';
 import Switch from '../Switch';
 import ExpandableBubbles from '../ExpandableBubbles';
 
-function BubbleFilter({filter, updateFilters, filters}){
+function BubbleFilter({filter, updateFilters}){
 
   const [switchState, setSwitchState] = useState(false);
 
   useEffect(()=>{
+
     if(filter.switchType === 'include'){
-      if(filters[filter['id']] !== undefined){
+      let currentIds = filter.filters.filter(f => f.active).map(f => f.ID);
+      if(currentIds.length > 0){
         updateFilters(
           {
             [filter['id']]: {
               'TYPE': 'INCLUDE',
               'RULE': switchState? 'AND' : 'OR',
-              'VALUE': filters[filter['id']]['VALUE']
+              'VALUE': currentIds//filters[filter['id']]['VALUE']
             }
           }
         )
@@ -24,10 +26,8 @@ function BubbleFilter({filter, updateFilters, filters}){
   }, [switchState])
 
   function bubbleSelect(itemId){
+    let currentIds = filter.filters.filter(f => f.active).map(f => f.ID);
 
-    console.log('bubbleselect')
-    let currentIds = filters[filter['id']] !== undefined? (filters[filter['id']]['VALUE'] || []) : [];
-    console.log(currentIds)
     let rule = switchState? 'AND' : 'OR';
 
     if(filter["switchType"] === "include"){
@@ -45,7 +45,6 @@ function BubbleFilter({filter, updateFilters, filters}){
     }
     //{VALUE: [1,2], TYPE: 'INCLUDE', RULE: 'ALL'}
     if(filter["switchType"] === "exclude"){
-      console.log('exclude')
       if(currentIds.indexOf(itemId) !== -1){
         currentIds.splice(currentIds.indexOf(itemId))
         if(currentIds.length === 0){

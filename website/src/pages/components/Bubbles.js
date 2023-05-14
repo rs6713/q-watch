@@ -3,12 +3,12 @@ import {useState} from 'react';
 
 function Bubbles({items, clickAction, id}){
 
-  const [activeItems, setActiveItems] = useState({});
+  //const [activeItems, setActiveItems] = useState({});
 
   function chooseItem(item, i){
     return () => {
       if(clickAction){
-        setActiveItems({...activeItems, [i]: !activeItems[i]})
+        //setActiveItems({...activeItems, [i]: !activeItems[i]})
         clickAction(item)
       }
     }
@@ -21,7 +21,7 @@ function Bubbles({items, clickAction, id}){
     <div className="bubbles" id={id || ""}>
       {
         items.map((item, i) => (
-          <div className={"bubble" + (activeItems[i]? " active": "")} title={item.DESCRIP || ""} onClick={chooseItem(item.ID, i)} key={i}>
+          <div className={"bubble" + (item['active']? " active": "")} title={item.DESCRIP || ""} onClick={chooseItem(item.ID, i)} key={i}>
             {typeof item === 'string' ? item : item.LABEL}
             {typeof item !== 'string' && Object.keys(item).indexOf('MAIN') !== -1 && item.MAIN === 0 ? '*' : ''}
           </div>

@@ -23,7 +23,7 @@ function MovieList({movies}){
   }
 
   return (
-    <div id="BrowseResults">
+    <div id="BrowseResults" style={movies === null || movies.length===0 ?{'flex': '1 1'}: {}}>
       <Loader isLoading={movies === null} />
       {content}
     </div>

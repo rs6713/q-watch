@@ -584,6 +584,7 @@ h3.delta.down {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+    z-index: 10;
     h1 {
       color: $FONT_COLOR_LIGHTEST;
       font-size: 9em;

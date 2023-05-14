@@ -159,49 +159,85 @@ function Filters({active, nMatches, updateFilters, filters}){
   action --> to call with list
 
   */
-  const [config, setConfig] = useState(null)
+  //const [config, setConfig] = useState(null)
+  const [labels, setLabels] = useState(null);
+  console.log('Received filters: ', filters)
   useEffect(() => {
     fetch('/api/movie/labels').then(res => res.json()).then(data => {
       console.log('Calling api movie labels', Object.keys(data))
-      let temp_config = {...baseConfig, 'filterSections': []}
-
-      for(let section of baseConfig['filterSections']){
-
-        let sectionLabel = Object.keys(section).indexOf('dataLabel') === -1? section['id'] : section['dataLabel']
-        if(sectionLabel !== null && Object.keys(data).indexOf(sectionLabel)!= -1){
-          temp_config['filterSections'].push(
-            {...section, 'filters': data[sectionLabel].sort((a, b) => a.ID - b.ID)}
-          )
-        }else if(section['type'] === 'subfilters'){
-          let filter_section = {...section, 'filters': []}
-          
-          for(let filter of section['filters']){
-            let filterLabel = Object.keys(filter).indexOf('dataLabel') === -1? filter['id'] : filter['dataLabel'];
-
-            // If is slider subfilter with options in data
-            if(['slider', 'bubble', 'dropdown'].indexOf(filter['type'])!== -1 && Object.keys(data).indexOf(filterLabel)!==-1){
-              console.log('Sorting ' + filter['type'])
-              filter_section['filters'].push(
-                {...filter, 'filters': data[filterLabel].sort((a, b) => a.ID - b.ID)}
-              )
-            }else{
-              filter_section['filters'].push(filter)
-            }
-          }
-          temp_config['filterSections'].push(filter_section)
-        }else{
-          temp_config['filterSections'].push(section)
-        }
-      }
-      
-      setConfig(temp_config)
+      setLabels(data);
     });
-  }, [])
+  }, []);
+
+  function createActiveFilters(label_id, filter_id){
+    let temp_filter = labels[label_id].sort((a, b) => a.ID - b.ID)
+    console.log('Temp filter: ', label_id, filters[filter_id], temp_filter)
+    var f_ids = [];
+    if(filters[filter_id]){
+      if(['number', 'string'].indexOf(typeof filters[filter_id])!== -1){
+        f_ids = [filters[filter_id]]
+      }else if(Array.isArray(filters[filter_id])){
+        f_ids = filters[filter_id]
+      }else{
+        f_ids = filters[filter_id]['VALUE']
+      }
+      temp_filter = temp_filter.map(f => {
+        if(f_ids.indexOf(f.ID) !== -1){
+          return {...f, 'active': true}
+        }
+        return f
+      })
+    }
+    return temp_filter
+  }
+
+  function getFilterLabel(filter){
+    return Object.keys(filter).indexOf('dataLabel') === -1? filter['id'] : filter['dataLabel']
+  }
+
+  let config = null;
+  if(labels){
+    let temp_config = {...baseConfig, 'filterSections': []}
+
+    for(let section of baseConfig['filterSections']){
+
+      let sectionLabel = getFilterLabel(section)
+      if(sectionLabel !== null && Object.keys(labels).indexOf(sectionLabel)!= -1){
+        temp_config['filterSections'].push(
+          {
+            ...section,
+            'filters': createActiveFilters(sectionLabel, section['id'])
+          }
+        )
+      }else if(section['type'] === 'subfilters'){
+        let filter_section = {...section, 'filters': []}
+        
+        for(let filter of section['filters']){
+          let filterLabel = getFilterLabel(filter);
+
+          // If is slider subfilter with options in data
+          if(['slider', 'bubble', 'dropdown'].indexOf(filter['type'])!== -1 && Object.keys(labels).indexOf(filterLabel)!==-1){
+            console.log('Sorting ' + filter['type'])
+            filter_section['filters'].push(
+              {...filter, 'filters': createActiveFilters(filterLabel, filter['id'])}
+            )
+          }else{
+            filter_section['filters'].push(filter)
+          }
+        }
+        temp_config['filterSections'].push(filter_section)
+      }else{
+        temp_config['filterSections'].push(section)
+      }
+    }
+    
+    config = temp_config;
+  }
 
   function generateFilter(filter){
-
+    
     return <div key={filter.title}>
-      {filter.type === "bubble" && <BubbleFilter filters={filters} updateFilters={updateFilters} filter={filter}/>}
+      {filter.type === "bubble" && <BubbleFilter updateFilters={updateFilters} filter={filter}/>}
 
       {filter.type === "checkbox" &&
         <div>
