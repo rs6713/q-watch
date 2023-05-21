@@ -1,16 +1,16 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
 
-function Labels({labelType, updateLabel, label}){
-  const [labels, setLabels] = useState([]);
+function Labels({labels, labelType, updateLabel, label}){
+  //const [labels, setLabels] = useState([]);
   label = label || null
 
   // Fetching labels called once at mount
-  useEffect(() => {
-    fetch('/api/movie/labels').then(res => res.json()).then(data => {
-      setLabels(data[labelType]);
-    });
-  }, []);
+  // useEffect(() => {
+  //   fetch('/api/movie/labels').then(res => res.json()).then(data => {
+  //     setLabels(data[labelType]);
+  //   });
+  // }, []);
 
   const labelName = labelType.slice(0, -1)
 

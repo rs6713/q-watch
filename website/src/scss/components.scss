@@ -67,6 +67,15 @@
   }
 }
 
+.sidegraphs {
+  display: flex;
+  flex-direction: row;
+  .Graph {
+    width: 50%;
+    margin: 0;
+  }
+}
+
 .announcement {
   position: absolute;
   top: 50%;
@@ -89,9 +98,11 @@
     h3 {
       margin-top: 0;
     }
-    div {
-      span:first-child {
-        margin-right: 1em;
+    tr {
+      //display: grid;
+
+      td:first-child {
+        padding-right: 1em;
         font-weight: bold;
       }
     }

@@ -1,3 +1,5 @@
+import {interpolateRainbow, interpolateWarm} from 'd3-scale-chromatic';
+import * as d3 from 'd3';
 var resizeGraph = (setGraphDimensions) => {
 
   return () => {
@@ -32,6 +34,21 @@ var resizeGraph = (setGraphDimensions) => {
     window.removeEventListener('resize', handleResize)
   }
 }
+}
+
+function getColorScale(keys){
+  let lenKeys = keys.length
+  let cs = [];
+  for (let i = 0; i< lenKeys; i++){
+    cs.push(interpolateWarm(i/lenKeys))
+  }
+  return d3.scaleOrdinal()
+  .domain(keys)
+  .range(cs)
+
+}
+export {
+  getColorScale
 }
 
 export default resizeGraph

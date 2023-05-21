@@ -102,6 +102,7 @@ function getCriteriaFromSearchParams(searchParams){
 function Browse(){
 
   const navigate = useNavigate();
+  const [labels, setLabels] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [filterActive, setFilterActive] = useState(false);
@@ -116,7 +117,6 @@ function Browse(){
 
   const [nIndexes, setNIndexes] = useState(null);
   const [nMatches, setNMatches] = useState(null);
-  const [labelsLoaded, setLabelsLoaded] = useState(false);
   const [shareActive, setShareActive] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
 
@@ -163,6 +163,13 @@ function Browse(){
     console.log('Updating searchParams to: ', newSearchParams)
     setSearchParams(newSearchParams)
   }
+
+  useEffect(() => {
+    fetch('/api/movie/labels').then(res => res.json()).then(data => {
+      console.log('Labels: ', data)
+      setLabels(data);
+    });
+  }, []);
 
   // function createParams(options){
   //   let params = {
@@ -241,7 +248,7 @@ function Browse(){
     sort = searchParams.get('sort') || DEFAULT_PARAMS['SORT'];
     index = parseInt(searchParams.get('index') || DEFAULT_PARAMS['INDEX']);
     criteria = getCriteriaFromSearchParams(searchParams);
-
+    setNMatches(null);
     setMovies(null);
     console.log('Triggered effect: ', sort, index, criteria)
     get_movies()
@@ -249,9 +256,57 @@ function Browse(){
 
   function generateCriteriaDescription(criteria){
     let descriptions = []
+    console.log('Generating criteria desription: ', criteria)
     for(let key of Object.keys(criteria)){
+      let ids = criteria[key];
+      console.log('ids: ', ids, 'key: ', key)
+      let vals, rule, typ;
+
+      if(['number', 'string'].indexOf(typeof ids) !== -1){
+        ids = [ids]
+      }
+      if (DICT_FILTERS.indexOf(key) !== -1){
+        typ = criteria[key].TYPE.slice(0, 1).toUpperCase() + criteria[key].TYPE.slice(1).toLowerCase()
+        rule = criteria[key].RULE? criteria[key].RULE.toLowerCase(): ' or '
+        ids = criteria[key].VALUE
+      }
+      // else if(Array.isArray(params[key])){
+      //   newSearchParams[key] = params[key]
+      // }
+      // else if (DICT_FILTERS.indexOf(key) !== -1){
+      //   console.log(key, params[key], params)
+      //   if(params[key]){
+      //     for(const [k, v] of Object.entries(params[key])){
+      //       newSearchParams[key+'-'+k] = v
+      //     }
+      //   }
+      // }
+      if(Object.keys(labels).indexOf(key) !== -1){
+        vals = labels[key].filter(
+          o => ids.indexOf(o.ID) !== -1).map(
+            o => o.LABEL
+          )
+      }else{
+        vals = ids
+      }
+
+      let keyNice = key.split('_').map(s => s.toLowerCase()).map(
+        k => k.slice(0, 1).toUpperCase() + k.slice(1)
+      )
+      keyNice = keyNice.join('/')
+
+      if (DICT_FILTERS.indexOf(key) !== -1){
+        keyNice = keyNice + ` (${typ})`
+        vals = vals.join(` ${rule} `)
+      }else{
+        vals = vals.join('&#8226;');
+      }
+
+      
+
+
       descriptions.push(
-        {'TITLE': key, 'DESCRIP': criteria[key]}
+        {'TITLE': keyNice, 'DESCRIP': vals}
       )
     }
     return descriptions
@@ -300,7 +355,7 @@ function Browse(){
 
       <div id="ControlPanel">
         <Options name='Sort' updateOption={updateSort} option={sort} options={ Object.keys(SORT)} />
-        <Labels labelType="GENRES" updateLabel={updateSearchParams} setLoaded={setLabelsLoaded} label={criteria["GENRES"]}/>
+        {labels && <Labels labelType={'GENRES'} labels={labels['GENRES']} updateLabel={updateSearchParams} label={criteria["GENRES"]}/>}
         
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
         <Button symbol={<Share/>} onClick={()=>{setShareActive(!shareActive)}}/>
@@ -314,19 +369,19 @@ function Browse(){
       {shareActive &&
         <div className='announcement'>
           <h2>Share Search - {nMatches} Movies</h2>
-          <div className='description'>
+          <table className='description'>
             {/* <h3>{nMatches} Movies</h3> */}
               {generateCriteriaDescription(criteria).map(item => {
-                return <div>
-                  <span>{item.TITLE}</span>
-                  <span>{item.DESCRIP}</span>
-                </div>
+                return <tr>
+                  <td>{item.TITLE}</td>
+                  <td>{item.DESCRIP}</td>
+                </tr>
               })}
               {Object.keys(criteria).length == 0 && <div>
                 <span>No Criteria</span>
                 <span>Wow! So you just like a little bit of everything, right??</span>
               </div>}
-          </div>
+          </table>
           <div className='callToAction' onClick={()=>{navigator.clipboard.writeText(window.location.href); setLinkCopied(true);}}>
             <Copy/>
             <span>{linkCopied? 'Link Copied!' : 'Copy Link to Search'}</span>

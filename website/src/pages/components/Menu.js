@@ -27,12 +27,6 @@ function Menu(){
               <span>Browse</span>
             </div>
           </Link>
-          <Link to={"/overview"} className={"link" + (useLocation().pathname == "/overview"? ' active' : ' inactive')}>
-            <div>
-              <Graph title=""/>
-              <span>Overview</span>
-            </div>
-          </Link>
           <Link to={"/rankings"} className={"link" + (useLocation().pathname == "/rankings"? ' active' : ' inactive')}>
             <div>
             <Rank title="" />
@@ -41,6 +35,12 @@ function Menu(){
           </Link>
           <hr />
           <h3>The State of Queer Cinema</h3>
+          <Link to={"/overview"} className={"link" + (useLocation().pathname == "/overview"? ' active' : ' inactive')}>
+            <div>
+              <Graph title=""/>
+              <span>Overview</span>
+            </div>
+          </Link>
           <Link to={"/visualizations/overtime"} className={"link" + (useLocation().pathname == "/visualizations/overtime"? ' active' : ' inactive')}>
             <div>
               <Time title="" />

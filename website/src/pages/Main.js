@@ -6,6 +6,7 @@ import Search from '../pages/components/Search';
 import Options from './components/Options'
 import Footer from './components/Footer'
 import PieChart from './Graphs/PieChart'
+import ChartLine from './Graphs/ChartLine'
 import '../App.scss'
 import Lgbt from '../static/images/group-lgbt.png'
 import HTMLString from 'react-html-string';
@@ -19,6 +20,7 @@ import {formatRuntime} from '../utils.js';
 import Bubbles from './components/Bubbles';
 import Counter from './components/Counter';
 import {PercentDelta} from './components/Delta';
+import {groupDataAgg} from './data/utils.js' //, generateCombinations, getMovieValues
 
 const PHRASES = [
   "**I will go down with this ship.... (screams in Dido)**",
@@ -36,12 +38,51 @@ const COUNT_CATEGORIES = {
 
 }
 
+const fake_data = {
+  'data': [{"date":2009,"fruit":"Apples","sales":130},{"date":2009,"fruit":"Bananas","sales":40},{"date":2010,"fruit":"Apples","sales":137},{"date":2011,"fruit":"Bananas","sales":97},{"date":2012,"fruit":"Apples","sales":154},{"date":2012,"fruit":"Bananas","sales":117},{"date":2013,"fruit":"Apples","sales":179},{"date":2013,"fruit":"Bananas","sales":98},{"date":2014,"fruit":"Apples","sales":187},{"date":2014,"fruit":"Bananas","sales":120},{"date":2015,"fruit":"Apples","sales":189},{"date":2015,"fruit":"Bananas","sales":84}],
+  'xLabel': 'Date',
+  'yLabel': 'Sales',
+  'x': 'date',
+  'y': 'sales',
+  'z': 'fruit'
+}
+
+
+
 function Main(){
   const [movieGif, setMovieGif] = useState(null);
   const [movieFeatured, setMovieFeatured] = useState(null);
   const [movieCounts, setMovieCounts] = useState(null);
   const [countCategory, setCountCategory] = useState('LGBTQIA+ Categories')
   const [scrollActive, setScrollActive] = useState(true);
+
+  const [movies, setMovies] = useState(null);
+  useEffect(() => {
+      fetch('/api/movies', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'cache-control': 'no-store',
+        },
+        body: JSON.stringify({
+          "criteria": {},
+          'properties': [
+            'YEAR', 'RUNTIME', 'AGE', 'COUNTRY', 'LANGUAGE',
+            'BOX_OFFICE_USD', 'BUDGET_USD',
+            'TYPES', 'REPRESENTATIONS', 'TROPE_TRIGGERS', 'TAGS', 'INTENSITY',
+            'AVG_RATING'
+          ]
+        })//this.state.filterCriteria
+      }).then(res => res.json()).then(data => {
+        console.log('Data: ', data['data'])
+        setMovies(data["data"]);
+
+        console.log(groupDataAgg(data['data'], ['YEAR']))
+        console.log(groupDataAgg(data['data'], ['YEAR'], 'BOX_OFFICE_USD'))
+        console.log(groupDataAgg(data['data'], ['YEAR', 'COUNTRY', 'REPRESENTATIONS']))
+      })
+  }, []);
 
   // Data Fetching Called once at mount/dismount
   useEffect(() => {
@@ -247,9 +288,6 @@ function Main(){
         </div>
       </div>
 
-
-      
-      
       <div className='centerblock' id='Analytics'>
         <div>
           <div>

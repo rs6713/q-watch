@@ -27,22 +27,27 @@ function calculatePercentChange(dataset, dataChoice, value1, value2){
   return percentChange
 }
 
-function calculatePercent({dataset, dataChoice, value}){
-  let percent = '?'
+function calculatePercent(dataset, dataChoice, value){
+  var percent = '?'
 
   try{
     if(Array.isArray(value)){
-      let total = dataset['TOTAL']
+      let total = Object.keys(dataset).indexOf('TOTAL') !== -1 ? dataset['TOTAL']: (
+        Object.values(dataset[dataChoice]).reduce((a, b) => (a + b), 0)
+      );
       let subtotal = value.map(v=> dataset[dataChoice][v] || 0).reduce((a,b)=> a+b)
       percent = (subtotal / total * 100).toFixed(2)
     }else{
-      let total = dataset['TOTAL']
+      let total = Object.keys(dataset).indexOf('TOTAL') !== -1 ? dataset['TOTAL']: (
+        Object.values(dataset[dataChoice]).reduce((a, b) => (a + b), 0)
+      )
       let subtotal = dataset[dataChoice][value]
       percent = (subtotal / total * 100).toFixed(2)
     }
   }catch(err){
 
   }
+  console.log(percent)
   return percent
 }
 
@@ -70,9 +75,40 @@ function PercentDelta({dataset, dataChoice, value1, value2, statement, substatem
   )
 }
 
-function PercentAlert({dataset, dataChoice, value, statement}){
+function PercentAbsolute({dataset, dataChoice, value, statement, substatement}){
+  let percent = dataset !== null ? calculatePercent(dataset, dataChoice, value): '?';
 
-  let percent = calculatePercent(dataset, dataChoice, value);
+  return (
+    <h3 className='percent absolute'>
+      <div>
+        <span>{percent > 0 ? percent : percent * -1}%</span>
+      </div>
+      <span>
+        <div>{statement}</div>
+        {substatement && <div>{substatement}</div>}
+      </span>
+    </h3>
+  )
+}
+
+function Absolute({value, statement, substatement}){
+
+  return (
+    <h3 className='percent absolute'>
+      <div>
+        <span>{value || '?'}</span>
+      </div>
+      <span>
+        <div>{statement}</div>
+        {substatement && <div>{substatement}</div>}
+      </span>
+    </h3>
+  )
+}
+
+function PercentAlert({dataset, dataChoice, value, statement}){
+  console.log('Percent Alert: ', dataset, dataChoice, value)
+  let percent = dataset !== null ? calculatePercent(dataset, dataChoice, value): '?';
 
   return (
     <h3 className='percent alert'>
@@ -81,6 +117,8 @@ function PercentAlert({dataset, dataChoice, value, statement}){
   )
 }
 export {
+  Absolute,
+  PercentAbsolute,
   PercentAlert,
   PercentDelta
 }

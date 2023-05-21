@@ -14,6 +14,11 @@
   h2 {
     font-family: $FONT_LOGO;
   }
+  // TODO : DELETE
+  > .Graph {
+    height: 500px;
+    width: 1000px;
+  }
 }
 
 #Main.page::-webkit-scrollbar {
@@ -46,11 +51,13 @@
   }
 }
 
-h3.delta {
+h3.percent {
+  min-width: 200px;
   font-size: 2em;
   margin-left: 1em;
   margin-right: 1em;
   display: inline-block;
+  text-align: center;
 
   > div {
     text-align: center;
@@ -79,16 +86,23 @@ h3.delta {
       width: min-content;
       min-width: 100%;
       white-space: break-spaces;
+      text-align: center;
     }
   }
 }
-h3.delta.up {
+h3.percent.absolute {
+  > div:first-child {
+    fill: $ACCENT_COLOR3;
+    color: $ACCENT_COLOR3;
+  }
+}
+h3.percent.up {
   > div:first-child {
     fill: $ACCENT_AFFIRM;
     color: $ACCENT_AFFIRM;
   }
 }
-h3.delta.down {
+h3.percent.down {
   > div:first-child {
     fill: $ACCENT_DENY;
     color: $ACCENT_DENY;
@@ -249,13 +263,14 @@ h3.delta.down {
 #ControlPanelContainer {
   background-color: $PRIMARY_COLOR;
 }
-#Understand {
+#Main #Understand {
   background-color: $PRIMARY_COLOR;
   > div:last-child {
-    h2 {
+    h2.bubbletext {
       color: black;
       font-size: 5em;
-      white-space: wrap;
+      white-space: break-spaces;
+      line-height: 1em;
       -webkit-text-fill-color: $FONT_COLOR_LIGHTEST;
       position: relative;
       z-index: 2;
@@ -278,10 +293,22 @@ h3.delta.down {
     }
   }
 }
+h2.bubbletext {
+  font-size: 5em;
+}
+h3.bubbletext {
+  font-size: 4em;
+}
 
 .bubbletext {
   text-emphasis: outline;
   font-family: $FONT_LOGO;
+  white-space: nowrap;
+  line-height: 0.8em;
+
+  text-shadow: -3px 0 black, 0 3px black, 0px 0 black, 0 0px black;
+  -webkit-text-fill-color: $FONT_COLOR_LIGHTEST; // $ACCENT_COLOR3;
+  color: black;
 }
 
 #Main > h2.bubbletext {
@@ -424,14 +451,12 @@ h3.delta.down {
   }
 }
 
-#Main {
-  .bubbletext {
-    //color: $FONT_COLOR_LIGHTEST;
-    //-webkit-text-fill-color: $ACCENT_COLOR3;
-    -webkit-text-stroke: 3px;
-    z-index: 5;
-    text-shadow: -6px 0 black, 0 5px black, 0px 0 black, 0 0px black;
-  }
+.bubbletext {
+  //color: $FONT_COLOR_LIGHTEST;
+  //-webkit-text-fill-color: $ACCENT_COLOR3;
+  -webkit-text-stroke: 3px;
+  z-index: 5;
+  text-shadow: -6px 0 black, 0 5px black, 0px 0 black, 0 0px black;
 }
 
 #Main > a {

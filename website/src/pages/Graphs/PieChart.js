@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect, useRef} from 'react';
 import * as d3 from 'd3';
-import {interpolateRainbow, interpolateWarm} from 'd3-scale-chromatic';
+import {getColorScale} from './utils';
 
 const MAX_CATEGORIES = 10
 const MIN_PERCENT = 0
@@ -112,14 +112,7 @@ const PieChart = ({dataset, dataChoice}) => {
     // .attr("transform", `translate(${width/2}, ${height/2})`);
     // //.attr("transform", "translate(" + -width / 2 + "," + height / 2 + ")");
 
-    let lenKeys = Object.keys(data).length
-    let cs = [];
-    for (let i = 0; i< lenKeys; i++){
-      cs.push(interpolateWarm(i/lenKeys))
-    }
-    var colorScale = d3.scaleOrdinal()
-    .domain(Object.keys(data))
-    .range(cs)
+    var colorScale = getColorScale(Object.keys(data))
 
   // Compute the position of each group on the pie:
   const pie = d3.pie()
