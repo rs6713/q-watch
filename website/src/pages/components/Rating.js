@@ -46,19 +46,49 @@ export function getIcon(movieTypes){
 }
 
 function Rating({id, rating, rotated, movieTypes, votable}){
+  /*
+    id - movie id
+    rating - (number) avg rating
+    rotated - whether rating is rotated
+    movieTypes - List associated movie lgbtqia+ categories
+    votable - whetehr we allow votes.
+  */
   const [active, setActive] = useState(false);
-  const [vote, setVote] = useState(null);
+  // Local user's vote
+  const [vote, setVote] = useState(
+    localStorage.getItem(`movie_rating_${id}_value`) || null
+  );
+  // Creates hover effect for newVote (proposed pre-click)
   const [newVote, updateNewVote] = useState(null);
-  const [Icon, setIcon] = useState(Rainbow);
+  const Icon = getIcon(movieTypes);
   const maxRating = 5;
+
+
+  function updateRating(rating){
+
+    fetch('/api/movie/rating', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'cache-control': 'no-store',
+      },
+      body: JSON.stringify({
+        "movie_id": id,
+        "rating": rating,
+        "movie_rating_id": localStorage.getItem(`movie_rating_${id}_id`) || -1
+      })
+    }).then(res => res.json()).then(data => {
+      localStorage.setItem(`movie_rating_${id}_id`, data["movie_rating_id"])
+      localStorage.setItem(`movie_rating_${id}_value`, rating)
+      setVote(rating);
+    })
+    
+  }
 
 
   //TODO: Check local stored variables in session - set vote
   //TODO: When place vote, update/insert vote in db. Store vote locally on success
-
-  useEffect(()=>{
-    setIcon(getIcon(movieTypes));
-  }, [movieTypes])
 
   function setNewVote(v){
     if(votable){
@@ -80,7 +110,7 @@ function Rating({id, rating, rotated, movieTypes, votable}){
     // Conditional creation of currentvote infront of existing rating
   var yourVote = <></>;
   if(vote !== null || active){
-    yourVote = <div className={classname} aria-label={"Your current vote is: " + (active? newVote : vote)}>
+    yourVote = <div className={classname} aria-label={"Your current rating is: " + (active? newVote : vote)}>
       {[...Array(maxRating)].map((_, idx) => <div onMouseOver={() => {setNewVote(idx + 1)}} key={idx}>
           <Icon key={idx} style={{visibility: (active? newVote : vote) > idx ? 'visible':'hidden'}} />
         </div>)
@@ -90,7 +120,7 @@ function Rating({id, rating, rotated, movieTypes, votable}){
 
 
   return (
-    <div className={"rating" + rotateClass} onMouseLeave={()=>{setActive(false)}} onMouseEnter={()=>{setActive(true)}} onClick={()=>{setVote(newVote)}}>
+    <div className={"rating" + rotateClass} onMouseLeave={()=>{setActive(false)}} onMouseEnter={()=>{setActive(true)}} onClick={() => {updateRating(newVote)}}>
       {yourVote}
       {!rating && votable && <div>
           {[...Array(maxRating)].map((_, idx) => {

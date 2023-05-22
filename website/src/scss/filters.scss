@@ -155,12 +155,22 @@
   //   background: rgba(0, 0, 0, 0);
   //   content: "";
   // }
-  > h1 span {
-    position: absolute;
-    font-size: $FONT_SIZE_DEFAULT;
-    right: 1em;
-    font-weight: normal;
-    top: 1em;
+
+  > h1 {
+    span {
+      position: absolute;
+      font-size: $FONT_SIZE_DEFAULT;
+      right: 1em;
+      font-weight: normal;
+      top: 1em;
+    }
+    svg {
+      display: none;
+      cursor: pointer;
+      height: 1em;
+      float: right;
+      fill: $ACCENT_DENY;
+    }
   }
 
   .bubbles {

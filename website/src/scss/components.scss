@@ -54,7 +54,9 @@
   }
 }
 #ControlPanel .button {
-  position: absolute;
+  // position: absolute;
+  position: relative;
+  margin-left: 1em;
   padding: 1.5em;
   border-radius: 0.5em;
   svg {

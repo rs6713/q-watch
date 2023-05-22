@@ -798,12 +798,12 @@ def get_random_movie():
     return convert_to_json(movie)
 
 
-@ app.route('/api/movie/rating/', methods=["POST"])
+@ app.route('/api/movie/rating', methods=["POST"])
 def save_movie_rating() -> int:
     """ Save rating for movie. """
-    movie_id = int(request.form.get('movie_id'))
-    rating = int(request.form.get('rating'))
-    movie_rating_id = request.form.get('movie_rating_id', None)
+    movie_id = int(request.get_json()['movie_id'])
+    rating = int(request.get_json()['rating'])
+    movie_rating_id = request.get_json()['movie_rating_id'] or -1
     if movie_rating_id is not None:
         movie_rating_id = int(movie_rating_id)
 

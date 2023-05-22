@@ -2,21 +2,12 @@ import React, {useState, useEffect} from 'react';
 import {ReactComponent as ThumbDown} from '../../static/icons/thumbdown.svg';
 import {ReactComponent as ThumbUp} from '../../static/icons/thumbup.svg';
 
-// const source = {
-//   img: "/sources/netflix.png",
-//   subtype: "UK",
-//   votes: 46,
-//   url: "netflix.com"
-// }
-
 function Source({source}){
 
   const [votes, setVotes] = useState(0);
   const [voted, setVoted] = useState(
     localStorage.getItem(`movie_source_${source.ID}_vote_value`) || 0
   );
-
-  console.log('source vote: ', localStorage.getItem(`movie_source_${source.ID}_vote_id`), ' ', localStorage.getItem(`movie_source_${source.ID}_vote_value`), ' voted: ', voted)
 
     useEffect(()=>{
       let personal_vote_id = localStorage.getItem(`movie_source_${source.ID}_vote_id`)

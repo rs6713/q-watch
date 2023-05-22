@@ -6,6 +6,7 @@ import BubbleFilter from './Filters/BubbleFilter';
 import SliderFilter from './Filters/SliderFilter';
 import DropDownFilter from './Filters/DropdownFilter'
 import Loader from './Loader'
+import {ReactComponent as Exit} from '../../static/icons/no.svg'
 
 const _ = require("lodash"); 
 
@@ -153,7 +154,7 @@ const baseConfig = {
   ]
 }
 
-function Filters({active, nMatches, updateFilters, filters}){
+function Filters({active, nMatches, updateFilters, filters, setActive}){
   /*
   list --> list to filter
   action --> to call with list
@@ -280,7 +281,11 @@ function Filters({active, nMatches, updateFilters, filters}){
 
     <div id="Filters" className={active? "active": "inactive"}>
       
-      <h1>{config.title} <span>({nMatches} Matches)</span></h1>
+      <h1>
+        {config.title}
+        <span>({nMatches} Matches)</span>
+        <Exit onClick={()=> {setActive(!active)}} />
+      </h1>
       <div>
         {config.filterSections.map(generateFilter)}
       </div>

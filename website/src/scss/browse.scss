@@ -187,7 +187,7 @@
 #ControlPanel {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  //align-items: flex-start;
   width: 100%;
   padding-top: 1.5em;
   padding-bottom: 1em;
@@ -207,7 +207,7 @@
     position: relative;
     z-index: 1;
     svg {
-      height: 1em;
+      height: 0.8em;
       position: relative;
       top: 0.1em;
     }
@@ -294,7 +294,7 @@
   #Categories {
     display: flex;
     flex-direction: row;
-    flex: 1 1;
+    flex: 1 0;
     overflow-x: scroll;
     margin-left: 1em;
     margin-right: 1em;
@@ -472,7 +472,11 @@
     ::-webkit-scrollbar {
       display: none;
     }
-
+    .button {
+      margin-right: 1em;
+      margin-left: 0;
+      float: right;
+    }
     #FiltersToggle {
       float: right;
     }

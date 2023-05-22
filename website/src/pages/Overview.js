@@ -75,8 +75,14 @@ function StateOfQueerCinema(){
 
   let maxYear = movieCounts !== null ? Math.max(...Object.keys(movieCounts['Year'])) : -1
 
-  let countryBoxOffice = movies? groupDataAgg(movies, ['COUNTRY'], 'BOX_OFFICE_USD', 'dict'): null;
-  let countryBudget = movies? groupDataAgg(movies, ['COUNTRY'], 'BUDGET_USD', 'dict'): null;
+  let countryBoxOffice = movies? groupDataAgg(movies, ['COUNTRY'], {
+    value:'BOX_OFFICE_USD',
+    returnType:'dict'}
+  ): null;
+  let countryBudget = movies? groupDataAgg(movies, ['COUNTRY'], {
+    value:'BUDGET_USD',
+    returnType:'dict'
+  }): null;
   let tropePercent = movies? (Math.round((movies.map(m => m['TROPE_TRIGGERS'] == null ? 1: 0).reduce((a,b) => a+b, 0) / movies.length * 100))) : '?';
 
   return (
@@ -330,6 +336,18 @@ function StateOfQueerCinema(){
               }} xDomain={[1980, Math.max(...movies.map(m=> parseInt(m.YEAR)))]}></ChartLine>
             }
           </div>
+          {movies && 
+              <ChartLine dataset={{
+                'data': groupDataAgg(movies, ['YEAR', 'REPRESENTATIONS']),
+                'xLabel': 'Date',
+                'yLabel': 'Total Movies',
+                'x': 'YEAR',
+                'y': 'VALUE',
+                'z': ['REPRESENTATIONS'],
+                'agg': 'cumulative',
+                'percent': true
+              }} xDomain={[1980, Math.max(...movies.map(m=> parseInt(m.YEAR)))]}></ChartLine>
+            }
           line plot of percent representations in yearly released movies over time
       </div>
       <div id='Sadness'>

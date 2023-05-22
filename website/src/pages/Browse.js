@@ -108,12 +108,9 @@ function Browse(){
   const [filterActive, setFilterActive] = useState(false);
   const [movies, setMovies] = useState(null);
 
-  //let {sort, index, ...restParams} = Object.fromEntries(searchParams)
   let sort = searchParams.get('sort') || DEFAULT_PARAMS['SORT'];
   let index = parseInt(searchParams.get('index') || DEFAULT_PARAMS['INDEX']);
   let criteria = getCriteriaFromSearchParams(searchParams);
-  
-  //console.log(sort, index, criteria)
 
   const [nIndexes, setNIndexes] = useState(null);
   const [nMatches, setNMatches] = useState(null);
@@ -122,7 +119,6 @@ function Browse(){
 
   function updateSearchParams(params){
     let newSearchParams = Object.fromEntries(searchParams.entries())
-    console.log('Current Search Params: ', newSearchParams)
 
     if(Object.keys(params).length && Object.keys(params).indexOf('index') == -1){
       newSearchParams['index'] = 1
@@ -143,9 +139,7 @@ function Browse(){
         }
         continue
       }
-      //
-      //if(ARRAY_FILTERS.indexOf(key) !== -1)
-  
+
       if(['number', 'string'].indexOf(typeof params[key]) !== -1){
         newSearchParams[key] = params[key]
       }
@@ -160,7 +154,6 @@ function Browse(){
         }
       }
     }
-    console.log('Updating searchParams to: ', newSearchParams)
     setSearchParams(newSearchParams)
   }
 
@@ -351,14 +344,16 @@ function Browse(){
     <div id="Browse" className="page">
       {(filterActive || shareActive) && <div className="cover" onClick={()=>{setFilterActive(false); setShareActive(false)}} />}
 
-      <Filters active={filterActive} nMatches={nMatches} updateFilters={updateSearchParams} filters={criteria} />
+      <Filters active={filterActive} nMatches={nMatches} updateFilters={updateSearchParams} filters={criteria} setActive={setFilterActive}/>
 
       <div id="ControlPanel">
         <Options name='Sort' updateOption={updateSort} option={sort} options={ Object.keys(SORT)} />
-        {labels && <Labels labelType={'GENRES'} labels={labels['GENRES']} updateLabel={updateSearchParams} label={criteria["GENRES"]}/>}
+        <Labels labelType={'GENRES'} labels={labels && labels['GENRES']} updateLabel={updateSearchParams} label={criteria["GENRES"]}/>
+        
         
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
         <Button symbol={<Share/>} onClick={()=>{setShareActive(!shareActive)}}/>
+        
       </div>
       <div id="MovieList">
         <MovieList movies={movies} />

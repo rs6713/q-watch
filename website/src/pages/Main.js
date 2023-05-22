@@ -77,10 +77,6 @@ function Main(){
       }).then(res => res.json()).then(data => {
         console.log('Data: ', data['data'])
         setMovies(data["data"]);
-
-        console.log(groupDataAgg(data['data'], ['YEAR']))
-        console.log(groupDataAgg(data['data'], ['YEAR'], 'BOX_OFFICE_USD'))
-        console.log(groupDataAgg(data['data'], ['YEAR', 'COUNTRY', 'REPRESENTATIONS']))
       })
   }, []);
 

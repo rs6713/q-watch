@@ -56,8 +56,20 @@ function generateCombinations(arr1, arrs){
 
 
 
-function groupDataAgg(data, groups, val, returnType='list'){
+function groupDataAgg(data, groups, {
+  val,
+  percent,
+  returnType='list'
+}={}){
   var groupedData = {};
+  var totals, percentGroupIndex;
+  // Totals by single group (percent)
+  if(percent !== undefined){
+    totals = groupDataAgg(data, [percent], {val: val, returnType:'dict'})
+    percentGroupIndex = groups.indexOf(percent)
+    console.log('Totals: ', totals, groups[percentGroupIndex])
+  }
+
   for(let d of data){
     let gs = groups.map(g=> getMovieValues(d, g)).filter(g=> g.length > 0);
     // If not all keys are present e.g. representations, early exit.
@@ -68,18 +80,26 @@ function groupDataAgg(data, groups, val, returnType='list'){
 
     for(let key of keys){
       let k = key.join(' - ')
+
+      var tempV = v;
+      if(percent !== undefined){
+        tempV = v / totals[key[percentGroupIndex]] * 100
+      }
       if(Object.keys(groupedData).indexOf(k) !== -1){
-        groupedData[k] += v;
+        groupedData[k] += tempV;
       }else{
-        groupedData[k] = v;
+        groupedData[k] = tempV;
       }
     }
   }
+  // Single dict, where groups are string concatenated to form keys
   if(returnType === 'dict'){
     console.log('Dict grouped: ', groupedData)
+
     return groupedData
   }
 
+  // List of objects, where each group is individual key, as well as value
   if(returnType === 'list'){
     let finalGroups = [];
     for(let [k, v] of Object.entries(groupedData)){
@@ -91,6 +111,9 @@ function groupDataAgg(data, groups, val, returnType='list'){
       o['VALUE'] = v;
       finalGroups.push(o);
     }
+
+
+
     return finalGroups;
   }
 }

@@ -54,10 +54,10 @@ function LineChart(data, {
   // Omit any data not present in the z-domain.
   const I = d3.range(X.length).filter(i => zDomain.has(Z[i]));
 
-
+  
   // Construct scales and axes.
-  const xScale = xType(xDomain, xRange);
-  const yScale = yType(yDomain, yRange);
+  const xScale = xType().range(xRange).domain(xDomain); //xType(xDomain, xRange);
+  const yScale = yType().range(yRange).domain(yDomain);//yType(yDomain, yRange);
   const color = getColorScale(Z.filter(onlyUnique));//d3.scaleOrdinal(zDomain, colors);
   const xAxis = d3.axisBottom(xScale).ticks(width / 80, 'd').tickSizeOuter(0);
   const yAxis = d3.axisLeft(yScale).ticks(height / 40, yFormat);
@@ -74,8 +74,10 @@ function LineChart(data, {
   const line = d3.line()
       .defined(i => D[i])
       .curve(curve)
-      .x(i => xScale(X[i]))
-      .y(i => yScale(Y[i]));
+      .x((i) => xScale(X[i]))
+      .y((i) => yScale(Y[i]))
+      //.attr("x", (_, i) => xScale(X[i]))
+      //.attr("y", (_, i) => yScale(Y[i]));
 
   svg.append("g")
       .attr("transform", `translate(0,${height - marginBottom})`)
@@ -249,6 +251,26 @@ const ChartLine = ({dataset, ...kwargs}) => {
         dataset['y'],
         dataset['z_key']
       )
+    }
+    if(kwargs['xDomain']){
+      let keys = data.map(d => d[dataset['z_key']]).filter(onlyUnique)
+      let maxs = keys.map( k => {
+        let examples = data.filter(d => d[dataset['z_key']] == k && d[dataset['x']] <= kwargs['xDomain'][0])
+        if(examples.length === 0){
+          return null
+        }
+        return examples.sort((a, b) => a[dataset['x']] < b[dataset['x']]? 1 : -1)[0]
+      })
+
+      data = data.filter(d => d[dataset['x']] <= kwargs['xDomain'][1] && d[dataset['x']] > kwargs['xDomain'][0])
+      for(let m of maxs){
+        if(m !== null){
+          data.push({
+            ...m, [dataset['x']]: kwargs['xDomain'][0]
+          })
+        }
+      }
+      data = data.sort((a, b) => a[dataset['x']] > b[dataset['x']] ? 1 : -1)
     }
 
     const l = LineChart(data, {

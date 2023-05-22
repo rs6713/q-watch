@@ -33,10 +33,10 @@
     margin-left: $side_padding;
     margin-right: $side_padding;
   }
-  #ControlPanel .button {
-    right: $side_padding;
-    transform: translateX(calc(100% + 1em));
-  }
+  // #ControlPanel .button {
+  //   right: $side_padding;
+  //   transform: translateX(calc(100% + 1em));
+  // }
 }
 
 @mixin main_width_styling($side_padding_inner, $side_padding_outer) {
@@ -167,5 +167,10 @@
   #Filters {
     width: 100vw;
     border-radius: 0;
+    > h1 {
+      svg {
+        display: block;
+      }
+    }
   }
 }
