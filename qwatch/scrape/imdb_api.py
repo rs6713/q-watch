@@ -204,7 +204,11 @@ class IMDBScraper(object):
         }
 
         quotes = self.quotes_soup.find("div", id="quotes_content"
-                                       ).find_all("div", {"class": "quote"})
+                                       )
+        if quotes is None:
+            quotes = []
+        else:
+            quotes = quotes.find_all("div", {"class": "quote"})
         quotes = [
             {
                 "QUOTE_ID": i,

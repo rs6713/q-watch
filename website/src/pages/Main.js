@@ -6,6 +6,7 @@ import Search from '../pages/components/Search';
 import Options from './components/Options'
 import Footer from './components/Footer'
 import PieChart from './Graphs/PieChart'
+import MainMenu from './components/MainMenu'
 import ChartLine from './Graphs/ChartLine'
 import '../App.scss'
 import Lgbt from '../static/images/group-lgbt.png'
@@ -145,9 +146,11 @@ function Main(){
     </div>
   }
 
-  function scroll(){
-    document.getElementById("Welcome").scrollIntoView({behavior:"smooth", block: "start"});
-  }
+
+
+
+
+
 
   let marqueeContent = <div>
   {movieCounts && <PercentDelta 
@@ -216,12 +219,15 @@ function Main(){
             </Link>
           </div>
         }
-        <div className="arrow" onClick={scroll}>
+        {/* <div className="arrow" onClick={scroll}>
           <span></span>
           <span></span>
           <span></span>
-        </div>
+        </div> */}
       </div>
+      <MainMenu/>
+      <div className='contentContainer'>
+      
       <div id='Welcome' className='block'>
         <div>
           <h2 className='bubbletext'>Find Yourself</h2>
@@ -280,7 +286,7 @@ function Main(){
         </div>
         <div>
           {movieCounts !== null && <h2 className='bubbletext'>
-            <span><span className='bg'></span><Counter total={movieCounts['TOTAL']}/></span> MOVIES AND COUNTING</h2>}
+            <span><span className='bg'></span><Counter total={movieCounts['TOTAL']}/></span><br/>MOVIES AND COUNTING</h2>}
         </div>
       </div>
 
@@ -321,7 +327,7 @@ function Main(){
       </div>
 
         <Footer />
-
+        </div>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import {ReactComponent as Logo} from '../../static/website/logo.svg';
 import {Link, useLocation} from 'react-router-dom';
 import {ReactComponent as Grid} from '../../static/icons/grid.svg'
@@ -12,6 +12,7 @@ import {ReactComponent as Graph} from '../../static/icons/graph.svg'
 
 
 function Menu(){
+
     return (
       <div id="MenuContainer">
         <Hamburger className="hamburger" title="" aria-label="Menu" />

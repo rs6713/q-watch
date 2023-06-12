@@ -1,7 +1,7 @@
 @import "./defaults.scss";
 
 #Overview {
-  > div {
+  > div:not(#MainMenu) {
     position: relative;
     background-color: $FONT_COLOR_LIGHTEST;
     padding: 1em;

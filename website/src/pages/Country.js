@@ -6,6 +6,7 @@ import Loader from './components/Loader';
 import Options from './components/Options';
 import Switch from './components/Switch';
 import ChartCountry from './Graphs/ChartCountry';
+import MainMenu from './components/MainMenu';
 
 import DEFAULT_MOVIES from './default_rank.json';
 
@@ -72,7 +73,7 @@ function Country(){
   return (
     <div id="Country" className="page GraphPage">
       {filterActive && <div className="cover" onClick={()=>{setFilterActive(false)}} />}
-
+      <MainMenu/>
       <Filters active={filterActive} nMatches={nMatches} updateFilters={updateCriteria} filters={criteria} />
 
       <div id="ControlPanel">

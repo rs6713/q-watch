@@ -5,6 +5,7 @@ import Filters from './components/Filters';
 import Loader from './components/Loader';
 import Options from './components/Options';
 import Switch from './components/Switch';
+import MainMenu from './components/MainMenu';
 import BarHierarchy from './Graphs/BarHierarchy';
 
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
@@ -110,8 +111,9 @@ function Rank(){
 
   return (
     <div id="Rankings" className="page GraphPage">
+      <MainMenu />
       {filterActive && <div className="cover" onClick={()=>{setFilterActive(false)}} />}
-
+      
       <Filters active={filterActive} nMatches={nMatches} updateFilters={updateCriteria} filters={criteria} />
 
       <div id="ControlPanel">

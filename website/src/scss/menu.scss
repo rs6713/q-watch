@@ -1,5 +1,101 @@
 @import "./defaults.scss";
 
+#MainMenu {
+  z-index: 5;
+  background-color: $FONT_COLOR_LIGHTEST;
+  display: block;
+  width: 100vw;
+  position: relative;
+  font-size: 1em;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+  box-shadow: 0 5px 10px rgba(154, 161, 177, 0.1);
+
+  a.active {
+    color: $PRIMARY_COLOR;
+    cursor: default;
+  }
+
+  svg {
+    height: 2em;
+  }
+  .logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    fill: $PRIMARY_COLOR;
+  }
+  nav {
+    display: flex;
+  }
+  nav:first-of-type {
+    > a,
+    > div {
+      margin-right: 2em;
+    }
+  }
+  nav:last-of-type {
+    > a,
+    > div {
+      margin-left: 2em;
+    }
+  }
+  nav > div {
+    position: relative;
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: -1em;
+      background-color: $FONT_COLOR_LIGHTEST;
+      color: $FONT_COLOR_DEFAULT;
+
+      > div {
+        padding: 1em 1em;
+        white-space: nowrap;
+      }
+      > div:hover {
+        color: $PRIMARY_COLOR;
+      }
+    }
+  }
+  nav > div:hover .dropdown {
+    display: block;
+  }
+
+  nav > a,
+  nav > div {
+    cursor: pointer;
+    padding: 1em 0em;
+    display: inline-block;
+    span {
+      position: relative;
+    }
+    span:after {
+      background-color: $PRIMARY_COLOR;
+      bottom: 2px;
+      content: "";
+      height: 2px;
+      left: 0;
+      position: absolute;
+      transition: width 0.2s ease-in-out;
+      visibility: hidden;
+      width: 0;
+    }
+  }
+  nav > a:not(.active):hover,
+  nav > div:hover {
+    color: $PRIMARY_COLOR;
+    span:after {
+      width: 100%;
+      visibility: visible;
+    }
+  }
+}
+
 #MenuContainer {
   position: fixed;
   top: 2em;
@@ -109,6 +205,7 @@
 #Menu a.active div svg {
   fill: $ACCENT_COLOR1;
 }
+
 #Menu a.inactive div > svg {
   fill: $ACCENT_COLOR3;
 }

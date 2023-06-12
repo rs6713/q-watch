@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 
-import Footer from './components/Footer'
+import MainMenu from './components/MainMenu';
+import Footer from './components/Footer';
 import {ReactComponent as Plus} from '../static/icons/plus.svg'
 import {ReactComponent as Minus} from '../static/icons/minus.svg'
 
@@ -65,6 +66,7 @@ function DropDown({title, contents}){
 
   return (
     <div className='dropdown' onClick={()=>{setActive(!active)}}>
+
       <h3>
         <span>{title}</span>
         {active && <Minus title="" aria-label={"Click to hide answer"} />}
@@ -81,6 +83,7 @@ function FAQ(){
 
   return (
     <div className='page' id='faq'>
+      <MainMenu/>
       <h2>Frequently Asked Questions</h2>
       <h3>Ya nosey parkers youu</h3>
       <div>

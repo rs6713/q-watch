@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import Footer from './components/Footer';
 import Gallery from './components/Gallery';
 import Loader from './components/Loader';
@@ -15,7 +15,7 @@ import Source from './components/Source';
 import styles from '../scss/defaults.scss';
 import {Icon} from './components/Image'
 import HTMLString from 'react-html-string';
-
+import MainMenu from './components/MainMenu';
 
 import {ReactComponent as ReturnMovie} from '../static/icons/return.svg';
 import {ReactComponent as ShuffleMovie} from '../static/icons/shuffle.svg';
@@ -47,6 +47,8 @@ function useWindowDimensions() {
 function Movie(props){
  
   var path = window.location.href.split("/")
+
+  const navigate = useNavigate();
 
   const [id, setId] = useState(path[path.length-1])
 
@@ -148,12 +150,13 @@ function Movie(props){
 
   return (
       <div id="Movie" className="page">
+        <MainMenu/>
         <div id="MovieControls">
           
           <ShuffleMovie aria-label="Choose Random Movie" title="Choose random movie." className="ShuffleMovie" onClick={pickRandomMovie}/>
-          <Link to="/browse">
-            <ReturnMovie aria-label="Return to Browse" title="Return to Browse" className="ReturnMovie" />
-          </Link>
+          
+          <ReturnMovie aria-label="Return to Browse" title="Return to Browse" onClick={() => navigate(-1)} />
+          
         </div>
 
         {

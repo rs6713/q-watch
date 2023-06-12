@@ -534,6 +534,17 @@ def get_count_matching_movies() -> int:
 
     movies = get_matching_movies(criteria, properties=["ID", *props])
 
+    na_maps = {
+        'BOX_OFFICE_USD': -1,
+        'BUDGET_USD': -1,
+        'BOX_OFFICE': '',
+        'BUDGET': '',
+    }
+    for movie in movies:
+        for col in na_maps:
+            if col in movie:
+                movie[col] = movie[col] if movie[col] is not None else na_maps[col]
+
     logger.info(movies[0].keys())
 
     if not groups:
@@ -742,6 +753,18 @@ def get_movie_list():
         movies = movies[
             (index - 1) * results_per_index: index * results_per_index
         ]
+
+    na_maps = {
+        'BOX_OFFICE_USD': 0,
+        'BUDGET_USD': 0,
+        'BOX_OFFICE': '',
+        'BUDGET': '',
+    }
+    for movie in movies:
+        for col in na_maps.keys():
+            if col in movie:
+                if movie[col] is None or (not isinstance(movie[col], str) and np.isnan(movie[col])):
+                    movie[col] = na_maps[col]
 
     return {"data": movies, "n_indexes": n_indexes, "n_matches": n_matches}
 

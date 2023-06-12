@@ -6,6 +6,7 @@ import Labels from './components/Labels';
 import MovieList from './components/MovieList';
 import Options from './components/Options';
 import Indexer from './components/Indexer';
+import MainMenu from './components/MainMenu'
 
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
 import {ReactComponent as Share} from '../static/icons/share.svg'
@@ -29,6 +30,7 @@ const SORT = {
   "Lowest Rating": ["AVG_RATING", 1],
   "Most Recent Release": ["YEAR", -1],
   "Least Recent Release": ["YEAR", 1],
+  'A-Z': ['TITLE', 1]
 }
 
 const DEFAULT_PARAMS = {
@@ -295,9 +297,6 @@ function Browse(){
         vals = vals.join('&#8226;');
       }
 
-      
-
-
       descriptions.push(
         {'TITLE': keyNice, 'DESCRIP': vals}
       )
@@ -343,6 +342,7 @@ function Browse(){
   return (
     <div id="Browse" className="page">
       {(filterActive || shareActive) && <div className="cover" onClick={()=>{setFilterActive(false); setShareActive(false)}} />}
+      <MainMenu/>
 
       <Filters active={filterActive} nMatches={nMatches} updateFilters={updateSearchParams} filters={criteria} setActive={setFilterActive}/>
 
@@ -359,8 +359,9 @@ function Browse(){
         <MovieList movies={movies} />
         {movies !== null && movies.length !== 0 && <div className='spacer'> </div>}
         <Indexer nIndexes={nIndexes} updateIndex={updateIndex} index={index} />
+        <Footer />
       </div>
-      <Footer />
+      
       {shareActive &&
         <div className='announcement'>
           <h2>Share Search - {nMatches} Movies</h2>

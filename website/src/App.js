@@ -36,7 +36,7 @@ class App extends Component {
             <Route exact path="/faq" element={<FAQ />} />
             <Route exact path="/disclaimers" element={<Disclaimers />} />
           </Routes>
-          <Menu />
+          {/* <Menu /> */}
         </Router>
       </div>
     )

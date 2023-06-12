@@ -5,6 +5,7 @@ import Footer from './components/Footer'
 import PieChart from './Graphs/PieChart'
 import ChartLine from './Graphs/ChartLine';
 import ChartBar from './Graphs/ChartBar';
+import MainMenu from './components/MainMenu';
 import {PercentDelta, PercentAlert, thresholdStatement, PercentAbsolute, Absolute} from './components/Delta';
 import {
   getLowestXValues,
@@ -93,6 +94,7 @@ function StateOfQueerCinema(){
         <PercentAlert dataset={movieCounts} dataChoice='Representations' value='Plus-Sized' statement={thresholdStatement(50)}/>
         <PercentAlert dataset={movieCounts} dataChoice='Representations' value='POC Love' statement={thresholdStatement(50)}/>
       </div> */}
+      <MainMenu/>
       <div id='Types'>
         <h3 className='bubbletext'>&#127752;<br/>Somewhere</h3>
         <div className='stats'>

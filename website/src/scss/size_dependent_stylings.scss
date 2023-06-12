@@ -1,6 +1,10 @@
 @import "../scss/defaults.scss";
 
 @mixin width_styling($side_padding) {
+  #MainMenu {
+    padding-left: $side_padding;
+    padding-right: $side_padding;
+  }
   // your SCSS here, e.g.
   #Browse #MovieList #BrowseResults,
   .footer,
@@ -12,7 +16,7 @@
     margin-left: $side_padding;
     margin-right: $side_padding;
   }
-  #Overview > div {
+  #Overview > div:not(#MainMenu) {
     margin-left: $side_padding;
     margin-right: $side_padding;
   }
@@ -41,11 +45,17 @@
 
 @mixin main_width_styling($side_padding_inner, $side_padding_outer) {
   #Main {
+    #MainMenu {
+      padding-left: $side_padding_outer;
+      padding-right: $side_padding_outer;
+    }
+
     .centerblock {
       padding-left: $side_padding_outer;
       padding-right: $side_padding_outer;
     }
-    > .block {
+
+    .contentContainer > .block {
       > div:first-child {
         padding-left: $side_padding_outer;
         padding-right: $side_padding_inner;
