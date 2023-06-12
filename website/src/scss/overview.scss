@@ -1,6 +1,8 @@
 @import "./defaults.scss";
 
 #Overview {
+  overflow-x: hidden;
+  max-width: 100%;
   > div:not(#MainMenu) {
     position: relative;
     background-color: $FONT_COLOR_LIGHTEST;

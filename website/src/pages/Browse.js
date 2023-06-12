@@ -215,7 +215,17 @@ function Browse(){
         body: JSON.stringify({
           "criteria": criteria,
           "sort": SORT[sort],
-          "index": index
+          "index": index,
+          'properties': [
+            "TITLE",
+            "YEAR",
+            "BIO",
+            "FILENAME", "CAPTION",
+            "AVG_RATING", "NUM_RATING",
+            "GENRES", "TYPES",
+           'RUNTIME', 'AGE', 'COUNTRY', 'LANGUAGE',
+            'REPRESENTATIONS'
+          ]
         })//this.state.filterCriteria
       }).then(res => res.json()).then(data => {
         setMovies(data["data"]);

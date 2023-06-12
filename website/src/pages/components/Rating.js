@@ -13,6 +13,7 @@ import {ReactComponent as Polygon} from '../../static/icons/polygon.svg';
 
 export function getIcon(movieTypes){
   var Icon = Rainbow;
+  console.log('Movie Types: ', movieTypes)
 
   if(movieTypes == null){
     return Icon;
@@ -62,6 +63,7 @@ function Rating({id, rating, rotated, movieTypes, votable}){
   const [newVote, updateNewVote] = useState(null);
   const Icon = getIcon(movieTypes);
   const maxRating = 5;
+
 
 
   function updateRating(rating){
