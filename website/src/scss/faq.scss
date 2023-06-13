@@ -3,19 +3,20 @@
 #faq {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow-y: hidden;
+  min-height: 100vh;
 
   > div:not(#MainMenu):nth-of-type(2) {
     flex: 1 1;
     background-color: white;
-    overflow-y: scroll;
+    // overflow-y: scroll;
     padding-left: 0em;
     padding-right: 0em;
 
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-
+    // -ms-overflow-style: none; /* IE and Edge */
+    // scrollbar-width: none; /* Firefox */
+    .dropdown:last-child {
+      border-bottom: none;
+    }
     .dropdown {
       list-style: none;
       border-bottom: 1px solid $FONT_COLOR_DEFAULT;

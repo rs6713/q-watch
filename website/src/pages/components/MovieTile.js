@@ -27,12 +27,13 @@ function MovieTile({movie}){
               {movie.LANGUAGE}&nbsp;&#9679;&nbsp;
               {movie.COUNTRY}
             </h4>
-            <h4>
-              {movie.TYPES.map((typ) => gIcon(typ))}
-              &nbsp;&#9679;&nbsp;
-              {movie.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}
-            </h4>
+            
           <p> {movie.BIO}</p>
+          <h4>
+              <span>{movie.TYPES.map((typ) => gIcon(typ))}</span>
+              
+              <span>{movie.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}</span>
+          </h4>
         </div>
         <span>{movie.YEAR}</span>
         <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} / >

@@ -99,7 +99,12 @@ function Movie(props){
   if(movie !== null){
     content = (<div id="MovieContainer">
 
+      <div className='GalleryContainer'>
+        {pageWidth >= largeScreenWidth && <Gallery images={movie.IMAGES} />}
+        {pageWidth >= largeScreenWidth && <Quote quote={movie.quote}/> }
+      </div>
       <div id="MovieContents">
+        
         <div id="MovieTitle">
           <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} votable={true}/>
           <h1>{movie.TITLE}</h1>
@@ -120,7 +125,7 @@ function Movie(props){
         </div>
         <div id="MovieParts">
           <HTMLString html={'<p>'+movie.SUMMARY + '</p>'}/>
-
+          {pageWidth < largeScreenWidth && <Gallery images={movie.IMAGES} />}
           {/* <Bubbles items={movie.GENRES} /> */}
           {movie.SOURCES && movie.SOURCES.length > 0 &&
             <div id="findMe">
@@ -136,13 +141,13 @@ function Movie(props){
           <ExpandableBubbles items={movie.TROPE_TRIGGERS} aside="(Potential for upsetting content/spoilers)" title="Trope/Trigger Warnings" expandable={true}/>
           <ExpandableBubbles items={movie.REPRESENTATIONS} title="Representation Matters" expandable={false} />
           <Opinion opinion={movie.OPINION}/>
-          <Quote quote={movie.quote}/>
+        {pageWidth < largeScreenWidth && <Quote quote={movie.quote}/> }
 
-          {pageWidth < largeScreenWidth && <Gallery images={movie.IMAGES} />}
+          
         </div>
         
       </div>
-      {pageWidth >= largeScreenWidth && <Gallery images={movie.IMAGES} />}
+      
 
     </div>)
   }
