@@ -1,6 +1,21 @@
 import React, {useState, useEffect} from 'react';
 import {ReactComponent as ThumbDown} from '../../static/icons/thumbdown.svg';
 import {ReactComponent as ThumbUp} from '../../static/icons/thumbup.svg';
+import Lgbt from '../../static/images/lgbt-flag.png'
+import Button from './Button';
+
+import {ReactComponent as Caret} from '../../static/icons/direction.svg'
+import {ReactComponent as Neutral} from '../../static/icons/neutral.svg'
+
+function Delta({number}){
+  if(number == 0){
+    return <span className='deltaSymbol'><Neutral /></span>
+  }
+  if(number < 0){
+    return <span className='deltaSymbol negative'><Caret/></span>
+  }
+  return <span className='deltaSymbol positive'><Caret/></span>
+}
 
 function Source({source}){
 
@@ -49,67 +64,47 @@ function Source({source}){
       
     }
 
+    function getPrice(){
+      if(source.MEMBERSHIP_INCLUDED){
+        return 'Membership Included'
+      }
+      if(source.COST == 0){
+        return 'Free'
+      }
+      return '£' + source.COST
+    }
+
     return (
       <div className="source">
         <img src={'/sources/' + source.IMAGE} aria-label={"Movie can be found at " + source.URL + (source.REGION? " (" + source.REGION + ")" : "" )}/>
-        <span id="votes" aria-label={"Current Votes for this Source: "+ votes}>{votes}</span>
-        <span id="region">{source.REGION}</span>
-        <span id="voter" className={voted !== 0 ? "active": ""}>
-          <span className={voted==-1 ? "active": ""}><ThumbDown title="Downvote this source." aria-label="Downvote this source." onClick={()=>{updateVoted(voted == -1 ? 0 : -1)}} /></span>
-          <span className={voted==1 ? "active": ""}><ThumbUp title="Upvote this source." aria-label="Upvote this source." onClick={() => {updateVoted(voted == 1? 0: 1)}} /></span>
-        </span>
+        <div className='description'>
+          <h2>
+            {source.LABEL}{source.REGION && ' ('+source.REGION + ')'}
+            {source.LGBT_RUN && <span className='explainer'>
+              <img src={Lgbt} alt='This OnDemand Streaming Service is LGBT run!'/>
+              <span>This OnDemand Streaming Service is LGBT run!</span>
+            </span>}
+
+          </h2>
+          <div>
+            <div className='price'>
+              <span>Price</span><br/>
+              <span>{getPrice()}</span>
+            </div>
+            {source.URL && <a target='_blank' href={source.URL}><Button onClick={()=>{}} text='Link' /></a>}
+            <div className='source_voting'>
+              <span id="votes" aria-label={"Current Votes for this Source: "+ votes}>{votes?  <span><Delta number={Math.abs(votes)} />{votes}</span> : 'No Votes'}</span>
+              <span id="voter" className={voted !== 0 ? "active": ""}>
+                <span className={voted==-1 ? "active": ""}><ThumbDown title="Downvote this source." aria-label="Downvote this source." onClick={()=>{updateVoted(voted == -1 ? 0 : -1)}} /></span>
+                <span className={voted==1 ? "active": ""}><ThumbUp title="Upvote this source." aria-label="Upvote this source." onClick={() => {updateVoted(voted == 1? 0: 1)}} /></span>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     )
 }
 
-// class Source extends Component {
-//   constructor(props){
-//     super(props)
-//     this.state = {
-    
-//     }
-//   }
-  
 
-//   componentDidMount(){
-//     // TODO get source  - by id
-//     // How to determine if user has already voted?
-//     this.setState({
-//       img: source.img,
-//       subtype: source.subtype,
-//       votes: source.votes,
-//       url: source.url,
-//       voted: undefined
-//     })
-//   }
-
-//   vote(val){
-//     if (this.state.voted !== val){
-//       this.setState({
-//         voted: val,
-//         votes: this.state.votes + val * (this.state.voted===undefined ? 1 : 2)
-//       })
-//     }
-//     if (this.state.voted === val){
-//       this.setState({
-//         voted: undefined,
-//         votes: this.state.votes - val
-//       })
-//     }
-//   }
-
-//   render(){
-//     return (
-//       <div className="source">
-//         <img src={this.state.img} aria-label={"Movie can be found at " + this.state.url + (this.state.subtype? " (" + this.state.subtype + ")" : "" )}/>
-//         <span id="votes" aria-label={"Current Votes for this Source: "+this.state.votes}>{this.state.votes}</span>
-//         <span id="voter" className={this.state.voted !== undefined ? "active": ""}>
-//           <span className={this.state.voted==-1 ? "active": ""}><ThumbDown title="Downvote this source." aria-label="Downvote this source." onClick={()=>{this.vote(-1)}} /></span>
-//           <span className={this.state.voted==1 ? "active": ""}><ThumbUp title="Upvote this source." aria-label="Upvote this source." onClick={()=>{this.vote(1)}} /></span>
-//         </span>
-//       </div>
-//     )
-//   }
-// }
 
 export default Source

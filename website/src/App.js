@@ -27,12 +27,12 @@ class App extends Component {
         <Router basename={process.env.PUBLIC_URL}>
           <Routes>
             <Route exact path='/' element={<Main />} />
-            <Route exact path='/overview' element={<StateOfQueerCinema/>} />
+            <Route exact path='/data/overview' element={<StateOfQueerCinema/>} />
             <Route exact path='/browse' element={<Browse />} />
             <Route exact path='/rankings' element={<Rank />} />
             <Route exact path='/movies/:id' element={<Movie />} /> 
-            <Route exact path="/visualizations/overtime" element={<OverTime />} /> 
-            <Route exact path="/visualizations/bycountry" element={<Country />} /> 
+            <Route exact path="/data/overtime" element={<OverTime />} /> 
+            <Route exact path="/data/country" element={<Country />} /> 
             <Route exact path="/faq" element={<FAQ />} />
             <Route exact path="/disclaimers" element={<Disclaimers />} />
           </Routes>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useMemo} from 'react';
 import {ReactComponent as Scissor} from '../../static/icons/scissor.svg';
 import {ReactComponent as Trans} from '../../static/icons/trans.svg';
 import {ReactComponent as Paw} from '../../static/icons/paw.svg';
@@ -61,10 +61,12 @@ function Rating({id, rating, rotated, movieTypes, votable}){
   );
   // Creates hover effect for newVote (proposed pre-click)
   const [newVote, updateNewVote] = useState(null);
-  const Icon = getIcon(movieTypes);
+
   const maxRating = 5;
 
-
+  const Icon = useMemo(() => {
+    return getIcon(movieTypes)
+  }, [])
 
   function updateRating(rating){
 

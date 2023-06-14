@@ -64,7 +64,6 @@
     background-color: $FONT_COLOR_LIGHTEST;
     margin-top: 0em;
     margin-bottom: 0em;
-    overflow-y: hidden;
     padding: 2em 2em 1em 2em;
     ::-webkit-scrollbar {
       display: none;
@@ -74,7 +73,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    width: fit-content;
+    box-sizing: border-box;
 
     > .GalleryContainer {
       overflow-y: auto;
@@ -94,7 +93,7 @@
       //float: right;
       max-height: 100%;
       position: relative;
-      overflow-y: hidden;
+      overflow-x: initial;
       display: flex;
       flex-direction: column;
 
@@ -151,7 +150,7 @@
 
       #MovieParts {
         flex: 1 1;
-        overflow-y: scroll;
+        overflow-x: initial;
         ::-webkit-scrollbar {
           display: none;
         }
@@ -167,37 +166,6 @@
           padding: 2em 1em;
           box-sizing: border-box;
           margin-top: 2em;
-        }
-
-        #findMe {
-          .disclaimer {
-            font-weight: lighter;
-            position: relative;
-            top: -1em;
-            width: 100%;
-            display: block;
-            text-align: justify;
-          }
-          > div {
-            margin-top: 1em;
-          }
-
-          #watchTrailer {
-            float: right;
-            font-size: $FONT_SIZE_DEFAULT;
-            text-decoration: underline;
-            font-weight: lighter;
-            cursor: pointer;
-          }
-          > div {
-            display: flex;
-            gap: 2em;
-            flex-direction: row;
-            flex-wrap: wrap;
-            img {
-              height: 5em;
-            }
-          }
         }
       }
     }
@@ -217,13 +185,11 @@
     }
   }
   #Movie #MovieContainer {
-    overflow-y: scroll;
     overflow-x: visible;
   }
   #Movie #MovieContainer #MovieContents {
     width: 100%;
     height: auto;
-    overflow-y: hidden;
     float: none;
     margin-bottom: 1em;
 

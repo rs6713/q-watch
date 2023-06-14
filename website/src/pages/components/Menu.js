@@ -36,19 +36,19 @@ function Menu(){
           </Link>
           <hr />
           <h3>The State of Queer Cinema</h3>
-          <Link to={"/overview"} className={"link" + (useLocation().pathname == "/overview"? ' active' : ' inactive')}>
+          <Link to={"/data/overview"} className={"link" + (useLocation().pathname == "/overview"? ' active' : ' inactive')}>
             <div>
               <Graph title=""/>
               <span>Overview</span>
             </div>
           </Link>
-          <Link to={"/visualizations/overtime"} className={"link" + (useLocation().pathname == "/visualizations/overtime"? ' active' : ' inactive')}>
+          <Link to={"/data/overtime"} className={"link" + (useLocation().pathname == "/data/overtime"? ' active' : ' inactive')}>
             <div>
               <Time title="" />
               <span>Over Time</span>
             </div>
           </Link>
-          <Link to={"/visualizations/bycountry"} className={"link" + (useLocation().pathname == "/visualizations/bycountry"? ' active' : ' inactive')}>
+          <Link to={"/data/country"} className={"link" + (useLocation().pathname == "/data/country"? ' active' : ' inactive')}>
             <div>
               <World title="" />
               <span>By Country</span>

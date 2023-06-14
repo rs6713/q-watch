@@ -449,7 +449,8 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
         source_query = MovieEntries('MOVIE_SOURCE', 'MOVIE_SOURCE', joins=[
             TableJoin(
                 "SOURCES",
-                return_properties=["LABEL", "URL", "REGION", "IMAGE"],
+                return_properties=["LABEL", "URL",
+                                   "REGION", "IMAGE", "LGBT_RUN"],
                 base_table_prop='SOURCE_ID', join_table_prop='ID',
                 isouter=False
             ),

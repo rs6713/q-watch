@@ -49,10 +49,10 @@ function MainMenu(){
         <div>
           <span>Data</span>
           <div className='dropdown'>
-            <div><Link to={"/overview"} className={"link" + (useLocation().pathname == "/overview"? ' active' : ' inactive')}>
+            <div><Link to={"/data/overview"} className={"link" + (useLocation().pathname == "/data/overview"? ' active' : ' inactive')}>
               Overview
             </Link></div>
-            <div><Link to={"/visualizations/bycountry"} className={"link" + (useLocation().pathname == "/visualizations/bycountry"? ' active' : ' inactive')}>
+            <div><Link to={"/data/country"} className={"link" + (useLocation().pathname == "/data/country"? ' active' : ' inactive')}>
               By Country
             </Link></div>
           </div>

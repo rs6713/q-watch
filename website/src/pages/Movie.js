@@ -10,12 +10,13 @@ import {formatRuntime} from '../utils.js';
 import Bubbles from './components/Bubbles';
 import Button from './components/Button';
 import ExpandableBubbles from './components/ExpandableBubbles'
-import {sourceDisclaimer} from '../constants'
+
 import Source from './components/Source';
 import styles from '../scss/defaults.scss';
 import {Icon} from './components/Image'
 import HTMLString from 'react-html-string';
 import MainMenu from './components/MainMenu';
+import Sources from './components/Sources';
 
 import {ReactComponent as ReturnMovie} from '../static/icons/return.svg';
 import {ReactComponent as ShuffleMovie} from '../static/icons/shuffle.svg';
@@ -128,15 +129,7 @@ function Movie(props){
           {pageWidth < largeScreenWidth && <Gallery images={movie.IMAGES} />}
           {/* <Bubbles items={movie.GENRES} /> */}
           {movie.SOURCES && movie.SOURCES.length > 0 &&
-            <div id="findMe">
-              <h2>
-                Find Me On
-              </h2>
-              <span className="disclaimer">({sourceDisclaimer})</span>
-              <div>
-                {movie.SOURCES.map((source, i) => <Source key={i} source={source} />)}
-              </div>
-            </div>
+            <Sources sources={movie.SOURCES} />
           }
           <ExpandableBubbles items={movie.TROPE_TRIGGERS} aside="(Potential for upsetting content/spoilers)" title="Trope/Trigger Warnings" expandable={true}/>
           <ExpandableBubbles items={movie.REPRESENTATIONS} title="Representation Matters" expandable={false} />

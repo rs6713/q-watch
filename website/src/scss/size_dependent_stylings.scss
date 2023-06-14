@@ -15,6 +15,7 @@
   #Movie #MovieContainer {
     margin-left: $side_padding;
     margin-right: $side_padding;
+    width: calc(100% - 2 * $side_padding);
   }
   #Overview > div:not(#MainMenu) {
     margin-left: $side_padding;

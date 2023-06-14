@@ -268,12 +268,14 @@ function Browse(){
       let vals, rule, typ;
 
       if(['number', 'string'].indexOf(typeof ids) !== -1){
+        console.log('Key ', key, ' is num/str ', ids)
         ids = [ids]
-      }
-      if (DICT_FILTERS.indexOf(key) !== -1){
-        typ = criteria[key].TYPE.slice(0, 1).toUpperCase() + criteria[key].TYPE.slice(1).toLowerCase()
-        rule = criteria[key].RULE? criteria[key].RULE.toLowerCase(): ' or '
-        ids = criteria[key].VALUE
+      }else {
+        if (DICT_FILTERS.indexOf(key) !== -1){
+          typ = criteria[key].TYPE.slice(0, 1).toUpperCase() + criteria[key].TYPE.slice(1).toLowerCase()
+          rule = criteria[key].RULE? criteria[key].RULE.toLowerCase(): ' or '
+          ids = criteria[key].VALUE
+        }
       }
       // else if(Array.isArray(params[key])){
       //   newSearchParams[key] = params[key]
@@ -286,8 +288,15 @@ function Browse(){
       //     }
       //   }
       // }
-      if(Object.keys(labels).indexOf(key) !== -1){
-        vals = labels[key].filter(
+      if(Object.keys(labels).indexOf(key) !== -1 || Object.keys(labels).indexOf(key + 'S') !== -1){
+        console.log(key, Object.keys(labels))
+        let k;
+        if(Object.keys(labels).indexOf(key) !== -1){
+          k = key;
+        }else{
+          k = key + 'S';
+        }
+        vals = labels[k].filter(
           o => ids.indexOf(o.ID) !== -1).map(
             o => o.LABEL
           )
@@ -295,6 +304,7 @@ function Browse(){
         vals = ids
       }
 
+      // The keys are first-letter capitalized, joined with '/'
       let keyNice = key.split('_').map(s => s.toLowerCase()).map(
         k => k.slice(0, 1).toUpperCase() + k.slice(1)
       )
@@ -391,7 +401,10 @@ function Browse(){
           <div className='callToAction' onClick={()=>{navigator.clipboard.writeText(window.location.href); setLinkCopied(true);}}>
             <Copy/>
             <span>{linkCopied? 'Link Copied!' : 'Copy Link to Search'}</span>
-          </div>
+          </div><br/>
+          {!nMatches && <div>
+              Look, we can't stop you from sharing a link to an empty list, but it's a cruel thing to do. &#128514;
+          </div>}
         </div>
       }
     </div>

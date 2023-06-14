@@ -1,89 +1,135 @@
 @import "./defaults.scss";
 
-.source:hover #voter {
-  display: flex;
+.deltaSymbol {
+  fill: $FONT_COLOR_LIGHT;
+  svg {
+    height: 1em;
+  }
+}
+.deltaSymbol.negative {
+  fill: $ACCENT_DENY;
+  transform: rotate("180deg");
+}
+.deltaSymbol.positive {
+  fill: $ACCENT_AFFIRM;
 }
 
-.source {
-  position: relative;
-  margin-left: 1.5em;
-  margin-right: 2em;
-  img {
-    height: 3em;
-    width: auto;
-  }
-  #region {
-    position: absolute;
-    left: 0;
-    top: 0;
-    font-size: $FONT_SIZE_DEFAULT;
-    font-weight: bold;
-    background-color: $FONT_COLOR_LIGHT;
-    border-radius: 100%;
-    transform: translateY(-50%) translateX(-50%);
-    width: 2.5em;
-    height: 2.5em;
-    box-sizing: border-box;
-    text-align: center;
-    line-height: 1em;
-    padding: 0.75em 0em;
-  }
-  #votes {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 2.5em;
-    height: 2.5em;
-    box-sizing: border-box;
-    text-align: center;
-    line-height: 1em;
-    padding: 0.75em 0em;
-    font-size: $FONT_SIZE_DEFAULT;
-    font-weight: bold;
-    background-color: $FONT_COLOR_LIGHT;
-    border-radius: 100%;
-    transform: translateY(-50%) translateX(50%);
-  }
-
-  #voter.active {
-    display: flex;
-  }
-
-  #voter {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateY(50%) translateX(-50%);
-    display: none;
-    span {
-      svg {
-        font-size: $FONT_SIZE_DEFAULT;
-        height: 1em;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translateY(-50%) translateX(-50%);
-      }
-
+#findMe {
+  > h2 {
+    margin-bottom: 0.5em;
+    svg {
+      height: 1em;
+      float: right;
       cursor: pointer;
-      width: 2em;
-      position: relative;
-      height: 2em;
-      display: inline-block;
-      border-radius: 100%;
-      background-color: $FONT_COLOR_LIGHT;
     }
-    span:first-child {
-      margin-right: 0.5em;
+  }
+}
+
+.sources {
+  background-color: $FONT_COLOR_LIGHTER;
+  border-radius: 1em;
+  padding: 1em;
+  overflow-x: unset;
+  overflow-y: unset;
+
+  .source:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .source:first-child {
+    padding-top: 0em;
+  }
+  .source {
+    width: 100%;
+    border-bottom: 1px solid $FONT_COLOR_DEFAULT;
+    padding-bottom: 1em;
+    padding-top: 1em;
+    display: flex;
+    flex-direction: row;
+
+    img {
+      height: 4em;
+      width: auto;
     }
 
-    span:first-child:hover,
-    span:first-child.active {
-      background-color: $ACCENT_DENY;
-    }
-    span:last-child:hover,
-    span:last-child.active {
-      background-color: $ACCENT_AFFIRM;
+    .description {
+      padding-left: 1em;
+      h2 {
+        margin-top: 0;
+        img {
+          padding-left: 0.5em;
+          height: 1.5em;
+          cursor: pointer;
+        }
+        .explainer span {
+          z-index: 100;
+          white-space: break-spaces;
+          min-width: 100px;
+        }
+      }
+      > div {
+        display: flex;
+        flex-direction: row;
+        gap: 2em;
+
+        .price {
+          span:first-child {
+            font-weight: bold;
+          }
+        }
+        .button {
+          font-size: 1em;
+          padding: 0.5em 1.5em;
+        }
+
+        .source_voting {
+          text-align: center;
+          #votes {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.5em;
+          }
+
+          #voter {
+            // position: absolute;
+            // bottom: 0;
+            // left: 50%;
+            // transform: translateY(50%) translateX(-50%);
+            // display: none;
+            span {
+              svg {
+                font-size: $FONT_SIZE_DEFAULT;
+                height: 1em;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translateY(-50%) translateX(-50%);
+                fill: $FONT_COLOR_LIGHTEST;
+              }
+
+              cursor: pointer;
+              width: 2em;
+              position: relative;
+              height: 2em;
+              display: inline-block;
+              border-radius: 100%;
+              background-color: $FONT_COLOR_DEFAULT;
+            }
+            span:first-child {
+              margin-right: 0.5em;
+            }
+
+            span:first-child:hover,
+            span:first-child.active {
+              background-color: $ACCENT_DENY;
+            }
+            span:last-child:hover,
+            span:last-child.active {
+              background-color: $ACCENT_AFFIRM;
+            }
+          }
+        }
+      }
     }
   }
 }
