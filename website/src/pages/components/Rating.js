@@ -46,7 +46,7 @@ export function getIcon(movieTypes){
   return Icon;
 }
 
-function Rating({id, rating, rotated, movieTypes, votable}){
+function Rating({id, rating, numRating, rotated, movieTypes, votable}){
   /*
     id - movie id
     rating - (number) avg rating
@@ -57,7 +57,7 @@ function Rating({id, rating, rotated, movieTypes, votable}){
   const [active, setActive] = useState(false);
   // Local user's vote
   const [vote, setVote] = useState(
-    localStorage.getItem(`movie_rating_${id}_value`) || null
+    parseInt(localStorage.getItem(`movie_rating_${id}_value`)) || null
   );
   // Creates hover effect for newVote (proposed pre-click)
   const [newVote, updateNewVote] = useState(null);
@@ -122,40 +122,181 @@ function Rating({id, rating, rotated, movieTypes, votable}){
     </div>
   }
 
+  function createDefaultVote(noVote, clickFn){
+    if(clickFn == null){
+      clickFn = () => {}
+    }
+    return <div className={'defaultVote' + (noVote? ' noVote': '')}>
+      {[...Array(maxRating)].map((_, idx) => {
+        return <div key={idx} onMouseOver={() => clickFn(idx + 1)}>
+          <Icon style={{fill: 'lightgrey'}} />
+        </div>
+      })
+    }
+  </div>
+  }
+
 
   return (
-    <div className={"rating" + rotateClass} onMouseLeave={()=>{setActive(false)}} onMouseEnter={()=>{setActive(true)}} onClick={() => {updateRating(newVote)}}>
-      {yourVote}
-      {!rating && votable && <div>
-          {[...Array(maxRating)].map((_, idx) => {
-            return <div key={idx} onMouseOver={() => {setNewVote(idx+1)}}><Icon style={{fill: 'lightgrey'}} /></div>
-          })
-        }
+    <div className={"ratingContainer" + rotateClass} >
+      <div >
+        <div className='user rating' onMouseLeave={()=>{setActive(false)}} onMouseEnter={()=>{setActive(true)}} onClick={() => {updateRating(newVote)}}>
+          {/* Your current active vote, made vote */}
+          {yourVote}
+          {/* When there is no vote made*/}
+          {createDefaultVote(!vote && !newVote, setNewVote)}
         </div>
-      }
-      { rating > 0 &&
-      <div aria-label={"The current rating is: " + rating} >
-      
-      {[...Array(maxRating)].map((_, idx) => {
-        if (Math.ceil(rating) < (1+idx)){
-          return <div key={idx} onMouseOver={() => {setNewVote(idx+1)}}><Icon style={{visibility: 'hidden'}} /></div>
-        }
-        if (Math.ceil(rating) == (1+idx)){
-          if(rotated ){ //|| ([Bicycle].indexOf(Icon) != -1)
-            return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon style={{clipPath: 'inset(0 '+ (rating - Math.floor(rating))*100 + '% 0 0)'}} /></div>
-          }else{
-            return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon style={{clipPath: 'inset(0 0 '+ (rating - Math.floor(rating))*100 + '% 0)'}} /></div>
+        <div className='description'>
+          <b>Your Rating</b><br/>{vote? vote : '-'} out of {maxRating}
+        </div>
+      </div>
+      <div>
+        <div className='audience rating'>
+          {createDefaultVote(!rating, () => {})}
+          { rating > 0 &&
+            <div aria-label={"The current rating is: " + rating} >
+            {[...Array(maxRating)].map((_, idx) => {
+              if (Math.ceil(rating) < (1+idx)){
+                return <div key={idx} onMouseOver={() => {setNewVote(idx+1)}}><Icon style={{visibility: 'hidden'}} /></div>
+              }
+              if (Math.ceil(rating) == (1+idx)){
+                if(rotated ){ //|| ([Bicycle].indexOf(Icon) != -1)
+                  return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon style={{clipPath: 'inset(0 '+ (rating - Math.floor(rating))*100 + '% 0 0)'}} /></div>
+                }else{
+                  return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon style={{clipPath: 'inset(0 0 '+ (rating - Math.floor(rating))*100 + '% 0)'}} /></div>
+                }
+              }
+              return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon /></div>
+              }
+              )}
+            </div>
           }
-        }
-        return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon /></div>
-      }
-      )}
+        </div>
+        <div className='description'>
+          <span><b>Audience Rating</b><br/>{rating? rating.toFixed(2) : '-'} out of {maxRating}
+          </span>
+        </div>
+      </div>
+      <div>
+        <div>
+          {numRating} Queer Rating{numRating > 1? 's':''}
+        </div>
+      </div>
     </div>
-}
-  </div>
   )
 
 }
+
+// function Rating({id, rating, rotated, movieTypes, votable}){
+//   /*
+//     id - movie id
+//     rating - (number) avg rating
+//     rotated - whether rating is rotated
+//     movieTypes - List associated movie lgbtqia+ categories
+//     votable - whetehr we allow votes.
+//   */
+//   const [active, setActive] = useState(false);
+//   // Local user's vote
+//   const [vote, setVote] = useState(
+//     localStorage.getItem(`movie_rating_${id}_value`) || null
+//   );
+//   // Creates hover effect for newVote (proposed pre-click)
+//   const [newVote, updateNewVote] = useState(null);
+
+//   const maxRating = 5;
+
+//   const Icon = useMemo(() => {
+//     return getIcon(movieTypes)
+//   }, [])
+
+//   function updateRating(rating){
+
+//     fetch('/api/movie/rating', {
+//       method: 'POST',
+//       headers: {
+//         'Accept': 'application/json',
+//         'Content-Type': 'application/json',
+//         'cache-control': 'no-store',
+//       },
+//       body: JSON.stringify({
+//         "movie_id": id,
+//         "rating": rating,
+//         "movie_rating_id": localStorage.getItem(`movie_rating_${id}_id`) || -1
+//       })
+//     }).then(res => res.json()).then(data => {
+//       localStorage.setItem(`movie_rating_${id}_id`, data["movie_rating_id"])
+//       localStorage.setItem(`movie_rating_${id}_value`, rating)
+//       setVote(rating);
+//     })
+    
+//   }
+
+
+//   //TODO: Check local stored variables in session - set vote
+//   //TODO: When place vote, update/insert vote in db. Store vote locally on success
+
+//   function setNewVote(v){
+//     if(votable){
+//       updateNewVote(v)
+//     }
+//   }
+
+//   var rotateClass = '';
+//   if([Bicycle].indexOf(Icon) != -1){
+//     rotateClass = ' norotate';
+//   }
+  
+
+//   var classname = "yourvote";
+//   if((!active && vote < rating) || (active && newVote < rating) || !rating){
+//     classname += " front";
+//   }
+
+//     // Conditional creation of currentvote infront of existing rating
+//   var yourVote = <></>;
+//   if(vote !== null || active){
+//     yourVote = <div className={classname} aria-label={"Your current rating is: " + (active? newVote : vote)}>
+//       {[...Array(maxRating)].map((_, idx) => <div onMouseOver={() => {setNewVote(idx + 1)}} key={idx}>
+//           <Icon key={idx} style={{visibility: (active? newVote : vote) > idx ? 'visible':'hidden'}} />
+//         </div>)
+//       }
+//     </div>
+//   }
+
+
+//   return (
+//     <div className={"rating" + rotateClass} onMouseLeave={()=>{setActive(false)}} onMouseEnter={()=>{setActive(true)}} onClick={() => {updateRating(newVote)}}>
+//       {yourVote}
+//       {!rating && votable && <div>
+//           {[...Array(maxRating)].map((_, idx) => {
+//             return <div key={idx} onMouseOver={() => {setNewVote(idx+1)}}><Icon style={{fill: 'lightgrey'}} /></div>
+//           })
+//         }
+//         </div>
+//       }
+//       { rating > 0 &&
+//       <div aria-label={"The current rating is: " + rating} >
+      
+//       {[...Array(maxRating)].map((_, idx) => {
+//         if (Math.ceil(rating) < (1+idx)){
+//           return <div key={idx} onMouseOver={() => {setNewVote(idx+1)}}><Icon style={{visibility: 'hidden'}} /></div>
+//         }
+//         if (Math.ceil(rating) == (1+idx)){
+//           if(rotated ){ //|| ([Bicycle].indexOf(Icon) != -1)
+//             return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon style={{clipPath: 'inset(0 '+ (rating - Math.floor(rating))*100 + '% 0 0)'}} /></div>
+//           }else{
+//             return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon style={{clipPath: 'inset(0 0 '+ (rating - Math.floor(rating))*100 + '% 0)'}} /></div>
+//           }
+//         }
+//         return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon /></div>
+//       }
+//       )}
+//     </div>
+// }
+//   </div>
+//   )
+
+// }
 
 // class Rating extends Component {
 //   constructor(props){

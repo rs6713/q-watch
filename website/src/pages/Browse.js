@@ -11,6 +11,7 @@ import MainMenu from './components/MainMenu'
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
 import {ReactComponent as Share} from '../static/icons/share.svg'
 import {ReactComponent as Copy} from '../static/icons/copy.svg'
+import {ReactComponent as Minus} from '../static/icons/minus.svg'
 import Button from './components/Button'
 import {
   BrowserRouter as Router,
@@ -361,7 +362,7 @@ function Browse(){
 
   return (
     <div id="Browse" className="page">
-      {(filterActive || shareActive) && <div className="cover" onClick={()=>{setFilterActive(false); setShareActive(false)}} />}
+      {(filterActive) && <div className="cover" onClick={()=>{setFilterActive(false); setShareActive(false)}} />}
       <MainMenu/>
 
       <Filters active={filterActive} nMatches={nMatches} updateFilters={updateSearchParams} filters={criteria} setActive={setFilterActive}/>
@@ -383,8 +384,12 @@ function Browse(){
       </div>
       
       {shareActive &&
+        <div className='announcement_container'>
         <div className='announcement'>
-          <h2>Share Search - {nMatches} Movies</h2>
+          <h2>
+            Share Search - {nMatches} 
+            <Minus onClick={()=>{setShareActive(false)}}/>
+          </h2>
           <table className='description'>
             {/* <h3>{nMatches} Movies</h3> */}
               {generateCriteriaDescription(criteria).map(item => {
@@ -405,6 +410,7 @@ function Browse(){
           {!nMatches && <div>
               Look, we can't stop you from sharing a link to an empty list, but it's a cruel thing to do. &#128514;
           </div>}
+        </div>
         </div>
       }
     </div>

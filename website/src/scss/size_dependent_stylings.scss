@@ -111,11 +111,6 @@
     $side_padding_outer: 8vw,
     $side_padding_inner: 5vw
   );
-  #Movie {
-    #MovieControls {
-      width: 8vw;
-    }
-  }
 }
 
 @media (max-width: $WIDTH_LARGE_SCREEN) {
@@ -129,13 +124,6 @@
   }
   .sidetab {
     display: block;
-  }
-
-  #Movie {
-    #MovieControls {
-      right: 3vw;
-      width: auto;
-    }
   }
 }
 
@@ -167,12 +155,6 @@
     width: 90vw;
     margin-left: 5vw;
     margin-right: 5vw;
-  }
-
-  #Movie {
-    #MovieControls {
-      right: 5vw;
-    }
   }
 
   #Filters {

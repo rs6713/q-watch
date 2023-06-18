@@ -3,7 +3,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import Footer from './components/Footer';
 import Gallery from './components/Gallery';
 import Loader from './components/Loader';
-import Rating from './components/Rating';
+import Rating, {getIcon} from './components/Rating';
 import Quote from './components/Quote';
 import Opinion from './components/Opinion';
 import {formatRuntime} from '../utils.js';
@@ -17,6 +17,7 @@ import {Icon} from './components/Image'
 import HTMLString from 'react-html-string';
 import MainMenu from './components/MainMenu';
 import Sources from './components/Sources';
+import {formatLanguage} from '../utils';
 
 import {ReactComponent as ReturnMovie} from '../static/icons/return.svg';
 import {ReactComponent as ShuffleMovie} from '../static/icons/shuffle.svg';
@@ -94,6 +95,10 @@ function Movie(props){
   var content = <div id="MovieContainer">
     <Loader isLoading={movie===null} />
   </div>;
+    function gIcon(typ){
+      let Ic = getIcon([typ])
+      return <Ic />
+    }
 
   var largeScreenWidth = parseInt(styles.WIDTH_LARGE_SCREEN)
 
@@ -107,22 +112,35 @@ function Movie(props){
       <div id="MovieContents">
         
         <div id="MovieTitle">
-          <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} votable={true}/>
+          <div id='MovieDetails'>
+          <Rating rating={movie.AVG_RATING} numRating={movie.NUM_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} votable={true}/>
+          
+          <div id="aside">
+            
+            <div id="MovieControls">
+              <ShuffleMovie aria-label="Choose Random Movie" title="Choose random movie." className="ShuffleMovie" onClick={pickRandomMovie}/>
+              
+              <ReturnMovie aria-label="Return to Browse" title="Return to Browse" onClick={() => navigate(-1)} />
+            </div>
+            <div>{movie.YEAR}</div><br/>
+            <div>
+              {movie.IMDB_ID && <a target='_blank' href={'https://www.imdb.com/title/tt'+movie.IMDB_ID}><Button onClick={()=>{}} text='IMDB' /></a>}
+              {movie.TRAILER && <Button onClick={()=>{setShowTrailer(!showTrailer)}} text='Trailer' />}
+            </div>
+          </div>
+          </div>
+          
           <h1>{movie.TITLE}</h1>
           <Bubbles items={movie.TAGS} />
           <h2>
             {formatRuntime(movie.RUNTIME)}&nbsp;&#9679;&nbsp;
             {movie.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
-            {movie.LANGUAGE}&nbsp;&#9679;&nbsp;
+            {formatLanguage(movie.LANGUAGE)}&nbsp;&#9679;&nbsp;
             {movie.COUNTRY}&nbsp;&#9679;&nbsp;
-            {movie.GENRES.map((genre, idx) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} key={idx}/>)}
+            {movie.GENRES.map((genre, idx) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} key={idx}/>)}&nbsp;&#9679;&nbsp;
+            {movie.TYPES.map((typ) => gIcon(typ))}
           </h2>
-          
-          <div id="aside">
-            {movie.IMDB_ID && <a target='_blank' href={'https://www.imdb.com/title/tt'+movie.IMDB_ID}><Button onClick={()=>{}} text='IMDB' /></a>}
-            {movie.TRAILER && <Button onClick={()=>{setShowTrailer(!showTrailer)}} text='Trailer' />}
-            <span>{movie.YEAR}</span>
-          </div>
+        
         </div>
         <div id="MovieParts">
           <HTMLString html={'<p>'+movie.SUMMARY + '</p>'}/>
@@ -149,13 +167,6 @@ function Movie(props){
   return (
       <div id="Movie" className="page">
         <MainMenu/>
-        <div id="MovieControls">
-          
-          <ShuffleMovie aria-label="Choose Random Movie" title="Choose random movie." className="ShuffleMovie" onClick={pickRandomMovie}/>
-          
-          <ReturnMovie aria-label="Return to Browse" title="Return to Browse" onClick={() => navigate(-1)} />
-          
-        </div>
 
         {
           showTrailer && 

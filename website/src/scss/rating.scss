@@ -1,33 +1,60 @@
 @import "./defaults.scss";
-.rating > div {
-  flex-wrap: nowrap;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 2%;
-}
 
-.rating {
-  position: relative;
-  cursor: pointer;
+.ratingContainer {
+  background-color: $FONT_COLOR_LIGHTER;
+  border-radius: 1em;
+  padding: 1em;
+  width: fit-content;
+  display: table;
 
-  span {
-    display: inline-block;
+  > div {
+    display: table-row;
+
+    > .rating.user {
+      cursor: pointer;
+    }
+
+    > .rating {
+      display: table-cell;
+      position: relative;
+      width: fit-content;
+      z-index: 2;
+
+      .defaultVote {
+        fill: $FONT_COLOR_LIGHT;
+      }
+      .defaultVote:not(.noVote) {
+        position: absolute;
+        top: 0%;
+        left: 0;
+        z-index: -1;
+      }
+
+      > div {
+        z-index: 1;
+        flex-wrap: nowrap;
+        display: flex;
+        gap: 0.5em;
+        svg {
+          height: 2em;
+        }
+        margin-right: 1em;
+      }
+    }
+    .description {
+      display: table-cell;
+      vertical-align: top;
+      white-space: nowrap;
+      line-height: 1em;
+      padding-bottom: 0.5em;
+    }
   }
 }
-.rating div {
-  z-index: 1;
-}
 
-.rating div.yourvote {
-  position: absolute;
-  top: 0%;
-  left: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  fill: $PRIMARY_COLOR;
-}
+// .rating div.yourvote.front {
+//   z-index: 5;
+// }
 
-.rating div.yourvote.front {
-  z-index: 5;
-}
+// span {
+//   display: inline-block;
+// }

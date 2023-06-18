@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import Image from './Image';
 import Rating, {getIcon} from './Rating';
 import {Icon} from './Image'
-import {formatRuntime} from '../../utils.js';
+import {formatRuntime, formatLanguage} from '../../utils.js';
 
 function MovieTile({movie}){
 
@@ -24,14 +24,13 @@ function MovieTile({movie}){
           <h4>
               {formatRuntime(movie.RUNTIME)}&nbsp;&#9679;&nbsp;
               {movie.AGE && movie.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
-              {movie.LANGUAGE}&nbsp;&#9679;&nbsp;
+              {formatLanguage(movie.LANGUAGE)}&nbsp;&#9679;&nbsp;
               {movie.COUNTRY}
             </h4>
             
           <p> {movie.BIO}</p>
           <h4>
               <span>{movie.TYPES.map((typ) => gIcon(typ))}</span>
-              
               <span>{movie.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}</span>
           </h4>
         </div>
