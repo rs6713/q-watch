@@ -3,7 +3,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import Footer from './components/Footer';
 import Gallery from './components/Gallery';
 import Loader from './components/Loader';
-import Rating, {getIcon} from './components/Rating';
+import Rating, {getIcon, RatingDisplay} from './components/Rating';
 import Quote from './components/Quote';
 import Opinion from './components/Opinion';
 import {formatRuntime} from '../utils.js';
@@ -113,7 +113,7 @@ function Movie(props){
         
         <div id="MovieTitle">
           <div id='MovieDetails'>
-          <Rating rating={movie.AVG_RATING} numRating={movie.NUM_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} votable={true}/>
+          <RatingDisplay rating={movie.AVG_RATING} numRating={movie.NUM_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} votable={true}/>
           
           <div id="aside">
             

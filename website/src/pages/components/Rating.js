@@ -46,7 +46,95 @@ export function getIcon(movieTypes){
   return Icon;
 }
 
-function Rating({id, rating, numRating, rotated, movieTypes, votable}){
+const maxRating = 5;
+
+function RatingBar({rating, mouseEnterFn, mouseLeaveFn, clickFn, mouseOverFn, rotated, Icon}){
+
+  if(rating == null && clickFn == null){
+    return <div className={'defaultVote'}>
+      {[...Array(maxRating)].map((_, idx) => {
+        return <div key={idx}>
+          <Icon style={{fill: 'lightgrey'}} />
+        </div>
+      })
+    }
+    </div>
+  }
+
+  let interactive = clickFn != null;
+  let style = interactive ? {'cursor': 'pointer'} : {};
+
+  clickFn = clickFn || (() => {});
+  mouseEnterFn = mouseEnterFn || (() => {});
+  mouseLeaveFn = mouseLeaveFn || (() => {});
+  mouseOverFn = mouseOverFn || ((a) => {});
+
+  return (<div aria-label={"The current rating is: " + rating} onMouseLeave={mouseLeaveFn} onMouseEnter={mouseEnterFn} onClick={clickFn} style={style}>
+  {[...Array(maxRating)].map((_, idx) => {
+    if (Math.ceil(rating) < (1+idx)){
+      return <div key={idx} onMouseOver={() => {mouseOverFn(idx+1)}}><Icon style={{visibility: 'hidden'}} /></div>
+    }
+    if (Math.ceil(rating) == (1+idx)){
+      let clippath = rotated ? 'inset(0 '+ (rating - Math.floor(rating))*100 + '% 0 0)' : 'inset(0 0 '+ (rating - Math.floor(rating))*100 + '% 0)';
+
+      return <div key={idx} onMouseOver={() => {mouseOverFn(idx + 1)}}><Icon style={{clipPath: clippath}} /></div>
+    }
+    return <div key={idx} onMouseOver={() => {mouseOverFn(idx + 1)}}><Icon /></div>
+    }
+    )}
+  </div>)
+}
+
+function Rating({rating, Icon, clickFn, mouseEnterFn, mouseLeaveFn, mouseOverFn, rotated}){
+
+  var currentRating = <RatingBar 
+    rating={rating}
+    clickFn={clickFn}
+    mouseEnterFn={mouseEnterFn}
+    mouseLeaveFn={mouseLeaveFn}
+    mouseOverFn={mouseOverFn}
+    rotated={rotated}
+    Icon={Icon}  
+  />
+  var backgroundRating = <RatingBar
+    Icon={Icon}
+    rotated={rotated}
+  />
+
+  return (
+    <div className='rating'>
+      {/* Your current active vote, made vote */}
+      {currentRating}
+      {/* When there is no vote made*/}
+      {backgroundRating}
+    </div>
+  )
+}
+
+  // var currentRating = (
+  //   <div aria-label={"Your current rating is: " + (rating)} onMouseLeave={mouseLeaveFn} onMouseEnter={mouseEnterFn} onClick={clickFn} style={s}>
+  //   {[...Array(maxRating)].map((_, idx) => <div onMouseOver={() => mouseOverFn(idx + 1)} key={idx}>
+  //       <Icon key={idx} style={{visibility: rating > idx ? 'visible':'hidden'}} />
+  //     </div>)
+  //   }
+  // </div>
+  // );
+
+
+
+
+function createDefaultVote(Icon){
+  return <div className={'defaultVote'}>
+    {[...Array(maxRating)].map((_, idx) => {
+      return <div key={idx}>
+        <Icon style={{fill: 'lightgrey'}} />
+      </div>
+    })
+  }
+</div>
+}
+
+function RatingDisplay({id, rating, numRating, rotated, movieTypes, votable}){
   /*
     id - movie id
     rating - (number) avg rating
@@ -62,7 +150,7 @@ function Rating({id, rating, numRating, rotated, movieTypes, votable}){
   // Creates hover effect for newVote (proposed pre-click)
   const [newVote, updateNewVote] = useState(null);
 
-  const maxRating = 5;
+  
 
   const Icon = useMemo(() => {
     return getIcon(movieTypes)
@@ -90,7 +178,6 @@ function Rating({id, rating, numRating, rotated, movieTypes, votable}){
     
   }
 
-
   //TODO: Check local stored variables in session - set vote
   //TODO: When place vote, update/insert vote in db. Store vote locally on success
 
@@ -106,72 +193,28 @@ function Rating({id, rating, numRating, rotated, movieTypes, votable}){
   }
   
 
-  var classname = "yourvote";
-  if((!active && vote < rating) || (active && newVote < rating) || !rating){
-    classname += " front";
-  }
-
-    // Conditional creation of currentvote infront of existing rating
-  var yourVote = <></>;
-  if(vote !== null || active){
-    yourVote = <div className={classname} aria-label={"Your current rating is: " + (active? newVote : vote)}>
-      {[...Array(maxRating)].map((_, idx) => <div onMouseOver={() => {setNewVote(idx + 1)}} key={idx}>
-          <Icon key={idx} style={{visibility: (active? newVote : vote) > idx ? 'visible':'hidden'}} />
-        </div>)
-      }
-    </div>
-  }
-
-  function createDefaultVote(noVote, clickFn){
-    if(clickFn == null){
-      clickFn = () => {}
-    }
-    return <div className={'defaultVote' + (noVote? ' noVote': '')}>
-      {[...Array(maxRating)].map((_, idx) => {
-        return <div key={idx} onMouseOver={() => clickFn(idx + 1)}>
-          <Icon style={{fill: 'lightgrey'}} />
-        </div>
-      })
-    }
-  </div>
-  }
-
-
   return (
     <div className={"ratingContainer" + rotateClass} >
       <div >
-        <div className='user rating' onMouseLeave={()=>{setActive(false)}} onMouseEnter={()=>{setActive(true)}} onClick={() => {updateRating(newVote)}}>
-          {/* Your current active vote, made vote */}
-          {yourVote}
-          {/* When there is no vote made*/}
-          {createDefaultVote(!vote && !newVote, setNewVote)}
-        </div>
+        <Rating
+          Icon={Icon}
+          mouseEnterFn={()=>{setActive(true)}}
+          mouseLeaveFn={()=>{setActive(false)}}
+          clickFn={() => {updateRating(newVote)}}
+          mouseOverFn={setNewVote}
+          rotated={rotated}
+          rating={active? newVote : vote}
+        />
         <div className='description'>
           <b>Your Rating</b><br/>{vote? vote : '-'} out of {maxRating}
         </div>
       </div>
       <div>
-        <div className='audience rating'>
-          {createDefaultVote(!rating, () => {})}
-          { rating > 0 &&
-            <div aria-label={"The current rating is: " + rating} >
-            {[...Array(maxRating)].map((_, idx) => {
-              if (Math.ceil(rating) < (1+idx)){
-                return <div key={idx} onMouseOver={() => {setNewVote(idx+1)}}><Icon style={{visibility: 'hidden'}} /></div>
-              }
-              if (Math.ceil(rating) == (1+idx)){
-                if(rotated ){ //|| ([Bicycle].indexOf(Icon) != -1)
-                  return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon style={{clipPath: 'inset(0 '+ (rating - Math.floor(rating))*100 + '% 0 0)'}} /></div>
-                }else{
-                  return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon style={{clipPath: 'inset(0 0 '+ (rating - Math.floor(rating))*100 + '% 0)'}} /></div>
-                }
-              }
-              return <div key={idx} onMouseOver={() => {setNewVote(idx + 1)}}><Icon /></div>
-              }
-              )}
-            </div>
-          }
-        </div>
+        <Rating
+          Icon={Icon}
+          rotated={rotated}
+          rating={rating}
+        />
         <div className='description'>
           <span><b>Audience Rating</b><br/>{rating? rating.toFixed(2) : '-'} out of {maxRating}
           </span>
@@ -186,6 +229,24 @@ function Rating({id, rating, numRating, rotated, movieTypes, votable}){
   )
 
 }
+
+  //   // Conditional creation of currentvote infront of existing rating
+  // var yourVote = <></>;
+  // if(vote !== null || active){
+  //   yourVote = <div className={classname} aria-label={"Your current rating is: " + (active? newVote : vote)}>
+  //     {[...Array(maxRating)].map((_, idx) => <div onMouseOver={() => {setNewVote(idx + 1)}} key={idx}>
+  //         <Icon key={idx} style={{visibility: (active? newVote : vote) > idx ? 'visible':'hidden'}} />
+  //       </div>)
+  //     }
+  //   </div>
+  // }
+
+  // //   <div className='user rating' onMouseLeave={()=>{setActive(false)}} onMouseEnter={()=>{setActive(true)}} onClick={() => {updateRating(newVote)}}>
+  // //   {/* Your current active vote, made vote */}
+  // //   {yourVote}
+  // //   {/* When there is no vote made*/}
+  // //   {createDefaultVote(Icon)}
+  // // </div>
 
 // function Rating({id, rating, rotated, movieTypes, votable}){
 //   /*
@@ -369,3 +430,4 @@ function Rating({id, rating, numRating, rotated, movieTypes, votable}){
 //   }
 // }
 export default Rating
+export {RatingDisplay}
