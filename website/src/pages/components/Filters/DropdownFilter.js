@@ -1,5 +1,7 @@
 import React from 'react';
 import {useEffect, useState} from 'react';
+import {formatLanguage} from '../../../utils';
+
 
 function DropDownFilter({filter, updateFilters, filters}){
 
@@ -35,13 +37,20 @@ function DropDownFilter({filter, updateFilters, filters}){
     return 'DropDownOption'
   }
 
+  function processItem(f){
+    if(filter.title === 'Language'){
+      return formatLanguage(f) || f
+    }
+    return f
+  }
+
   return <div className='DropDownFilter' >
     <h2>{filter.title}</h2>
     <div className={'DropDownContainer' + (dropdownActive? ' active': '')} onMouseLeave={()=>{setDropdownActive(false)}} >
       <div onClick={()=>{setDropdownActive(!dropdownActive)}}>{filter.placeholder}</div>
       <div className={'DropDownOptions' + (dropdownActive? ' active': '')}>
-        {filter.filters.map((f) => <div className={getItemClass(f)} onClick={()=>{selectItem(f)}}>
-          {f}
+        {filter.filters.sort((a, b) => processItem(a) > processItem(b) ? 1 : -1).map((f) => <div className={getItemClass(f)} onClick={()=>{selectItem(f)}}>
+          {processItem(f)}
         </div>)}
       </div>
     </div>

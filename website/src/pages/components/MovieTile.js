@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Link} from 'react-router-dom';
 import Image from './Image';
 import Rating, {getIcon} from './Rating';
@@ -6,6 +6,10 @@ import {Icon} from './Image'
 import {formatRuntime, formatLanguage} from '../../utils.js';
 
 function MovieTile({movie}){
+
+  const RatingIcon = useMemo(() => {
+    return getIcon(movie.TYPES)
+  }, [])
 
   function gIcon(typ){
     let Ic = getIcon([typ])
@@ -18,6 +22,12 @@ function MovieTile({movie}){
         {/* <div className="screenshot" alt={movie.CAPTION} style={{backgroundImage: 'url(/movie-pictures/' + movie.FILENAME + ')'}} /> */}
         <div className="screenshot">
           {Image(movie.FILENAME, movie.CAPTION)}
+          <Rating 
+            rating={movie.AVG_RATING}
+            Icon={RatingIcon}
+            rotated={true}
+            noDefault={true}
+          />
         </div>
         <div className="description">
           <h3>{movie.TITLE}</h3>
@@ -35,11 +45,13 @@ function MovieTile({movie}){
           </h4>
         </div>
         <span>{movie.YEAR}</span>
-        <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} / >
+        
+        {/* <Rating rating={movie.AVG_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} / > */}
       </div>
     </Link>
   )
 }
 
 export default MovieTile;
+
 

@@ -187,7 +187,10 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_str
                     col == str(v),
                     col.like(f"{v},%"),
                     col.like(f"%,{v}"),
-                    col.like(f"%,{v},%")
+                    col.like(f"%, {v}"),
+                    col.like(f"%,{v},%"),
+                    col.like(f"%,{v} ,%"),
+                    col.like(f"%, {v},%")
                 )
                 for v in val
             )
@@ -349,6 +352,9 @@ def get_entries(conn: Connection, table_name: str, ID: Union[List[int], int] = N
                             k == agg.label and agg.func == "string"
                             for agg in joins[i-1].table.aggs
                         ])
+                    if k == 'LANGUAGE':
+                        is_string_agg = True
+
                     conditionals += [get_conditional(tab.c[k],
                                                      v, is_string_agg=is_string_agg)]
                     break

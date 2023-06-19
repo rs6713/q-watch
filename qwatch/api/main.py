@@ -125,7 +125,7 @@ def get_labels() -> Dict:
                 labels[f"{option['ID']}S"] = sorted(list(set(vals)))
             if option['TYPE'] == 'STRING_DISAGG':
                 labels[f"{option['ID']}S"] = sorted(list(set(itertools.chain.from_iterable(
-                    list(map(lambda s: s.split(','), vals))
+                    list(map(lambda s: s.replace(' ', '').split(','), vals))
                 ))))
 
     return labels

@@ -112,7 +112,7 @@ const baseConfig = {
           dataLabel: 'LANGUAGES',
           type: "dropdown",
           filters: null,
-          placeholder: 'Select the Primary Language Characters Speak'
+          placeholder: 'Select the Primary Language Characters Speak',
         },
         {
           title: "Country",

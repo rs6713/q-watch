@@ -113,7 +113,12 @@ function Movie(props){
         
         <div id="MovieTitle">
           <div id='MovieDetails'>
-          <RatingDisplay rating={movie.AVG_RATING} numRating={movie.NUM_RATING} rotated={true} id={movie.ID} movieTypes={movie.TYPES} votable={true}/>
+          <RatingDisplay 
+            rating={movie.AVG_RATING}
+            numRating={movie.NUM_RATING}
+            id={movie.ID}
+            movieTypes={movie.TYPES}
+            votable={true}/>
           
           <div id="aside">
             

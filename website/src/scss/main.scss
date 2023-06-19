@@ -437,11 +437,28 @@ h3.bubbletext {
     }
     .rating {
       position: absolute;
-      transform: rotate(-90deg) translateX(-100%);
-      transform-origin: 0% 0%;
-      top: calc(50% - 11em);
-      left: 1em;
-      width: 22em;
+      left: 0;
+      top: 0;
+      box-sizing: border-box;
+      padding: 1em;
+      height: 100%;
+      > div {
+        height: 100%;
+        flex-wrap: nowrap;
+        display: flex;
+        gap: 0.25em;
+        flex-direction: column-reverse;
+        justify-content: space-between;
+        // svg {
+        //   height: 1em;
+        // }
+        > div {
+          height: calc(20% - 0.2em);
+          svg {
+            height: 100%;
+          }
+        }
+      }
     }
   }
   h3 {

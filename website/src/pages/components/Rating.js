@@ -75,7 +75,10 @@ function RatingBar({rating, mouseEnterFn, mouseLeaveFn, clickFn, mouseOverFn, ro
       return <div key={idx} onMouseOver={() => {mouseOverFn(idx+1)}}><Icon style={{visibility: 'hidden'}} /></div>
     }
     if (Math.ceil(rating) == (1+idx)){
-      let clippath = rotated ? 'inset(0 '+ (rating - Math.floor(rating))*100 + '% 0 0)' : 'inset(0 0 '+ (rating - Math.floor(rating))*100 + '% 0)';
+      let clippath = !rotated ? 'inset(0 '+ (1 - rating + Math.floor(rating))*100 + '% 0 0)' : 'inset('+ (1 - rating + Math.floor(rating))*100 + '% 0 0 0)';
+      if (rating == Math.floor(rating)){
+        clippath = 'inset(0 0 0 0)'
+      }
 
       return <div key={idx} onMouseOver={() => {mouseOverFn(idx + 1)}}><Icon style={{clipPath: clippath}} /></div>
     }
@@ -85,7 +88,9 @@ function RatingBar({rating, mouseEnterFn, mouseLeaveFn, clickFn, mouseOverFn, ro
   </div>)
 }
 
-function Rating({rating, Icon, clickFn, mouseEnterFn, mouseLeaveFn, mouseOverFn, rotated}){
+function Rating({rating, Icon, clickFn, mouseEnterFn, mouseLeaveFn, mouseOverFn, rotated, noDefault}){
+
+  noDefault = noDefault || false;
 
   var currentRating = <RatingBar 
     rating={rating}
@@ -94,9 +99,9 @@ function Rating({rating, Icon, clickFn, mouseEnterFn, mouseLeaveFn, mouseOverFn,
     mouseLeaveFn={mouseLeaveFn}
     mouseOverFn={mouseOverFn}
     rotated={rotated}
-    Icon={Icon}  
+    Icon={Icon}
   />
-  var backgroundRating = <RatingBar
+  var backgroundRating = noDefault? <></> : <RatingBar
     Icon={Icon}
     rotated={rotated}
   />
@@ -134,7 +139,7 @@ function createDefaultVote(Icon){
 </div>
 }
 
-function RatingDisplay({id, rating, numRating, rotated, movieTypes, votable}){
+function RatingDisplay({id, rating, numRating, movieTypes, votable}){
   /*
     id - movie id
     rating - (number) avg rating
@@ -202,7 +207,7 @@ function RatingDisplay({id, rating, numRating, rotated, movieTypes, votable}){
           mouseLeaveFn={()=>{setActive(false)}}
           clickFn={() => {updateRating(newVote)}}
           mouseOverFn={setNewVote}
-          rotated={rotated}
+          rotated={false}
           rating={active? newVote : vote}
         />
         <div className='description'>
@@ -212,7 +217,7 @@ function RatingDisplay({id, rating, numRating, rotated, movieTypes, votable}){
       <div>
         <Rating
           Icon={Icon}
-          rotated={rotated}
+          rotated={false}
           rating={rating}
         />
         <div className='description'>

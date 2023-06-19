@@ -16,7 +16,7 @@ import {ReactComponent as Query} from '../static/icons/query.svg'
 import {ReactComponent as Graph} from '../static/icons/graph.svg'
 import {ReactComponent as Movie} from '../static/icons/movie.svg'
 import {Icon} from './components/Image'
-import Rating from './components/Rating';
+import Rating, {getIcon} from './components/Rating';
 import {formatRuntime} from '../utils.js';
 import Bubbles from './components/Bubbles';
 import Counter from './components/Counter';
@@ -56,6 +56,7 @@ function Main(){
   const [movieCounts, setMovieCounts] = useState(null);
   const [countCategory, setCountCategory] = useState('LGBTQIA+ Categories')
   const [scrollActive, setScrollActive] = useState(true);
+  const [ratingIcon, setRatingIcon] = useState(null);
 
   const [movies, setMovies] = useState(null);
   useEffect(() => {
@@ -90,6 +91,7 @@ function Main(){
       }
     }).then(res => res.json()).then(data => {
       if(Object.keys(data).length > 0){
+        setRatingIcon(getIcon(data.TYPES))
         setMovieFeatured(data);
       }
     })
@@ -250,7 +252,11 @@ function Main(){
         <div className='block'>
           <div>
             {Image(movieFeatured.FILENAME, movieFeatured.CAPTION)}
-            <Rating rating={movieFeatured.AVG_RATING} rotated={true} id={movieFeatured.ID} movieTypes={movieFeatured.TYPES} votable={false}/>
+            <Rating 
+              rating={movieFeatured.AVG_RATING}
+              Icon={ratingIcon}
+              noDefault={true}
+            />
           </div>
           <div className='info'>
             
