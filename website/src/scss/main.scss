@@ -67,6 +67,26 @@ h3.percent {
     font-size: 1.5em;
     position: relative;
     height: 1.5em;
+
+    .loader {
+      position: relative;
+      top: 0;
+      left: 0;
+      display: inline;
+      // transform: none;
+      svg {
+        -webkit-filter: none;
+        filter: none;
+        top: 0;
+        left: 0;
+        position: inherit;
+        transform: none;
+        path {
+          fill: $ACCENT_COLOR3;
+        }
+      }
+    }
+
     svg {
       max-width: 1em;
       max-height: 1em;

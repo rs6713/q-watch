@@ -5,6 +5,16 @@
   flex-direction: column;
   min-height: 100vh;
 
+  .explainer {
+    > span {
+      font-weight: normal;
+      white-space: break-spaces;
+      text-align: justify;
+      text-align-last: left;
+      width: 300px;
+    }
+  }
+
   > div:not(#MainMenu):nth-of-type(2) {
     flex: 1 1;
     background-color: white;

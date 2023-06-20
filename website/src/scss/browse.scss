@@ -249,6 +249,7 @@
   }
   #Options,
   #FiltersToggle {
+    height: fit-content;
     background-color: $FONT_COLOR_LIGHTEST;
     border-radius: 0.5em;
     line-height: 1em;
@@ -353,6 +354,7 @@
 
     div {
       display: inline-block;
+      line-height: 1em;
       word-wrap: none;
       white-space: nowrap;
       padding: 1em 1em;

@@ -1,6 +1,7 @@
 import react from 'react';
 import {ReactComponent as Caret} from '../../static/icons/direction.svg'
 import {ReactComponent as Neutral} from '../../static/icons/neutral.svg'
+import Loader from './Loader'
 
 function calculatePercentChange(dataset, dataChoice, value1, value2){
   var percentChange = '?'
@@ -76,12 +77,23 @@ function PercentDelta({dataset, dataChoice, value1, value2, statement, substatem
 }
 
 function PercentAbsolute({dataset, dataChoice, value, statement, substatement}){
-  let percent = dataset !== null ? calculatePercent(dataset, dataChoice, value): '?';
+  let percent = '';
+
+  if(dataset !== null){
+    percent = calculatePercent(dataset, dataChoice, value);
+    //percent = percent > 0 ? percent : percent * -1
+  }
+  // let percent = dataset !== null ? (
+  //   calculatePercent(dataset, dataChoice, value)
+  // ): '?';
 
   return (
     <h3 className='percent absolute'>
       <div>
-        <span>{percent > 0 ? percent : percent * -1}%</span>
+        <span>
+          {dataset==null && <Loader isLoading={dataset==null}/>}
+          {percent}%
+        </span>
       </div>
       <span>
         <div>{statement}</div>

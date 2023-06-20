@@ -85,7 +85,12 @@ function FAQ(){
     <div className='page' id='faq'>
       <MainMenu/>
       <h2>Frequently Asked Questions</h2>
-      <h3>Ya nosey parkers youu</h3>
+      <h3>
+        <span className='explainer'>
+          Ya nosey parkers
+          <span><b>Matthew Parker</b>, who was Archbishop of Canterbury (1559-75), had rather a reputation for prying into the affairs of others. He therefore acquired the nickname 'Nosey Parker'.</span> 
+        </span>
+      </h3>
       <div>
         {question_answers.map((qa, _) => <DropDown title={qa[0]} contents={qa[1]} />)}
       </div>
