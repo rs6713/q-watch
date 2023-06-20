@@ -1,14 +1,19 @@
 import React, { Component, useState, useEffect} from 'react';
 import Footer from './components/Footer';
+import {useSearchParams} from 'react-router-dom';
 
 import Filters from './components/Filters';
 import Loader from './components/Loader';
 import Options from './components/Options';
-import Switch from './components/Switch';
 import ChartCountry from './Graphs/ChartCountry';
 import MainMenu from './components/MainMenu';
 
-import DEFAULT_MOVIES from './default_rank.json';
+import {
+  getCriteriaFromSearchParams,
+  createUpdateSearchParams,
+  createUpdateSort,
+  createUpdateIndex,
+} from './search';
 
 
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
@@ -23,26 +28,34 @@ const RANK_OPTIONS = {
 
 function Country(){
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const updateSearchParams = createUpdateSearchParams(setSearchParams, searchParams);
+  const updateSort = createUpdateSort(setSearchParams, searchParams);
+  const updateIndex = createUpdateIndex(setSearchParams, searchParams);
+  let criteria = getCriteriaFromSearchParams(searchParams);
+
+  
   const [filterActive, setFilterActive] = useState(false);
   const [rank, setRank] = useState('COUNT');
+
   const [movies, setMovies] = useState(null);
   const [nMatches, setNMatches] = useState(null);
-  const [criteria, setCriteria] = useState({});
+  // const [criteria, setCriteria] = useState({});
 
-  function updateCriteria(update){
+  // function updateCriteria(update){
 
-    let newCriteria = criteria === null? {...update} : {...criteria, ...update}
+  //   let newCriteria = criteria === null? {...update} : {...criteria, ...update}
 
-    // Cancelled criteria are removed
-    for(let key in newCriteria){
-      if(newCriteria[key] === null){
-        delete newCriteria[key];
-      }
-    }
-    setCriteria(
-      newCriteria
-    )
-  }
+  //   // Cancelled criteria are removed
+  //   for(let key in newCriteria){
+  //     if(newCriteria[key] === null){
+  //       delete newCriteria[key];
+  //     }
+  //   }
+  //   setCriteria(
+  //     newCriteria
+  //   )
+  // }
 
   function get_movies(){
     fetch('/api/movies', {
@@ -64,17 +77,25 @@ function Country(){
   }
 
   useEffect(() => {
-    console.log('Setting rank ', rank, ' criteria', criteria)
-    setMovies(null);
+    criteria = getCriteriaFromSearchParams(searchParams);
     setNMatches(null);
-    get_movies();
-  }, [criteria])
+    setMovies(null);
+    console.log('Triggered effect: ',  criteria)
+    get_movies()
+  }, [searchParams])
+
+  // useEffect(() => {
+  //   console.log('Setting rank ', rank, ' criteria', criteria)
+  //   setMovies(null);
+  //   setNMatches(null);
+  //   get_movies();
+  // }, [criteria])
 
   return (
     <div id="Country" className="page GraphPage">
       {filterActive && <div className="cover" onClick={()=>{setFilterActive(false)}} />}
       <MainMenu/>
-      <Filters active={filterActive} nMatches={nMatches} updateFilters={updateCriteria} filters={criteria} />
+      <Filters active={filterActive} nMatches={nMatches} updateFilters={updateSearchParams} filters={criteria} />
 
       <div id="ControlPanel">
         <Options updateOption={setRank} option={rank} name='Ranking' options={RANK_OPTIONS} multi={false}/>

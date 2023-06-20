@@ -9,8 +9,16 @@ import MainMenu from './components/MainMenu';
 import BarHierarchy from './Graphs/BarHierarchy';
 
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
+import {useSearchParams} from 'react-router-dom';
 
-import DEFAULT_MOVIES from './default_rank.json';
+
+import {
+  getCriteriaFromSearchParams,
+  createUpdateSearchParams,
+  createUpdateSort,
+  createUpdateIndex,
+} from './search';
+
 
 const RANK_OPTIONS = {
   "Count": "COUNT",
@@ -56,9 +64,15 @@ function Rank(){
   const [rank, setRank] = useState("BOX_OFFICE_USD");
   const [movies, setMovies] = useState(null);
   const [nMatches, setNMatches] = useState(null);
-  const [criteria, setCriteria] = useState({});
   const [group, setGroup] = useState([])
   const [summary, setSummary] = useState("sum");
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const updateSearchParams = createUpdateSearchParams(setSearchParams, searchParams);
+  const updateSort = createUpdateSort(setSearchParams, searchParams);
+  const updateIndex = createUpdateIndex(setSearchParams, searchParams);
+  let criteria = getCriteriaFromSearchParams(searchParams);
+
 
   function get_movies(){
     let properties =  ['TITLE', 'YEAR', 'TYPES', ...Object.values(RANK_OPTIONS), 'GENRES', 'REPRESENTATIONS'];
@@ -83,26 +97,34 @@ function Rank(){
   }
 
   useEffect(() => {
-    console.log('Setting rank ', rank, ' criteria', criteria)
-    setMovies(null);
+    criteria = getCriteriaFromSearchParams(searchParams);
     setNMatches(null);
-    get_movies();
-  }, [criteria])
+    setMovies(null);
+    console.log('Triggered effect: ',  criteria)
+    get_movies()
+  }, [searchParams])
 
-  function updateCriteria(update){
+  // useEffect(() => {
+  //   console.log('Setting rank ', rank, ' criteria', criteria)
+  //   setMovies(null);
+  //   setNMatches(null);
+  //   get_movies();
+  // }, [criteria])
 
-    let newCriteria = criteria === null? {...update} : {...criteria, ...update}
+  // function updateCriteria(update){
 
-    // Cancelled criteria are removed
-    for(let key in newCriteria){
-      if(newCriteria[key] === null){
-        delete newCriteria[key];
-      }
-    }
-    setCriteria(
-      newCriteria
-    )
-  }
+  //   let newCriteria = criteria === null? {...update} : {...criteria, ...update}
+
+  //   // Cancelled criteria are removed
+  //   for(let key in newCriteria){
+  //     if(newCriteria[key] === null){
+  //       delete newCriteria[key];
+  //     }
+  //   }
+  //   setCriteria(
+  //     newCriteria
+  //   )
+  // }
 
   function updateRank(x){
     setRank(x)
@@ -114,7 +136,7 @@ function Rank(){
       <MainMenu />
       {filterActive && <div className="cover" onClick={()=>{setFilterActive(false)}} />}
       
-      <Filters active={filterActive} nMatches={nMatches} updateFilters={updateCriteria} filters={criteria} />
+      <Filters active={filterActive} nMatches={nMatches} updateFilters={updateSearchParams} filters={criteria} />
 
       <div id="ControlPanel">
         <Options updateOption={updateRank} option={rank} name='Ranking' options={RANK_OPTIONS} />

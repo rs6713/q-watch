@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo} from 'react';
 import Image from './components/Image';
 import {Link} from 'react-router-dom';
 import Search from '../pages/components/Search';
@@ -26,6 +26,10 @@ import {groupDataAgg} from './data/utils.js' //, generateCombinations, getMovieV
 const PHRASES = [
   "**I will go down with this ship.... (screams in Dido)**",
   "Come for the lesbians. Stay for the lesbians.",
+  "Theyyyy do not give out Oscars for playing trans like they used to",
+  "It's liked she reached up and put a string of lights around my heart",
+  "The lily means I dare you to love me",
+  "I wish I knew how to quit you",
 ]
 const COUNT_CATEGORIES = {
   'LGBTQIA+ Categories': 'LGBTQIA+ Categories',
@@ -36,19 +40,7 @@ const COUNT_CATEGORIES = {
   'Intensity': 'Intensity',
   'Country': 'Country',
   'Tag': 'Tag'
-
 }
-
-const fake_data = {
-  'data': [{"date":2009,"fruit":"Apples","sales":130},{"date":2009,"fruit":"Bananas","sales":40},{"date":2010,"fruit":"Apples","sales":137},{"date":2011,"fruit":"Bananas","sales":97},{"date":2012,"fruit":"Apples","sales":154},{"date":2012,"fruit":"Bananas","sales":117},{"date":2013,"fruit":"Apples","sales":179},{"date":2013,"fruit":"Bananas","sales":98},{"date":2014,"fruit":"Apples","sales":187},{"date":2014,"fruit":"Bananas","sales":120},{"date":2015,"fruit":"Apples","sales":189},{"date":2015,"fruit":"Bananas","sales":84}],
-  'xLabel': 'Date',
-  'yLabel': 'Sales',
-  'x': 'date',
-  'y': 'sales',
-  'z': 'fruit'
-}
-
-
 
 function Main(){
   const [movieGif, setMovieGif] = useState(null);
@@ -57,6 +49,15 @@ function Main(){
   const [countCategory, setCountCategory] = useState('LGBTQIA+ Categories')
   const [scrollActive, setScrollActive] = useState(true);
   const [ratingIcon, setRatingIcon] = useState(null);
+
+  const welcomePhrase = useMemo(() => {
+    var now = new Date();
+    var start = new Date(now.getFullYear(), 0, 0);
+    var diff = now - start;
+    var oneDay = 1000 * 60 * 60 * 24;
+    var day = Math.floor(diff / oneDay);
+    return PHRASES[day % PHRASES.length]
+  }, [])
 
   const [movies, setMovies] = useState(null);
   useEffect(() => {
@@ -210,6 +211,7 @@ function Main(){
       <div id="TitlePage">
         {backgroundDiv}
         <div id="Title" >
+          <h3>{welcomePhrase}</h3>
           <h1>Q-WATCH</h1>
           <Search placeholder="Query Queer Watches" />
         </div>
