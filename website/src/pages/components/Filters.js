@@ -6,7 +6,7 @@ import BubbleFilter from './Filters/BubbleFilter';
 import SliderFilter from './Filters/SliderFilter';
 import DropDownFilter from './Filters/DropdownFilter'
 import Loader from './Loader'
-import {ReactComponent as Exit} from '../../static/icons/no.svg'
+import {ReactComponent as Exit} from '../../static/icons/minus.svg'
 
 const _ = require("lodash"); 
 
@@ -162,17 +162,14 @@ function Filters({active, nMatches, updateFilters, filters, setActive}){
   */
   //const [config, setConfig] = useState(null)
   const [labels, setLabels] = useState(null);
-  console.log('Received filters: ', filters)
   useEffect(() => {
     fetch('/api/movie/labels').then(res => res.json()).then(data => {
-      console.log('Calling api movie labels', Object.keys(data))
       setLabels(data);
     });
   }, []);
 
   function createActiveFilters(label_id, filter_id){
     let temp_filter = labels[label_id].sort((a, b) => a.ID - b.ID)
-    console.log('Temp filter: ', label_id, filters[filter_id], temp_filter)
     var f_ids = [];
     if(filters[filter_id]){
       if(['number', 'string'].indexOf(typeof filters[filter_id])!== -1){
@@ -218,7 +215,6 @@ function Filters({active, nMatches, updateFilters, filters, setActive}){
 
           // If is slider subfilter with options in data
           if(['slider', 'bubble', 'dropdown'].indexOf(filter['type'])!== -1 && Object.keys(labels).indexOf(filterLabel)!==-1){
-            console.log('Sorting ' + filter['type'])
             filter_section['filters'].push(
               {...filter, 'filters': createActiveFilters(filterLabel, filter['id'])}
             )

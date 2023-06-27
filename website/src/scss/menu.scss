@@ -1,7 +1,8 @@
 @import "./defaults.scss";
 
 #MainMenu {
-  z-index: 5;
+  z-index: 11;
+  min-height: 3em;
   background-color: $FONT_COLOR_LIGHTEST;
   display: block;
   width: 100%;
@@ -13,6 +14,14 @@
   box-sizing: border-box;
   box-shadow: 0 5px 10px rgba(154, 161, 177, 0.1);
 
+  // No hamburger menu or side menu
+  > svg {
+    display: none;
+  }
+  .sideMenu {
+    display: none;
+  }
+
   a.active {
     color: $PRIMARY_COLOR;
     cursor: default;
@@ -20,6 +29,11 @@
 
   svg {
     height: 2em;
+  }
+  > svg {
+    height: 1.5em;
+    padding-top: 0.75em;
+    cursor: pointer;
   }
   .logo {
     position: absolute;
@@ -229,5 +243,67 @@
 
   div:hover > svg {
     fill: $ACCENT_COLOR1;
+  }
+}
+
+@media (max-width: $WIDTH_MOBILE) {
+  #MainMenu {
+    > nav {
+      display: none;
+    }
+    > svg {
+      display: block;
+    }
+    .sideMenu {
+      display: block;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      position: fixed;
+      width: 100%;
+      height: 100vh;
+      background-color: $FONT_COLOR_LIGHTEST;
+      transform: translateX(-100%);
+      transition: 0.5s;
+      margin: 0;
+      padding: 1em;
+      box-sizing: border-box;
+      font-size: 1.5em;
+
+      > svg {
+        float: right;
+        cursor: pointer;
+      }
+      nav:first-of-type {
+        margin-top: 2em;
+      }
+
+      nav {
+        flex-direction: column;
+        padding-left: 1em;
+
+        a {
+          margin-left: 0;
+          margin-right: 0;
+        }
+
+        > div {
+          .dropdown {
+            display: none;
+            position: relative;
+            //top: 100%;
+            left: 1em;
+            //background-color: $FONT_COLOR_LIGHTEST;
+            color: $FONT_COLOR_DEFAULT;
+          }
+        }
+        > div:hover .dropdown {
+          display: block;
+        }
+      }
+    }
+    .sideMenu.active {
+      transform: translateX(0);
+    }
   }
 }

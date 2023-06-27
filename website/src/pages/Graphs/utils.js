@@ -8,7 +8,6 @@ var resizeGraph = (setGraphDimensions) => {
   function handleResize() {
 
     if (!throttled) {
-      console.log('resize')
       let graphContainer = document.getElementsByClassName('Graph')[0];
       let graphStyle = getComputedStyle(graphContainer);
       var paddingX = parseFloat(graphStyle.paddingLeft) + parseFloat(graphStyle.paddingRight);

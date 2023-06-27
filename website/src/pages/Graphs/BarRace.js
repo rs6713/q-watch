@@ -44,8 +44,6 @@ const BarRace = ({data, grouping_vars, name_var, label_vars, value_var}) => {
 
   React.useEffect(() => {
 
-  console.log('Value var: ', value_var, ' group var: ', grouping_vars)
-  console.log(data)
   let year_data = d3.merge(
     Array.from(
         d3.map(data, d => (
@@ -63,13 +61,10 @@ const BarRace = ({data, grouping_vars, name_var, label_vars, value_var}) => {
       )
     )
   )
-  console.log(year_data)
 
   let groups = new Set(year_data.map(d => d.GROUP))
-  console.log('Groups: ', groups)
 
   const margin = ({top: 20, right: 5 * max(Array.from(groups).map(g => g.length)), bottom: 20, left: 20})
-  console.log(margin)
   const svg = d3.select(ref.current)
   let height = SVGdimensions['minHeight']
 
@@ -100,7 +95,7 @@ const BarRace = ({data, grouping_vars, name_var, label_vars, value_var}) => {
   let years = Array.from(d3.rollup(year_data, d => d, d => +d.YEAR, d => d.GROUP))
     .map(([year, data]) => [new Date(`${year}-01-01`), data])
     .sort(([a], [b]) => d3.ascending(a, b))
-  console.log('Years: ', years)
+
 
   function rank(value) {
     const data = Array.from(groups, group => ({group, value: value(group)}));
@@ -140,9 +135,6 @@ const BarRace = ({data, grouping_vars, name_var, label_vars, value_var}) => {
     return keyframes;
   };
   let keyframes = generateKeyframes();
-
-
-  console.log('Keyframes: ', keyframes)
 
   let nameframes = d3.groups(keyframes.flatMap(([, data]) => data), d => d.group)
 

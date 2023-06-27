@@ -22,7 +22,6 @@ export function Icon({name, label, className}){
     </svg>
     return <svg xmlns={svgIcon} className={className} fill="currentColor" stroke="currentColor"/>
   }catch (error) {
-    console.log(`Icon with name "${name}" does not exist`);
     return <></>
   }
 }

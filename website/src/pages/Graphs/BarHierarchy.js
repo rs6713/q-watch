@@ -296,7 +296,6 @@ function up(svg, svgX, d, fontSize, x, xAxis) {
 function calculateScore(object, summary_var){
   object.scores = [];
   if(object.children){
-    console.log(object.children)
     for(let child of object.children){
       object.scores.push(calculateScore(child, summary_var));
     }
@@ -358,14 +357,12 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
     
     // Calculate and add .score attribute, sum of all children, or own value
     calculateScore(root, summary_var)
-    console.log(root, summary_var)
     root = root.sort((a, b) => (b.score - a.score) * (sort_ascending ? -1 : 1))
     .eachAfter(d => d.index = d.parent ? d.parent.index = d.parent.index + 1 || 0 : 0)
     
     // let width = container.clientWidth - paddingX;
     // var x = d3.scaleLinear().range([MARGIN.left, width - MARGIN.right])
     var x = d3.scaleLinear().range([MARGIN.left, SVGdimensions['width'] - MARGIN.right])
-    console.log(root.score)
     x.domain([0, Math.max(root.score)]);
 
     const svgX = d3.select(refX.current)

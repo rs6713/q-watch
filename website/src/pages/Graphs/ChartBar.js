@@ -149,8 +149,6 @@ const ChartBar = ({dataset, limit, ...kwargs}) => {
     }
     const svg = d3.select(ref.current);
 
-    console.log('Bar: ', dataset)
-
     createZKey(dataset)
 
     var data = dataset['data'].sort((a, b) => a[dataset['y']] < b[dataset['y']] ? 1 : -1)
@@ -175,7 +173,6 @@ const ChartBar = ({dataset, limit, ...kwargs}) => {
         dataset['z_key']
       )
     }
-    console.log('Bar: ', data)
 
     const l = BarChart(data, {
       svg,

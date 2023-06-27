@@ -43,8 +43,7 @@ function Choropleth(data, {
   // Compute default domains.
   if (domain === undefined) domain = d3.extent(V);
   domain[0] = Math.max(domain[0], 1)
-  console.log('Domain: ', domain)
-  
+
   // Construct scales.
   const color = scale(domain, range);
   if (color.unknown && unknown !== undefined) color.unknown(unknown);
@@ -58,7 +57,7 @@ function Choropleth(data, {
     const O = d3.map(data, d => d);
     title = (f, i) => T(f, O[i]);
   }
-  console.log(width, margin.left, margin.right, outline)
+
   // Compute the default height. If an outline object is specified, scale the projection to fit
   // the width, and then compute the corresponding height.
 
@@ -73,12 +72,6 @@ function Choropleth(data, {
   // Construct a path generator.
   const path = d3.geoPath(projection);
 
-  // if (outline != null) svg.append("path")
-  //     .attr("fill", fill)
-  //     .attr("stroke", "currentColor")
-  //     .attr("d", path(outline))
-
-  console.log('container height ', container_height, ' height ', height)
   svg.append("g")
     .selectAll("path")
     .data(features.features)
@@ -148,18 +141,12 @@ const ChartCountry = ({dataset, value_var}) => {
     .attr("fill", "black")
     .text(title);
 
-    // let grouped_data = [
-    //   {'name': 'United Kingdom', [value_var]: 10}
-    // ]
-    // console.log(dataset)
-    console.log(new Set(dataset.map(d => d.COUNTRY)))
     let rename = {
       'United States': 'United States of America'
     }
     let grouped_data = Array.from(d3.rollup(dataset, d => d.map(m => value_var !== 'COUNT' ? m[value_var]: 1).reduce((a, b)=> a+b), d => d.COUNTRY)).map(
       ([country, total]) => ({'name': (rename[country] || country), 'value': total})
     )
-    console.log(grouped_data)
   
     let countries = topojson.feature(world, world.objects.countries)
     let countrymesh = topojson.mesh(world, world.objects.countries, (a, b) => a !== b)
@@ -178,10 +165,6 @@ const ChartCountry = ({dataset, value_var}) => {
       margin: MARGIN,
       outline: undefined
     })
-    //chart.scales.color
-    // console.log( Legend(chart.scales.color, {title: "Number of Movies"}))
-    // let key = Legend(chart.scales.color, {title: "Number of Movies"})
-    // //console.log(key)
 
     
   }, [value_var, dataset, SVGdimensions])

@@ -72,7 +72,6 @@ function Movie(props){
         "properties":['ID']
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
-      console.log(data)
       setId(parseInt(data['ID']));
       window.location.href = ('/movies/'+ data['ID'])
     })
@@ -87,7 +86,6 @@ function Movie(props){
         'cache-control': 'no-store',
       }
     }).then(res => res.json()).then(data => {
-      console.log(data);
       setMovie(data);
     })
   }, [id]);
@@ -104,11 +102,11 @@ function Movie(props){
 
   if(movie !== null){
     content = (<div id="MovieContainer">
-
+      {pageWidth >= largeScreenWidth && 
       <div className='GalleryContainer'>
-        {pageWidth >= largeScreenWidth && <Gallery images={movie.IMAGES} />}
-        {pageWidth >= largeScreenWidth && <Quote quote={movie.quote}/> }
-      </div>
+        <Gallery images={movie.IMAGES} />
+        <Quote quote={movie.quote}/>
+      </div>}
       <div id="MovieContents">
         
         <div id="MovieTitle">
@@ -127,7 +125,7 @@ function Movie(props){
               
               <ReturnMovie aria-label="Return to Browse" title="Return to Browse" onClick={() => navigate(-1)} />
             </div>
-            <div>{movie.YEAR}</div><br/>
+            <div>{movie.YEAR}</div>
             <div>
               {movie.IMDB_ID && <a target='_blank' href={'https://www.imdb.com/title/tt'+movie.IMDB_ID}><Button onClick={()=>{}} text='IMDB' /></a>}
               {movie.TRAILER && <Button onClick={()=>{setShowTrailer(!showTrailer)}} text='Trailer' />}

@@ -45,7 +45,7 @@
 }
 
 @mixin main_width_styling($side_padding_inner, $side_padding_outer) {
-  #Main {
+  #Main.page {
     #MainMenu {
       padding-left: $side_padding_outer;
       padding-right: $side_padding_outer;
@@ -149,6 +149,12 @@
   #Browse .Alert {
     width: 90vw;
     max-width: 90vw;
+  }
+
+  #Movie #MovieContainer {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   #ControlPanel #Categories {

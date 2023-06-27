@@ -286,12 +286,14 @@ h3.percent.down {
 #ControlPanelContainer {
   background-color: $PRIMARY_COLOR;
 }
+h2.bubbletext {
+  font-size: 5em;
+}
 #Main #Understand {
   background-color: $PRIMARY_COLOR;
   > div:last-child {
     h2.bubbletext {
       color: black;
-      font-size: 5em;
       white-space: break-spaces;
       line-height: 1em;
       -webkit-text-fill-color: $FONT_COLOR_LIGHTEST;
@@ -689,16 +691,13 @@ h3.bubbletext {
 }
 
 @media (max-width: $WIDTH_SMALL_SCREEN) {
-  #Welcome.block {
+  #Main.page .contentContainer #Welcome.block {
     flex-direction: column;
 
     > div {
       width: 100%;
-    }
-  }
+      border-radius: 0;
 
-  #Welcome.block {
-    > div {
       img {
         display: inline-block;
         transform: none;
@@ -706,12 +705,13 @@ h3.bubbletext {
         width: 60%;
       }
     }
+
     > div:first-child {
       padding-bottom: 3em;
     }
     > div:last-child {
       text-align: center;
-      padding: 0em 0em 4em 0em;
+      padding-bottom: 4em;
       background-color: $ACCENT_COLOR3;
     }
   }
@@ -729,6 +729,18 @@ h3.bubbletext {
     row-gap: 1em;
     column-gap: 3em;
 
+    > div:last-child > div {
+      border-radius: 8em;
+      padding: 3em;
+      span {
+        display: none;
+      }
+      svg {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    }
+
     > div {
       width: auto;
     }
@@ -741,7 +753,7 @@ h3.bubbletext {
 }
 
 @media (max-width: $WIDTH_TABLET) {
-  #TitlePage #Title {
+  #Main.page #TitlePage #Title {
     h1 {
       font-size: calc($FONT_SIZE_TITLE * 1.5);
     }
@@ -761,7 +773,6 @@ h3.bubbletext {
         transform: translateX(-50%);
       }
       h2 {
-        font-size: 4em;
         text-align: center;
         margin-top: 0.5em;
       }
@@ -782,24 +793,43 @@ h3.bubbletext {
 }
 
 @media (max-width: $WIDTH_MOBILE) {
-  #TitlePage #Title {
+  h2.bubbletext {
+    font-size: 3.5em;
+    white-space: break-spaces;
+  }
+
+  #Main.page #TitlePage #Title {
     position: inherit;
     width: 100%;
     top: 0;
     left: 0;
     transform: none;
     h1 {
-      font-size: calc($FONT_SIZE_TITLE * 1.5);
+      font-size: calc($FONT_SIZE_TITLE);
     }
   }
   #Analytics.centerblock {
     display: flex;
     flex-direction: column;
-
+    padding-bottom: 2em;
+    > div:not(:first-child) > div {
+      border-radius: 8em;
+      padding: 3em;
+      span {
+        display: none;
+      }
+      svg {
+        margin-top: 0;
+      }
+    }
     > div {
       width: auto;
       padding-left: 3em;
       padding-right: 3em;
+
+      p {
+        text-align: center;
+      }
 
       svg {
         height: 20vw;
@@ -814,15 +844,16 @@ h3.bubbletext {
   }
 
   #Main #Understand {
+    padding-bottom: 2em;
     .Graph {
       width: 100%;
+      margin-bottom: 2em;
     }
     h2 {
-      font-size: 3em;
       margin-top: 0em;
     }
   }
-  #Welcome.block {
+  #Main.page .contentContainer #Welcome.block {
     > div:first-child {
       padding-top: 4em;
       padding-bottom: 2em;
@@ -831,13 +862,10 @@ h3.bubbletext {
       img {
         width: 100%;
       }
-      h2 {
-        font-size: 3em;
-      }
     }
 
     > div:last-child {
-      padding: 0em 0em 2em 0em;
+      padding-bottom: 2em;
     }
   }
 
@@ -849,8 +877,10 @@ h3.bubbletext {
     }
 
     .searchbar {
+      font-size: 1em;
       input {
-        width: 10.5em;
+        width: 80vw;
+        box-sizing: border-box;
       }
       .searchresult {
         width: 13.5em;

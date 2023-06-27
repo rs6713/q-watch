@@ -42,7 +42,6 @@ function formatLanguage(language){
     if(l.length > 3){
       return l
     }
-    console.log(l)
     return ''
   }
 

@@ -15,7 +15,6 @@ function MovieTile({movie}){
     let Ic = getIcon([typ])
     return <Ic />
   }
-  console.log(movie)
   return (
     <Link to={'/movies/' + movie.ID} key={movie.ID}>
       <div className="movietile" key={movie.ID}>

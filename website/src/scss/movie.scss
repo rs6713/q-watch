@@ -43,7 +43,7 @@
   }
 
   .trailer {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
@@ -293,6 +293,28 @@
     #MovieContainer {
       padding-left: 1em;
       padding-right: 1em;
+    }
+  }
+
+  #Movie #MovieContainer #MovieContents #MovieTitle #MovieDetails {
+    flex-direction: column;
+
+    .ratingContainer {
+      margin-bottom: 1em;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    div#aside {
+      > div {
+        display: inline-block;
+      }
+      text-align: left;
+
+      #MovieControls {
+        display: block;
+        float: right;
+      }
     }
   }
 }

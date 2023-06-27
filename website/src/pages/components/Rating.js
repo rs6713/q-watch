@@ -13,7 +13,6 @@ import {ReactComponent as Polygon} from '../../static/icons/polygon.svg';
 
 export function getIcon(movieTypes){
   var Icon = Rainbow;
-  console.log('Movie Types: ', movieTypes)
 
   if(movieTypes == null){
     return Icon;
@@ -124,20 +123,6 @@ function Rating({rating, Icon, clickFn, mouseEnterFn, mouseLeaveFn, mouseOverFn,
   //   }
   // </div>
   // );
-
-
-
-
-function createDefaultVote(Icon){
-  return <div className={'defaultVote'}>
-    {[...Array(maxRating)].map((_, idx) => {
-      return <div key={idx}>
-        <Icon style={{fill: 'lightgrey'}} />
-      </div>
-    })
-  }
-</div>
-}
 
 function RatingDisplay({id, rating, numRating, movieTypes, votable}){
   /*

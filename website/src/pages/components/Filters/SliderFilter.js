@@ -13,13 +13,11 @@ function SliderFilter({
   const [toggleActive, setToggleActive] = useState(false);
   
   let currentSelectedOption = getSelectedOption();
-  console.log('SliderFilter currentselectedoption: ', filter['id'], currentSelectedOption)
   const atLeast = currentSelectedOption[1];
   const [selectedOption, setSelectedOption] = useState(
     currentSelectedOption[0]
   )
   const [active, setActive] = useState(false)
-  console.log('Current selected option 0: ', currentSelectedOption[0])
   const [toggleLeft, setToggleLeft] = useState(
     currentSelectedOption[0]? getOptionTogglePosition(currentSelectedOption[0]) : 0
   );
@@ -38,18 +36,13 @@ function SliderFilter({
     )
   }, [selectedOption])
 
-  console.log('SlideFilter: ', filter,  filter['id'], filters[filter['id']])
-
   function getSelectedOption(){
     let currentOption = filters[filter['id']];
     if(currentOption){
-      console.log('selected slidefilter: ', currentOption)
 
       //atLeast? 'EXCLUDE': 'INCLUDE',
       let top_id = Array.isArray(currentOption['VALUE'])?Math.max(...currentOption['VALUE']): currentOption['VALUE']
-      console.log('Available filters: ', filter.filters, top_id)
       let topOption = filter.filters.filter(f=> f.ID == top_id)[0]
-      console.log('Topoption: ', topOption)
       if(filter['type'] === 'slider' ){
         return [
           topOption,
@@ -222,7 +215,6 @@ function SliderFilter({
   if(selectedOption === null || !filter.filters){
     return <></>
   }
-  console.log('Trying ot generate optiondescription: ', selectedOption)
   let optionDescription = selectedOption && selectedOption.LABEL?<><h3>{selectedOption.LABEL}</h3>
   <p>{selectedOption.DESCRIP}</p></> : null;
 

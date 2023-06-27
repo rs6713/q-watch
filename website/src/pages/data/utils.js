@@ -67,7 +67,7 @@ function groupDataAgg(data, groups, {
   if(percent !== undefined){
     totals = groupDataAgg(data, [percent], {val: val, returnType:'dict'})
     percentGroupIndex = groups.indexOf(percent)
-    console.log('Totals: ', totals, groups[percentGroupIndex])
+
   }
 
   for(let d of data){
@@ -94,8 +94,6 @@ function groupDataAgg(data, groups, {
   }
   // Single dict, where groups are string concatenated to form keys
   if(returnType === 'dict'){
-    console.log('Dict grouped: ', groupedData)
-
     return groupedData
   }
 

@@ -50,7 +50,6 @@ function OverTime(){
     )
   }
   function get_movies(){
-    console.log('Fetching movies with criteria: ', criteria)
     fetch('/api/movies', {
       method: 'POST',
       headers: {
@@ -63,7 +62,6 @@ function OverTime(){
         "properties": ['TITLE', 'YEAR', 'TYPES', 'BOX_OFFICE', 'BUDGET', 'GENRES', 'REPRESENTATIONS']
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
-      console.log(data["data"])
       setMovies(data["data"]);
       setNMatches(data["n_matches"]);
     })

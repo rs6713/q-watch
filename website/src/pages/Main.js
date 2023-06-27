@@ -24,12 +24,38 @@ import {PercentDelta} from './components/Delta';
 import {groupDataAgg} from './data/utils.js' //, generateCombinations, getMovieValues
 
 const PHRASES = [
-  "**I will go down with this ship.... (screams in Dido)**",
+  "I will go down with this ship...(screams in Dido)",
   "Come for the lesbians. Stay for the lesbians.",
-  "Theyyyy do not give out Oscars for playing trans like they used to",
-  "It's liked she reached up and put a string of lights around my heart",
-  "The lily means I dare you to love me",
-  "I wish I knew how to quit you",
+  //"Theyyyy do not give out Oscars for playing trans like they used to",
+  //"It's liked she reached up and put a string of lights around my heart",
+  "The lily means I dare you to love me.",
+  "I wish I knew how to quit you.",
+  "We're here. We're queer.",
+  "I like the wine, and not the label.",
+  "I don't know what I am. I think I might be nothing.",
+  "Swim the warm waters of sins of the flesh",
+  "Yes, I live with a man. Yes, I’m a middle-aged fag.",
+  
+  //"You can be gay, but you don't have to let nobody call you a faggot",
+  //"Yeah, it's always heartwarming to see a prejudice defeated by a deeper prejudice.",
+  "What happened to you? You happened to me.",
+  "I have infinite tenderness for you.",
+  "I want to show the world. How much I love you.",
+  "My angel, flung out of space.",
+  "I could tell the answer was yes. And that it was now.",
+  "You make me feel something I absolutely cannot feel.",
+  "Kiss me. Now. Infront of all these people.",
+  "How you could live in an ocean of her thoughts.",
+  "It is to you I devote a dreaming space.",
+  "This is my Josh. And he is a homosexual.",
+  "We are everywhere.",
+  "Fuck the senator, I don’t give a damn what he thinks.",
+  "No. But God knows we keep trying.",
+  "Would you?",
+  "But to be in love when you’re sad, that’s something else.",
+  "You were my first everything.",
+  "We accept the love we think we deserve.",
+  "The only way to get through this is together.",
 ]
 const COUNT_CATEGORIES = {
   'LGBTQIA+ Categories': 'LGBTQIA+ Categories',
@@ -78,7 +104,6 @@ function Main(){
           ]
         })//this.state.filterCriteria
       }).then(res => res.json()).then(data => {
-        console.log('Data: ', data['data'])
         setMovies(data["data"]);
       })
   }, []);
@@ -136,7 +161,6 @@ function Main(){
         }
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
-      console.log(data)
       setMovieCounts(data)
     })
     
@@ -211,9 +235,10 @@ function Main(){
       <div id="TitlePage">
         {backgroundDiv}
         <div id="Title" >
-          <h3>{welcomePhrase}</h3>
+          
           <h1>Q-WATCH</h1>
-          <Search placeholder="Query Queer Watches" />
+
+          <Search placeholder={welcomePhrase} />
         </div>
         {movieGif !== null && 
           <div id="MovieInfo">

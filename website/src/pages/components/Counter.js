@@ -39,7 +39,6 @@ function Counter({total}){
   }
 
   useEffect(()=>{
-    console.log(total, 'adding scroll event')
     window.addEventListener('wheel', monitorScroll);
 
     return () => window.removeEventListener('wheel', monitorScroll)

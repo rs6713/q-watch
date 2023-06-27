@@ -48,7 +48,7 @@ function calculatePercent(dataset, dataChoice, value){
   }catch(err){
 
   }
-  console.log(percent)
+
   return percent
 }
 
@@ -119,7 +119,6 @@ function Absolute({value, statement, substatement}){
 }
 
 function PercentAlert({dataset, dataChoice, value, statement}){
-  console.log('Percent Alert: ', dataset, dataChoice, value)
   let percent = dataset !== null ? calculatePercent(dataset, dataChoice, value): '?';
 
   return (

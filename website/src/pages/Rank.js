@@ -15,8 +15,6 @@ import {useSearchParams} from 'react-router-dom';
 import {
   getCriteriaFromSearchParams,
   createUpdateSearchParams,
-  createUpdateSort,
-  createUpdateIndex,
 } from './search';
 
 
@@ -55,23 +53,39 @@ const GROUP_OPTIONS = {
   "Representations": "REPRESENTATIONS",
 }
 
+function deepEqual(x, y) {
+  return (x && y && typeof x === 'object' && typeof y === 'object') ?
+    (Object.keys(x).length === Object.keys(y).length) &&
+      (Object.keys(x).reduce(function(isEqual, key) {
+        return isEqual && deepEqual(x[key], y[key]);
+      }, true) || Object.keys(x).length == 0) : (x === y);
+}
+
 
 function Rank(){
 
-  const [filterActive, setFilterActive] = useState(false);
-  const [ascending, setAscending] = useState(false);
-  const [ignoreZeros, setIgnoreZeros] = useState(true);
-  const [rank, setRank] = useState("BOX_OFFICE_USD");
-  const [movies, setMovies] = useState(null);
-  const [nMatches, setNMatches] = useState(null);
-  const [group, setGroup] = useState([])
-  const [summary, setSummary] = useState("sum");
-
   const [searchParams, setSearchParams] = useSearchParams();
   const updateSearchParams = createUpdateSearchParams(setSearchParams, searchParams);
-  const updateSort = createUpdateSort(setSearchParams, searchParams);
-  const updateIndex = createUpdateIndex(setSearchParams, searchParams);
-  let criteria = getCriteriaFromSearchParams(searchParams);
+  const [criteria, setCriteria] = useState({});
+  //let criteria = getCriteriaFromSearchParams(searchParams);
+
+  const [filterActive, setFilterActive] = useState(false);
+
+  //const [rank, setRank] = useState("BOX_OFFICE_USD");
+  // const [summary, setSummary] = useState("sum");
+  const rank = searchParams.get('rank') || 'BOX_OFFICE_USD';
+  const summary = searchParams.get('summary') || 'sum';
+  const [movies, setMovies] = useState(null);
+  const [nMatches, setNMatches] = useState(null);
+  //const [group, setGroup] = useState(["TYPES"])
+  const group = getCriteriaFromSearchParams(searchParams, [], ['group'])['group'] || ['TYPES'];
+  // const [ascending, setAscending] = useState(false);
+  // const [ignoreZeros, setIgnoreZeros] = useState(true);
+  const ascending = searchParams.get('ascending') || false;
+  const ignoreZeros = searchParams.get('ignoreZeros') || true;
+  
+
+
 
 
   function get_movies(){
@@ -90,60 +104,50 @@ function Rank(){
         "properties": properties
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
-      console.log(data["data"])
       setMovies(data["data"]);
       setNMatches(data["n_matches"]);
     })
   }
 
   useEffect(() => {
-    criteria = getCriteriaFromSearchParams(searchParams);
+    let newCriteria = getCriteriaFromSearchParams(
+      searchParams,
+      ['rank', 'summary', 'group', 'ascending', 'ignoreZero']
+    );
+
+    if(!deepEqual(criteria, newCriteria) || movies === null){
+      setCriteria(newCriteria);
+    }
+    // setCriteria(newCriteria);
+    // setNMatches(null);
+    // setMovies(null);
+    // console.log('Triggered effect: ',  criteria)
+    // get_movies()
+  }, [searchParams])
+
+  useEffect(() => {
+    //criteria = getCriteriaFromSearchParams(searchParams);
     setNMatches(null);
     setMovies(null);
     console.log('Triggered effect: ',  criteria)
     get_movies()
-  }, [searchParams])
+  }, [criteria])
 
-  // useEffect(() => {
-  //   console.log('Setting rank ', rank, ' criteria', criteria)
-  //   setMovies(null);
-  //   setNMatches(null);
-  //   get_movies();
-  // }, [criteria])
-
-  // function updateCriteria(update){
-
-  //   let newCriteria = criteria === null? {...update} : {...criteria, ...update}
-
-  //   // Cancelled criteria are removed
-  //   for(let key in newCriteria){
-  //     if(newCriteria[key] === null){
-  //       delete newCriteria[key];
-  //     }
-  //   }
-  //   setCriteria(
-  //     newCriteria
-  //   )
-  // }
-
-  function updateRank(x){
-    setRank(x)
-    setSummary(SUMMARY_OPTIONS[x][Object.keys(SUMMARY_OPTIONS[x])[0]])
-  }
+  console.log(rank, summary, ascending, group)
 
   return (
     <div id="Rankings" className="page GraphPage">
       <MainMenu />
       {filterActive && <div className="cover" onClick={()=>{setFilterActive(false)}} />}
       
-      <Filters active={filterActive} nMatches={nMatches} updateFilters={updateSearchParams} filters={criteria} />
+      <Filters active={filterActive} nMatches={nMatches} updateFilters={updateSearchParams} filters={criteria} setActive={setFilterActive} />
 
       <div id="ControlPanel">
-        <Options updateOption={updateRank} option={rank} name='Ranking' options={RANK_OPTIONS} />
-        <Options updateOption={setGroup} option={group} name='Grouping' options={GROUP_OPTIONS} multi={true}/>
-        <Options updateOption={setSummary} option={summary} name='Summary' options={SUMMARY_OPTIONS[rank]}/>
-        <Switch state={ascending} setState={setAscending} onMessage={<div>Ascending Order</div>} offMessage={<div>Descending Order</div>} />
-        <Switch state={ignoreZeros} setState={setIgnoreZeros} onMessage={<div>Ignore Zeros/Unknown</div>} offMessage={<div>Show All</div>} />
+        <Options updateOption={(r) => {updateSearchParams({'rank': r})}} option={rank} name='Ranking' options={RANK_OPTIONS} />
+        <Options updateOption={(g) => {updateSearchParams({'group': g})}} option={group} name='Grouping' options={GROUP_OPTIONS} multi={true}/>
+        <Options updateOption={(s) => {updateSearchParams({'summary': s})}} option={summary} name='Summary' options={SUMMARY_OPTIONS[rank]}/>
+        <Switch state={ascending} setState={(a) => {updateSearchParams({'ascending': a})}} onMessage={<div>Ascending Order</div>} offMessage={<div>Descending Order</div>} />
+        <Switch state={ignoreZeros} setState={(r) => {updateSearchParams({'ignoreZeros': r})}} onMessage={<div>Ignore Zeros/Unknown</div>} offMessage={<div>Show All</div>} />
         <div className='filler' />
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
       </div>

@@ -164,7 +164,6 @@ function LineChart(data, {
 
 
   // Add one dot in the legend for each name.
-  console.log('z ', Z)
   let zLabels = Z.filter(onlyUnique);
   if(zLabels.length > 1){
     svg.selectAll("mydots")
@@ -199,7 +198,6 @@ const ChartLine = ({dataset, ...kwargs}) => {
   if(kwargs == null){
     kwargs = {}
   }
-  console.log('Kwargs: ', kwargs)
 
   let graphContainer;
   var graphStyle;
@@ -217,7 +215,7 @@ const ChartLine = ({dataset, ...kwargs}) => {
 
       var paddingX = parseFloat(graphStyle.paddingLeft) + parseFloat(graphStyle.paddingRight);
       var paddingY = parseFloat(graphStyle.paddingTop) + parseFloat(graphStyle.paddingBottom);
-      console.log(graphContainer.paddingTop, graphContainer.clientWidth)
+
       setSVGdimensions({
         height: graphContainer.clientHeight - paddingY,
         width: graphContainer.clientWidth - paddingX

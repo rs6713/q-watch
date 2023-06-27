@@ -34,7 +34,6 @@ function Search({placeholder}){
         "properties": ["ID", "TITLE", "YEAR", "AVG_RATING", "TYPES"]
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
-      console.log("Getting movie data")
       setMovies(data["data"]);
     })
   }, [])

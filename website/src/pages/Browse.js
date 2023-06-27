@@ -21,8 +21,6 @@ import {
   generateCriteriaDescription,
   getCriteriaFromSearchParams,
   createUpdateSearchParams,
-  createUpdateSort,
-  createUpdateIndex,
 } from './search';
 
 
@@ -46,8 +44,7 @@ function Browse(){
 
   const [searchParams, setSearchParams] = useSearchParams();
   const updateSearchParams = createUpdateSearchParams(setSearchParams, searchParams);
-  const updateSort = createUpdateSort(setSearchParams, searchParams);
-  const updateIndex = createUpdateIndex(setSearchParams, searchParams);
+
   let criteria = getCriteriaFromSearchParams(searchParams);
 
   let sort = searchParams.get('sort') || DEFAULT_PARAMS['SORT'];
@@ -64,7 +61,6 @@ function Browse(){
 
   useEffect(() => {
     fetch('/api/movie/labels').then(res => res.json()).then(data => {
-      console.log('Labels: ', data)
       setLabels(data);
     });
   }, []);
@@ -72,7 +68,6 @@ function Browse(){
 
   function get_movies(){
     if(criteria !== null){
-      console.log(criteria)
       fetch('/api/movies', {
         method: 'POST',
         headers: {
@@ -126,7 +121,7 @@ function Browse(){
       <Filters active={filterActive} nMatches={nMatches} updateFilters={updateSearchParams} filters={criteria} setActive={setFilterActive}/>
 
       <div id="ControlPanel">
-        <Options name='Sort' updateOption={updateSort} option={sort} options={ Object.keys(SORT)} />
+        <Options name='Sort' updateOption={(s)=>{updateSearchParams({'sort': s, 'index': 1})}} option={sort} options={ Object.keys(SORT)} />
         <Labels labelType={'GENRES'} labels={labels && labels['GENRES']} updateLabel={updateSearchParams} label={criteria["GENRES"]}/>
         
         
@@ -137,7 +132,7 @@ function Browse(){
       <div id="MovieList">
         <MovieList movies={movies} />
         {movies !== null && movies.length !== 0 && <div className='spacer'> </div>}
-        <Indexer nIndexes={nIndexes} updateIndex={updateIndex} index={index} />
+        <Indexer nIndexes={nIndexes} updateIndex={(i)=>{updateSearchParams({'index': i})}} index={index} />
         <Footer />
       </div>
       
@@ -157,7 +152,7 @@ function Browse(){
                 </tr>
               })}
               {Object.keys(criteria).length == 0 && <div>
-                <span>No Criteria</span>
+                <div>No Criteria</div>
                 <span>Wow! So you just like a little bit of everything, right??</span>
               </div>}
           </table>
