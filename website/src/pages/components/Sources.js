@@ -20,12 +20,11 @@ function Sources({sources}){
               <Minus onClick={() => {setInfoActive(false)}}/>
             </h2>
             <div className='description'>
-              Not all Online Streaming Platforms are equally ethical, but we will always provide you with all the links that we have access to. <br/><br/>If you have the means, you may want to consider chipping in an extra quid, to support the most ethical available option.<br/><br/>
-              To make this easier, we've added <img src={Lgbt} alt='A lil LGBT flag'/> to denote queer-run Streaming Orgs, and ethicacy ratings to help guide your decision process.
+              Not all Online Streaming Platforms are equally ethical, but we will always provide you with all the links that we have access to. <br/><br/><b>Supporting, and renting from Queer Run Organisations (denoted <img src={Lgbt} alt='A lil LGBT flag'/>), if you have the means, can be a great way to give love back to the community.</b> 
             </div>
             <div>
-              We will never provide links to illegal streaming sites, not just because we fear Uncle Sam, but because it's the right thing to do dammit.<br/><br/>
-              So please, whatever you do, don't visit illegal online streaming sites known for hosting queer content like: <b>b4watch.com</b>.
+              There's an argument we've heard on the grapevine &#127815;, that illegal streaming by individuals who never had the means to purchase, deprives nothing of the media creator. <br/><br/>
+              Of course, we could never legally endorse such ideas, so please make sure you avoid sites known for hosting free queer content like: <b>b4watch.com</b>. &#128521;
             </div>
           </div>
         </div>

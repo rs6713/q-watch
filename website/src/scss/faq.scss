@@ -72,6 +72,9 @@
     padding-top: 1em;
     padding-bottom: 0em;
   }
+  h2.bubbletext {
+    white-space: break-spaces;
+  }
   > h3 {
     font-size: $FONT_SIZE_MED;
     font-weight: lighter;
@@ -85,5 +88,16 @@
   > h3 {
     padding-left: 5vw;
     padding-right: 5vw;
+  }
+}
+
+@media (max-width: $WIDTH_TABLET) {
+  #faq h2.bubbletext {
+    font-size: 4em;
+  }
+}
+@media (max-width: $WIDTH_MOBILE) {
+  #faq h2.bubbletext {
+    font-size: 3em;
   }
 }

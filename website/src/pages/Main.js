@@ -22,12 +22,18 @@ import Bubbles from './components/Bubbles';
 import Counter from './components/Counter';
 import {PercentDelta} from './components/Delta';
 import {groupDataAgg} from './data/utils.js' //, generateCombinations, getMovieValues
+import {formatLanguage} from '../utils';
+
+function gIcon(typ){
+  let Ic = getIcon([typ])
+  return <Ic />
+}
 
 const PHRASES = [
   "I will go down with this ship...(screams in Dido)",
   "Come for the lesbians. Stay for the lesbians.",
-  //"Theyyyy do not give out Oscars for playing trans like they used to",
-  //"It's liked she reached up and put a string of lights around my heart",
+  "Theyyyy do not give out Oscars for playing trans like they used to",
+  "It's liked she reached up and put a string of lights around my heart",
   "The lily means I dare you to love me.",
   "I wish I knew how to quit you.",
   "We're here. We're queer.",
@@ -35,9 +41,9 @@ const PHRASES = [
   "I don't know what I am. I think I might be nothing.",
   "Swim the warm waters of sins of the flesh",
   "Yes, I live with a man. Yes, I’m a middle-aged fag.",
-  
-  //"You can be gay, but you don't have to let nobody call you a faggot",
-  //"Yeah, it's always heartwarming to see a prejudice defeated by a deeper prejudice.",
+  "You can be gay, but you don't have to let nobody call you a faggot",
+  "Yeah, it's always heartwarming to see a prejudice defeated by a deeper prejudice.",
+  "If a bullet should enter my brain, let that bullet destroy every closet door.",
   "What happened to you? You happened to me.",
   "I have infinite tenderness for you.",
   "I want to show the world. How much I love you.",
@@ -291,9 +297,10 @@ function Main(){
             <h3>
               {formatRuntime(movieFeatured.RUNTIME)}&nbsp;&#9679;&nbsp;
               {movieFeatured.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
-              {movieFeatured.LANGUAGE}&nbsp;&#9679;&nbsp;
+              {formatLanguage(movieFeatured.LANGUAGE)}&nbsp;&#9679;&nbsp;
               {movieFeatured.COUNTRY}&nbsp;&#9679;&nbsp;
-              {movieFeatured.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}
+              {movieFeatured.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}&#9679;&nbsp;
+              {movieFeatured.TYPES.map((typ) => gIcon(typ))}
             </h3>
             <Bubbles items={movieFeatured.REPRESENTATIONS} />
             

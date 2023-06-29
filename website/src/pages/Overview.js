@@ -6,6 +6,7 @@ import PieChart from './Graphs/PieChart'
 import ChartLine from './Graphs/ChartLine';
 import ChartBar from './Graphs/ChartBar';
 import MainMenu from './components/MainMenu';
+import styles from '../scss/defaults.scss';
 import {PercentDelta, PercentAlert, thresholdStatement, PercentAbsolute, Absolute} from './components/Delta';
 import {
   getLowestXValues,
@@ -20,10 +21,34 @@ import {
   groupDataAgg,
 } from './data/utils'
 
+function getWindowDimensions() {
+  const { innerWidth: pageWidth, innerHeight: pageHeight } = window;
+  return {
+    pageWidth, pageHeight
+  };
+}
+
+function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+}
+
 function StateOfQueerCinema(){
   const [movies, setMovies] = useState(null);
   const [movieTotal, setMovieTotal] = useState(null);
   const [movieCounts, setMovieCounts] = useState(null);
+
+  const { pageHeight, pageWidth } = useWindowDimensions();
 
   useEffect(() => {
     fetch('/api/movies/count', {
@@ -86,6 +111,8 @@ function StateOfQueerCinema(){
   }): null;
   let tropePercent = movies? (Math.round((movies.map(m => m['TROPE_TRIGGERS'] == null ? 1: 0).reduce((a,b) => a+b, 0) / movies.length * 100))) : '?';
 
+  let chartBarLimit = pageWidth < styles.WIDTH_MOBILE ? 10 : (pageWidth < styles.WIDTH_TABLET ? 20 : 30);
+
   return (
     <div id='Overview' className='page'>
       {/* <div id='Race' className='block'>
@@ -122,7 +149,7 @@ function StateOfQueerCinema(){
         </div>
         <div className='sidegraphs'>
          {movies && 
-          <ChartBar dataset={{
+          <ChartBar limit={chartBarLimit} dataset={{
             'data': groupDataAgg(movies, [ 'TYPES']),
             'xLabel': 'LGBTQIA+ Categories',
             'yLabel': 'Total Movies',
@@ -198,7 +225,7 @@ function StateOfQueerCinema(){
             'x': 'COUNTRY',
             'y': 'VALUE',
             'z': ['COUNTRY']
-          }} limit={30} yType={d3.scaleLog}></ChartBar>
+          }} limit={chartBarLimit} yType={d3.scaleLog}></ChartBar>
           }
           Stack area plot of continents over time
       </div>
@@ -324,7 +351,7 @@ function StateOfQueerCinema(){
                 'x': 'REPRESENTATIONS',
                 'y': 'VALUE',
                 'z': ['REPRESENTATIONS'],
-              }}></ChartBar>
+              }}  limit={chartBarLimit}></ChartBar>
             }
           {movies && 
               <ChartLine dataset={{
@@ -502,7 +529,7 @@ function StateOfQueerCinema(){
             'x': 'GENRES',
             'y': 'VALUE',
             'z': ['GENRES']
-          }}></ChartBar>
+          }} limit={chartBarLimit}></ChartBar>
           }
       </div>
 

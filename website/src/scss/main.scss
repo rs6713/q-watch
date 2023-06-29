@@ -57,8 +57,10 @@
 h3.percent {
   min-width: 200px;
   font-size: 2em;
-  margin-left: 1em;
-  margin-right: 1em;
+  // margin-left: 1em;
+  // margin-right: 1em;
+  padding: 1em;
+  margin: 0;
   display: inline-block;
   text-align: center;
 
@@ -151,6 +153,7 @@ h3.percent.down {
     padding: 0.5em 1em;
     border: 0.2em solid $FONT_COLOR_DEFAULT;
     color: $FONT_COLOR_DEFAULT;
+    font-size: $FONT_SIZE_DEFAULT;
     font-weight: bold;
     transform: translateY(100%);
   }
@@ -285,6 +288,8 @@ h3.percent.down {
 
 #ControlPanelContainer {
   background-color: $PRIMARY_COLOR;
+  position: relative;
+  z-index: 5;
 }
 h2.bubbletext {
   font-size: 5em;
@@ -370,7 +375,7 @@ h3.bubbletext {
 }
 
 #Featured {
-  max-height: 50em;
+  //max-height: 50em;
   min-height: 25em;
   border: 1em solid $ACCENT_COLOR1;
   background-color: $ACCENT_COLOR1;
@@ -388,6 +393,7 @@ h3.bubbletext {
   padding: 1em;
 
   > .block {
+    max-height: 50em;
     border-radius: 3em;
     background-color: white;
     overflow: hidden;
@@ -490,6 +496,12 @@ h3.bubbletext {
       display: inline-block;
       margin-right: 0.3em;
     }
+    svg {
+      height: 1em;
+      width: auto;
+      display: inline-block;
+      margin-right: 0.3em;
+    }
   }
 }
 
@@ -527,8 +539,8 @@ h3.bubbletext {
     margin-bottom: 0em;
 
     h2.bubbletext {
-      font-size: 5em;
       color: black;
+      white-space: break-spaces;
       -webkit-text-fill-color: $FONT_COLOR_LIGHTEST;
       text-shadow: -3px 0 black, 0 3px black, 0px 0 black, 0 0px black;
     }
@@ -684,13 +696,22 @@ h3.bubbletext {
   #Main {
     #Understand {
       h2 {
-        font-size: 5em;
+        font-size: 4em;
       }
     }
   }
 }
 
 @media (max-width: $WIDTH_SMALL_SCREEN) {
+  #Main.page #Featured {
+  }
+
+  #Main .contentContainer > h2.bubbletext {
+    // font-size: 3.5em;
+    white-space: break-spaces;
+    max-width: 60vw;
+  }
+
   #Main.page .contentContainer #Welcome.block {
     flex-direction: column;
 
@@ -716,11 +737,9 @@ h3.bubbletext {
     }
   }
 
-  #Main #Understand {
-    h2 {
-      font-size: 4em;
-    }
-  }
+  // #Main.page .contentContainer #Welcome h2.bubbletext {
+  //   font-size: 4em;
+  // }
 
   #Analytics.centerblock {
     display: grid;
@@ -758,6 +777,29 @@ h3.bubbletext {
       font-size: calc($FONT_SIZE_TITLE * 1.5);
     }
   }
+  #Main .contentContainer > h2.bubbletext {
+    font-size: 4em;
+    //white-space: break-spaces;
+  }
+  #Main.page #Featured > .block {
+    flex-direction: column;
+    > div {
+      width: 100%;
+    }
+    > div:first-of-type {
+      width: 100%;
+      padding-right: 0;
+    }
+    > div:last-child {
+      padding-right: 0;
+    }
+    .info {
+      overflow-y: scroll;
+    }
+    .info::-webkit-scrollbar {
+      display: none;
+    }
+  }
   #Main {
     #Understand.block {
       flex-direction: column;
@@ -793,9 +835,29 @@ h3.bubbletext {
 }
 
 @media (max-width: $WIDTH_MOBILE) {
-  h2.bubbletext {
+  .bubbletext {
+    font-size: 3em;
+  }
+  h3.percent {
+    font-size: 1.5em;
+  }
+  #Main .contentContainer > h2.bubbletext {
     font-size: 3.5em;
     white-space: break-spaces;
+    max-width: none;
+    //margin-left: 3vw;
+    margin-right: 3vw;
+    border: 0.14em solid black;
+    border-bottom-width: 0;
+  }
+
+  h3.bubbletext {
+    font-size: 3em;
+    white-space: break-spaces;
+  }
+  #Main.page #Featured {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
 
   #Main.page #TitlePage #Title {

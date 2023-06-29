@@ -42,7 +42,12 @@ function Search({placeholder}){
   return (
     <div className="searchbar" >
         <SearchIcon />
-        <input onFocus={onFocus} placeholder={placeholder} onChange={event => setQuery(event.target.value)} onBlur={onFocusOut} />
+        {!query && <span>{placeholder}</span>}
+
+        <input onFocus={onFocus}  onChange={event => setQuery(event.target.value)} onBlur={onFocusOut}>
+          
+        </input>
+        <span className='bg'></span>
         <Link to={"/browse"}><span>Advanced Search</span></Link>
         
         <div className="searchresults" style={{display: active ? 'block': 'none'}} 

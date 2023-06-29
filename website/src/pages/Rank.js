@@ -11,6 +11,10 @@ import BarHierarchy from './Graphs/BarHierarchy';
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
 import {useSearchParams} from 'react-router-dom';
 
+import Button from './components/Button';
+import Share from './components/Share';
+import {ReactComponent as ShareIcon} from '../static/icons/share.svg'
+
 
 import {
   getCriteriaFromSearchParams,
@@ -84,9 +88,14 @@ function Rank(){
   const ascending = searchParams.get('ascending') || false;
   const ignoreZeros = searchParams.get('ignoreZeros') || true;
   
+  const [labels, setLabels] = useState(null);
+  const [shareActive, setShareActive] = useState(false);
 
-
-
+  useEffect(() => {
+    fetch('/api/movie/labels').then(res => res.json()).then(data => {
+      setLabels(data);
+    });
+  }, []);
 
   function get_movies(){
     let properties =  ['TITLE', 'YEAR', 'TYPES', ...Object.values(RANK_OPTIONS), 'GENRES', 'REPRESENTATIONS'];
@@ -150,6 +159,13 @@ function Rank(){
         <Switch state={ignoreZeros} setState={(r) => {updateSearchParams({'ignoreZeros': r})}} onMessage={<div>Ignore Zeros/Unknown</div>} offMessage={<div>Show All</div>} />
         <div className='filler' />
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
+        <Button symbol={<ShareIcon/>} onClick={()=>{setShareActive(!shareActive)}}/>
+        {shareActive && <Share
+          labels={labels}
+          criteria={criteria}
+          nMatches={nMatches}
+          setShareActive={setShareActive}
+        />}
       </div>
       
       <div className='Graph'>

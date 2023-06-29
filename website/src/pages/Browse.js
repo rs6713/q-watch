@@ -152,8 +152,8 @@ function Browse(){
                 </tr>
               })}
               {Object.keys(criteria).length == 0 && <div>
-                <div>No Criteria</div>
-                <span>Wow! So you just like a little bit of everything, right??</span>
+                <div>No Criteria</div><br/>
+                <span><b>Woww...</b> So you just like a little bit of everything, right?? &#128539;</span>
               </div>}
           </table>
           <div className='callToAction' onClick={()=>{navigator.clipboard.writeText(window.location.href); setLinkCopied(true);}}>

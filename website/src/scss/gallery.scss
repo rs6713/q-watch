@@ -13,10 +13,11 @@
   height: 100%;
 }
 
-@media (max-width: $WIDTH_LARGE_SCREEN) {
+@media (max-width: $WIDTH_SMALL_SCREEN) {
   .Gallery {
     width: 100%;
-    height: 20em;
+    height: 15em;
+    margin-top: 1em;
     flex-direction: row;
     overflow-x: scroll;
     float: none;
@@ -28,12 +29,11 @@
   }
 }
 
-@media (max-width: $WIDTH_SMALL_SCREEN) {
-  .Gallery {
-    height: 15em;
-    margin-top: 1em;
-  }
-}
+// @media (max-width: $WIDTH_SMALL_SCREEN) {
+//   .Gallery {
+
+//   }
+// }
 
 @media (max-width: $WIDTH_MOBILE) {
   .Gallery {

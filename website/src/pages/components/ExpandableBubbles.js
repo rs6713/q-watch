@@ -11,13 +11,19 @@ function ExpandableBubbles({expandable, title, aside, subtitle, items, clickActi
     return <></>
   }
 
+  const Minimize = active ? <Minus title="" aria-label={"Click to hide " + title} onClick={()=>{setActive(false)}}/> : <Plus title="" aria-label={"Click to see " + title} onClick={()=>{setActive(true)}} />;
+
   return (
     <div className="expandable_bubbles">
       <h2>{title}
-      {expandable !== false && active && <Minus title="" aria-label={"Click to hide " + title} onClick={()=>{setActive(false)}}/>}
-      {expandable !== false && !active && <Plus title="" aria-label={"Click to see " + title} onClick={()=>{setActive(true)}} />}
-      {aside && (!active || !expandable) && <span>{aside}</span>}
-      
+
+      {expandable !== false && <span className='explainer'>
+        {Minimize}
+        {!active && <span> {aside}</span>}
+      </span>}
+
+      {/* {aside && (!active || !expandable) && <span className='explainer'><span>{aside}</span></span>}
+       */}
       </h2>
       {subtitle && <p>{subtitle}</p>}
       {active && 

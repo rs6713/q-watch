@@ -98,11 +98,11 @@ function Movie(props){
       return <Ic />
     }
 
-  var largeScreenWidth = parseInt(styles.WIDTH_LARGE_SCREEN)
+  var smallScreenWidth = parseInt(styles.WIDTH_SMALL_SCREEN)
 
   if(movie !== null){
     content = (<div id="MovieContainer">
-      {pageWidth >= largeScreenWidth && 
+      {pageWidth >= smallScreenWidth && 
       <div className='GalleryContainer'>
         <Gallery images={movie.IMAGES} />
         <Quote quote={movie.quote}/>
@@ -133,7 +133,7 @@ function Movie(props){
           </div>
           </div>
           
-          <h1>{movie.TITLE}</h1>
+          <h1 className='bubbletext'>{movie.TITLE}</h1>
           <Bubbles items={movie.TAGS} />
           <h2>
             {formatRuntime(movie.RUNTIME)}&nbsp;&#9679;&nbsp;
@@ -147,7 +147,7 @@ function Movie(props){
         </div>
         <div id="MovieParts">
           <HTMLString html={'<p>'+movie.SUMMARY + '</p>'}/>
-          {pageWidth < largeScreenWidth && <Gallery images={movie.IMAGES} />}
+          {pageWidth < smallScreenWidth && <Gallery images={movie.IMAGES} />}
           {/* <Bubbles items={movie.GENRES} /> */}
           {movie.SOURCES && movie.SOURCES.length > 0 &&
             <Sources sources={movie.SOURCES} />
@@ -155,7 +155,7 @@ function Movie(props){
           <ExpandableBubbles items={movie.TROPE_TRIGGERS} aside="(Potential for upsetting content/spoilers)" title="Trope/Trigger Warnings" expandable={true}/>
           <ExpandableBubbles items={movie.REPRESENTATIONS} title="Representation Matters" expandable={false} />
           <Opinion opinion={movie.OPINION}/>
-        {pageWidth < largeScreenWidth && <Quote quote={movie.quote}/> }
+        {pageWidth < smallScreenWidth && <Quote quote={movie.quote}/> }
 
           
         </div>

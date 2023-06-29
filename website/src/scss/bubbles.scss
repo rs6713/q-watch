@@ -1,6 +1,6 @@
 @import "../scss/defaults.scss";
 
-$colors: $ACCENT_COLOR2; //, $ACCENT_COLOR3
+$colors: $ACCENT_COLOR3; //, $ACCENT_COLOR3
 
 .expandable_bubbles {
   h2 {
@@ -9,16 +9,26 @@ $colors: $ACCENT_COLOR2; //, $ACCENT_COLOR3
     border-top: 1px solid $FONT_COLOR_LIGHT;
     border-bottom: 1px solid $FONT_COLOR_LIGHT;
     padding: 0.5em 0em;
-
-    span {
-      font-size: $FONT_SIZE_DEFAULT;
-      font-weight: lighter;
+    // span.explainer {
+    //   font-size: 1em;
+    // }
+    // span:first-of-type {
+    //   font-size: $FONT_SIZE_DEFAULT;
+    //   font-weight: lighter;
+    //   float: right;
+    //   padding-right: 1em;
+    // }
+    .explainer {
       float: right;
-      padding-right: 1em;
+      > span {
+        right: 0;
+        left: auto;
+        bottom: 0;
+        //transform: translateY(100%) translateX(-100%);
+      }
     }
   }
   svg {
-    float: right;
     height: 1em;
     cursor: pointer;
   }
@@ -33,9 +43,10 @@ $colors: $ACCENT_COLOR2; //, $ACCENT_COLOR3
   font-size: $FONT_SIZE_DEFAULT;
 
   .bubble {
-    padding: 1em 2em;
+    //padding: 1em 2em;
+    padding: 0.5em 1em;
     color: $FONT_COLOR_LIGHTEST;
-    font-weight: bold;
+    font-weight: normal;
     border-radius: 3em;
   }
   @for $i from 1 through length($colors) {

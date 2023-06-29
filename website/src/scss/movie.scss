@@ -63,6 +63,7 @@
   }
 
   #MovieContainer {
+    position: relative;
     background-color: $FONT_COLOR_LIGHTEST;
     margin-top: 0em;
     margin-bottom: 0em;
@@ -127,8 +128,10 @@
         }
 
         h1 {
-          margin-top: 0;
-          margin-bottom: 0;
+          margin-top: 0.2em;
+          margin-bottom: 0.2em;
+          white-space: break-spaces;
+          line-height: 1em;
         }
         > h2 {
           font-weight: normal;
@@ -185,29 +188,6 @@
   }
 }
 
-@media (max-width: $WIDTH_LARGE_SCREEN) {
-  #Movie {
-    ::-webkit-scrollbar {
-      display: none;
-    }
-  }
-  #Movie #MovieContainer {
-    overflow-x: visible;
-  }
-  #Movie #MovieContainer #MovieContents {
-    width: 100%;
-    height: auto;
-    float: none;
-    margin-bottom: 1em;
-
-    #MovieTitle {
-      > div#aside {
-        top: 1.5em;
-      }
-    }
-  }
-}
-
 @mixin content_styling($font_multiplier, $default_font_multiplier) {
   #Movie {
     #MovieControls {
@@ -255,15 +235,37 @@
         h2 {
           font-size: $FONT_SIZE_HEADING * $font_multiplier;
         }
-        span {
-          font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
-        }
+        // span {
+        //   font-size: $FONT_SIZE_DEFAULT * $default_font_multiplier;
+        // }
       }
     }
   }
 }
-
 @include content_styling($font_multiplier: 1, $default_font_multiplier: 1);
+
+@media (max-width: $WIDTH_SMALL_SCREEN) {
+  #Movie {
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  #Movie #MovieContainer {
+    overflow-x: visible;
+  }
+  #Movie #MovieContainer #MovieContents {
+    width: 100%;
+    height: auto;
+    float: none;
+    margin-bottom: 1em;
+
+    #MovieTitle {
+      > div#aside {
+        top: 1.5em;
+      }
+    }
+  }
+}
 
 @media (max-width: $WIDTH_TABLET) {
   @include content_styling(
@@ -273,9 +275,9 @@
 
   #Movie #MovieContainer .expandable_bubbles {
     span {
-      float: none;
-      display: block;
-      padding-top: 0.5em;
+      // float: none;
+      // display: block;
+      // padding-top: 0.5em;
     }
   }
 }

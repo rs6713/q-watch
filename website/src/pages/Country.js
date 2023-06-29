@@ -7,6 +7,9 @@ import Loader from './components/Loader';
 import Options from './components/Options';
 import ChartCountry from './Graphs/ChartCountry';
 import MainMenu from './components/MainMenu';
+import Button from './components/Button';
+import Share from './components/Share';
+import {ReactComponent as ShareIcon} from '../static/icons/share.svg'
 
 import {
   getCriteriaFromSearchParams,
@@ -34,16 +37,23 @@ function deepEqual(x, y) {
 
 function Country(){
 
+  const [labels, setLabels] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const updateSearchParams = createUpdateSearchParams(setSearchParams, searchParams);
   const [criteria, setCriteria] = useState({})
   //getCriteriaFromSearchParams(searchParams, ['rank']);
-
+  const [shareActive, setShareActive] = useState(false);
   
   const [filterActive, setFilterActive] = useState(false);
 
   const [movies, setMovies] = useState(null);
   const [nMatches, setNMatches] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/movie/labels').then(res => res.json()).then(data => {
+      setLabels(data);
+    });
+  }, []);
 
 
   function get_movies(){
@@ -89,12 +99,20 @@ function Country(){
       {filterActive && <div className="cover" onClick={()=>{setFilterActive(false)}} />}
       <MainMenu/>
       <Filters active={filterActive} nMatches={nMatches} updateFilters={updateSearchParams} filters={criteria} setActive={setFilterActive} />
+      
 
       <div id="ControlPanel">
         <Options updateOption={(r) => {updateSearchParams({'rank': r})}} option={searchParams.get('rank') || 'COUNT'} name='Ranking' options={RANK_OPTIONS} multi={false}/>
         <div className='filler' />
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
+        <Button symbol={<ShareIcon/>} onClick={()=>{setShareActive(!shareActive)}}/>
       </div>
+      {shareActive && <Share
+        labels={labels}
+        criteria={criteria}
+        nMatches={nMatches}
+        setShareActive={setShareActive}
+      />}
     
       <div className='Graph'>
         <Loader isLoading={movies === null} />

@@ -84,7 +84,7 @@ function FAQ(){
   return (
     <div className='page' id='faq'>
       <MainMenu/>
-      <h2>Frequently Asked Questions</h2>
+      <h2 className='bubbletext'>Frequently Asked Questions</h2>
       <h3>
         <span className='explainer'>
           Ya nosey parkers

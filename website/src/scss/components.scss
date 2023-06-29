@@ -144,3 +144,13 @@
     }
   }
 }
+
+@media (max-width: $WIDTH_TABLET) {
+  .sidegraphs {
+    flex-direction: column;
+    .Graph {
+      width: 100%;
+      margin: 0;
+    }
+  }
+}
