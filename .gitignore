@@ -16,6 +16,7 @@
 
 # Local/Temporary Files
 /website/src/static/
+/website/public/icons/
 .env
 .venv
 database.txt
@@ -24,6 +25,7 @@ database.txt
 *.pyc
 IMAGES/
 chromedriver.exe
+chromedriver_old.exe
 
 # testing
 /coverage

@@ -1,25 +1,24 @@
-import React, { Component, useState, useEffect} from 'react';
-import Footer from './components/Footer';
+import React, {useState, useEffect} from 'react';
+import {useSearchParams} from 'react-router-dom';
 
+import Footer from './components/Footer';
 import Filters from './components/Filters';
 import Loader from './components/Loader';
 import Options from './components/Options';
 import Switch from './components/Switch';
 import MainMenu from './components/MainMenu';
-import BarHierarchy from './Graphs/BarHierarchy';
-
-import {ReactComponent as Filter} from '../static/icons/filter.svg'
-import {useSearchParams} from 'react-router-dom';
-
 import Button from './components/Button';
 import Share from './components/Share';
-import {ReactComponent as ShareIcon} from '../static/icons/share.svg'
 
-
+import BarHierarchy from './Graphs/BarHierarchy';
 import {
   getCriteriaFromSearchParams,
   createUpdateSearchParams,
 } from './search';
+import {deepEqual} from '../utils';
+
+import {ReactComponent as ShareIcon} from '../static/icons/share.svg'
+import {ReactComponent as Filter} from '../static/icons/filter.svg'
 
 
 const RANK_OPTIONS = {
@@ -57,13 +56,7 @@ const GROUP_OPTIONS = {
   "Representations": "REPRESENTATIONS",
 }
 
-function deepEqual(x, y) {
-  return (x && y && typeof x === 'object' && typeof y === 'object') ?
-    (Object.keys(x).length === Object.keys(y).length) &&
-      (Object.keys(x).reduce(function(isEqual, key) {
-        return isEqual && deepEqual(x[key], y[key]);
-      }, true) || Object.keys(x).length == 0) : (x === y);
-}
+
 
 
 function Rank(){

@@ -101,15 +101,15 @@ function StateOfQueerCinema(){
 
   let maxYear = movieCounts !== null ? Math.max(...Object.keys(movieCounts['Year'])) : -1
 
-  let countryBoxOffice = movies? groupDataAgg(movies, ['COUNTRY'], {
-    value:'BOX_OFFICE_USD',
+  const countryBoxOffice = movies? groupDataAgg(movies, ['COUNTRY'], {
+    val:'BOX_OFFICE_USD',
     returnType:'dict'}
   ): null;
-  let countryBudget = movies? groupDataAgg(movies, ['COUNTRY'], {
-    value:'BUDGET_USD',
+  const countryBudget = movies? groupDataAgg(movies, ['COUNTRY'], {
+    val:'BUDGET_USD',
     returnType:'dict'
   }): null;
-  let tropePercent = movies? (Math.round((movies.map(m => m['TROPE_TRIGGERS'] == null ? 1: 0).reduce((a,b) => a+b, 0) / movies.length * 100))) : '?';
+  const tropePercent = movies? (Math.round((movies.map(m => m['TROPE_TRIGGERS'] == null ? 1: 0).reduce((a,b) => a+b, 0) / movies.length * 100))) : '?';
 
   let chartBarLimit = pageWidth < styles.WIDTH_MOBILE ? 10 : (pageWidth < styles.WIDTH_TABLET ? 20 : 30);
 
@@ -227,7 +227,7 @@ function StateOfQueerCinema(){
             'z': ['COUNTRY']
           }} limit={chartBarLimit} yType={d3.scaleLog}></ChartBar>
           }
-          Stack area plot of continents over time
+         {/* TODO Stack area plot of continents over time */}
       </div>
       <div id='Temporal'>
         <h3 className='bubbletext'>&#8987;<br/>Time After Time</h3>
@@ -377,7 +377,7 @@ function StateOfQueerCinema(){
                 'percent': true
               }} xDomain={[1980, Math.max(...movies.map(m=> parseInt(m.YEAR)))]}></ChartLine>
             }
-          line plot of percent representations in yearly released movies over time
+          {/*line plot of percent representations in yearly released movies over time*/}
       </div>
       <div id='Sadness'>
         <h3 className='bubbletext'>&#128546;&#129297;<br/>Selling Sadness</h3>
@@ -412,7 +412,7 @@ function StateOfQueerCinema(){
           />
         </div>
 
-        {movies && 
+        {/* {movies && 
             <ChartLine dataset={{
               'data': groupDataAgg(movies, ['YEAR', 'TROPE_TRIGGERS']).filter(
                 d => ['Suicide/SH', 'Hate Crimes', 'Bury your gays',  'Gore/Murder'].indexOf(d['TROPE_TRIGGERS']) != -1
@@ -435,7 +435,7 @@ function StateOfQueerCinema(){
               'y': 'VALUE',
               'z': ['TROPE_TRIGGERS'],
             }} xDomain={[1950, Math.max(...movies.map(m=> parseInt(m.YEAR)))]}></ChartLine>
-          }
+          } */}
       </div>
       <div id='LoveIt'>
         <h3 className='bubbletext'>&#128674;<br/>Ships that Ship</h3>

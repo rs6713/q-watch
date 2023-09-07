@@ -52,7 +52,7 @@ const question_answers = [
   ],
   [
     'What\'s Next?',
-    (<p><b>MORE MOVIES!!</b> That's our top priority right now. We want to get to at least 300 movies by the end of year. <i>(The trick is not specifying whichh year)</i> <br/><br/>We cannot effectively evaluate the state of Queer Cinema and how it's changing over time without comprehensive movie coverage.<br/> Not to mention our primary function, of creating a searchable archive has meant we're prioritizing the addition of movies representing further marginallized communities, skewing our datasets to say the least, in these early stages.</p>)
+    (<p><b>MORE MOVIES!!</b> That's our top priority right now. We want to get to at least 1000 movies by the end of year. <i>(The trick is not specifying whichh year)</i> <br/><br/>We cannot effectively evaluate the state of Queer Cinema and how it's changing over time without comprehensive movie coverage.<br/> Not to mention our primary function, of creating a searchable archive has meant we're prioritizing the addition of movies representing further marginallized communities, skewing our datasets to say the least, in these early stages.</p>)
   ],
   [
     'Isn\'t qwatchbusiness69@gmail.com a little unprofessional?',

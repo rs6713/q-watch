@@ -352,7 +352,7 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
       var max = 1;
       return root.children.length * (BARSTEP + BARPADDING) + MARGIN.bottom;
     })();
-    height = Math.max(height, SVGdimensions['height'] - MARGIN.top - fontSize);
+    height = Math.max(height + 1, SVGdimensions['height'] - MARGIN.top - fontSize);
 
     
     // Calculate and add .score attribute, sum of all children, or own value
@@ -362,7 +362,8 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
     
     // let width = container.clientWidth - paddingX;
     // var x = d3.scaleLinear().range([MARGIN.left, width - MARGIN.right])
-    var x = d3.scaleLinear().range([MARGIN.left, SVGdimensions['width'] - MARGIN.right])
+    console.log([MARGIN.left, SVGdimensions['width'] - MARGIN.right], MARGIN.right, SVGdimensions['width'])
+    var x = d3.scaleLinear().range([MARGIN.left, Math.max(MARGIN.left + 1, SVGdimensions['width'] - MARGIN.right)])
     x.domain([0, Math.max(root.score)]);
 
     const svgX = d3.select(refX.current)

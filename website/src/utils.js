@@ -50,4 +50,12 @@ function formatLanguage(language){
   ).filter(l => l.length > 0).join(', ')
 }
 
-export {formatRuntime, formatLanguage};
+function deepEqual(x, y) {
+  return (x && y && typeof x === 'object' && typeof y === 'object') ?
+    (Object.keys(x).length === Object.keys(y).length) &&
+      (Object.keys(x).reduce(function(isEqual, key) {
+        return isEqual && deepEqual(x[key], y[key]);
+      }, true) || Object.keys(x).length == 0) : (x === y);
+}
+
+export {formatRuntime, formatLanguage, deepEqual};

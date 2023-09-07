@@ -38,6 +38,10 @@
     margin-left: $side_padding;
     margin-right: $side_padding;
   }
+  #disclaimers > div:not(#MainMenu):not(.footer) {
+    margin-left: $side_padding;
+    margin-right: $side_padding;
+  }
   // #ControlPanel .button {
   //   right: $side_padding;
   //   transform: translateX(calc(100% + 1em));

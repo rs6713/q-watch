@@ -1,0 +1,35 @@
+@import "../scss/defaults.scss";
+
+#disclaimers {
+  > div:not(#MainMenu):not(.footer) {
+    background-color: $FONT_COLOR_LIGHTEST;
+    padding: 5vw;
+    margin-top: 0;
+    overflow: hidden;
+    margin-bottom: 1em;
+  }
+
+  h2.bubbletext {
+    text-align: center;
+  }
+
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .listItem {
+      text-align: center;
+      max-width: 30%;
+      h2 {
+        font-weight: bold;
+      }
+      h3 {
+        color: $FONT_COLOR_LIGHT;
+      }
+      img {
+        height: 5em;
+      }
+    }
+  }
+}

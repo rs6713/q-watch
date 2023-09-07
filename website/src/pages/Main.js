@@ -289,6 +289,7 @@ function Main(){
               rating={movieFeatured.AVG_RATING}
               Icon={ratingIcon}
               noDefault={true}
+              rotated={true}
             />
           </div>
           <div className='info'>

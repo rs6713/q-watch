@@ -2,42 +2,147 @@ import React from 'react';
 import MainMenu from './components/MainMenu';
 import Footer from './components/Footer';
 
+function ListItem({title, subtitle, text, img}){
+  return <div className='listItem'>
+    {img && <img src={'/icons/' + img} />}
+    <h2>{title}</h2>
+    {subtitle && <h3>{subtitle}</h3>}
+    <p>{text}</p>
+  </div>
+}
+
 function Disclaimers(){
   return (
     <div className='page' id='disclaimers'>
       <MainMenu/>
-      
+
       <div id='credit'>
-        <h2 className='bubbletext'>Credit Giving</h2>
-        Credits
-          b4watch
-          Cinemagoer
-          Ultimate Lesbian Film List
-          BFI Flare
-          https://sesamebutdifferent.com/
-          bfi instistute
-          film freeway - festival entry
-          https://www.timeout.com/film/the-50-best-gay-movies-the-best-in-lgbt-film-making lists, autostraddle lists.
+        <h2 className='bubbletext'>&#127942;<br/>Credit Giving</h2>
+        <p>
+          We couldn't have done this alone. We are community. We stand on the shoulders of giants. We certainly aren't the first, and won't be the last to create a resource to help our fellow queers query queer content. <br/><b>We would love to be the best-searchable archive of queer content online, but gladly welcome a world where someone else does it better.</b>
+        </p>
+        <div className='list'>
+        
+        <ListItem
+            title={<a target='_blank' href='https://queerfilmreviews.com/'>Queer Film Reviews</a>}
+            subtitle='Queer Film Reviews'
+            img='queer_film.webp'
+            text="Michael is the real MVP, amassing 1000's of reviews of queer and gay-themed films, shorts, series, and more. A self-confessed cinephile he'll let you know which ones are worth watching – and which ones aren’t"
+            />
+          <ListItem
+            title={<a target='_blank' href='https://whatson.bfi.org.uk/flare/Online/default.asp'>BFI Flare</a>}
+            subtitle='London LGBTIQ+ Film Festival'
+            img='bfi_flare.jpg'
+            text='BFI Flare not only documents so many diverse feature-length and short films, through the BFI Player, many can be watched for relatively low prices.'
+            />
+            <ListItem
+            img='lesbianflag.jpg'
+            title={<a target='_blank' href='https://docs.google.com/spreadsheets/d/1ceuNsDgm5M6q82zvw_Q-o6LGiZGNE_FglgGrJhvwmTo/'>Ultimate Lesbian Film List</a>}
+            subtitle='Excel sheet of 100s Lesbian Movies'
+            text='We stand on the shoulders of giants. This list was invaluable in identifying lesser known lesbian movies from times by-gone, recorded by a fellow devotee'
+            />
+            <ListItem
+            title='AutoStraddle'
+            subtitle='Lesbian & Trans Centered Online Magazine'
+            img='autostraddle.png'
+            text='Autostraddle is a formerly independently owned online magazine and social network for lesbian, bisexual, and queer women, as well as non-binary people and trans people of all genders.'
+            />
+            <ListItem
+            title='CinemaGoer'
+            subtitle='IMDB Open-Source Scraper'
+            img='cinemagoer.png'
+            text='Cinemagoer (previously known as IMDbPY) is a Python package for retrieving and managing the data of the IMDb movie database about movies and people.'
+            />
+            <ListItem
+            title='Pecadillo on Demand'
+            subtitle='LGBT Streaming'
+            img='pecadillo.png'
+            text='PeccadilloPOD is the online streaming home of award winning independent film publisher Peccadillo Pictures. Stream LGBTQ+ films and international cinemas.'
+            />
+            <ListItem
+              title={<a href='https://sesamebutdifferent.com/blogs/chia-poppys-corner/ultimate-list-of-lesbian-movies-to-watch' target='_blank'>Sesame But Different</a>}
+              subtitle='Lesbian Couple Run Blog, Art, Business'
+              img='sesame_but_different.png'
+              text='Starting as a lesbian slice-of-life comic, about their real life relationship, now they create unique one-of-a-kind LGBT greetings cards. They also took the time to create an Ultimate List of Lesbian Movies.'
+            />
+            <ListItem
+              title={<a href='https://teddyaward.tv/en/' target='_blank'>Teddy Awards</a>}
+              subtitle='International LGBT Film Award'
+              img='logo_teddy.png'
+              text='The Teddy Award is an Berlin International film award for films with LGBT topics, highlighting LGBT movies from a diverse range of cultural backgrounds.'
+            />
+        </div>
+        <h3>The Lists</h3>
+        <ul>
+          <li>
+            <h3></h3><a 
+              href='https://www.timeout.com/film/the-50-best-gay-movies-the-best-in-lgbt-film-making'
+              target = '_blank'
+              >Timeout - Top 50 Best Films in LGBT Film Making</a>
+          </li>
+          <li>
+            <h3></h3><a href='https://www.autostraddle.com/autostraddle-encyclopedia-of-cinema/'
+            target='_blank'
+            >Autostraddle - The Autostraddle Encyclopedia of Lesbian Cinema
+            </a>
+          </li>
+          <li>
+            <h3></h3><a href='https://www.autostraddle.https://www.autostraddle.com/100-best-lesbian-queer-bisexual-movies-285412//autostraddle-encyclopedia-of-cinema/'
+            target='_blank'
+            >Autostraddle - The 50 Best Lesbian Movies Of All Time
+            </a>
+          </li>
+          <li>
+            <h3></h3><a href='https://editorial.rottentomatoes.com/guide/best-lgbt-movies-of-all-time/'
+            target='_blank'
+            >Rotten Tomatoes - 200 Best LGBT Movies of all time
+            </a>
+          </li>
+          <li>
+            <h3></h3><a href='https://www.bfi.org.uk/lists/30-best-lgbt-films-all-time'
+            target='_blank'
+            >British Film Institute - The 30 Best LGBTQ+ Films of All Time
+            </a>
+          </li>
+          <li>
+            <h3></h3><a href='https://www.esquire.com/entertainment/movies/g3392/best-gay-lgbt-movies-of-all-time/'
+            target='_blank'
+            >Esquire - The 58 Best LGBTQ Movies Ever Made
+            </a>
+          </li>
+          
+
+          
+        </ul>
+          
+
       </div>
       <div id='dataIssues'>
-        <h2 className='bubbletext'>Data Error</h2>
+        <h2 className='bubbletext'>&#128190;<br/>Data Error</h2>
 
-        <p>Disclaimer: This dataset was generated in a semi-automated fashion using a combination of web-scraping and manual data entry. Due to time constraints it was not possible for every movie to be watched before it was categorised. Old or indie-production movies often have less data available online. We tried our best but please, if you see a TAG/ Descriptor that seems innappropriate, it probably was a mistake, let us know and email us at <b>qwatch.gmail.com</b></p>
-          <p>If you take issue </p>
+        <p>This dataset was generated in a semi-automated fashion using a combination of web-scraping and manual data entry. Due to time constraints it was not possible for every movie to be watched before it was categorised. Information for old or indie-production movies would often have less data available online to aid categorization. We tried our best but please, if you see a TAG/ Descriptor that seems innappropriate, it probably was a mistake, either by data or entry error, please let us know and email us at <b>qwatch.gmail.com</b></p>
+          <p>If you take issue with any of our labels, terminologies, we welcome feedback. Although please bear in mind, there is variety of thought in any political space, for instance one of our labels for movie representation is 'Plus Sized' while many in the community have proudly reclaimed the term 'Fat', we did not feel it was fair for us to make that choice for everyone.</p>
       </div>
       <div id='identity'>
-        <h3>Binarizing Fluids</h3>
-        <h2 className='bubbletext'>Binarizing Fluids</h2>
-        Films like Beau Travail and The Philosophers create intereseting questions about where films are based. 
+        <h2 className='bubbletext'>&#127754;<br/>Binarizing Fluids</h2>
+        <p>Human experience, and as such our portrayal of it is complicated; throw in a capitalism-based economy that seeks to profit from artistic expression, the absence or erasure of identity to appeal to a presumed homogeneous audience, or the conditional presence of identities in their most palatable forms, and we ask you to correctly label such movies. We categorized our movies, not because we felt it was always possible to correctly assign a movie a binary label such as country, race, representation, but that in doing so would allow the efficient search of such media. Ultimately we want people to be able to experience media that represents them, so we tended to err on the side of inclusion rather than exclusion when it came to designating labels. With that being said, here are some guidelines and assumptions we determined. This was a work in progress throughout the data collection process, and while we made efforts to retrace our steps, be consistent in these decisions </p>
+
+        <h3>Race</h3>
+        The racial representation of a movie is determined by the characters, not the actors. If an actor is white presenting, and there is no indication in the movie that their character is anything other than white, especially when all other characters are white, this movie will not appear under QTIPOC labels. We do consider these movies on a global scale, and understand racial perception is not a fixed quality . Exceptions occur 
+        <h3>Location Location</h3>
+        The Country of a Movie is defined as "the primary country . At time of writing we do not represent multi-country movies well. Priority is given the locations that the majority of the movie took place in, the country representing the culture of the main characters.Films like 'Beau Travail' and 'The Philosophers' create intereseting questions about where films are based. If a geographic location is completely devoid of its cultural context, 
           A military base in Africa filled with french troops Beau Travail
           A fantasy based education exercise where an international school almost entirely American actors
+
           appearance of children movies under explicit lgbt tags. see the little prince(ss)
       </div>
       <div id='proportionalRepresentation'>
-        <h2 className='bubbletext'>Proportional Rep??</h2>
-
+        <h2 className='bubbletext'>&#128208;<br/>Proportional Rep??</h2>
+        While creating a searchable archive of queer media was our upmost priority, what it also did was provide us with a unique opportunity to take this tagged, and labelled dataset and perform data analysis. Media representation cannot improve until we truly take stock, and understand what marginal groups are so hidden, so forgotten from public consciousness that we do not even perceive them as an underrepresented group in the face of such a lack of representative media.<br/><br/> With that being said, understand, while we may report on the relative representation of groups, it is not our stance that proportional representation is the goal. These statistics do not take into account underlying presence of marginalised group in the global or country specific regions that we are considering. 
       </div>
+   
       <Footer />
+
     </div>
   )
 }
