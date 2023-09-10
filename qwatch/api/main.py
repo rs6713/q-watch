@@ -320,7 +320,11 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                         ]
                     ],
                     groups=["MOVIE_ID"],
-                    criteria=None
+                    criteria={
+                        e: criteria[f'{prop}S'][e]
+                        for e in MOVIE_LABELS_EXTRAS.get(prop, [])
+                        if f'{prop}S' in criteria and e in criteria[f'{prop}S'] and criteria[f'{prop}S'][e] is not None
+                    }
                 ),
                 return_properties=[f'{prop}S', *[
                     f'{prop}S_{e}'
@@ -933,10 +937,15 @@ def get_matching_movies_archive(criteria: Dict, properties: List[str] = None) ->
                 return []
             # Just getting labels by value, then using INCLUDE/EXCLUDE to determine if
             # LABEL should exist for movie, or not exist.
+            extra_criteria = {
+                k: criteria_labels[label][k]
+                for k in criteria_labels[label]
+                if k not in ['VALUE', 'RULE', 'TYPE']
+            }
+            logger.info(f'Extra criteria: {extra_criteria}')
             matching_movies, _ = get_entries(conn, f"MOVIE_{label}",
                                              **{f'{label}_ID': criteria_labels[label]["VALUE"],
-                                                **({criteria_labels[label]['REQUIREMENT']: 1} if 'REQUIREMENT' in criteria_labels[label]
-                                                else {})
+                                                **extra_criteria
 
                                                 })
 

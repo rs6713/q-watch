@@ -6,8 +6,8 @@ import ExpandableBubbles from '../ExpandableBubbles';
 function BubbleFilter({filter, updateFilters, filters}){
 
   //const [switchState, setSwitchState] = useState(false);
-  const switchState = filters[filter['id']] !== undefined && filters[filter['id']]['RULE'] == 'AND' ? 1 : 0
-  const requireSwitchState = filters[filter['id']] !== undefined && !filters[filter['id']]['REQUIREMENT'] ? 0: 1
+  const switchState = filters[filter['id']] !== undefined && filters[filter['id']]['RULE'] == 'AND' ? true: false
+  const requireSwitchState = filters[filter['id']] !== undefined && filters[filter['id']][filter['requirement']] ? true: false
   //console.log('Bubblefilter ', filters[filter['id']])
 
   const bubbleItems = filter.filters;
@@ -44,12 +44,12 @@ function BubbleFilter({filter, updateFilters, filters}){
     })
   }
   function setRequireSwitchState(newState){
-    let newFilters = filters[filter['id']]
+    let newFilters = filters[filter['id']];
     if(newFilters === undefined) return;
     if(newState){
-      newFilters['REQUIREMENT'] = filter['requirement']
+      newFilters[filter['requirement']] = 1
     }else{
-      newFilters['REQUIREMENT'] = null;
+      newFilters[filter['requirement']] = null;
     }
     
     updateFilters({
@@ -62,7 +62,7 @@ function BubbleFilter({filter, updateFilters, filters}){
     let currentIds = filters[filter['id']] === undefined? []: filters[filter['id']]['VALUE'];
     let req = {};
     if(filter['requirement']){
-      req = {'REQUIREMENT': requireSwitchState? filter['requirement']: null}
+      req = {[filter['requirement']]: requireSwitchState? 1: null}
     }
 
     let rule = switchState? 'AND' : 'OR';

@@ -129,6 +129,7 @@ def get_table_aggregate(conn: Connection, table_name: str, groups: List[str], ag
     aggs - Aggregates to persom
     criteria - entries to consider
     """
+    print(f'Getting table aggregate {table_name}, criteria: {criteria}')
     table = Table(table_name, MetaData(), schema=SCHEMA, autoload_with=conn)
 
     def generate_agg(agg: Aggregate):
@@ -162,7 +163,7 @@ def get_table_aggregate(conn: Connection, table_name: str, groups: List[str], ag
     ).subquery()
 
 
-def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_string_agg: bool = False):
+def get_conditional(tabc, tabk, val: Union[Dict, List, int, str, float], is_string_agg: bool = False):
     """
     Get result of conditional applied to Column col.
 
@@ -178,6 +179,7 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_str
     is_string_agg: bool
         Is the column the result of string aggregation
     """
+    col = tabc[tabk]
     if isinstance(val, (list, np.ndarray)):
         if not is_string_agg:
             return col.in_(list(val))
@@ -200,6 +202,7 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_str
         if val["TYPE"] == "LESS_THAN":
             return or_(col <= val["VALUE"], col == None)
         if val["TYPE"] == "INCLUDE":
+
             if is_string_agg:
                 rule = or_ if (
                     'RULE' not in val or val['RULE'] == 'OR') else and_
@@ -212,7 +215,28 @@ def get_conditional(col: Column, val: Union[Dict, List, int, str, float], is_str
                     )
                     for v in ([val['VALUE']] if isinstance(val['VALUE'], (int, float)) else val['VALUE'])
                 )
+
+            # return col.in_(val['VALUE'])
             return col.in_(val['VALUE'])
+
+            # # Explicit, main
+            # if isinstance(v, dict):
+            #     for pk, pv in v.items():
+            #         print(k, pk, pv)
+            #         if pk not in ['VALUE', 'RULE', 'TYPE']:
+            #             if (k + '_' + pk) in tab.c:
+            #                 if not is_string_agg:
+            #                     conditionals += [tab.c[k +
+            #                                         '_' + pk] == int(pv)]
+            #                 else:
+
+            #             else:
+            #                 raise ValueError(
+            #                     'Unrecognised %s, found for conditional %s in base/join tables %s' %
+            #                     pk, k, str(
+            #                         [*table_columns, *join_cols])
+            #                 )
+
         if val['TYPE'] == "EXCLUDE":
             if is_string_agg:
                 return not_(or_(
@@ -303,7 +327,7 @@ def get_entries(conn: Connection, table_name: str, ID: Union[List[int], int] = N
         )
         return ([] if return_format == "listdict" else pd.DataFrame([], columns=table_columns)), table_columns
 
-    #query = select(table)
+    # query = select(table)
 
     # Create table joins
     join_properties = []
@@ -355,8 +379,9 @@ def get_entries(conn: Connection, table_name: str, ID: Union[List[int], int] = N
                     if k == 'LANGUAGE':
                         is_string_agg = True
 
-                    conditionals += [get_conditional(tab.c[k],
+                    conditionals += [get_conditional(tab.c, k,
                                                      v, is_string_agg=is_string_agg)]
+
                     break
             else:
                 raise ValueError(

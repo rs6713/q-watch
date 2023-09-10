@@ -154,7 +154,9 @@ function createUpdateSearchParams(setSearchParams, searchParams){
     let newSearchParams = {};
     for(let [key, val] of searchParams.entries()){
 
-      if(ARRAY_FILTERS.indexOf(key) !== -1){
+      if(ARRAY_FILTERS.indexOf(key) !== -1 || (
+        DICT_FILTERS.indexOf(key.split('-')[0]) !== -1 && key.split('-')[1] == 'VALUE'
+      )){
         newSearchParams[key] = [
           ...(newSearchParams[key] || []),
           val

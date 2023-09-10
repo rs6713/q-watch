@@ -13,7 +13,7 @@ function MovieList({movies}){
   }else if(movies.length === 0){
     content = <div className="Alert">
       We are sorry we could find no titles matching your search criteria.<br/>
-      To learn more about the state of queer cinema, click <Link to={'/data/explore'}>here</Link>.
+      To learn more about the state of queer cinema, click <Link to={'/data/overview'}>here</Link>.
       
     </div>
   }else{
