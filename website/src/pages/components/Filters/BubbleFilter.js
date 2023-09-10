@@ -3,30 +3,39 @@ import {useEffect, useState} from 'react';
 import Switch from '../Switch';
 import ExpandableBubbles from '../ExpandableBubbles';
 
-function BubbleFilter({filter, updateFilters}){
+function BubbleFilter({filter, updateFilters, filters}){
 
   const [switchState, setSwitchState] = useState(false);
+  const [requireSwitchState, setRequireSwitchState] = useState(true);
+  console.log('Bubblefilter ', filter)
 
   useEffect(()=>{
 
     if(filter.switchType === 'include'){
       let currentIds = filter.filters.filter(f => f.active).map(f => f.ID);
-      if(currentIds.length > 0){
-        updateFilters(
-          {
-            [filter['id']]: {
-              'TYPE': 'INCLUDE',
-              'RULE': switchState? 'AND' : 'OR',
-              'VALUE': currentIds//filters[filter['id']]['VALUE']
-            }
-          }
-        )
+      let newFilters = {
+        [filter['id']]: {
+          'TYPE': 'INCLUDE',
+          'RULE': switchState? 'AND' : 'OR',
+          'VALUE': currentIds//filters[filter['id']]['VALUE']
         }
+      }
+      if(requireSwitchState && filter['requirement']){
+        newFilters[filter['id']]['REQUIREMENT'] = filter['requirement']
+      }
+      if(currentIds.length > 0){
+        console.log(newFilters)
+        updateFilters(
+          newFilters
+        )
+      }
     }
-  }, [switchState])
+  }, [switchState, requireSwitchState])
+
 
   function bubbleSelect(itemId){
     let currentIds = filter.filters.filter(f => f.active).map(f => f.ID);
+    let req = (filter['requirement'] && requireSwitchState) ? {'REQUIREMENT': filter['requirement']} : {};
 
     let rule = switchState? 'AND' : 'OR';
 
@@ -37,10 +46,10 @@ function BubbleFilter({filter, updateFilters}){
         if(currentIds.length === 0){
           updateFilters({[filter['id']]: null});
         }else{
-          updateFilters({[filter['id']]: {'TYPE': 'INCLUDE', 'RULE': rule, 'VALUE': currentIds}});
+          updateFilters({[filter['id']]: {'TYPE': 'INCLUDE', 'RULE': rule, 'VALUE': currentIds, ...req}});
         }
       }else{
-        updateFilters({[filter['id']]: {'TYPE': 'INCLUDE', 'RULE': rule, 'VALUE':[...currentIds, itemId]}})
+        updateFilters({[filter['id']]: {'TYPE': 'INCLUDE', 'RULE': rule, 'VALUE':[...currentIds, itemId], ...req}})
       }
     }
     //{VALUE: [1,2], TYPE: 'INCLUDE', RULE: 'ALL'}
@@ -50,16 +59,21 @@ function BubbleFilter({filter, updateFilters}){
         if(currentIds.length === 0){
           updateFilters({[filter['id']]: null});
         }else{
-          updateFilters({[filter['id']]: {'TYPE': 'EXCLUDE', 'VALUE': currentIds}});
+          updateFilters({[filter['id']]: {'TYPE': 'EXCLUDE', 'VALUE': currentIds, ...req}});
         }
       }else{
-        updateFilters({[filter['id']]: {'TYPE': 'EXCLUDE', 'VALUE': [...currentIds, itemId]}})
+        updateFilters({[filter['id']]: {'TYPE': 'EXCLUDE', 'VALUE': [...currentIds, itemId], ...req}})
       }
     }
   }
 
   let onMessage = <div>I want a movie that matches <b>all</b> of these labels.</div>
   let offMessage = <div>I want a movie that matches <b>any</b> of these labels.</div>
+
+  let requireSwitch = <></>;
+  if(filter["requirement"] !== undefined){
+    requireSwitch = <Switch state={requireSwitchState} setState={setRequireSwitchState} onMessage={filter['onRequirementMessage']} offMessage={filter["offRequirementMessage"]}/>
+  }
 
   return (
     <div className='LabelFilter'>
@@ -74,6 +88,7 @@ function BubbleFilter({filter, updateFilters}){
       {filter.switchType === 'include' &&
         <Switch state={switchState} setState={setSwitchState} onMessage={onMessage} offMessage={offMessage}/>
       }
+      {requireSwitch}
     </div>
   )
 }

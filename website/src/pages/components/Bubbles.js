@@ -17,13 +17,16 @@ function Bubbles({items, clickAction, id}){
   if(items === null || items.length == 0){
     return <></>
   }
+  const notMain = (item) => Object.keys(item).indexOf('MAIN') !== -1 && item.MAIN === 0
   return (
     <div className="bubbles" id={id || ""}>
       {
         items.map((item, i) => (
-          <div className={"bubble" + (item['active']? " active": "")} title={item.DESCRIP || ""} onClick={chooseItem(item.ID, i)} key={i}>
+          <div
+            className={"bubble" + (item['active']? " active": "")}
+            title={item.DESCRIP + (notMain(item) ? ' (Non Main)': '') || ""} onClick={chooseItem(item.ID, i)} key={i}>
             {typeof item === 'string' ? item : item.LABEL}
-            {typeof item !== 'string' && Object.keys(item).indexOf('MAIN') !== -1 && item.MAIN === 0 ? '*' : ''}
+            {typeof item !== 'string' && notMain(item) ? '*' : ''}
           </div>
         )
       )}

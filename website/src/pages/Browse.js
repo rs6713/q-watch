@@ -104,9 +104,9 @@ function Browse(){
   }, [linkCopied])
 
   useEffect(() => {
-    sort = searchParams.get('sort') || DEFAULT_PARAMS['SORT'];
-    index = parseInt(searchParams.get('index') || DEFAULT_PARAMS['INDEX']);
-    criteria = getCriteriaFromSearchParams(searchParams);
+    // sort = searchParams.get('sort') || DEFAULT_PARAMS['SORT'];
+    // index = parseInt(searchParams.get('index') || DEFAULT_PARAMS['INDEX']);
+    // criteria = getCriteriaFromSearchParams(searchParams);
     setNMatches(null);
     setMovies(null);
     console.log('Triggered effect: ', sort, index, criteria)

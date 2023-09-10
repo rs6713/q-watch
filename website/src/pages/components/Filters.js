@@ -36,7 +36,10 @@ const baseConfig = {
       subtitle: "Take you anywhere under the LGBTQIA2+ rainbow.",
       type: "bubble",
       filters:null,
-      switchType: 'include'
+      switchType: 'include',
+      requirement: 'EXPLICIT',
+      onRequirementMessage: (<div>It needs to be explicit.</div>),
+      offRequirementMessage: (<div>I'll take the faintest whiffs on the breeze.</div>)
     },
     {
       title: "Representation Matters",
@@ -50,7 +53,9 @@ const baseConfig = {
       type: "bubble",
       filters: null,
       switchType:'include',
-      
+      requirement: 'MAIN',
+      onRequirementMessage: (<div>I want them to be the <b>main</b> characters.</div>),
+      offRequirementMessage: (<div>They just have to be there... somewhere.</div>)
     },
     {
       title: "Tropes / Trigger Warnings",
@@ -234,7 +239,7 @@ function Filters({active, nMatches, updateFilters, filters, setActive}){
   function generateFilter(filter){
     
     return <div key={filter.title}>
-      {filter.type === "bubble" && <BubbleFilter updateFilters={updateFilters} filter={filter}/>}
+      {filter.type === "bubble" && <BubbleFilter updateFilters={updateFilters} filter={filter} filters={filters}/>}
 
       {filter.type === "checkbox" &&
         <div>

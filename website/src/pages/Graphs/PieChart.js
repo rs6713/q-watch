@@ -33,7 +33,7 @@ const PieChart = ({dataset, dataChoice}) => {
         minHeight: graphContainer.clientHeight - paddingY,
         width: graphContainer.clientWidth - paddingX
       })
-      addDataElements();
+      //addDataElements();
     }
     window.addEventListener('resize', handleResize)
     handleResize();
@@ -211,7 +211,7 @@ const PieChart = ({dataset, dataChoice}) => {
     const svg = d3.select(ref.current)
     svg.selectAll("*").remove();
     addDataElements();
-  }, [dataset, dataChoice])
+  }, [dataset, dataChoice, SVGdimensions])
 
 
   return (

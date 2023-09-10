@@ -212,7 +212,6 @@ const ChartLine = ({dataset, ...kwargs}) => {
     graphContainer = ref.current.parentElement;
     graphStyle = getComputedStyle(graphContainer);
     function handleResize() {
-
       var paddingX = parseFloat(graphStyle.paddingLeft) + parseFloat(graphStyle.paddingRight);
       var paddingY = parseFloat(graphStyle.paddingTop) + parseFloat(graphStyle.paddingBottom);
 
@@ -220,7 +219,6 @@ const ChartLine = ({dataset, ...kwargs}) => {
         height: graphContainer.clientHeight - paddingY,
         width: graphContainer.clientWidth - paddingX
       })
-      addDataElements();
     }
     window.addEventListener('resize', handleResize)
     handleResize();
@@ -285,14 +283,14 @@ const ChartLine = ({dataset, ...kwargs}) => {
     })
   }
 
-  useEffect(()=>{
-    const svg = d3.select(ref.current)
-    svg.attr("width", SVGdimensions['width'])
-    .attr("height", SVGdimensions['height'])
-    .attr("viewBox", [0, 0, SVGdimensions['width'], SVGdimensions['height']])
-    .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
-    addDataElements();
-  }, [dataset])
+  // useEffect(()=>{
+  //   const svg = d3.select(ref.current)
+  //   svg.attr("width", SVGdimensions['width'])
+  //   .attr("height", SVGdimensions['height'])
+  //   .attr("viewBox", [0, 0, SVGdimensions['width'], SVGdimensions['height']])
+  //   .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+  //   addDataElements();
+  // }, [dataset])
 
   useEffect(()=>{
     const svg = d3.select(ref.current)
@@ -301,7 +299,7 @@ const ChartLine = ({dataset, ...kwargs}) => {
     .attr("viewBox", [0, 0, SVGdimensions['width'], SVGdimensions['height']])
     .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
     addDataElements();
-  }, [])
+  }, [SVGdimensions, dataset])
 
   return (
     <div className='Graph'>

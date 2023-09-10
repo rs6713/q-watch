@@ -133,7 +133,6 @@ const ChartBar = ({dataset, limit, ...kwargs}) => {
         height: graphContainer.clientHeight - paddingY,
         width: graphContainer.clientWidth - paddingX
       })
-      addDataElements();
     }
     window.addEventListener('resize', handleResize)
     handleResize();
@@ -194,17 +193,7 @@ const ChartBar = ({dataset, limit, ...kwargs}) => {
     .attr("viewBox", [0, 0, SVGdimensions['width'], SVGdimensions['height']])
     .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
     addDataElements();
-  }, [dataset])
-
-  useEffect(()=>{
-    const svg = d3.select(ref.current)
-    svg.attr("width", SVGdimensions['width'])
-    .attr("height", SVGdimensions['height'])
-    .attr("viewBox", [0, 0, SVGdimensions['width'], SVGdimensions['height']])
-    .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
-    addDataElements();
-  }, [])
-
+  }, [dataset, SVGdimensions])
 
   return (
     <div className='Graph'>

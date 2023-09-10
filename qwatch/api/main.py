@@ -934,15 +934,22 @@ def get_matching_movies_archive(criteria: Dict, properties: List[str] = None) ->
             # Just getting labels by value, then using INCLUDE/EXCLUDE to determine if
             # LABEL should exist for movie, or not exist.
             matching_movies, _ = get_entries(conn, f"MOVIE_{label}",
-                                             **{f'{label}_ID': criteria_labels[label]["VALUE"]})
+                                             **{f'{label}_ID': criteria_labels[label]["VALUE"],
+                                                **({criteria_labels[label]['REQUIREMENT']: 1} if 'REQUIREMENT' in criteria_labels[label]
+                                                else {})
+
+                                                })
+
             matching_movie_ids = [movie["MOVIE_ID"]
-                                  for movie in matching_movies]
+                                  for movie in matching_movies
+                                  ]
 
             if criteria_labels[label]["TYPE"] == "INCLUDE":
                 movies = [
                     movie for movie in movies
                     if movie["ID"] in matching_movie_ids
                 ]
+
             if criteria_labels[label]["TYPE"] == "EXCLUDE":
                 movies = [
                     movie for movie in movies
