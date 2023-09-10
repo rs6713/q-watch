@@ -149,6 +149,7 @@ function createUpdateSearchParams(setSearchParams, searchParams){
      using setSearchParams
   */
   return function updateSearchParams(params){
+    console.log('New Filters: ', params)
 
     let newSearchParams = {};
     for(let [key, val] of searchParams.entries()){
@@ -191,11 +192,18 @@ function createUpdateSearchParams(setSearchParams, searchParams){
       }else if (DICT_FILTERS.indexOf(key) !== -1){
         if(params[key]){
           for(const [k, v] of Object.entries(params[key])){
-            newSearchParams[key+'-'+k] = v
+            if(v!== null){
+              newSearchParams[key+'-'+k] = v
+            }else{
+              if(Object.keys(newSearchParams).indexOf(key + '-' + k) !== -1){
+                delete newSearchParams[key+'-'+k]
+              }
+            }
           }
         }
       }
     }
+    console.log('New Search Params: ', newSearchParams)
     setSearchParams(newSearchParams)
   }
 }
