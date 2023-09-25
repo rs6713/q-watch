@@ -8,7 +8,9 @@
   display: table;
 
   > div {
-    display: table-row;
+    // display: table-row;
+    display: flex;
+    flex-wrap: wrap;
 
     > .rating {
       display: table-cell;
@@ -54,3 +56,18 @@
 // span {
 //   display: inline-block;
 // }
+
+@media (max-width: $WIDTH_MOBILE) {
+  .ratingContainer {
+    > div {
+      > .rating {
+        > div {
+          gap: 0.2em;
+          svg {
+            height: 1.5em;
+          }
+        }
+      }
+    }
+  }
+}

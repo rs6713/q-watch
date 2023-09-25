@@ -126,3 +126,12 @@
   color: $FONT_COLOR_LIGHT;
   text-align: center;
 }
+
+#Rankings #ControlPanel {
+  flex-wrap: wrap;
+  row-gap: 1em;
+  .Switch {
+    width: -webkit-min-content;
+    white-space: break-space;
+  }
+}

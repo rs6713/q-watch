@@ -3,7 +3,10 @@
 #Overview {
   overflow-x: hidden;
   max-width: 100%;
-  > div:not(#MainMenu) {
+  #Types {
+    margin-top: 1em;
+  }
+  > div:not(#MainMenu):not(.footer) {
     position: relative;
     background-color: $FONT_COLOR_LIGHTEST;
     padding: 1em;
@@ -55,7 +58,7 @@
         width: 50%;
       }
     }
-    > div:not(#MainMenu) {
+    > div:not(#MainMenu):not(.footer) {
       .description {
         width: 70%;
       }
@@ -71,7 +74,7 @@
         width: 100%;
       }
     }
-    > div:not(#MainMenu) {
+    > div:not(#MainMenu):not(.footer) {
       .description {
         width: 100%;
       }

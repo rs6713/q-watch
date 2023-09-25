@@ -240,6 +240,7 @@ function Main(){
     <div id="Main" className="page">
       <div id="TitlePage">
         {backgroundDiv}
+        <h3 id='beta'>Beta</h3>
         <div id="Title" >
           
           <h1>Q-WATCH</h1>
@@ -305,7 +306,7 @@ function Main(){
             </h3>
             <Bubbles items={movieFeatured.REPRESENTATIONS} />
             
-            <HTMLString html={'<p>'+movieFeatured.DESCRIP + '</p>'}/>
+            <HTMLString html={'<p>'+ (movieFeatured.DESCRIP || movieFeatured.SUMMARY) + '</p>'}/>
           </div>
           </div>
           

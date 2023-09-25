@@ -328,8 +328,8 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
   })
   React.useEffect(resizeGraph(setSVGdimensions), []);
 
-  useEffect(() => {
-
+  React.useEffect(() => {
+    console.log(dataset, sort_ascending, grouping_vars, name_var, label_vars, value_var, summary_var)
     let yAxis = g => g
         .attr("class", "y-axis")
         .attr("transform", `translate(${MARGIN.left + 0.5},0)`)

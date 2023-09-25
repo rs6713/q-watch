@@ -17,7 +17,7 @@
     margin-right: $side_padding;
     width: calc(100% - 2 * $side_padding);
   }
-  #Overview > div:not(#MainMenu) {
+  #Overview > div:not(#MainMenu):not(.footer) {
     margin-left: $side_padding;
     margin-right: $side_padding;
   }
@@ -159,6 +159,7 @@
     width: 100%;
     margin-left: 0;
     margin-right: 0;
+    overflow-x: hidden;
   }
 
   #ControlPanel #Categories {

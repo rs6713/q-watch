@@ -1,16 +1,28 @@
 @import "../scss/defaults.scss";
 
 #disclaimers {
+  > #credit {
+    margin-top: 1em;
+  }
   > div:not(#MainMenu):not(.footer) {
     background-color: $FONT_COLOR_LIGHTEST;
     padding: 5vw;
-    margin-top: 0;
     overflow: hidden;
     margin-bottom: 1em;
   }
 
   h2.bubbletext {
     text-align: center;
+    white-space: break-spaces;
+  }
+  .description {
+    text-align: justify;
+    text-align-last: center;
+    width: 40vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 2em;
   }
 
   .list {
@@ -30,6 +42,37 @@
       img {
         height: 5em;
       }
+    }
+  }
+}
+
+@media (max-width: $WIDTH_SMALL_SCREEN) {
+  #disclaimers {
+    .description {
+      width: 60vw;
+    }
+    .list {
+      .listItem {
+        max-width: 45%;
+      }
+    }
+  }
+}
+
+@media (max-width: $WIDTH_TABLET) {
+  #disclaimers {
+    .description {
+      width: 80vw;
+    }
+    .list {
+      justify-content: space-around;
+      .listItem {
+        max-width: 80%;
+      }
+    }
+
+    h2.bubbletext {
+      font-size: 3em;
     }
   }
 }

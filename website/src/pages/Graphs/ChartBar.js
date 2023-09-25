@@ -27,6 +27,7 @@ function BarChart(data, {
   yFormat, // a format specifier string for the y-axis
   yLabel, // a label for the y-axis
   zDomain, // array of z-values
+  xHighlight = [],
 } = {}) {
 
   // Compute values.
@@ -55,8 +56,8 @@ function BarChart(data, {
     .call(xAxis)
     .selectAll("text")
       .attr("transform", "translate(0,0)rotate(-25)")
-      .style("text-anchor", "end");
-
+      .style("text-anchor", "end")
+      .style("font-weight", (_, i) => xHighlight.indexOf(X[i]) !== -1 ? 'bold': 'normal');
 
   if(yType === d3.scaleLinear){
     //yAxis = yAxis.ticks(10, 'd')
@@ -125,7 +126,7 @@ const ChartBar = ({dataset, limit, ...kwargs}) => {
     graphContainer = ref.current.parentElement;
     graphStyle = getComputedStyle(graphContainer);
     function handleResize() {
-
+      
       var paddingX = parseFloat(graphStyle.paddingLeft) + parseFloat(graphStyle.paddingRight);
       var paddingY = parseFloat(graphStyle.paddingTop) + parseFloat(graphStyle.paddingBottom);
 

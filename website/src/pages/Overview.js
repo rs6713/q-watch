@@ -225,7 +225,7 @@ function StateOfQueerCinema(){
             'x': 'COUNTRY',
             'y': 'VALUE',
             'z': ['COUNTRY']
-          }} limit={chartBarLimit} yType={d3.scaleLog}></ChartBar>
+          }} limit={chartBarLimit} yType={d3.scaleLog} xHighlight={['Space']}></ChartBar>
           }
          {/* TODO Stack area plot of continents over time */}
       </div>
@@ -365,18 +365,6 @@ function StateOfQueerCinema(){
               }} xDomain={[1980, Math.max(...movies.map(m=> parseInt(m.YEAR)))]}></ChartLine>
             }
           </div>
-          {movies && 
-              <ChartLine dataset={{
-                'data': groupDataAgg(movies, ['YEAR', 'REPRESENTATIONS']),
-                'xLabel': 'Date',
-                'yLabel': 'Total Movies',
-                'x': 'YEAR',
-                'y': 'VALUE',
-                'z': ['REPRESENTATIONS'],
-                'agg': 'cumulative',
-                'percent': true
-              }} xDomain={[1980, Math.max(...movies.map(m=> parseInt(m.YEAR)))]}></ChartLine>
-            }
           {/*line plot of percent representations in yearly released movies over time*/}
       </div>
       <div id='Sadness'>
@@ -440,13 +428,19 @@ function StateOfQueerCinema(){
       <div id='LoveIt'>
         <h3 className='bubbletext'>&#128674;<br/>Ships that Ship</h3>
         <p className='description'>
-          <b>What love stories are we telling ourselves?</b>
+          <b>What love stories are we telling ourselves?</b><br/><br/>
+          We don't know how many LGBT movies we've watched and said to ourselves, "I'm just gonna pretend they decided the character was 18, (and Armie Hammer looks 23 and not like the 30 year old man that he most definitely is)", but probably toooo many.
         </p>
         <div className='stats'>
           <Absolute
             value={movieCounts && movieCounts['Tags']['Happy Ending']}
             statement='Happy Endings'
             substatement='LGBTQIA+ Movies with Significant Happy Endings'
+          />
+          <Absolute
+            value={movieCounts && movieCounts['Tags']['Sad Ending']}
+            statement='Sad Endings'
+            substatement='LGBTQIA+ Movies with Significant Sad Endings'
           />
           <Absolute
             value={movieCounts && movieCounts['Tags']['Age Gap Relationship']}
@@ -474,6 +468,10 @@ function StateOfQueerCinema(){
       </div>
       <div id='tagged'>
         <h3 className='bubbletext'>&#128125;<br/>Subject Me</h3>
+        <p className='description'>
+          <b>Queers don't like Action and Adventure. They like Rom-Coms, Photography and the Victorian Era.</b>
+          <br/><br/>(Apparently)
+        </p>
           <div className='stats'>
             <Absolute
               value={movieCounts && movieCounts['Tags']['Christmas']}
@@ -571,7 +569,7 @@ function StateOfQueerCinema(){
         <PercentAlert dataset={transMovieCounts} dataChoice='Representations' value='POC Love' />
 
 <PieChart dataset={transMovieCounts} dataChoice={'Tropes / Triggers'}/> */}
-      
+      <Footer />
     </div>
 
   )

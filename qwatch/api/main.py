@@ -635,7 +635,7 @@ def get_movie_featured():
             return {}
 
         properties = [
-            "TITLE",
+            "TITLE", "SUMMARY",
             "YEAR",
             "FILENAME", "CAPTION",
             "AVG_RATING", "NUM_RATING",

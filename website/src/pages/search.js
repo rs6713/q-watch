@@ -80,6 +80,7 @@ function getCriteriaFromSearchParams(searchParams, ignoreCols, onlyCols){
     ignoreCols - parameter keys to ignore, not keep in newCriteria
     onlyCols - if specified, only these parameter keys are kept in the newCriteria
   */
+  console.log('Getting criteria from search params')
   let newCriteria = {}
   ignoreCols = ignoreCols || [];
 

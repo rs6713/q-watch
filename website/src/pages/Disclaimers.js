@@ -18,8 +18,8 @@ function Disclaimers(){
 
       <div id='credit'>
         <h2 className='bubbletext'>&#127942;<br/>Credit Giving</h2>
-        <p>
-          We couldn't have done this alone. We are community. We stand on the shoulders of giants. We certainly aren't the first, and won't be the last to create a resource to help our fellow queers query queer content. <br/><b>We would love to be the best-searchable archive of queer content online, but gladly welcome a world where someone else does it better.</b>
+        <p className='description'>
+          We couldn't have done this alone. We are community. We stand on the shoulders of giants. We certainly aren't the first, and won't be the last to create a resource to help our fellow queers query queer content. <br/><br/><b>We would love to be the best-searchable archive of queer content online, but gladly welcome a world where someone else does it better.</b>
         </p>
         <div className='list'>
         
@@ -110,31 +110,39 @@ function Disclaimers(){
             >Esquire - The 58 Best LGBTQ Movies Ever Made
             </a>
           </li>
-          
-
-          
         </ul>
-          
 
       </div>
       <div id='dataIssues'>
         <h2 className='bubbletext'>&#128190;<br/>Data Error</h2>
 
-        <p>This dataset was generated in a semi-automated fashion using a combination of web-scraping and manual data entry. Due to time constraints it was not possible for every movie to be watched before it was categorised. Information for old or indie-production movies would often have less data available online to aid categorization. We tried our best but please, if you see a TAG/ Descriptor that seems innappropriate, it probably was a mistake, either by data or entry error, please let us know and email us at <b>qwatch.gmail.com</b></p>
+        <p>This dataset was generated in a semi-automated fashion using a combination of web-scraping and manual data entry. As such we encountered the following issues:
+          <ol>
+            <li>Due to time constraints it was not possible for every movie to be watched before it was categorised. </li>
+            <li>Information for old or indie-production movies would often have less data available online to aid categorization. </li>
+          </ol>
+          <h3>Apologizing Alreadyyy</h3>
+          We tried our best but please, if you see a TAG/ Descriptor that seems innappropriate, it probably was a mistake, either by data or entry error, please let us know and email us at <b>qwatch.gmail.com</b></p>
           <p>If you take issue with any of our labels, terminologies, we welcome feedback. Although please bear in mind, there is variety of thought in any political space, for instance one of our labels for movie representation is 'Plus Sized' while many in the community have proudly reclaimed the term 'Fat', we did not feel it was fair for us to make that choice for everyone.</p>
       </div>
+      tropes triggers - able playing disabled...
       <div id='identity'>
         <h2 className='bubbletext'>&#127754;<br/>Binarizing Fluids</h2>
-        <p>Human experience, and as such our portrayal of it is complicated; throw in a capitalism-based economy that seeks to profit from artistic expression, the absence or erasure of identity to appeal to a presumed homogeneous audience, or the conditional presence of identities in their most palatable forms, and we ask you to correctly label such movies. We categorized our movies, not because we felt it was always possible to correctly assign a movie a binary label such as country, race, representation, but that in doing so would allow the efficient search of such media. Ultimately we want people to be able to experience media that represents them, so we tended to err on the side of inclusion rather than exclusion when it came to designating labels. With that being said, here are some guidelines and assumptions we determined. This was a work in progress throughout the data collection process, and while we made efforts to retrace our steps, be consistent in these decisions </p>
+        <p>Human experience, and as such our portrayal of it is complicated; throw in a capitalism-based economy that seeks to profit from artistic expression, the absence or erasure of identity to appeal to a presumed homogeneous audience, or the conditional presence of identities in their most palatable forms, and we ask you to correctly label such movies. We categorized our movies, not because we felt it was always possible to correctly assign a movie a binary label such as country, race, representation, but that in doing so would allow the efficient search of such media. Ultimately we want people to be able to experience media that represents them, so we tended to err on the side of inclusion rather than exclusion when it came to designating labels. With that being said, here are some guidelines and assumptions we determined. This was a work in progress throughout the data collection process, and while we made efforts to retrace our steps and be consistent in these decisions, mistakes may have been made.</p>
 
         <h3>Race</h3>
-        The racial representation of a movie is determined by the characters, not the actors. If an actor is white presenting, and there is no indication in the movie that their character is anything other than white, especially when all other characters are white, this movie will not appear under QTIPOC labels. We do consider these movies on a global scale, and understand racial perception is not a fixed quality . Exceptions occur 
+        The racial representation of a movie is determined by the characters, not the actors. If an actor is white presenting, and there is no indication in the movie that their character is anything other than white, especially when all other characters are white, this movie will not appear under QTIPOC labels. We do consider these movies on a global scale, and understand racial perception is not a fixed quality,. People of mixed heritage, or who are "racially ambiguous" often find 
         <h3>Location Location</h3>
-        The Country of a Movie is defined as "the primary country . At time of writing we do not represent multi-country movies well. Priority is given the locations that the majority of the movie took place in, the country representing the culture of the main characters.Films like 'Beau Travail' and 'The Philosophers' create intereseting questions about where films are based. If a geographic location is completely devoid of its cultural context, 
-          A military base in Africa filled with french troops Beau Travail
-          A fantasy based education exercise where an international school almost entirely American actors
+        The Country of a Movie is defined as "the primary country the movie took place in". It does not capture where the movies were produced, the cultural background of the main characters, or which Country financiered the movie. <br/><br/>At time of writing we do not allow a movie to fall under multiple country tags, where a movie takes place in multiple countries, priority is given to the one with the most screentime, symbollic importance or is most representative of the culture of the main characters.<br/><br/> As always there are ambiguities. Films like 'Beau Travail' and 'The Philosophers' raise interesting questions about where films are based. If a geographic location is completely devoid of its original cultural context, can this movie be said to take place in this country?
+        <ol>
+          <li><b>Beau Travail</b> - A film about French troops training at a military base in Djibouti, East Africa.</li>
+          <li><b>The Philosophers</b> - A film based in Jakarta, Indonesia, concerning an international school comprised of almost entirely American actors</li>
+        </ol>
 
-          appearance of children movies under explicit lgbt tags. see the little prince(ss)
+        <h3>LGBT Labelling</h3>
+        A lot of earlier lesbian cinema can be argued to fall under the Bisexual label. A cis (probably blonde) woman is dating/married to her long term male partner, bored but comfortable, until suddenly a sexy brunette rocks up and turns her world upside down. However, cheating, can be a bit of a bummer, so to reduce empathy for the male partner, we are encouraged implicitly or explicitly to view the woman not as a bisexual but a baby lesbian, just discovering her sexuality, only found to be in this unfortunate situation because of the heternormative society we must endure. We do not place movies such as this under the Bisexual label, if no character is shown to be capable and enthusiastic to date people of multiple genders.
+
+        We want to avoid the premature labelling of children, who are still in the process of developing their identities as trans, lesbian or gay. For example, the movie Tomboy, is intentionally left ambiguous, non-prescriptive, what did this genderplay mean for this pre-pubescent child? Will they grow up to be lesbian? Butch? Transgender? However that does not mean, we cannot label these movies. When we assign a movie a LGBT Category, we are saying people with this sexual identity, trans identity, may see, and feel themselves represented in this movie. As such a movie like Tomboy, may fall under both the Lesbian, and Transgender label, both groups can identify with the experiences explored, whether it being kissing a girl for the first time and knowing you're not supposed to, cross-dressing and hiding it from your parents etc.
       </div>
       <div id='proportionalRepresentation'>
         <h2 className='bubbletext'>&#128208;<br/>Proportional Rep??</h2>

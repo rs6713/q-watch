@@ -138,7 +138,9 @@ class MovieSearch(tk.Toplevel):
         potential_matches = [
             (movie_id, movie_title)
             for movie_id, (movie_title, movie_year) in self.movies.items()
-            if nlp_model(movie_title).similarity(nlp_model(title)) > 0.9 and (year is None or movie_year == year)
+            if (
+                nlp_model(movie_title).similarity(nlp_model(title)) > 0.9
+                or title.lower() in movie_title.lower()) and (year is None or movie_year == year)
         ]
         return potential_matches
 

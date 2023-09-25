@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 
 function Counter({total}){
 
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(100);
   
 
   function incrementCounter(){
@@ -16,7 +16,7 @@ function Counter({total}){
     }
   }
   useEffect(()=>{
-    if(count > 0 && count < total){
+    if(count > 100 && count < total){
       if((total - count) < 20){
         setTimeout(incrementCounter, 100 - ((total - count)* 4.5))
       }else{
@@ -29,8 +29,8 @@ function Counter({total}){
     var element = document.getElementById('Counter');
     var position = element.getBoundingClientRect();
 
-    if(position.top >= 0 && position.bottom <= window.innerHeight) {
-      if(count === 0){
+    if(position.top >= 0 && position.top <= window.innerHeight) {
+      if(count === 100){
         window.removeEventListener('wheel', monitorScroll);
         incrementCounter();
       }
@@ -46,7 +46,7 @@ function Counter({total}){
 
 
 
-  return <span id='Counter'>{count}</span>
+  return <span id='Counter'>{count >0 ? count : ''}</span>
 }
 
 export default Counter

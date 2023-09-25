@@ -14,6 +14,20 @@
   // -ms-overflow-style: none; /* IE and Edge */
   // scrollbar-width: none; /* Firefox */
 
+  #beta {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    margin: 0;
+
+    font-family: "Cooper Std";
+    text-shadow: -1px 0 black, 0 1px black, 0px 0 black, 0 0px black;
+    -webkit-text-stroke: 1px;
+    -webkit-text-fill-color: $FONT_COLOR_LIGHTEST;
+    color: $FONT_COLOR_DEFAULT;
+    text-emphasis: outline;
+  }
+
   h2 {
     font-family: $FONT_LOGO;
   }
@@ -37,8 +51,8 @@
   }
 }
 #statsContainer {
-  margin-top: 2em;
-  margin-bottom: 2em;
+  margin-top: 4em;
+  margin-bottom: 4em;
   user-select: none;
   text-align: center;
 
@@ -63,12 +77,14 @@ h3.percent {
   margin: 0;
   display: inline-block;
   text-align: center;
+  vertical-align: top;
 
   > div {
     text-align: center;
     font-size: 1.5em;
     position: relative;
     height: 1.5em;
+    font-family: "Cooper Std";
 
     .loader {
       position: relative;
@@ -103,6 +119,7 @@ h3.percent {
   > span {
     div:first-child {
       font-size: 1.5em;
+      font-family: "Cooper Std";
     }
     div:last-child {
       color: $FONT_COLOR_SUB;
@@ -304,6 +321,9 @@ h2.bubbletext {
       -webkit-text-fill-color: $FONT_COLOR_LIGHTEST;
       position: relative;
       z-index: 2;
+      top: 50%;
+      transform: translateY(-50%);
+      margin: 0;
       > span {
         position: relative;
         z-index: -1;
@@ -393,7 +413,7 @@ h3.bubbletext {
   padding: 1em;
 
   > .block {
-    max-height: 50em;
+    //max-height: 50em;
     border-radius: 3em;
     background-color: white;
     overflow: hidden;
@@ -430,7 +450,6 @@ h3.bubbletext {
     }
 
     h2 {
-      font-family: "Futura PT";
       margin-top: 0em;
       margin-bottom: 0em;
       font-size: 3em;
@@ -443,6 +462,9 @@ h3.bubbletext {
   .block > div:first-of-type {
     width: 50%;
     position: relative;
+    max-height: 250px;
+    overflow-y: hidden;
+
     > img {
       height: 100%;
       width: 100%;
@@ -561,7 +583,7 @@ h3.bubbletext {
       background-color: $ACCENT_COLOR3;
       border-radius: 0em 0em 2em 0em;
 
-      padding-top: 6em;
+      padding-top: 9em;
       padding-bottom: 6em;
       text-align: justify;
 
@@ -703,7 +725,24 @@ h3.bubbletext {
 }
 
 @media (max-width: $WIDTH_SMALL_SCREEN) {
-  #Main.page #Featured {
+  #Main.page {
+    #statsContainer {
+      > div > div {
+        display: inline-grid;
+        grid-auto-flow: column dense;
+        grid-template-rows: 1fr 1fr;
+        animation: scrollStats 25s linear infinite;
+        grid-column-gap: 5em;
+
+        h3.percent {
+          min-width: auto;
+        }
+        h3.percent:nth-child(2n) {
+          left: 50%;
+          position: relative;
+        }
+      }
+    }
   }
 
   #Main .contentContainer > h2.bubbletext {
@@ -814,9 +853,14 @@ h3.bubbletext {
         left: 50%;
         transform: translateX(-50%);
       }
-      h2 {
-        text-align: center;
-        margin-top: 0.5em;
+      > div:last-child {
+        h2.bubbletext {
+          text-align: center;
+          margin-top: 0.5em;
+          top: 0%;
+          margin-bottom: 1em;
+          transform: translateY(0%);
+        }
       }
     }
   }
@@ -832,6 +876,30 @@ h3.bubbletext {
       }
     }
   }
+  #Main.page {
+    #statsContainer {
+      > div > div {
+        grid-column-gap: 3em;
+      }
+    }
+  }
+
+  #Main .contentContainer > h2.bubbletext {
+    font-size: 3.5em;
+    white-space: break-spaces;
+    max-width: none;
+    //margin-left: 3vw;
+    margin-right: 0;
+    border: none;
+    border-bottom-width: 0;
+  }
+  #Main.page a #Featured {
+    // border-top-left-radius: 0;
+    // border-top-right-radius: 0;
+    outline: none;
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 @media (max-width: $WIDTH_MOBILE) {
@@ -841,31 +909,18 @@ h3.bubbletext {
   h3.percent {
     font-size: 1.5em;
   }
-  #Main .contentContainer > h2.bubbletext {
-    font-size: 3.5em;
-    white-space: break-spaces;
-    max-width: none;
-    //margin-left: 3vw;
-    margin-right: 3vw;
-    border: 0.14em solid black;
-    border-bottom-width: 0;
-  }
 
   h3.bubbletext {
     font-size: 3em;
     white-space: break-spaces;
   }
-  #Main.page #Featured {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
 
   #Main.page #TitlePage #Title {
     position: inherit;
     width: 100%;
-    top: 0;
+    top: 50%;
     left: 0;
-    transform: none;
+    transform: translateY(-50%);
     h1 {
       font-size: calc($FONT_SIZE_TITLE);
     }
@@ -930,6 +985,10 @@ h3.bubbletext {
       padding-bottom: 2em;
     }
   }
+  #Main.page a #Featured {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
 
   #TitlePage {
     #Title {
@@ -956,6 +1015,13 @@ h3.bubbletext {
       }
       .searchresults {
         max-height: 12em;
+      }
+    }
+  }
+  #Main.page {
+    #statsContainer {
+      > div > div {
+        grid-column-gap: 2em;
       }
     }
   }

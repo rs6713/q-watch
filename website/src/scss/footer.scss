@@ -28,3 +28,9 @@
   float: left;
   line-height: 1em;
 }
+
+@media (max-width: $WIDTH_MOBILE) {
+  .footer span {
+    display: none;
+  }
+}

@@ -163,6 +163,7 @@ function Rank(){
           name='Summary'
           options={SUMMARY_OPTIONS[rank]}
         />
+
         <Switch
           state={ascending}
           setState={(a) => {updateSearchParams({'ascending': a})}}
@@ -175,6 +176,7 @@ function Rank(){
           onMessage={<div>Ignore Zeros/Unknown</div>}
           offMessage={<div>Show All</div>}
         />
+
         <div className='filler' />
         <div id="FiltersToggle" onClick={()=>{setFilterActive(!filterActive)}} className={filterActive? 'active': ''} ><Filter/>Filters</div>
         <Button symbol={<ShareIcon/>} onClick={()=>{setShareActive(!shareActive)}}/>
