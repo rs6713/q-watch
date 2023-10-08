@@ -38,7 +38,7 @@ const baseConfig = {
       filters:null,
       switchType: 'include',
       requirement: 'EXPLICIT',
-      onRequirementMessage: (<div>It needs to be explicit.</div>),
+      onRequirementMessage: (<div>It needs to be explicit, <b>MAINSTAGE</b> babbyy.</div>),
       offRequirementMessage: (<div>I'll take the faintest whiffs on the breeze.</div>)
     },
     {
@@ -182,7 +182,7 @@ function Filters({active, nMatches, updateFilters, filters, setActive}){
       }else if(Array.isArray(filters[filter_id])){
         f_ids = filters[filter_id]
       }else{
-        f_ids = filters[filter_id]['VALUE']
+        f_ids = filters[filter_id]['VALUE'] || [];
       }
       temp_filter = temp_filter.map(f => {
         if(f_ids.indexOf(f.ID) !== -1){

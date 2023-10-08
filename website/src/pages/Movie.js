@@ -141,7 +141,8 @@ function Movie(props){
             {formatLanguage(movie.LANGUAGE)}&nbsp;&#9679;&nbsp;
             {movie.COUNTRY}&nbsp;&#9679;&nbsp;
             {movie.GENRES.map((genre, idx) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} key={idx}/>)}&nbsp;&#9679;&nbsp;
-            {movie.TYPES.map((typ) => gIcon(typ))}
+            {movie.TYPES.map((typ) => gIcon(typ))}&nbsp;&#9679;&nbsp;
+            {<Icon label={movie.INTENSITY.LABEL} name={movie.INTENSITY.ICON}/>}
           </h2>
         
         </div>

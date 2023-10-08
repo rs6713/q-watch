@@ -125,12 +125,34 @@ function StateOfQueerCinema(){
       <div id='Types'>
         <h3 className='bubbletext'>&#127752;<br/>Somewhere</h3>
         <div className='stats'>
+        <PercentAbsolute
+            dataset={movieCounts}
+            dataChoice='LGBTQIA+ Categories'
+            value='Gay'
+            statement='Gay'
+            substatement='% of Movies featuring Gay Characters/Stories'
+          />
+          <PercentAbsolute
+            dataset={movieCounts}
+            dataChoice='LGBTQIA+ Categories'
+            value='Lesbian'
+            statement='Lesbian'
+            substatement='% of Movies featuring Lesbian Characters/Stories'
+          />
+          
           <PercentAbsolute
             dataset={movieCounts}
             dataChoice='LGBTQIA+ Categories'
             value='Transgender'
             statement='Transgender'
             substatement='% of Movies featuring Transgender Characters/Stories'
+          />
+          <PercentAbsolute
+            dataset={movieCounts}
+            dataChoice='LGBTQIA+ Categories'
+            value='Polyamory'
+            statement='Polyamory'
+            substatement='% of Movies featuring Polyamorous Characters/Stories'
           />
           <PercentAbsolute
             dataset={movieCounts}

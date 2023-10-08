@@ -5,31 +5,20 @@ import {Icon} from '../Image'
 import Switch from '../Switch'
 
 function SliderFilter({
-  filter,
-  updateFilters,
-  filters,
+  filter, // Filter specification
+  updateFilters, // Update selected filter options
+  filters, // Filters currently selected
   randomIdx}){
 
-  const [toggleActive, setToggleActive] = useState(false);
-  
-  let currentSelectedOption = getSelectedOption();
-  const atLeast = currentSelectedOption[1];
-  const [selectedOption, setSelectedOption] = useState(
-    currentSelectedOption[0]
-  )
-  const [active, setActive] = useState(false)
-  const [toggleLeft, setToggleLeft] = useState(
-    currentSelectedOption[0]? getOptionTogglePosition(currentSelectedOption[0]) : 0
-  );
-  // if(filters[filter['id']]){
-  //   setSnapPosition(selectedOption)
-  // }
+  const [selectedOption, atLeast] = getSelectedOption();
 
-  useEffect(()=>{
-    let cso = getSelectedOption();
-    setSelectedOption(cso[0]);
-    //setAtLeast = cso[1]
-  }, [filters, filter])
+  // The current position of the toggle
+  // (depends on selectedOption (filters input) & whether user moving toggle)
+  const [toggleLeft, setToggleLeft] = useState(
+    getOptionTogglePosition(selectedOption)
+  );
+
+  // On changed selectedOption toggle switches to that position.
   useEffect(() => {
     setToggleLeft(
       getOptionTogglePosition(selectedOption)
@@ -37,11 +26,21 @@ function SliderFilter({
   }, [selectedOption])
 
   function getSelectedOption(){
+    /* Get [selectedOption, atLeastMode] to be used by UI*/
     let currentOption = filters[filter['id']];
     if(currentOption){
 
-      //atLeast? 'EXCLUDE': 'INCLUDE',
-      let top_id = Array.isArray(currentOption['VALUE'])?Math.max(...currentOption['VALUE']): currentOption['VALUE']
+      let top_id = Array.isArray(currentOption['VALUE'])? Math.max(...currentOption['VALUE']): currentOption['VALUE'];
+
+      // For Exclude the true top id is above
+      if(currentOption['TYPE'] == 'EXCLUDE'){
+        for(let filterOption of filter.filters){
+          if(filterOption.ID > top_id || top_id === undefined){
+            top_id = filterOption.ID
+            break;
+          }
+        }
+      }
       let topOption = filter.filters.filter(f=> f.ID == top_id)[0]
       if(filter['type'] === 'slider' ){
         return [
@@ -56,29 +55,26 @@ function SliderFilter({
         ]
       }
     }
+    // Include all filter options upto/including final option, include, by default
     return [filter && filter.filters ? filter.filters[filter.filters.length - 1]: null, false]
   }
 
-  useEffect(()=>{
-    if(active){
-      chooseOption(selectedOption)
-    }
-  }, [atLeast])
 
   function updateFiltersOption(option, atLeast){
+    /* Update filter options selected, with option & atLeast mode */
     var validIds = [];
     if(filter.type === 'slider'){
       
       for(let filterOption of filter.filters){
-        if(filterOption.ID === option.ID){
-          if(!atLeast){
+        if(filterOption.ID < option.ID){
             validIds.push(filterOption.ID)
-          }
-          break;
         }
-        validIds.push(filterOption.ID)
+        // Include
+        if(!atLeast && filterOption.ID == option.ID){
+          validIds.push(filterOption.ID)
+        }
       }
-
+      console.log('Update Filters: ', validIds)
       updateFilters({[filter['id']]: {
         'TYPE': atLeast? 'EXCLUDE': 'INCLUDE',
         'VALUE': validIds
@@ -92,18 +88,6 @@ function SliderFilter({
     }
   }
 
-  function chooseOption(option){
-    setActive(true)
-    setSelectedOption(option);
-    setSnapPosition(option);
-
-    updateFiltersOption(option, atLeast)
-
-  }
-  function setAtLeast(atLeast){
-    updateFiltersOption(selectedOption, atLeast)
-  }
-
   function getOptionClass(option){
     let cls = 'SliderOption';
     if(selectedOption && option.ID === selectedOption.ID){
@@ -112,66 +96,54 @@ function SliderFilter({
     if(option.ICON){
       return cls + ' SliderIcon'
     }else{
-      return cls// + ' SliderDot'
+      return cls
     }
   }
 
   function moveToggle(e){
-    
-    if(toggleActive){
+    /* Move toggle when mode active according to user movement */
+    //if(toggleActive){
       var rect = document.getElementById('bar').getBoundingClientRect();
       var x = e.clientX - rect.left;
       setToggleLeft(
         `${x}px`
       )
-    }
+    //}
   }
 
-  let nearestOptionIdx = null;
   function releaseToggle(e){
-    
-    if(toggleActive){
-      // Snap toggle to nearest choice
-      // Choose that element
-      let nearestDistance = 10000;
-      
-      var i = 0;
-      for(let option of filter.filters){
-        let optionX = document.getElementById(String(option.ID + randomIdx)).getBoundingClientRect();
-        optionX = (optionX.left + optionX.right) / 2;
-        if(Math.abs(e.clientX - optionX) < nearestDistance){
-          nearestOptionIdx = i;
-          nearestDistance = Math.abs(e.clientX - optionX);
-        }
-        i = i + 1;
+    // Snap toggle to nearest choice
+    // Choose that element
+    let nearestDistance = 10000;
+    let nearestOptionIdx = null;
+    var i = 0;
+    for(let option of filter.filters){
+      let optionX = document.getElementById(String(option.ID + randomIdx)).getBoundingClientRect();
+      optionX = (optionX.left + optionX.right) / 2;
+      if(Math.abs(e.clientX - optionX) < nearestDistance){
+        nearestOptionIdx = i;
+        nearestDistance = Math.abs(e.clientX - optionX);
       }
-      document.removeEventListener('mousemove', moveToggle);
-      document.removeEventListener('mouseup', releaseToggle);
-      setToggleActive(false);
-      chooseOption(filter.filters[nearestOptionIdx]);
+      i = i + 1;
     }
+    document.removeEventListener('mousemove', moveToggle);
+    document.removeEventListener('mouseup', releaseToggle);
+    updateFiltersOption(filter.filters[nearestOptionIdx], atLeast);
   }
 
   function getOptionTogglePosition(selectedOption){
+    /* Calculate left position (for toggle) based on selected option */
     if(selectedOption && document.getElementById('bar') && document.getElementById(String(selectedOption.ID + randomIdx))){
-    let optionX = document.getElementById(String(selectedOption.ID + randomIdx)).getBoundingClientRect();
-    let sliderLeft = document.getElementById('bar').getBoundingClientRect().left;
-    let toggleWidth = document.getElementById('toggle').clientWidth;
-    return  `${(optionX.left + optionX.right) / 2 - sliderLeft - (toggleWidth/2)}px`
+      let optionX = document.getElementById(String(selectedOption.ID + randomIdx)).getBoundingClientRect();
+      let sliderLeft = document.getElementById('bar').getBoundingClientRect().left;
+      let toggleWidth = document.getElementById('toggle').clientWidth;
+      return  `${(optionX.left + optionX.right) / 2 - sliderLeft - (toggleWidth/2)}px`
     }
-  }
-
-
-  function setSnapPosition(selectedOption){
-    if(selectedOption !== null){
-
-      setToggleLeft(
-       getOptionTogglePosition(selectedOption)
-      )
-    }
+    return 0
   }
 
   function getBarStyle(){
+    /* Which part of the bar is highlighted depends on whether atLeast mode is true */
     if(atLeast){
       return {
         'left': toggleLeft,
@@ -182,35 +154,10 @@ function SliderFilter({
       'left': 0
     }
   }
-  let mm, mu, mo;
-  useEffect(()=>{
-    if(toggleActive){
-      document.addEventListener('mousemove', moveToggle);
-      document.addEventListener('mouseup', releaseToggle);
-    }
-      //document.addEventListener('mouseout', releaseToggle);
-    // }else{
-    //   console.log('removing movetoggle')
-    //   document.removeEventListener('mouemove', moveToggle)
-    // }
-    // }else{
-
-    //     console.log('Event Listeners removing')
-    //     //document.removeEventListener('mousemove', moveToggle);
-    //     document.removeEventListener('mouseup', releaseToggle);
-    //     document.removeEventListener('mouseout', releaseToggle);
-        
-
-    // }
-
-
-    // return function (){
-    //   document.removeEventListener(mm);
-    //   document.removeEventListener(mu);
-    //   document.removeEventListener(mo);
-    // }
-  }, [toggleActive])//toggleActive
-
+  function turnOnToggle(){
+    document.addEventListener('mousemove', moveToggle);
+    document.addEventListener('mouseup', releaseToggle);
+  }
 
   if(selectedOption === null || !filter.filters){
     return <></>
@@ -218,19 +165,8 @@ function SliderFilter({
   let optionDescription = selectedOption && selectedOption.LABEL?<><h3>{selectedOption.LABEL}</h3>
   <p>{selectedOption.DESCRIP}</p></> : null;
 
-  function mouseDown(){
-    if(!active){
-      setActive(true);
-    }
-    setToggleActive(true)
-  }
+  
 
-
-  //document.onMouseUp = releaseToggle;
-  //document.onmouseout = releaseToggle;
-  //document.onmousemove = moveToggle;
-  //onMouseMove={moveToggle} 
-  //onMouseUp={releaseToggle}
   return (
     <div className='SliderFilter'>
       <h2>
@@ -240,17 +176,17 @@ function SliderFilter({
         {optionDescription}
         <div id='bar'>
           <div id='barOverlay' style={getBarStyle()} />
-          <div id='toggle' onMouseDown={mouseDown}  style={{'left': toggleLeft}}></div>
+          <div id='toggle' onMouseDown={turnOnToggle}  style={{'left': toggleLeft}}></div>
         </div>
         <div className='SliderOptions'>
         {filter.filters.map((option) => {
-          return <div className={getOptionClass(option)} id={String(option.ID + randomIdx)} key={option.ID} onClick={()=>chooseOption(option)}>
+          return <div className={getOptionClass(option)} id={String(option.ID + randomIdx)} key={option.ID} onClick={()=>updateFiltersOption(option, atLeast)}>
               {option.ICON && <Icon name={option.ICON} className={'icon'} label={option.LABEL} />}
               {!option.ICON && option.ID}
             </div>
           })}
         </div>
-        <Switch state={atLeast} setState={setAtLeast} onMessage={<div>{filter.onMessage}</div>} offMessage={<div>{filter.offMessage}</div>}/>
+        <Switch state={atLeast} setState={(al) => {updateFiltersOption(selectedOption, al)}} onMessage={<div>{filter.onMessage}</div>} offMessage={<div>{filter.offMessage}</div>}/>
       </div>
     </div>
   )

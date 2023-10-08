@@ -140,6 +140,10 @@ function getCriteriaFromSearchParams(searchParams, ignoreCols, onlyCols){
       if(['INCLUDE', 'EXCLUDE'].indexOf(v['TYPE']) == -1){
         newCriteria[k]['VALUE'] = newCriteria[k]['VALUE'][0]
       }
+      // There are no values to include/exclude
+      if(Object.keys(newCriteria[k]).indexOf('VALUE') == -1){
+        newCriteria[k]['VALUE'] = [];
+      }
     }
   }
   return newCriteria
