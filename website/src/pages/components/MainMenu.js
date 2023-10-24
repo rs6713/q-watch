@@ -61,9 +61,26 @@ function MainMenu(){
     <Link to={"/faq"} className={"link" + (useLocation().pathname == "/faq"? ' active' : ' inactive')}>
       <span>FAQ</span>
     </Link>
-    <Link to={"/disclaimers"} className={"link" + (useLocation().pathname == "/disclaimers"? ' active' : ' inactive')}>
+    {/* <Link to={"/disclaimers"} className={"link" + (useLocation().pathname == "/disclaimers"? ' active' : ' inactive')}>
       <span>Disclaimers</span>
-    </Link>
+    </Link> */}
+    <div>
+      <span>Disclaimers</span>
+      <div className='dropdown'>
+        <div><Link to={"/disclaimers/recognition"} className={"link" + (useLocation().pathname == "/disclaimers/recognition"? ' active' : ' inactive')}>
+          Shout Outs
+        </Link></div>
+        <div><Link to={"/disclaimers/labels"} className={"link" + (useLocation().pathname == "/disclaimers/labels"? ' active' : ' inactive')}>
+          Our Labels
+        </Link></div>
+        <div><Link to={"/disclaimers/limitations"} className={"link" + (useLocation().pathname == "/disclaimers/limitations"? ' active' : ' inactive')}>
+          Our Limits
+        </Link></div>
+        <div><Link to={"/disclaimers/goals"} className={"link" + (useLocation().pathname == "/disclaimers/goals"? ' active' : ' inactive')}>
+          Our Goals
+        </Link></div>
+      </div>
+    </div>
   </nav>
 
   return (

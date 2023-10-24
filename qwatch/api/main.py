@@ -740,7 +740,7 @@ def get_movie_list():
     n_indexes = math.ceil(len(movies) / results_per_index)
 
     # Sort movies according to sort
-    if sort is not None:
+    if sort is not None and sort:
 
         movies = sorted(
             movies,

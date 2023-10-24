@@ -31,6 +31,7 @@
   padding: 1em;
   overflow-x: unset;
   overflow-y: unset;
+  display: grid;
 
   .source:last-child {
     border-bottom: none;
@@ -53,6 +54,7 @@
     }
 
     .description {
+      width: 100%;
       padding-left: 1em;
       h2 {
         margin-top: 0;
@@ -66,20 +68,22 @@
           white-space: break-spaces;
           min-width: 100px;
         }
+        .button {
+          font-size: 0.66em;
+          padding: 0.5em 1.5em;
+          float: right;
+        }
       }
       > div {
         display: flex;
         flex-direction: row;
+        justify-content: space-between;
         gap: 2em;
 
         .price {
           span:first-child {
             font-weight: bold;
           }
-        }
-        .button {
-          font-size: 1em;
-          padding: 0.5em 1.5em;
         }
 
         .source_voting {

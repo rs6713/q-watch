@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect, useRef} from 'react';
 import * as d3 from 'd3';
-import resizeGraph from './utils';
+import resizeGraph, {cartesian, createHierarchicalData, textLineWrap} from './utils';
 
 const DURATION = 750;
 
@@ -8,122 +8,9 @@ const color = d3.scaleOrdinal([true, false], ["#cc81dd", "#85f2e8"])
 var BARSTEP, BARPADDING, BARGAP, MARGIN;
 
 
-
-function cartesian(...args) {
-  var r = [], max = args.length-1;
-  function helper(arr, i) {
-      for (var j=0, l=args[i].length; j<l; j++) {
-          var a = arr.slice(0); // clone arr
-          a.push(args[i][j]);
-          if (i==max)
-              r.push(a);
-          else
-              helper(a, i+1);
-      }
-  }
-  helper([], 0);
-  return r;
-}
-
-function wrap(text, width) {
-  let i = 0;
-  let maxWrap = 0;
-  text.each(function() {
-    let wrapped_text = false;
-    var text = d3.select(this),
-        words = text.text().split(/\s+/).reverse(),
-        num = text.text().split(/\s+/)[-1],
-        word,
-        line = [],
-        lineNumber = 0,
-        lineHeight = 1.1, // ems
-        y = text.attr("y"),
-        x = text.attr("x"),
-        dy = 0,
-        tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
-        //.attr("dy", dy + lineHeight * maxWrap + "em")
-        if (maxWrap > 0){
-          maxWrap = 0;
-        }
-
-    while (word = words.pop()) {
-      line.push(word);
-      tspan.text(line.join(" "));
-      if (tspan.node().getComputedTextLength() > width && (line.length > 1)) {
-        line.pop();
-        tspan.text(line.join(" "));
-        line = [word];
-        if(wrapped_text== false){
-          tspan.attr("dy", - (BARPADDING/2))
-        }
-        tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy",  lineHeight + dy + "em").text(word);
-        maxWrap += 1;
-        wrapped_text = true;
-        //.attr("font-weight", (_, i) => i ? null : "bold")
-      }
-      if(wrapped_text){
-
-      }
-    }
-    //text.append("tspan").attr("x", 0).attr("y", y).attr("dy", lineNumber * lineHeight + dy + "em").text(num)
-  });
-}
-
-const createHierarchicalData = (data, name_var, value_var, grouping_vars, label_vars) => {
-  /*
-  Translate data to hierarchical form
-  */
-  let dataHierarchy = [];
-  // If there are no grouping vars (top level)
-  if(grouping_vars === null || grouping_vars.length === 0){
-    for(let item of data){
-      let newItem = {
-        'value': value_var === 'COUNT' ? 1 : item[value_var],
-        'children': [],
-        'name': item[name_var]
-      };
-
-      dataHierarchy.push(newItem);
-    }
-  }else{
-    // For each movie
-    for(let item of data){
-      let group_keys = [];
-      // Collect group keys
-      for(let g of grouping_vars){
-        if(item[g] !== null){
-          group_keys.push(item[g].map(i => i.LABEL))
-        }
-      }
-      // A movie can count under all combinations of it's sub-label categories
-      let group_combinations = group_keys.length ? cartesian(...group_keys).map(i => i.join(' - ')): []
-
-      // Item representing movie's name and value
-      let i = {'value': value_var == 'COUNT'? 1 : item[value_var], 'name': item[name_var]}
-
-      // Add movie to each of it's group combinations.
-      // Creating new array if group combination doesn't already exist.
-      for(let key of group_combinations){
-        let foundCategory = false;
-        for(let newItem of dataHierarchy){
-          if(newItem['name'] === key){
-            newItem['children'].push(i)
-            foundCategory = true;
-          }
-        }
-        if(!foundCategory){
-          dataHierarchy.push(
-            {'name': key, 'children': [i]}
-          )
-        }
-      }
-    }
-  }
-  return {name: 'root', children: dataHierarchy}
-}
-
 function down(svg, svgX, d, x, xAxis, fontSize) {
-  if (!d.children || d3.active(svg.node())) return;
+
+  if (!d.children ) return;// 
 
   // Rebind the current node to the background.
   svg.select(".background").datum(d);
@@ -183,6 +70,7 @@ function down(svg, svgX, d, x, xAxis, fontSize) {
 }
 
 function stack(i, x) {
+  /* x Domain map, i - y offset */
   let value = 0;
   return d => {
     const t = `translate(${x(value) - x(0)},${BARSTEP * i})`;
@@ -219,7 +107,7 @@ function bar(svg, svgX, down, d, selector, fontSize, x, xAxis) {
       .attr("y", BARSTEP * (1 - BARPADDING) / 2)
       .attr("dy", ".35em")
       .text(d => d.data.name)
-      .call(wrap, MARGIN.left - 6);
+      .call(textLineWrap, MARGIN.left - 6, BARPADDING);
 
   bar.append("rect")
       .attr("x", x(0))
@@ -329,20 +217,8 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
   React.useEffect(resizeGraph(setSVGdimensions), []);
 
   React.useEffect(() => {
+    console.log(BARSTEP, BARPADDING, MARGIN)
     console.log(dataset, sort_ascending, grouping_vars, name_var, label_vars, value_var, summary_var)
-    let yAxis = g => g
-        .attr("class", "y-axis")
-        .attr("transform", `translate(${MARGIN.left + 0.5},0)`)
-        .call(g => g.append("line")
-            .attr("stroke", "currentColor")
-            .attr("y1", 0)
-            .attr("y2", height - MARGIN.bottom))
-
-    let xAxis = g => g
-      .attr("class", "x-axis")
-      .attr("transform", `translate(0,${MARGIN.top})`)
-      .call(d3.axisTop(x).ticks(SVGdimensions['width'] / 80, "s"))
-      .call(g => (g.selection ? g.selection() : g).select(".domain").remove())
 
     let hierarchy_data = createHierarchicalData(dataset, name_var, value_var, grouping_vars, label_vars)
     let root = d3.hierarchy(hierarchy_data).sum(d => d.value)
@@ -353,6 +229,23 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
       return root.children.length * (BARSTEP + BARPADDING) + MARGIN.bottom;
     })();
     height = Math.max(height + 1, SVGdimensions['height'] - MARGIN.top - fontSize);
+
+    console.log(height)
+
+    let yAxis = g => g
+    .attr("class", "y-axis")
+    .attr("transform", `translate(${MARGIN.left + 0.5},0)`)
+    .call(g => g.append("line")
+        .attr("stroke", "currentColor")
+        .attr("y1", 0)
+        .attr("y2", height - MARGIN.bottom))
+
+    let xAxis = g => g
+      .attr("class", "x-axis")
+      .attr("transform", `translate(0,${MARGIN.top})`)
+      .call(d3.axisTop(x).ticks(SVGdimensions['width'] / 80, "s"))
+      .call(g => (g.selection ? g.selection() : g).select(".domain").remove())
+
 
     
     // Calculate and add .score attribute, sum of all children, or own value
@@ -413,7 +306,7 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
     //down(svg, root, x, xAxis, fontSize);
     down(svg, svgX, root, x, xAxis, fontSize);
 
-  }, [dataset, sort_ascending, grouping_vars, SVGdimensions, summary_var]);
+  }, [ sort_ascending, grouping_vars, SVGdimensions, summary_var, dataset]);//
 
 
   return (

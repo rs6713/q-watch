@@ -44,23 +44,18 @@ function useWindowDimensions() {
   return windowDimensions;
 }
 
-
-
 function Movie(props){
- 
-  var path = window.location.href.split("/")
 
   const navigate = useNavigate();
 
-  const [id, setId] = useState(path[path.length-1])
+  const path = window.location.href.split("/")
+  const id = path[path.length-1];
 
   const [movie, setMovie] = useState(null);
   const { pageHeight, pageWidth } = useWindowDimensions();
   const [showTrailer, setShowTrailer] = useState(false);
-  //const [randomMovieId, setRandomMovieId] = useState(3)
 
   function pickRandomMovie(){
-    setMovie(null);
     fetch(`/api/movie/random`, {
       method: 'POST',
       headers: {
@@ -70,13 +65,11 @@ function Movie(props){
       },
       body: JSON.stringify({
         "properties":['ID']
-      })//this.state.filterCriteria
+      })
     }).then(res => res.json()).then(data => {
-      setId(parseInt(data['ID']));
       window.location.href = ('/movies/'+ data['ID'])
     })
   }
-
 
   // Data Fetching Called once at mount/dismount
   useEffect(() => {
@@ -88,7 +81,7 @@ function Movie(props){
     }).then(res => res.json()).then(data => {
       setMovie(data);
     })
-  }, [id]);
+  }, []);
 
   var content = <div id="MovieContainer">
     <Loader isLoading={movie===null} />
@@ -140,7 +133,12 @@ function Movie(props){
             {movie.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
             {formatLanguage(movie.LANGUAGE)}&nbsp;&#9679;&nbsp;
             {movie.COUNTRY}&nbsp;&#9679;&nbsp;
-            {movie.GENRES.map((genre, idx) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} key={idx}/>)}&nbsp;&#9679;&nbsp;
+            {movie.GENRES.map(
+              (genre, idx) => <Icon 
+                label={genre.LABEL}
+                name={'genres/'+genre.ICON}
+                key={idx}
+              />)}&nbsp;&#9679;&nbsp;
             {movie.TYPES.map((typ) => gIcon(typ))}&nbsp;&#9679;&nbsp;
             {<Icon label={movie.INTENSITY.LABEL} name={movie.INTENSITY.ICON}/>}
           </h2>
@@ -153,25 +151,25 @@ function Movie(props){
           {movie.SOURCES && movie.SOURCES.length > 0 &&
             <Sources sources={movie.SOURCES} />
           }
-          <ExpandableBubbles items={movie.TROPE_TRIGGERS} aside="(Potential for upsetting content/spoilers)" title="Trope/Trigger Warnings" expandable={true}/>
-          <ExpandableBubbles items={movie.REPRESENTATIONS} title="Representation Matters" expandable={false} />
+          <ExpandableBubbles
+            items={movie.TROPE_TRIGGERS}
+            aside="(Potential for upsetting content/spoilers)"
+            title="Trope/Trigger Warnings" expandable={true}/>
+          <ExpandableBubbles
+            items={movie.REPRESENTATIONS}
+            title="Representation Matters"
+            expandable={false} />
           <Opinion opinion={movie.OPINION}/>
         {pageWidth < smallScreenWidth && <Quote quote={movie.quote}/> }
 
-          
         </div>
-        
       </div>
-      
-
     </div>)
   }
-
 
   return (
       <div id="Movie" className="page">
         <MainMenu/>
-
         {
           showTrailer && 
             <div className="cover" onClick={()=>{setShowTrailer(false)}} />

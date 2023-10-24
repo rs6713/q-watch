@@ -1,6 +1,6 @@
 /* Page to Rank by Count, Box Office, Budget different groupings of LGBT Movies */
 
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {useSearchParams} from 'react-router-dom';
 
 import Footer from './components/Footer';
@@ -66,24 +66,32 @@ function Rank(){
   const [criteria, setCriteria] = useState({});
   const [filterActive, setFilterActive] = useState(false);
 
-  const rank = searchParams.get('rank') || 'BOX_OFFICE_USD';
-  const summary = searchParams.get('summary') || 'sum';
+  const rank = useMemo(() => searchParams.get('rank') || 'BOX_OFFICE_USD', [searchParams]);
+  const summary = useMemo(() => searchParams.get('summary') || 'sum', [searchParams]);
+
+  // Movie Results
   const [movies, setMovies] = useState(null);
   const [nMatches, setNMatches] = useState(null);
+  const label_var = useMemo(() => ['YEAR'], []);
+  const group =  useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['group'])['group'] || ['TYPES'], [searchParams]);
 
-  const group = getCriteriaFromSearchParams(searchParams, [], ['group'])['group'] || ['TYPES'];
-  const rankSettings = getCriteriaFromSearchParams(searchParams, [], ['ascending', 'ignoreZeros'])
-  const ascending = rankSettings['ascending'] || false;
-  const ignoreZeros = rankSettings['ignoreZeros'] || true;
+  const ascending = useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['ascending'])['ascending'] || false, [searchParams]);
+  const ignoreZeros = useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['ignoreZeros'])['ignoreZeros'] || true, [searchParams]);
   
   const [labels, setLabels] = useState(null);
   const [shareActive, setShareActive] = useState(false);
+
+  const filteredMovies = useMemo(
+    () => movies && movies.filter(movie => movie[rank] !== 0 || !ignoreZeros),
+    [ignoreZeros, rank, movies]
+  )
 
   useEffect(() => {
     fetch('/api/movie/labels').then(res => res.json()).then(data => {
       setLabels(data);
     });
   }, []);
+
 
   function get_movies(){
     /* Get movies matching filters, in rank order */
@@ -101,7 +109,7 @@ function Rank(){
       },
       body: JSON.stringify({
         "criteria": criteria,
-        "sort": [rank, ascending ? 1 : -1],
+        "sort": rank != 'COUNT' ? [rank, ascending ? 1 : -1] : [],
         "properties": properties
       })
     }).then(res => res.json()).then(data => {
@@ -192,11 +200,11 @@ function Rank(){
         <Loader isLoading={movies === null} />
         {movies !== null && 
           <BarHierarchy
-            dataset={movies.filter(movie => movie[rank] !== 0 || !ignoreZeros)}
+            dataset={filteredMovies}
             sort_ascending={ascending}
             grouping_vars={group}
             name_var={'TITLE'}
-            label_vars={['YEAR']}
+            label_vars={label_var}
             value_var={rank}
             summary_var={summary}
           />

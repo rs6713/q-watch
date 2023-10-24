@@ -84,14 +84,14 @@ function Source({source}){
               <img src={Lgbt} alt='This OnDemand Streaming Service is LGBT run!'/>
               <span>This OnDemand Streaming Service is LGBT run!</span>
             </span>}
-
+            {source.URL && <a target='_blank' href={source.URL}><Button onClick={()=>{}} text='Link' /></a>}
           </h2>
           <div>
             <div className='price'>
               <span>Price</span><br/>
               <span>{getPrice()}</span>
             </div>
-            {source.URL && <a target='_blank' href={source.URL}><Button onClick={()=>{}} text='Link' /></a>}
+            
             <div className='source_voting'>
               <span id="votes" aria-label={"Current Votes for this Source: "+ votes}>{votes?  <span><Delta number={Math.abs(votes)} />{votes}</span> : 'No Votes'}</span>
               <span id="voter" className={voted !== 0 ? "active": ""}>

@@ -1,8 +1,12 @@
 @import "../scss/defaults.scss";
 
 #disclaimers {
-  > #credit {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  > div:nth-child(2) {
     margin-top: 1em;
+    flex: 1 1;
   }
   > div:not(#MainMenu):not(.footer) {
     background-color: $FONT_COLOR_LIGHTEST;
@@ -33,6 +37,7 @@
     .listItem {
       text-align: center;
       max-width: 30%;
+      position: relative;
       h2 {
         font-weight: bold;
       }
@@ -42,7 +47,53 @@
       img {
         height: 5em;
       }
+      a {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+      }
     }
+  }
+
+  #lists {
+    margin-top: 2em;
+    ul li {
+      text-decoration: none;
+      list-style-type: none;
+      text-align: center;
+      a span {
+        font-weight: bold;
+      }
+    }
+  }
+
+  #proportionalRepresentation {
+    #intersex {
+      display: flex;
+      flex-direction: row;
+      > p {
+        margin-right: 2em;
+        text-align: justify;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      > div {
+        min-width: 30%;
+        text-align: justify;
+        img {
+          width: 100%;
+        }
+      }
+    }
+  }
+  #portrayals {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 2em;
+    text-align: center;
   }
 }
 
