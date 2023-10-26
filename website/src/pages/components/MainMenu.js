@@ -61,9 +61,7 @@ function MainMenu(){
     <Link to={"/faq"} className={"link" + (useLocation().pathname == "/faq"? ' active' : ' inactive')}>
       <span>FAQ</span>
     </Link>
-    {/* <Link to={"/disclaimers"} className={"link" + (useLocation().pathname == "/disclaimers"? ' active' : ' inactive')}>
-      <span>Disclaimers</span>
-    </Link> */}
+
     <div>
       <span>Disclaimers</span>
       <div className='dropdown'>

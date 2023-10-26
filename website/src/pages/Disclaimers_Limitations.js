@@ -29,8 +29,8 @@ function DisclaimersLimitations(){
         </div>
         <div>
           <h3>Apologizing Already</h3>
-          We tried our best but please, if you see a Tag/Descriptor that seems innappropriate, it probably was a mistake, either by data or entry error, please let us know and email us at <b>qwatch.gmail.com</b>
-          <b>If you take issue with any of our labels, terminologies, we welcome feedback.</b> <br/><br/>Although please bear in mind, there is variety of thought in any political space, for instance one of our labels for movie representation is 'Plus Sized' while many in the community have proudly reclaimed the term 'Fat', we did not feel it was fair for us to make that choice for everyone.
+          We tried our best but please, if you see a Tag/Descriptor that seems innappropriate, it probably was a mistake, either by data or entry error, please let us know and email us at <i>qwatch.gmail.com.</i>
+          <b> If you take issue with any of our labels, terminologies, we welcome feedback.</b> <br/><br/>Although please bear in mind, there is variety of thought in any political space, for instance one of our labels for movie representation is 'Plus Sized' while many in the community have proudly reclaimed the term 'Fat', we did not feel it was fair for us to make that choice for everyone.
           </div>
       </div>
 

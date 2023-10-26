@@ -252,6 +252,10 @@
     > nav {
       display: none;
     }
+    nav:last-of-type > a,
+    nav:last-of-type > div {
+      margin-left: 0;
+    }
     > svg {
       display: block;
       fill: $PRIMARY_COLOR;

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import MainMenu from './components/MainMenu';
 import Footer from './components/Footer';
+import { PercentAbsolute} from './components/Delta';
 
 function ListItem({title, subtitle, text, img}){
   return <div className='listItem'>
@@ -12,6 +13,32 @@ function ListItem({title, subtitle, text, img}){
 }
 
 function DisclaimersLabels(){
+
+  const [movieCounts, setMovieCounts] = useState(null);
+  useEffect(() => {
+    fetch('/api/movies/count', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'cache-control': 'no-store',
+      },
+      body: JSON.stringify({
+        "groups": {
+          'LGBTQIA+ Categories': ['TYPES'],
+          'Genres': ['GENRES'],
+          'Tropes / Triggers': ["TROPE_TRIGGERS"],
+          'Representations': ['REPRESENTATIONS'],
+          'Age': ['AGE'],
+          'Intensity': ['INTENSITY'],
+          'Country': ['COUNTRY'],
+        }
+      })//this.state.filterCriteria
+    }).then(res => res.json()).then(data => {
+      setMovieCounts(data)
+    })
+  }, []);
+
   return (
     <div className='page' id='disclaimers'>
       <MainMenu/>
@@ -21,28 +48,59 @@ function DisclaimersLabels(){
       <div id='identity'>
         <h2 className='bubbletext'>&#127754;<br/>Binarizing Fluids</h2>
         <p className='description'>Human experience, and as such our portrayal of it is complicated; throw in a capitalism-based economy that seeks to profit from artistic expression, the erasure of identity to appeal to a presumed homogeneous audience, or the conditional presence of identities in their most palatable forms, and we ask you to correctly label such movies. <br/><br/><b>We categorized our movies, not because we felt it was always possible to correctly assign a movie a binary label such as country, race, LGBT Label, but that in doing so would allow the efficient search of such media.</b> Ultimately we want people to be able to experience media that represents them, so we tended to err on the side of inclusion rather than exclusion when it came to designating labels.<br/><br/> With that being said, here are some guidelines and assumptions we determined. This was a work in progress throughout the data collection process, and while we made efforts to retrace our steps and be consistent in these decisions, mistakes may have been made.</p>
-        <h3>Disability</h3>
-        One of the tropes we look out for is when disabled roles, are once again taken by an able-bodied, neurotypical actor: 'Able Playing Disabled'. Unfortunately LGBTQIA+ media, like media as a whole is extremely devoid of effective and authentic disabled representation. However there are some disabilities, explored in media, like terminal conditions e.g. late-stage cancer, or debilitating conditions that prevent acting such as late-stage dementia where we felt this trope label is not appropriate. When we segment 'Mental Health' and 'Disability' it is not as a comment that Mental Health Conditions such as depression, or anxiety cannot be disabling. It is that movies, typically show Mental Health conditions as temporary, with specific causes, that are often cured, or at the very least are not examined through the lens of disability. Furthermore, film producers are still far more willing to portray a finite list of mental health conditions in a "palatable" way than disabiltiies at large. By separating these two labels, we hope to aid queers with disabiltiies find movies that represent them.
-        <h3>Race</h3>
-        The racial representation of a movie is determined by the characters, not the actors. If an actor is white presenting, and there is no indication in the movie that their character is anything other than white, whether by name, culture etc, especially when all other characters/actors are white, or the part is small, this movie will not in general appear under QTIPOC labels. 
-        For example, Alia Shawkat is an actress of mixed Iraqi, European descent, she has played both white and arabic characters throughout her career. In the movie "The Intervention", she is the only non-white actor in the 8-person production, and plays a character named 'Lola', this movie does not have the QTIPOC label. In 'Duck Butter', she plays one of just two main characters, there are other POC side-characters, she also served as the writer, and her character is named 'Nima', a name of arabic origin. This movie has the QTIPOC label.
-        
-        Not assigning a movie the QTIPOC label, is not meant as a commentary on the actor's race or ethnicity. People of mixed heritage, or who are "racially ambiguous" often find themselves in the difficult position of being "too other" for white roles but not "[x]" enough for "[x]" roles. It is common for actors to play roles, outside of their race/background, as often studios cast based on "they look like/can pass for" vs "they are". At all times, we make the effort to try and understand what was the intended race/ethnicity/cultural background for the POC characters by the movie producers, where this is not possible we default to the race/ethnicity/cultural background of the actor.
+        <h3 className='bubbletext'>Disability</h3>
+        <div id='Disability'>
+          <p>
+            One of the tropes we look out for is when disabled roles, are once again taken by an able-bodied, neurotypical actor: <b><i>'Able Playing Disabled'</i></b>. Unfortunately LGBTQIA+ media, like media as a whole is extremely devoid of effective and authentic disability representation. However there are some disabilities, explored in media, like terminal conditions e.g. late-stage cancer, or debilitating conditions that prevent acting such as late-stage dementia where we felt this trope label is not appropriate. <br/><br/>When we segment 'Mental Health' and 'Disability' it is not as a comment that Mental Health Conditions such as depression, or anxiety cannot be disabling. It is that movies, typically show Mental Health conditions as temporary, with specific causes, that are often cured, or at the very least are not examined through the lens of disability. Furthermore, film producers are still far more willing to portray a finite list of mental health conditions in a "palatable" way than disabiltiies at large.<br/><b>By separating these two labels, we hope to aid queers with disabiltiies find movies that represent them.</b>
+          </p>
+          <PercentAbsolute
+              dataset={movieCounts}
+              dataChoice='Representations'
+              value='Disability'
+              statement='Disability'
+              substatement={`Percent of LGBTQIA+ Movies with 1+ Characters with a Disability`}
+            />
+        </div>
+        <h3 className='bubbletext'>Race</h3>
+        <div id='Race'>
+        <b>The racial representation of a movie is determined by the characters, not the actors.</b> If an actor is white presenting, and there is no indication in the movie that their character is anything other than white, whether by name, culture etc, especially when all other characters/actors are white, or the part is small, this movie will not in general appear under QTIPOC labels. 
+        <ol><li>For example, Alia Shawkat is an actress of mixed Iraqi, European descent, she has played both white and arabic characters throughout her career. In the movie "The Intervention", she is the only non-white actor in the 8-person production, and plays a character named 'Lola', this movie does not have the QTIPOC label. In 'Duck Butter', she plays one of just two main characters, there are other POC side-characters, she also served as the writer, and her character is named 'Nima', a name of arabic origin. This movie has the QTIPOC label.</li></ol>
 
-        We do consider these movies on a global scale, and understand racial perception is not a fixed quality. 
-        <h3>Location Location</h3>
-        The Country of a Movie is defined as "the primary country the movie took place in". It does not capture where the movies were produced, the cultural background of the main characters, or which Country financiered the movie. <br/><br/>At time of writing we do not allow a movie to fall under multiple country tags, where a movie takes place in multiple countries, priority is given to the one with the most screentime, symbollic importance or is most representative of the culture of the main characters.<br/><br/> As always there are ambiguities. Films like 'Beau Travail' and 'The Philosophers' raise interesting questions about where films are based. If a geographic location is completely devoid of its original cultural context, can this movie be said to take place in this country?
+        Not assigning a movie the QTIPOC label, is not meant as a commentary on the actor's race or ethnicity. People of mixed heritage, or who are "racially ambiguous" often find themselves in the difficult position of being "too other" for white roles but not "[x]" enough for "[x]" roles. It is common for actors to play roles, outside of their race/background, as often studios cast based on "they look like/can pass for" vs "they are".
+        
+         <br/><br/>At all times, we make the effort to try and understand what was the intended race/ethnicity/cultural background for the POC characters by the movie producers, where this is not possible we default to the race/ethnicity/cultural background of the actor.We do consider these movies on a global scale, and understand racial perception is not a fixed quality. 
+         <div>
+         <PercentAbsolute
+            dataset={movieCounts}
+            dataChoice='Representations'
+            value='QTIPOC'
+            statement='QTIPOC'
+            substatement={`Percent of LGBTQIA+ Movies with 1+ QTIPOC Characters`}
+          />
+          <span>>></span>
+          <PercentAbsolute
+            dataset={movieCounts}
+            dataChoice='Representations'
+            value='POC Love'
+            statement='POC Love'
+            substatement={`Percent of LGBTQIA+ Movies with POC Characters loving POC Characters`}
+          />
+          <p>However simply being on screen is not enough. We see time and again QTIPOC characters can exist, just.. not too many, and if they do have love stories the majority of the time, they must be partnered with a white character.</p>
+         </div>
+         </div>
+        <h3 className='bubbletext'>Location Location</h3>
+        <b>The Country of a Movie is defined as "the primary country the movie took place in".</b> However this does not capture where the movies were produced, the cultural background of the main characters, or which Country financiered the movie. <br/><br/>At time of writing we do not allow a movie to fall under multiple country tags, where a movie takes place in multiple countries, priority is given to the one with the most screentime, symbollic importance or is most representative of the culture of the main characters.<br/><br/> As always there are ambiguities. Films like <i>'Beau Travail'</i> and <i>'The Philosophers'</i> raise interesting questions about where films are based. If a geographic location is completely devoid of its original cultural context, can this movie be said to take place in this country?
         <ol>
           <li><b>Beau Travail</b> - A film about French troops training at a military base in Djibouti, East Africa.</li>
           <li><b>The Philosophers</b> - A film based in Jakarta, Indonesia, concerning an international school comprised of almost entirely American actors</li>
         </ol>
 
-        <h3>LGBT Labelling</h3>
-        A lot of earlier lesbian cinema can be argued to fall under the Bisexual label. A cis (probably blonde) woman is dating/married to her long term male partner, bored but comfortable, until suddenly a sexy brunette rocks up and turns her world upside down. However, cheating, can be a bit of a bummer, so to reduce empathy for the male partner, we are encouraged implicitly or explicitly to view the woman not as a bisexual but a baby lesbian, just discovering her sexuality, only found to be in this unfortunate situation because of the heternormative society we must endure. We do not place movies such as this under the Bisexual label, it feels the intent of the movie was not to portray bisexuality, particularly if no character is shown to be capable and enthusiastic to date people of multiple genders.
-
-        We want to avoid the premature labelling of children, who are still in the process of developing their identities as cis or trans, straight or gay. There is room for ambiguity. For example, the movie Tomboy, is intentionally left ambiguous, non-prescriptive, what did this genderplay mean for this pre-pubescent child? Will they grow up to be lesbian? Butch? Transgender? However that does not mean, we cannot label these movies. When we assign a movie a LGBT Category, we are saying people with this sexual identity, trans identity, may see, and feel themselves represented in this movie. As such a movie like Tomboy, may fall under both the Lesbian, and Transgender label, both groups can identify with the experiences explored, whether it being kissing a girl for the first time and knowing you're not supposed to, "cross-dressing" and hiding it from your parents etc.
-
-        As we collect further movies, we are actively exploring refining this labelling system, and admit the current labelling we have is coarse, and commit to incrementally improving it.
+        <h3 className='bubbletext'>LGBT Labelling</h3>
+        A lot of earlier lesbian cinema can be argued to fall under the Bisexual label:<ol><li><i>A cis (probably blonde) woman is dating/married to her long term cishet male partner, bored but comfortable, until suddenly a sexy lesbian (probably brunette) rocks up and turns her world upside down.</i></li></ol> However, cheating... can be a bit of a bummer, so to reduce empathy for the male partner, we are encouraged, implicitly or explicitly, to view the woman not as a bisexual but a baby lesbian, just discovering her sexuality, only found to be in this unfortunate situation because of the heternormative society we must endure.<br/> <b>We do not place movies such as this under the Bisexual label, it feels the intent of the movie was not to portray bisexuality, particularly if no character is shown to be enthusiastic to date people of multiple genders.</b>
+        <br/><br/>
+        We want to avoid the premature labelling of children, who are still in the process of developing their identities as cis or trans, straight or gay. There is room for ambiguity. For example, the movie Tomboy, is intentionally left ambiguous, non-prescriptive, what did this genderplay mean for this pre-pubescent child? Will they grow up to be lesbian? Butch? Transgender? However that does not mean, we cannot label these movies. <br/><br/><b>When we assign a movie a LGBT Category, we are saying people with this sexual identity, gender identity, may see, and feel themselves represented in this movie. </b>As such a movie like Tomboy, may fall under both the Lesbian, and Transgender label, both groups can identify with the experiences explored, whether it being kissing a girl for the first time and knowing you're not supposed to, "cross-dressing" and hiding it from your parents etc.
+        <br/><br/><br/><br/>
+        <div className='description'>As we collect further movies, we are actively exploring refining this labelling system, and admit the current labelling we have is coarse, and commit to incrementally improving it.</div>
       </div>
      
    

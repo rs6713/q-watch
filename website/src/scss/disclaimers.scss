@@ -4,6 +4,13 @@
   display: flex;
   min-height: 100vh;
   flex-direction: column;
+
+  #Race {
+    ol li {
+      text-decoration: none;
+      list-style-type: none;
+    }
+  }
   > div:nth-child(2) {
     margin-top: 1em;
     flex: 1 1;
@@ -69,22 +76,21 @@
     }
   }
 
-  #proportionalRepresentation {
-    #intersex {
-      display: flex;
-      flex-direction: row;
-      > p {
-        margin-right: 2em;
-        text-align: justify;
-        margin-top: 0;
-        margin-bottom: 0;
-      }
-      > div {
-        min-width: 30%;
-        text-align: justify;
-        img {
-          width: 100%;
-        }
+  #proportionalRepresentation #intersex,
+  #identity #Disability {
+    display: flex;
+    flex-direction: row;
+    > p {
+      margin-right: 2em;
+      text-align: justify;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    > div {
+      min-width: 30%;
+      text-align: justify;
+      img {
+        width: 100%;
       }
     }
   }
@@ -94,6 +100,23 @@
     justify-content: space-around;
     gap: 2em;
     text-align: center;
+  }
+  #identity #Race {
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1em;
+      > h3 {
+        flex: none;
+      }
+      position: relative;
+      > span {
+        font-size: 5em;
+        font-weight: bold;
+        font-family: revert;
+      }
+    }
   }
 }
 

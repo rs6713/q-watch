@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import MainMenu from './components/MainMenu';
 import Footer from './components/Footer';
 
@@ -12,6 +12,29 @@ function ListItem({title, subtitle, text, img}){
 }
 
 function DisclaimersGoals(){
+
+  const [movieCounts, setMovieCounts] = useState(null);
+  useEffect(() => {
+    fetch('/api/movies/count', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'cache-control': 'no-store',
+      },
+      body: JSON.stringify({
+        "groups": {
+          'LGBTQIA+ Categories': ['TYPES'],
+          'Representations': ['REPRESENTATIONS'],
+          'Age': ['AGE'],
+        }
+      })//this.state.filterCriteria
+    }).then(res => res.json()).then(data => {
+      console.log(data)
+      setMovieCounts(data)
+    })
+  }, []);
+  
   return (
     <div className='page' id='disclaimers'>
       <MainMenu/>
@@ -25,12 +48,12 @@ function DisclaimersGoals(){
          
          <div id='intersex'>
           <p>
-          Only x% of media concern Senior Stories (and we are being very generous with our definition of senior here). Our Queer Elders, those that came before us, often faced far greater discrimination, persecution and hardship, and paved the way for our rights today. <b>We pay lip service but do we pay respect?</b><br/><br/> 
+  Only <b>{movieCounts !== null ? Math.round(movieCounts["Age"]['Senior']/movieCounts['TOTAL']*100*100)/100: '?'}%</b> of media concern Senior Stories (and we are being very generous with our definition of senior here). Our Queer Elders, those that came before us, often faced far greater discrimination, persecution and hardship, and paved the way for our rights today. <b>We pay lip service but do we pay respect?</b><br/><br/> 
           With that being said, understand, while we may report on the relative representation of groups, <b>it is <u>not</u> our stance that proportional representation is the goal</b>. <br/><br/>The statistics we explore do not take into account the underlying presence of marginalised groups in the global or country specific regions. The goal as always is to make sure everyone can feel represented, see authentic stories of their lived experiences, cultural backgrounds, see characters who look like them, live like them, love like them. The argument for strictly proportional representation can hurt as much as it can help, for marginal groups so small in number that such a system would demand near to no media representation at all.
           </p>
           <div>
           <img src='/icons/intersex.png' />
-          <p> Some estimates of the rate of intersex births are as low as <b>0.02%–0.05%</b> but we make no such claim that an appropriate level of representation in our dataset would be x movies.</p>
+          <p> Some estimates of the rate of intersex births are as low as <b>0.02%–0.05%</b> but we make no such claim that an appropriate level of representation in our dataset would be <b>{movieCounts !== null ? Math.round(movieCounts['TOTAL'] * 0.01 * 0.05*100)/100 : '?'}</b> movies.</p>
           </div>
          </div>
          <br/><br/>
