@@ -167,7 +167,11 @@ function createUpdateSearchParams(setSearchParams, searchParams){
           val
         ]
       }else{
-        newSearchParams[key] = val
+        if(val === 'true' || val === 'false'){
+          newSearchParams[key] = val == 'true' ? true : false;
+        }else{
+          newSearchParams[key] = val
+        }
       }
     }
 
@@ -190,8 +194,9 @@ function createUpdateSearchParams(setSearchParams, searchParams){
         }
         continue
       }
-
-      if(['number', 'string', "boolean"].indexOf(typeof params[key]) !== -1){
+      if(params[key] === 'true' || params[key] === 'false'){
+        newSearchParams[key] = params[key] == 'true' ? true : false;
+      }else if(['number', 'string', "boolean"].indexOf(typeof params[key]) !== -1){
         newSearchParams[key] = params[key]
       }
       else if(Array.isArray(params[key])){

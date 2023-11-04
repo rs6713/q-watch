@@ -41,10 +41,10 @@ const SUMMARY_OPTIONS = {
     "Total": 'sum',
     "Average": 'mean'
   },
-  "RATING": {
+  "AVG_RATING": {
     "Average": 'mean'
   },
-  "POPULARITY": {
+  "NUM_RATING": {
     "Average": 'mean'
   },
   "COUNT": {
@@ -67,7 +67,7 @@ function Rank(){
   const [filterActive, setFilterActive] = useState(false);
 
   const rank = useMemo(() => searchParams.get('rank') || 'BOX_OFFICE_USD', [searchParams]);
-  const summary = useMemo(() => searchParams.get('summary') || 'sum', [searchParams]);
+  const summary = useMemo(() => searchParams.get('summary') && Object.values(SUMMARY_OPTIONS[(searchParams.get('rank')|| 'BOX_OFFICE_USD')]).indexOf(searchParams.get('summary')) !== -1 ?  searchParams.get('summary') : Object.values(SUMMARY_OPTIONS[searchParams.get('rank') || 'BOX_OFFICE_USD'])[0], [searchParams]);
 
   // Movie Results
   const [movies, setMovies] = useState(null);
@@ -75,22 +75,25 @@ function Rank(){
   const label_var = useMemo(() => ['YEAR'], []);
   const group =  useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['group'])['group'] || ['TYPES'], [searchParams]);
 
-  const ascending = useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['ascending'])['ascending'] || false, [searchParams]);
-  const ignoreZeros = useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['ignoreZeros'])['ignoreZeros'] || true, [searchParams]);
+  const ascending = useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['ascending'])['ascending']|| false, [searchParams]);
+  const ignoreZeros = useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['ignoreZeros'])['ignoreZeros'] || false, [searchParams]);
+  console.log('Ignore zeros: ', ignoreZeros)
   
   const [labels, setLabels] = useState(null);
   const [shareActive, setShareActive] = useState(false);
 
-  const filteredMovies = useMemo(
-    () => movies && movies.filter(movie => movie[rank] !== 0 || !ignoreZeros),
-    [ignoreZeros, rank, movies]
-  )
+  const filteredMovies = movies && movies.filter(movie => (rank === 'COUNT') ||( movie[rank] !== 0) || (!ignoreZeros));
+  // useMemo(
+  //   () => movies && movies.filter(movie => rank === 'COUNT' || movie[rank] !== 0 || !ignoreZeros),
+  //   [ignoreZeros, rank, movies]
+  // )
 
   useEffect(() => {
     fetch('/api/movie/labels').then(res => res.json()).then(data => {
       setLabels(data);
     });
   }, []);
+
 
 
   function get_movies(){
@@ -113,6 +116,7 @@ function Rank(){
         "properties": properties
       })
     }).then(res => res.json()).then(data => {
+      console.log(data['data'])
       setMovies(data["data"]);
       setNMatches(data["n_matches"]);
     })
@@ -122,7 +126,7 @@ function Rank(){
   useEffect(() => {
     let newCriteria = getCriteriaFromSearchParams(
       searchParams,
-      ['rank', 'summary', 'group', 'ascending', 'ignoreZero']
+      ['rank', 'summary', 'group', 'ascending', 'ignoreZeros']
     );
 
     if(!deepEqual(criteria, newCriteria) || movies === null){
@@ -134,7 +138,6 @@ function Rank(){
 
     setNMatches(null);
     setMovies(null);
-    console.log('Triggered effect: ',  criteria)
     get_movies()
   }, [criteria])
 

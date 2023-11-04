@@ -236,6 +236,19 @@ function Main(){
   />}
   </div>
 
+  let featuredTitle = movieFeatured !== null ? <div className='featuredTitle'>
+  <h2>{movieFeatured.TITLE}</h2>
+  <h3>
+    {formatRuntime(movieFeatured.RUNTIME)}&nbsp;&#9679;&nbsp;
+    {movieFeatured.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
+    {formatLanguage(movieFeatured.LANGUAGE)}&nbsp;&#9679;&nbsp;
+    {movieFeatured.COUNTRY}&nbsp;&#9679;&nbsp;
+    {movieFeatured.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}&#9679;&nbsp;
+    {movieFeatured.TYPES.map((typ) => gIcon(typ))}
+  </h3>
+  <Bubbles items={movieFeatured.REPRESENTATIONS} />
+  </div> : <></>;
+
   return (
     <div id="Main" className="page">
       <div id="TitlePage">
@@ -283,7 +296,10 @@ function Main(){
       {movieFeatured && 
       <Link to={"/movies/"+movieFeatured.ID}>
       <div id='Featured'>
+        <div>
+        {featuredTitle}
         <div className='block'>
+          
           <div>
             {Image(movieFeatured.FILENAME, movieFeatured.CAPTION)}
             <Rating 
@@ -294,22 +310,10 @@ function Main(){
             />
           </div>
           <div className='info'>
-            
-            <h2>{movieFeatured.TITLE}</h2>
-            <h3>
-              {formatRuntime(movieFeatured.RUNTIME)}&nbsp;&#9679;&nbsp;
-              {movieFeatured.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
-              {formatLanguage(movieFeatured.LANGUAGE)}&nbsp;&#9679;&nbsp;
-              {movieFeatured.COUNTRY}&nbsp;&#9679;&nbsp;
-              {movieFeatured.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}&#9679;&nbsp;
-              {movieFeatured.TYPES.map((typ) => gIcon(typ))}
-            </h3>
-            <Bubbles items={movieFeatured.REPRESENTATIONS} />
-            
             <HTMLString html={'<p>'+ (movieFeatured.DESCRIP || movieFeatured.SUMMARY) + '</p>'}/>
           </div>
           </div>
-          
+          </div>
         </div>
         <div id='bg'/>
       </Link>

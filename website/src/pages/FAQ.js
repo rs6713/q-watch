@@ -19,7 +19,7 @@ const question_answers = [
   ],
   [
     'Why don\'t you have LGBTQIA+ TV Shows?',
-    (<p>That sounds like a lot of work ... Not categorizing movies though, <b><i>twas barely two shakes of a lamb's tail it 'twas.</i></b></p>)
+    (<p>That sounds like a lot of work ...</p>)
   ],
   [
     'My company wants to sponsor your amazing project, you entrepeneurial fellows you..',
@@ -28,11 +28,11 @@ const question_answers = [
   [
     'Why do you have so few Gay Male movies compared to what\'s out there?',
     (<p>We made the decision to prioritize LGBTQIA+ movies in all other categories for several reasons:<br/><ol>
-      <li>Firstly from a practical standpoint, we were more familiar with those movies making them easier to enter into the database.</li> <li>Secondly Gay Cis Men, are typically the "best served" in the media space (a game of empty victories we know), with the greatest number of movies, making achieving representative coverage more of a challenge.</li><li> Building on that, ultimately the greatest goal of this project is to help people who struggle to find themselves onscreen, do just that, so we prioritized those groups who felt this pain most acutely. Honestly there are like 3 aro/ace movies, it took us barely an hour.</li></ol></p>)
+      <li>Gay Cis Men, are typically the "best served" in the media space (a game of empty victories we know), with the greatest number of movies, making achieving representative coverage more of a challenge.</li><li> Building on that, ultimately the greatest goal of this project is to help people who struggle to find themselves onscreen, do just that, so we prioritized those groups who felt this pain most acutely. Honestly there are like 3 aro/ace movies, it took us barely an hour.</li></ol></p>)
   ],
   [
     'Why don\'t you have [insert movie name here]?',
-    (<p>We are constantly adding new movies to the archive but even with semi-automation it takes  ~20-30 minutes to add a new movie, so please be patient with us. <br/><b>Send us your suggestions at qwatchbusiness69@gmail.com</b>, and we can prioritise them.</p>)
+    (<p>We are constantly adding new movies to the archive but even with semi-automation it takes  ~10-20 minutes to add a new movie, so please be patient with us. <br/><b>Send us your suggestions at qwatchbusiness69@gmail.com</b>, and we can prioritise them.</p>)
   ],
   [
     'How did you compile this Queer Archive?',

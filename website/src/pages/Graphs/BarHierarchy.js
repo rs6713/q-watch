@@ -226,7 +226,13 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
     // Graph height, required so page covers all children
     let height = (() => {
       var max = 1;
-      return root.children.length * (BARSTEP + BARPADDING) + MARGIN.bottom;
+      if(root.children === undefined) return 0;
+      let longestChildren = root.children.length;
+      for(let child of root.children){
+        longestChildren = Math.max(longestChildren, child.children.length)
+      }
+
+      return longestChildren * (BARSTEP + BARPADDING) + MARGIN.bottom;
     })();
     height = Math.max(height + 1, SVGdimensions['height'] - MARGIN.top - fontSize);
 

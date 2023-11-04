@@ -83,11 +83,11 @@
       margin-left: $side_padding_outer;
       margin-right: $side_padding_outer;
 
-      > div > div:first-child {
+      .block > div:first-child {
         //padding-left: $side_padding_outer;
         padding-right: $side_padding_inner/2;
       }
-      > div > div:last-child {
+      .block > div:last-child {
         padding-right: $side_padding_inner/2;
       }
       // > div:last-child {

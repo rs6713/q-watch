@@ -412,7 +412,36 @@ h3.bubbletext {
   overflow: hidden;
   padding: 1em;
 
-  > .block {
+  .featuredTitle {
+    text-align: center;
+    margin-bottom: 1em;
+    h2 {
+      margin-top: 0em;
+      margin-bottom: 0em;
+      font-size: 3em;
+    }
+    h3 {
+      font-size: 1em;
+      font-weight: normal;
+    }
+
+    .bubbles {
+      font-size: $FONT_SIZE_DEFAULT;
+      justify-content: center;
+      .bubble {
+        padding: 0.5em 1em;
+        border-radius: 3em;
+        font-size: 1em;
+
+        color: $FONT_COLOR_LIGHTEST;
+        background-color: $ACCENT_COLOR3;
+        font-weight: normal;
+        border-radius: 3em;
+      }
+    }
+  }
+
+  > div {
     //max-height: 50em;
     border-radius: 3em;
     background-color: white;
@@ -425,50 +454,29 @@ h3.bubbletext {
     display: flex;
     flex-direction: column;
     overflow-y: hidden;
+  }
 
-    .bubbles {
-      font-size: $FONT_SIZE_DEFAULT;
-      .bubble {
-        padding: 0.5em 1em;
-        border-radius: 3em;
-        font-size: 1em;
-
-        color: $FONT_COLOR_LIGHTEST;
-        background-color: $ACCENT_COLOR3;
-        font-weight: normal;
-        border-radius: 3em;
-      }
-    }
-
-    p {
-      flex: 1 0;
-      overflow-y: scroll;
-      text-align: justify;
-    }
-    p::-webkit-scrollbar {
-      display: none;
-    }
-
-    h2 {
-      margin-top: 0em;
-      margin-bottom: 0em;
-      font-size: 3em;
-    }
-    h3 {
-      font-size: 1em;
-      font-weight: normal;
-    }
+  p {
+    flex: 1 0;
+    overflow-y: scroll;
+    text-align: justify;
+  }
+  p::-webkit-scrollbar {
+    display: none;
+  }
+  .block > div:last-of-type {
+    width: 60%;
   }
   .block > div:first-of-type {
-    width: 50%;
+    width: 40%;
     position: relative;
-    max-height: 250px;
     overflow-y: hidden;
 
     > img {
       height: 100%;
       width: 100%;
       object-fit: cover;
+      border-radius: 2em;
     }
     .rating {
       // position: absolute;
@@ -779,6 +787,14 @@ h3.bubbletext {
   // #Main.page .contentContainer #Welcome h2.bubbletext {
   //   font-size: 4em;
   // }
+  #Featured {
+    .block > div:last-of-type {
+      width: 50%;
+    }
+    .block > div:first-of-type {
+      width: 50%;
+    }
+  }
 
   #Analytics.centerblock {
     display: grid;
@@ -818,9 +834,10 @@ h3.bubbletext {
   }
   #Main .contentContainer > h2.bubbletext {
     font-size: 4em;
+    max-width: 60vw;
     //white-space: break-spaces;
   }
-  #Main.page #Featured > .block {
+  #Main.page #Featured .block {
     flex-direction: column;
     > div {
       width: 100%;
@@ -887,7 +904,7 @@ h3.bubbletext {
   #Main .contentContainer > h2.bubbletext {
     font-size: 3.5em;
     white-space: break-spaces;
-    max-width: none;
+
     //margin-left: 3vw;
     margin-right: 0;
     border: none;
@@ -1024,5 +1041,8 @@ h3.bubbletext {
         grid-column-gap: 2em;
       }
     }
+  }
+  #Main .contentContainer > h2.bubbletext {
+    max-width: none;
   }
 }

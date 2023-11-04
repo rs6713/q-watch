@@ -45,7 +45,7 @@ const baseConfig = {
       title: "Representation Matters",
       id: "REPRESENTATIONS",
       warning: "See yourself on the bigscreen.",
-      subtitle: "We have tried our best, but if you feel we are missing filters here, please let us know, email us at q-watch.gmail.com.",
+      subtitle: "We have tried our best, but if you feel we are missing filters here, please let us know, email us at qwatchbusiness69@gmail.com.",
       disclaimers: [
         "Unfortunately some options may be missing or extremely broad, due to a lack of representation in the media itself.",
         "Representation here, guarantees presence, but not good representation: see tropes/trigger warnings."
