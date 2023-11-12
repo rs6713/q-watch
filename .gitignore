@@ -26,6 +26,9 @@ database.txt
 IMAGES/
 chromedriver.exe
 chromedriver_old.exe
+production_local_setup.sh
+Dockerfile
+cloud-sql-proxy.exe
 
 # testing
 /coverage

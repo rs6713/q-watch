@@ -5,6 +5,7 @@ import logging
 import math
 import random
 import re
+import os
 from typing import Dict, List
 
 import coloredlogs
@@ -50,7 +51,7 @@ coloredlogs.install(level='INFO', logger=logger)
 
 # Setup DB
 engine = _create_engine()
-metadata = MetaData(bind=engine)
+metadata = MetaData(bind=engine)  #
 
 movie_table = Table('MOVIES', metadata, autoload=True)
 
@@ -900,7 +901,10 @@ def save_movie_source_vote() -> int:
 
 if __name__ == '__main__':
     # run app in debug mode on port 5000
-    app.run(debug=True, port=5000)
+    app.run(
+        debug=not os.environ.get('PRODUCTION', True),
+        host='0.0.0.0', port=int(os.environ.get('PORT', 8080))
+    )
 
 
 def get_matching_movies_archive(criteria: Dict, properties: List[str] = None) -> List[int]:

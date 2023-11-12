@@ -1,0 +1,5 @@
+python-tds==1.12.0
+pyopenssl==23.2.0
+SQLAlchemy==2.0.17
+cloud-sql-python-connector==1.2.4
+sqlalchemy-pytds==1.0.0

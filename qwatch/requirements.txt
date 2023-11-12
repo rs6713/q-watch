@@ -1,0 +1,7 @@
+coloredlogs==15.0.1
+CurrencyConverter==0.17.4
+MarkupSafe==2.1.1
+numpy==1.22.3
+pandas==1.4.1
+Pillow==9.0.1
+SQLAlchemy==1.4.32
