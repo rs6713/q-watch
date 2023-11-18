@@ -87,8 +87,8 @@ function Movie(props){
     <Loader isLoading={movie===null} />
   </div>;
     function gIcon(typ){
-      let Ic = getIcon([typ])
-      return <Ic />
+      return getIcon([typ])
+      //return <Ic />
     }
 
   var smallScreenWidth = parseInt(styles.WIDTH_SMALL_SCREEN)

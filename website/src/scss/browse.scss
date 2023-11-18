@@ -96,7 +96,8 @@
         // }
         > div {
           height: calc(20% - 0.2em);
-          svg {
+          svg,
+          img {
             height: 100%;
           }
         }
@@ -125,6 +126,14 @@
       stroke-width: 1.5em;
       stroke-linejoin: round;
     }
+    .rating div img {
+      filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(330deg)
+        brightness(105%) contrast(101%);
+      paint-order: fill stroke;
+      stroke: $FONT_COLOR_DEFAULT;
+      stroke-width: 1.5em;
+      stroke-linejoin: round;
+    }
     .screenshot {
       width: 100%;
       height: 15em;
@@ -132,7 +141,7 @@
       position: relative;
       overflow: hidden;
 
-      img {
+      > img {
         height: 100%;
         width: 100%;
         object-fit: cover;

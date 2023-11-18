@@ -22,6 +22,9 @@ import {
   getCriteriaFromSearchParams,
   createUpdateSearchParams,
 } from './search';
+import {
+  labels
+} from './utils';
 
 
 const SORT = {
@@ -50,7 +53,7 @@ function Browse(){
   let sort = searchParams.get('sort') || DEFAULT_PARAMS['SORT'];
   let index = parseInt(searchParams.get('index') || DEFAULT_PARAMS['INDEX']);
 
-  const [labels, setLabels] = useState(null);
+  //const [labels, setLabels] = useState(null);
   const [movies, setMovies] = useState(null);
   const [nIndexes, setNIndexes] = useState(null);
   const [nMatches, setNMatches] = useState(null);
@@ -59,11 +62,11 @@ function Browse(){
   const [shareActive, setShareActive] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
 
-  useEffect(() => {
-    fetch('/api/movie/labels').then(res => res.json()).then(data => {
-      setLabels(data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   fetch('/api/movie/labels').then(res => res.json()).then(data => {
+  //     setLabels(data);
+  //   });
+  // }, []);
 
 
   function get_movies(){

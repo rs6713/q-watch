@@ -125,6 +125,11 @@
 
         .rating {
           fill: $ACCENT_COLOR3;
+          img {
+            /*https://codepen.io/sosuke/pen/Pjoqqp*/
+            filter: invert(73%) sepia(23%) saturate(5063%) hue-rotate(223deg)
+              brightness(93%) contrast(84%);
+          }
         }
 
         h1 {

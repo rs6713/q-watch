@@ -51,24 +51,24 @@ coloredlogs.install(level='INFO', logger=logger)
 
 # Setup DB
 engine = _create_engine()
-metadata = MetaData(bind=engine)  #
+metadata = MetaData()  # bind=engine
 
-movie_table = Table('MOVIES', metadata, autoload=True)
+movie_table = Table('MOVIES', metadata, )
 
-people_table = Table('PEOPLE', metadata, autoload=True)
-person_ethnicity_table = Table('PERSON_ETHNICITY', metadata, autoload=True)
-person_disability_table = Table('PERSON_DISABILITY', metadata, autoload=True)
-person_role_table = Table('PERSON_ROLE', metadata, autoload=True)
+people_table = Table('PEOPLE', metadata, )
+person_ethnicity_table = Table('PERSON_ETHNICITY', metadata, )
+person_disability_table = Table('PERSON_DISABILITY', metadata, )
+person_role_table = Table('PERSON_ROLE', metadata, )
 
-movie_source_table = Table('MOVIE_SOURCE', metadata, autoload=True)
-movie_source_vote_table = Table('MOVIE_SOURCE_VOTE', metadata, autoload=True)
+movie_source_table = Table('MOVIE_SOURCE', metadata, )
+movie_source_vote_table = Table('MOVIE_SOURCE_VOTE', metadata, )
 movie_trope_trigger_table = Table(
-    'MOVIE_TROPE_TRIGGER', metadata, autoload=True)
+    'MOVIE_TROPE_TRIGGER', metadata, )
 movie_tag_table = Table(
-    'MOVIE_TAG', metadata, autoload=True)
+    'MOVIE_TAG', metadata, )
 movie_representation_table = Table(
-    'MOVIE_REPRESENTATION', metadata, autoload=True)
-movie_genre_table = Table('MOVIE_GENRE', metadata, autoload=True)
+    'MOVIE_REPRESENTATION', metadata, )
+movie_genre_table = Table('MOVIE_GENRE', metadata, )
 
 app = Flask(__name__)
 
@@ -309,7 +309,8 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
         return_properties = list(set([*properties, "ID"]))
 
     query = MovieEntries('MOVIES', 'MOVIES', joins=[
-        *[
+        j for j in
+        [*[
             TableJoin(
                 TableAggregate(
                     table_name=f'MOVIE_{prop}',
@@ -336,7 +337,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             )
             for prop in MOVIE_LABELS
         ],
-        TableJoin(
+            TableJoin(
             TableAggregate(
                 table_name="RATINGS",
                 aggs=[
@@ -349,13 +350,13 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             base_table_prop='ID', join_table_prop='MOVIE_ID',
             isouter=True
         ),
-        TableJoin(
+            TableJoin(
             "MOVIE_IMAGE",
             return_properties=["FILENAME", "CAPTION"],
             base_table_prop='DEFAULT_IMAGE', join_table_prop='ID',
             isouter=True
         ),
-        TableJoin(
+            TableJoin(
             TableAggregate(
                 table_name="MOVIE_IMAGE",
                 aggs=[
@@ -367,7 +368,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             base_table_prop="ID", join_table_prop="MOVIE_ID",
             isouter=False
         ),
-        TableJoin(
+            TableJoin(
             TableAggregate(
                 table_name="MOVIE_SOURCE",
                 aggs=[
@@ -379,6 +380,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             base_table_prop="ID", join_table_prop="MOVIE_ID",
             isouter=True
         )
+        ] if any([p in properties or p in criteria.keys() for p in j.return_properties])
     ])
 
     # criteria_qualities = {
@@ -410,6 +412,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
         if return_properties is None or len(return_properties) > 1:
             movies = movies[0]
 
+    logger.info('Got entries - all movies matching criteria')
     # Filter movies that don't have associated character types
     if "CHARACTERS" in criteria:
         movie_ids = get_matching_characters(
@@ -437,9 +440,11 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
 
     # Perform Post-Processing on properties
     if return_properties is not None and "FILENAME" in return_properties:
-        for movie in movies:
-            if movie["FILENAME"] is None:
-                with engine.begin() as conn:
+        logger.info('Fetching movie captions, filename for thumbnail image')
+        with engine.begin() as conn:
+            for movie in movies:
+                if movie["FILENAME"] is None:
+
                     # Set as first image
                     images = get_entries(
                         conn, "MOVIE_IMAGE",
@@ -451,6 +456,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                         movie["CAPTION"] = images[0]["CAPTION"]
 
     if return_properties is None or 'SOURCES' in return_properties and len(movie['SOURCES']):
+        logger.info('Getting sources')
         source_query = MovieEntries('MOVIE_SOURCE', 'MOVIE_SOURCE', joins=[
             TableJoin(
                 "SOURCES",
@@ -490,6 +496,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                     )[0]
 
     if return_properties is None or "IMAGES" in return_properties:
+        logger.info('Fetching movie images')
         for movie in movies:
             with engine.begin() as conn:
                 print('IMAGES: ', movie['IMAGES'])
@@ -498,6 +505,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                     ID=(movie["IMAGES"] or [])
                 )[0]
 
+    logger.info('Avg/Num ratings')
     for movie in movies:
         if (return_properties is None or "AVG_RATING" in return_properties) and (movie["AVG_RATING"] is None or np.isnan(movie["AVG_RATING"])):
             movie["AVG_RATING"] = 0.0
@@ -520,6 +528,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             if return_properties is None or label in return_properties:
                 movie[label] = LABEL_MAPPINGS[f"{label}S"][movie[label]]
 
+    logger.info(f'Returning movies, {type(movies)} {len(movies)}')
     return movies
 
 
@@ -724,20 +733,12 @@ def get_movie_list():
 
     results_per_index = 12
 
-    if properties is None:
-        properties = [
-            "TITLE",
-            "YEAR",
-            "BIO",
-            "FILENAME", "CAPTION",
-            "AVG_RATING", "NUM_RATING",
-            "GENRES", "TYPES"
-        ]
+    idProperties = ['ID']
+    if sort is not None:
+        idProperties += [sort[0]]
 
-    movies = get_matching_movies(criteria, properties=properties)
-
-    if len(movies) == 0:
-        return {"data": [], "n_indexes": 0, "n_matches": 0}
+    movies = get_matching_movies(criteria, properties=idProperties)
+    logger.info(f'Got idmovies {len(movies)}')
     n_indexes = math.ceil(len(movies) / results_per_index)
 
     # Sort movies according to sort
@@ -759,6 +760,29 @@ def get_movie_list():
         movies = movies[
             (index - 1) * results_per_index: index * results_per_index
         ]
+
+    if properties is None:
+        properties = [
+            "TITLE",
+            "YEAR",
+            "BIO",
+            "FILENAME",
+            "CAPTION",
+            "AVG_RATING",
+            "NUM_RATING",
+            "GENRES",
+            "TYPES"
+        ]
+    matchIds = (
+        [m['ID'] for m in movies]
+        if len(idProperties) > 1
+        else movies
+    )
+    movies = get_matching_movies(
+        {'ID': matchIds}, properties=properties)
+    logger.info(f'Got movies {len(movies)}')
+    if len(movies) == 0:
+        return {"data": [], "n_indexes": 0, "n_matches": 0}
 
     na_maps = {
         'BOX_OFFICE_USD': 0,

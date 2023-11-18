@@ -9,11 +9,12 @@ function MovieTile({movie}){
 
   const RatingIcon = useMemo(() => {
     return getIcon(movie.TYPES)
+    //return <Ic/>
   }, [])
 
   function gIcon(typ){
-    let Ic = getIcon([typ])
-    return <Ic />
+    return getIcon([typ])
+   
   }
   return (
     <Link to={'/movies/' + movie.ID} key={movie.ID}>

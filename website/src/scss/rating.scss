@@ -20,6 +20,10 @@
 
       .defaultVote {
         fill: $FONT_COLOR_LIGHT;
+        img {
+          filter: invert(87%) sepia(0%) saturate(2%) hue-rotate(56deg)
+            brightness(93%) contrast(98%);
+        }
       }
       .defaultVote:not(.noVote) {
         position: absolute;
@@ -34,6 +38,9 @@
         display: flex;
         gap: 0.5em;
         svg {
+          height: 2em;
+        }
+        img {
           height: 2em;
         }
         margin-right: 1em;
@@ -64,6 +71,9 @@
         > div {
           gap: 0.2em;
           svg {
+            height: 1.5em;
+          }
+          img {
             height: 1.5em;
           }
         }

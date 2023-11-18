@@ -1,45 +1,57 @@
 import React from 'react';
 import {useState, useEffect, useMemo} from 'react';
-import {ReactComponent as Scissor} from '../../static/icons/scissor.svg';
-import {ReactComponent as Trans} from '../../static/icons/trans.svg';
-import {ReactComponent as Paw} from '../../static/icons/paw.svg';
-import {ReactComponent as Rainbow} from '../../static/icons/rainbow.svg';
-import {ReactComponent as Ace} from '../../static/icons/ace.svg';
-import {ReactComponent as Bicycle} from '../../static/icons/bicycle.svg';
-import {ReactComponent as Intersect} from '../../static/icons/intersect.svg';
-import {ReactComponent as Polygon} from '../../static/icons/polygon.svg';
+// import {ReactComponent as Scissor} from '../../static/icons/scissor.svg';
+// import {ReactComponent as Trans} from '../../static/icons/trans.svg';
+// import {ReactComponent as Paw} from '../../static/icons/paw.svg';
+// import {ReactComponent as Rainbow} from '../../static/icons/rainbow.svg';
+// import {ReactComponent as Ace} from '../../static/icons/ace.svg';
+// import {ReactComponent as Bicycle} from '../../static/icons/bicycle.svg';
+// import {ReactComponent as Intersect} from '../../static/icons/intersect.svg';
+// import {ReactComponent as Polygon} from '../../static/icons/polygon.svg';
+import {Icon} from './Image'
 
 export function getIcon(movieTypes){
   /* Get correct Icon representative of Movie Type */
-  var Icon = Rainbow;
+  var typIcon = 'rainbow';
+  var typLabel = 'LGBTQIA+';
 
-  if(movieTypes == null){
-    return Icon;
+  function getTypeIcon(typ){
+    // Random Selection of Icon
+    
+    switch(typ.LABEL) {
+      case "Gay": return 'paw';
+      case "Lesbian": return 'scissor';
+      case "Transgender": return 'trans';
+      case "Bisexual": return 'bicycle';
+      case "Ace/Aro": return 'ace';
+      case "Intersex": return 'intersect';
+      case "Polyamory": return 'polygon';
+      default: return 'rainbow';
+    }
   }
-  // Random Selection of Icon
-  let typ = movieTypes[Math.floor(Math.random() * movieTypes.length)]
+  if(movieTypes !== null && movieTypes.length > 0){
+    let typ = movieTypes[Math.floor(Math.random() * movieTypes.length)]
+    typIcon = getTypeIcon(typ)
+    typLabel = typ.LABEL
+  }
+  return <Icon label={typLabel} name={typIcon}/>
+}
 
-  switch(typ.LABEL) {
-    case "Gay": return Paw;
-    case "Lesbian": return Scissor;
-    case "Transgender": return Trans;
-    case "Bisexual": return Bicycle;
-    case "Ace/Aro": return Ace;
-    case "Intersex": return Intersect;
-    case "Polyamory": return Polygon;
-    default: return Rainbow;
-  }
+function getTypeIcon(icon, style){
+  return <Icon label={icon.props.label} name={icon.props.name} style={style} />
 }
 
 const maxRating = 5;
 
 function RatingBar({rating, mouseEnterFn, mouseLeaveFn, clickFn, mouseOverFn, rotated, Icon}){
 
+  
+
   if(rating == null && clickFn == null){
     return <div className={'defaultVote'}>
       {[...Array(maxRating)].map((_, idx) => {
         return <div key={idx}>
-          <Icon style={{fill: 'lightgrey'}} />
+            {getTypeIcon(Icon, {fill: 'lightgrey', filter: 'invert(96%) sepia(3%) saturate(83%) hue-rotate(194deg) brightness(111%) contrast(65%)'})}
         </div>
       })
     }
@@ -57,7 +69,9 @@ function RatingBar({rating, mouseEnterFn, mouseLeaveFn, clickFn, mouseOverFn, ro
   return (<div aria-label={"The current rating is: " + rating} onMouseLeave={mouseLeaveFn} onMouseEnter={mouseEnterFn} onClick={clickFn} style={style}>
   {[...Array(maxRating)].map((_, idx) => {
     if (Math.ceil(rating) < (1+idx)){
-      return <div key={idx} onMouseOver={() => {mouseOverFn(idx+1)}}><Icon style={{visibility: 'hidden'}} /></div>
+      return <div key={idx} onMouseOver={() => {mouseOverFn(idx+1)}}>
+        {getTypeIcon(Icon, {visibility: 'hidden'})}
+      </div>
     }
     if (Math.ceil(rating) == (1+idx)){
       let clippath = !rotated ? 'inset(0 '+ (1 - rating + Math.floor(rating))*100 + '% 0 0)' : 'inset('+ (1 - rating + Math.floor(rating))*100 + '% 0 0 0)';
@@ -65,9 +79,11 @@ function RatingBar({rating, mouseEnterFn, mouseLeaveFn, clickFn, mouseOverFn, ro
         clippath = 'inset(0 0 0 0)'
       }
 
-      return <div key={idx} onMouseOver={() => {mouseOverFn(idx + 1)}}><Icon style={{clipPath: clippath}} /></div>
+      return <div key={idx} onMouseOver={() => {mouseOverFn(idx + 1)}}>
+        {getTypeIcon(Icon, {clipPath: clippath})}
+      </div>
     }
-    return <div key={idx} onMouseOver={() => {mouseOverFn(idx + 1)}}><Icon /></div>
+    return <div key={idx} onMouseOver={() => {mouseOverFn(idx + 1)}}>{getTypeIcon(Icon)}</div>
     }
     )}
   </div>)
@@ -111,6 +127,7 @@ function RatingDisplay({id, rating, numRating, movieTypes, votable}){
   */
   const Icon = useMemo(() => {
     return getIcon(movieTypes)
+
   }, [])
   const originalVote = useMemo(() => {
     return parseInt(localStorage.getItem(`movie_rating_${id}_value`)) || null
@@ -155,7 +172,7 @@ function RatingDisplay({id, rating, numRating, movieTypes, votable}){
   }
 
   var rotateClass = '';
-  if([Bicycle].indexOf(Icon) != -1){
+  if(Icon.props.name == 'bicycle'){
     rotateClass = ' norotate';
   }
   

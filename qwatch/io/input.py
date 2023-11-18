@@ -339,7 +339,10 @@ def get_entries(conn: Connection, table_name: str, ID: Union[List[int], int] = N
         elif isinstance(join.table, TableAggregate):
             join_table = get_table_aggregate(
                 conn,
-                **join.table._asdict()
+                **join.table._asdict(),
+                # 'criteria': {
+                #     [join.join_table_prop]:
+                # }
             )
         table = table.join(
             join_table,

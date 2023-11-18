@@ -6,6 +6,7 @@ import BubbleFilter from './Filters/BubbleFilter';
 import SliderFilter from './Filters/SliderFilter';
 import DropDownFilter from './Filters/DropdownFilter'
 import Loader from './Loader'
+import {labels} from '../utils'
 import {ReactComponent as Exit} from '../../static/icons/minus.svg'
 
 const _ = require("lodash"); 
@@ -166,12 +167,12 @@ function Filters({active, nMatches, updateFilters, filters, setActive}){
 
   */
   //const [config, setConfig] = useState(null)
-  const [labels, setLabels] = useState(null);
-  useEffect(() => {
-    fetch('/api/movie/labels').then(res => res.json()).then(data => {
-      setLabels(data);
-    });
-  }, []);
+  // const [labels, setLabels] = useState(null);
+  // useEffect(() => {
+  //   fetch('/api/movie/labels').then(res => res.json()).then(data => {
+  //     setLabels(data);
+  //   });
+  // }, []);
 
   function createActiveFilters(label_id, filter_id){
     let temp_filter = labels[label_id].sort((a, b) => a.ID - b.ID)
