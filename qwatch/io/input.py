@@ -39,7 +39,7 @@ from qwatch.io.utils import (
     TableAggregate,
     TableJoin,
 )
-SCHEMA = "dbo"
+SCHEMA = "public"
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +132,7 @@ def get_table_aggregate(conn: Connection, table_name: str, groups: List[str], ag
     print(f'Getting table aggregate {table_name}, criteria: {criteria}')
     table = Table(table_name, MetaData(), schema=SCHEMA, autoload_with=conn)
 
-    def generate_agg(agg: Aggregate):
+    def generate_agg(table, agg: Aggregate):
         if agg.func == "string":
             return func.string_agg(
                 cast(table.c[agg.property], sqlalchemy.String),
@@ -145,15 +145,36 @@ def get_table_aggregate(conn: Connection, table_name: str, groups: List[str], ag
         if agg.func == "count":
             return func.count(table.c[agg.property]).label(agg.label)
 
-    query = select(
+    # query = select(
+    #     *[table.c[g] for g in groups],
+    #     *[generate_agg(table, agg) for agg in aggs]
+    # ).select_from(table)
+
+    ftab = select(
         *[table.c[g] for g in groups],
-        *[generate_agg(agg) for agg in aggs]
-    ).select_from(table)
+        *[table.c[agg.property] for agg in aggs],
+        *[table.c[key] for key, val in (criteria or {}).items()]
+    ).select_from(table).where(
+        and_(*[
+            table.c[key] == val
+            if not isinstance(val, (list, np.ndarray))
+            else table.c[key].in_(val)
+            for key, val in (criteria or {}).items()
+        ])
+    )
+    return select(
+        *[ftab.c[g] for g in groups],
+        *[generate_agg(ftab, agg) for agg in aggs]
+    ).select_from(ftab).group_by(
+        *[ftab.c[group] for group in groups]
+    ).subquery()
 
     if criteria is not None:
         query = query.where(
             and_(*[
                 table.c[key] == val
+                if not isinstance(val, (list, np.ndarray))
+                else table.c[key].in_(val)
                 for key, val in criteria.items()
             ])
         )
@@ -327,7 +348,14 @@ def get_entries(conn: Connection, table_name: str, ID: Union[List[int], int] = N
         )
         return ([] if return_format == "listdict" else pd.DataFrame([], columns=table_columns)), table_columns
 
-    # query = select(table)
+    # Create filtered base table, is valid, return only entries that match that id
+    # base_table = select([base_table.c[col]
+    #                     for col in table_columns]).select_from(base_table)
+    # if is_valid_id(ID):
+    #     if isinstance(ID, int):
+    #         base_table = base_table.where(base_table.c.ID == ID)
+    #     else:
+    #         base_table = base_table.where(base_table.c.ID.in_(ID))
 
     # Create table joins
     join_properties = []
@@ -336,13 +364,35 @@ def get_entries(conn: Connection, table_name: str, ID: Union[List[int], int] = N
         if isinstance(join.table, str):
             join_table = Table(join.table, MetaData(),
                                schema=SCHEMA, autoload_with=conn)
+            # join_table = select(
+            #     *[join_table.c[col] for col in join.return_properties],
+            #     join_table.c[join.join_table_prop]
+            # ).select_from(join_table)
+            # if is_valid_id(ID) and 'ID' in join.join_table_prop:
+            #     join_table = join_table.where(
+            #         join_table.c[join.join_table_prop].in_()
+            #     )
         elif isinstance(join.table, TableAggregate):
+
+            # Filter table aggregate for only relevant rows
+            join_criteria = {}
+            if is_valid_id(ID) and 'ID' in join.join_table_prop:
+                join_criteria = {
+                    join.join_table_prop: ID
+                }
+                logger.debug(
+                    F'Join criteria: {join_criteria} {join.table._asdict().get("criteria", {})}')
             join_table = get_table_aggregate(
                 conn,
-                **join.table._asdict(),
+                **{k: v for k, v in join.table._asdict().items() if k != 'criteria'},
+                criteria={
+                    **join_criteria,
+                    **(join.table._asdict().get('criteria', {}) or {})
+                }
                 # 'criteria': {
                 #     [join.join_table_prop]:
                 # }
+
             )
         table = table.join(
             join_table,
@@ -358,7 +408,7 @@ def get_entries(conn: Connection, table_name: str, ID: Union[List[int], int] = N
         *join_properties
     )
 
-    # If ID exists, is valid, return only entries that match that id
+    # # If ID exists, is valid, return only entries that match that id
     if is_valid_id(ID):
         if isinstance(ID, int):
             query = query.where(base_table.c.ID == ID)

@@ -369,18 +369,18 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
             isouter=False
         ),
             TableJoin(
-            TableAggregate(
-                table_name="MOVIE_SOURCE",
-                aggs=[
-                    Aggregate('ID', 'SOURCES', 'string')
-                ],
-                groups=["MOVIE_ID"]
-            ),
-            return_properties=["SOURCES"],
-            base_table_prop="ID", join_table_prop="MOVIE_ID",
-            isouter=True
+                TableAggregate(
+                    table_name="MOVIE_SOURCE",
+                    aggs=[
+                        Aggregate('ID', 'SOURCES', 'string')
+                    ],
+                    groups=["MOVIE_ID"]
+                ),
+                return_properties=["SOURCES"],
+                base_table_prop="ID", join_table_prop="MOVIE_ID",
+                isouter=True
         )
-        ] if any([p in properties or p in criteria.keys() for p in j.return_properties])
+        ] if any([p in (properties or []) or p in criteria.keys() for p in (j.return_properties or [])])
     ])
 
     # criteria_qualities = {
@@ -455,7 +455,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                         movie["FILENAME"] = images[0]["FILENAME"]
                         movie["CAPTION"] = images[0]["CAPTION"]
 
-    if return_properties is None or 'SOURCES' in return_properties and len(movie['SOURCES']):
+    if return_properties is None or 'SOURCES' in return_properties:
         logger.info('Getting sources')
         source_query = MovieEntries('MOVIE_SOURCE', 'MOVIE_SOURCE', joins=[
             TableJoin(
@@ -480,39 +480,39 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
         ])
 
         for movie in movies:
-            with engine.begin() as conn:
-                movie['SOURCES'] = get_entries(
-                    conn, source_query.table,
-                    return_properties=None,
-                    joins=source_query.joins,
-                    return_format="listdict",
-                    ID=(movie['SOURCES'] or [])
-                )[0]
-                for source in (movie['SOURCES'] or []):
-                    source['VOTES'] = get_entries(
-                        conn, 'MOVIE_SOURCE_VOTE',
-                        ID=(source['VOTES'] or []),
-                        return_properties=['VOTE', 'DATE', 'ID']
+            if movie.get('SOURCES', []):
+                with engine.begin() as conn:
+                    movie['SOURCES'] = get_entries(
+                        conn, source_query.table,
+                        return_properties=None,
+                        joins=source_query.joins,
+                        return_format="listdict",
+                        ID=(movie['SOURCES'])
                     )[0]
+                    for source in (movie['SOURCES'] or []):
+                        source['VOTES'] = get_entries(
+                            conn, 'MOVIE_SOURCE_VOTE',
+                            ID=(source['VOTES'] or []),
+                            return_properties=['VOTE', 'DATE', 'ID']
+                        )[0]
 
     if return_properties is None or "IMAGES" in return_properties:
         logger.info('Fetching movie images')
         for movie in movies:
-            with engine.begin() as conn:
-                print('IMAGES: ', movie['IMAGES'])
-                movie["IMAGES"] = get_entries(
-                    conn, "MOVIE_IMAGE",
-                    ID=(movie["IMAGES"] or [])
-                )[0]
+            if movie.get('IMAGES', []):
+                with engine.begin() as conn:
+                    movie["IMAGES"] = get_entries(
+                        conn, "MOVIE_IMAGE",
+                        ID=(movie["IMAGES"] or [])
+                    )[0]
 
-    logger.info('Avg/Num ratings')
     for movie in movies:
-        if (return_properties is None or "AVG_RATING" in return_properties) and (movie["AVG_RATING"] is None or np.isnan(movie["AVG_RATING"])):
+        if (return_properties is None or "AVG_RATING" in return_properties) and (movie.get("AVG_RATING", None) is None or np.isnan(movie["AVG_RATING"])):
             movie["AVG_RATING"] = 0.0
-        if (return_properties is None or "NUM_RATING" in return_properties) and (movie["NUM_RATING"] is None or np.isnan(movie["NUM_RATING"])):
+        if (return_properties is None or "NUM_RATING" in return_properties) and (movie.get("NUM_RATING", None) is None or np.isnan(movie["NUM_RATING"])):
             movie["NUM_RATING"] = 0
         for label in MOVIE_LABELS:
-            if ((return_properties is None or f"{label}S" in return_properties) and movie[f"{label}S"] is not None):
+            if ((return_properties is None or f"{label}S" in return_properties) and movie.get(f"{label}S", None) is not None):
                 movie[f"{label}S"] = [
                     {
                         **LABEL_MAPPINGS[f"{label}S"][i],
@@ -676,7 +676,29 @@ def get_movie_by_id(movie_id: int):
     movie_id = int(movie_id)
 
     movie = get_matching_movies(
-        dict(ID=movie_id)
+        dict(ID=movie_id),
+        properties=[
+            'TITLE',
+            'YEAR',
+            'IMAGES',
+            'AVG_RATING',
+            'NUM_RATING',
+            'LANGUAGE',
+            'BIO',
+            'SUMMARY',
+            'INTENSITY',
+            'GENRES',
+            'RUNTIME',
+            'AGE',
+            'TYPES',
+            'TAGS',
+            'IMDB_ID',
+            'COUNTRY',
+            'SOURCES',
+            'TROPE_TRIGGERS',
+            'REPRESENTATIONS',
+            'BOX_OFFICE_USD', 'BUDGET_USD',
+        ]
     )[0]
 
     # movie = get_movie(
@@ -783,6 +805,15 @@ def get_movie_list():
     logger.info(f'Got movies {len(movies)}')
     if len(movies) == 0:
         return {"data": [], "n_indexes": 0, "n_matches": 0}
+
+    # Sort movies according to sort
+    if sort is not None and sort:
+
+        movies = sorted(
+            movies,
+            key=lambda movie: movie[sort[0]],
+            reverse=sort[1] == -1
+        )
 
     na_maps = {
         'BOX_OFFICE_USD': 0,

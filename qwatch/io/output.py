@@ -34,7 +34,7 @@ from qwatch.utils import describe_obj
 
 logger = logging.getLogger(__name__)
 
-SCHEMA = "dbo"
+SCHEMA = "public"
 
 
 def delete_movie(conn: Connection, movie_id: int) -> None:
@@ -182,7 +182,6 @@ def preprocess_movie(movie: Dict) -> Dict:
                 (len(movie['IMAGES'] or []) - len(new_images or []))
             )
         movie['IMAGES'] = new_images
-        
 
     return movie
 

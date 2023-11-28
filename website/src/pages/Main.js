@@ -115,19 +115,19 @@ function Main(){
   }, []);
 
   // Data Fetching Called once at mount/dismount
-  useEffect(() => {
-    fetch(`/api/movie/featured`, {
-      method: 'GET',
-      headers: {
-        'cache-control': 'no-store',
-      }
-    }).then(res => res.json()).then(data => {
-      if(Object.keys(data).length > 0){
-        setRatingIcon(getIcon(data.TYPES))
-        setMovieFeatured(data);
-      }
-    })
-  }, []);
+  // useEffect(() => {
+  //   fetch(`/api/movie/featured`, {
+  //     method: 'GET',
+  //     headers: {
+  //       'cache-control': 'no-store',
+  //     }
+  //   }).then(res => res.json()).then(data => {
+  //     if(Object.keys(data).length > 0){
+  //       setRatingIcon(getIcon(data.TYPES))
+  //       setMovieFeatured(data);
+  //     }
+  //   })
+  // }, []);
 
   //Data Fetching Called once at mount/dismount
   useEffect(() => {

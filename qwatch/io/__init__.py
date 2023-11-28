@@ -8,7 +8,7 @@ def _create_engine():
     """Wrapper to create sqlalchemy engine."""
 
     if(os.environ.get('PRODUCTION', False)):
-
+        raise ValueError()
         db_host = os.environ[
             "INSTANCE_HOST"
         ]  # e.g. '127.0.0.1' ('172.17.0.1' if deployed to GAE Flex)
@@ -108,5 +108,8 @@ def _create_engine():
     else:
         return sqlalchemy.create_engine(
             # 11.0'SQL+Server+Native+Client+11.0
-            'mssql+pyodbc://localhost/Q-Watch?driver=ODBC+Driver+17+for+SQL+Server'
+            # 'mssql+pyodbc://localhost/Q-Watch?driver=ODBC+Driver+17+for+SQL+Server'
+            'postgresql://postgres:@localhost/Q-Watch',
+            # echo=True
+            #://user:password@hostname/database_name
         )

@@ -34,7 +34,7 @@ export function getIcon(movieTypes){
     typIcon = getTypeIcon(typ)
     typLabel = typ.LABEL
   }
-  return <Icon label={typLabel} name={typIcon}/>
+  return <Icon label={typLabel} name={typIcon} key={typLabel} />
 }
 
 function getTypeIcon(icon, style){
