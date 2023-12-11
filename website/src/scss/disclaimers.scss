@@ -12,14 +12,14 @@
     }
   }
   > div:nth-child(2) {
-    margin-top: 1em;
+    margin-top: 1.5em;
     flex: 1 1;
   }
   > div:not(#MainMenu):not(.footer) {
     background-color: $FONT_COLOR_LIGHTEST;
     padding: 5vw;
     overflow: hidden;
-    margin-bottom: 1em;
+    margin-bottom: 1.5em;
   }
 
   h2.bubbletext {
@@ -65,7 +65,7 @@
   }
 
   #lists {
-    margin-top: 2em;
+    margin-top: 0em;
     ul li {
       text-decoration: none;
       list-style-type: none;
@@ -147,6 +147,24 @@
 
     h2.bubbletext {
       font-size: 3em;
+    }
+  }
+}
+
+@media (max-width: $WIDTH_MOBILE) {
+  #disclaimers {
+    #identity #Race > div {
+      flex-direction: column;
+    }
+    #proportionalRepresentation #intersex,
+    #identity #Disability {
+      display: flex;
+      flex-direction: column;
+
+      p {
+        margin-right: 0;
+        margin-bottom: 1em;
+      }
     }
   }
 }

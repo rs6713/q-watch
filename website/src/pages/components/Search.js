@@ -70,7 +70,7 @@ function Search({placeholder}){
                 <div className="searchresult">
                   <span>{movie.TITLE}</span>
                   <div>{movie.YEAR} 
-                  &nbsp;&#9679;&nbsp; {rating}&nbsp;<Icon /></div>
+            &nbsp;&#9679;&nbsp; {rating}&nbsp;{Icon}</div>
                 </div>
               </Link>
             })

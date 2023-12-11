@@ -4,13 +4,13 @@
   overflow-x: hidden;
   max-width: 100%;
   #Types {
-    margin-top: 1em;
+    margin-top: 1.5em;
   }
   > div:not(#MainMenu):not(.footer) {
     position: relative;
     background-color: $FONT_COLOR_LIGHTEST;
     padding: 1em;
-    margin-bottom: 1em;
+    margin-bottom: 1.5em;
     h3 {
       text-align: center;
     }
@@ -77,6 +77,12 @@
     > div:not(#MainMenu):not(.footer) {
       .description {
         width: 100%;
+      }
+    }
+
+    .sidegraphs {
+      .Graph {
+        height: 20em;
       }
     }
   }

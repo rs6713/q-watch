@@ -49,6 +49,9 @@ logger.addHandler(ch)
 
 coloredlogs.install(level='INFO', logger=logger)
 
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
+
 # Setup DB
 engine = _create_engine()
 metadata = MetaData()  # bind=engine
@@ -294,10 +297,10 @@ def get_count_matching_people() -> int:
 
 def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[int]:
     """
-    Get movie ids of movies that match criteria
+    Get properties of movies that match criteria
     - qualities: values on MOVIES entries, e.g. YEAR, BOX_OFFICE
     - labels: many-to_many labels assigned to movies e.g. representations
-    - writers: writers associated with
+
     """
     logger.info(
         "Retrieving movies that match criteria: %s",
@@ -310,64 +313,70 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
 
     query = MovieEntries('MOVIES', 'MOVIES', joins=[
         j for j in
-        [*[
+        [
+            # Table joins for all LABEL's attached to MOVIES through many-to-many mappings
+            *[
+                TableJoin(
+                    TableAggregate(
+                        table_name=f'MOVIE_{prop}',
+                        aggs=[
+                            Aggregate(f'{prop}_ID', f'{prop}S', 'string'),
+                            *[
+                                Aggregate(e, f'{prop}S_{e}', 'string')
+                                for e in MOVIE_LABELS_EXTRAS.get(prop, [])
+                            ]
+                        ],
+                        groups=["MOVIE_ID"],
+                        criteria={
+                            e: criteria[f'{prop}S'][e]
+                            for e in MOVIE_LABELS_EXTRAS.get(prop, [])
+                            if f'{prop}S' in criteria and e in criteria[f'{prop}S'] and criteria[f'{prop}S'][e] is not None
+                        }
+                    ),
+                    return_properties=[f'{prop}S', *[
+                        f'{prop}S_{e}'
+                        for e in MOVIE_LABELS_EXTRAS.get(prop, [])
+                    ]],
+                    base_table_prop='ID', join_table_prop='MOVIE_ID',
+                    isouter=True
+                )
+                for prop in MOVIE_LABELS
+            ],
+            # Average and number of ratings attached to movie
             TableJoin(
                 TableAggregate(
-                    table_name=f'MOVIE_{prop}',
+                    table_name="RATINGS",
                     aggs=[
-                        Aggregate(f'{prop}_ID', f'{prop}S', 'string'),
-                        *[
-                            Aggregate(e, f'{prop}S_{e}', 'string')
-                            for e in MOVIE_LABELS_EXTRAS.get(prop, [])
-                        ]
+                        Aggregate('RATING', 'AVG_RATING', 'mean'),
+                        Aggregate('RATING', 'NUM_RATING', 'count')
                     ],
-                    groups=["MOVIE_ID"],
-                    criteria={
-                        e: criteria[f'{prop}S'][e]
-                        for e in MOVIE_LABELS_EXTRAS.get(prop, [])
-                        if f'{prop}S' in criteria and e in criteria[f'{prop}S'] and criteria[f'{prop}S'][e] is not None
-                    }
+                    groups=["MOVIE_ID"]
                 ),
-                return_properties=[f'{prop}S', *[
-                    f'{prop}S_{e}'
-                    for e in MOVIE_LABELS_EXTRAS.get(prop, [])
-                ]],
+                return_properties=["AVG_RATING", "NUM_RATING"],
                 base_table_prop='ID', join_table_prop='MOVIE_ID',
                 isouter=True
-            )
-            for prop in MOVIE_LABELS
-        ],
-            TableJoin(
-            TableAggregate(
-                table_name="RATINGS",
-                aggs=[
-                    Aggregate('RATING', 'AVG_RATING', 'mean'),
-                    Aggregate('RATING', 'NUM_RATING', 'count')
-                ],
-                groups=["MOVIE_ID"]
             ),
-            return_properties=["AVG_RATING", "NUM_RATING"],
-            base_table_prop='ID', join_table_prop='MOVIE_ID',
-            isouter=True
-        ),
+            # Join Image entry to default image
             TableJoin(
-            "MOVIE_IMAGE",
-            return_properties=["FILENAME", "CAPTION"],
-            base_table_prop='DEFAULT_IMAGE', join_table_prop='ID',
-            isouter=True
-        ),
-            TableJoin(
-            TableAggregate(
-                table_name="MOVIE_IMAGE",
-                aggs=[
-                    Aggregate('ID', 'IMAGES', 'string')
-                ],
-                groups=["MOVIE_ID"]
+                "MOVIE_IMAGE",
+                return_properties=["FILENAME", "CAPTION"],
+                base_table_prop='DEFAULT_IMAGE', join_table_prop='ID',
+                isouter=True
             ),
-            return_properties=["IMAGES"],
-            base_table_prop="ID", join_table_prop="MOVIE_ID",
-            isouter=False
-        ),
+            # Images to attach to movie
+            TableJoin(
+                TableAggregate(
+                    table_name="MOVIE_IMAGE",
+                    aggs=[
+                        Aggregate('ID', 'IMAGES', 'string')
+                    ],
+                    groups=["MOVIE_ID"]
+                ),
+                return_properties=["IMAGES"],
+                base_table_prop="ID", join_table_prop="MOVIE_ID",
+                isouter=False
+            ),
+            # ID of sources to attach to movie
             TableJoin(
                 TableAggregate(
                     table_name="MOVIE_SOURCE",
@@ -379,7 +388,8 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                 return_properties=["SOURCES"],
                 base_table_prop="ID", join_table_prop="MOVIE_ID",
                 isouter=True
-        )
+            )
+            # Filter table joins if for properties not in criteria or return_properties
         ] if any([p in (properties or []) or p in criteria.keys() for p in (j.return_properties or [])])
     ])
 
@@ -696,14 +706,11 @@ def get_movie_by_id(movie_id: int):
             'COUNTRY',
             'SOURCES',
             'TROPE_TRIGGERS',
+            'TRAILER',
             'REPRESENTATIONS',
             'BOX_OFFICE_USD', 'BUDGET_USD',
         ]
     )[0]
-
-    # movie = get_movie(
-    #     conn, movie_id
-    # )
 
     return convert_to_json(movie)
 
@@ -960,96 +967,3 @@ if __name__ == '__main__':
         debug=not os.environ.get('PRODUCTION', True),
         host='0.0.0.0', port=int(os.environ.get('PORT', 8080))
     )
-
-
-def get_matching_movies_archive(criteria: Dict, properties: List[str] = None) -> List[int]:
-    """
-    Get movie ids of movies that match criteria
-    - qualities: values on MOVIES entries, e.g. YEAR, BOX_OFFICE
-    - labels: many-to_many labels assigned to movies e.g. representations
-    - writers: writers associated with
-    """
-    if properties is None:
-        return_properties = ["ID"]
-    else:
-        return_properties = list(set([*properties, "ID"]))
-
-    criteria_qualities = {
-        k: v for k, v in criteria.get("qualities", {}).items()
-        if k in MOVIE_QUALITIES
-    }
-    criteria_labels = {
-        label: label_criteria
-        for label, label_criteria in criteria.get("labels", {}).items()
-        if label in MOVIE_LABELS
-    }
-
-    with engine.begin() as conn:
-        movies = get_entries(
-            conn, "MOVIES", **criteria_qualities, return_properties=return_properties)
-        # Not just a list ahs been returned
-        if len(return_properties) > 1:
-            movies = movies[0]
-
-        for label in criteria_labels:
-            if not len(movies):
-                return []
-            # Just getting labels by value, then using INCLUDE/EXCLUDE to determine if
-            # LABEL should exist for movie, or not exist.
-            extra_criteria = {
-                k: criteria_labels[label][k]
-                for k in criteria_labels[label]
-                if k not in ['VALUE', 'RULE', 'TYPE']
-            }
-            logger.info(f'Extra criteria: {extra_criteria}')
-            matching_movies, _ = get_entries(conn, f"MOVIE_{label}",
-                                             **{f'{label}_ID': criteria_labels[label]["VALUE"],
-                                                **extra_criteria
-
-                                                })
-
-            matching_movie_ids = [movie["MOVIE_ID"]
-                                  for movie in matching_movies
-                                  ]
-
-            if criteria_labels[label]["TYPE"] == "INCLUDE":
-                movies = [
-                    movie for movie in movies
-                    if movie["ID"] in matching_movie_ids
-                ]
-
-            if criteria_labels[label]["TYPE"] == "EXCLUDE":
-                movies = [
-                    movie for movie in movies
-                    if movie["ID"] not in matching_movie_ids
-                ]
-
-    # Filter movies that don't have associated character types
-    if "CHARACTERS" in criteria:
-        movie_ids = get_matching_characters(
-            {**criteria["CHARACTERS"], "MOVIE_ID": [movie["ID"]
-                                                    for movie in movies]},
-            properties=["MOVIE_ID"]
-        )
-        movies = [
-            movie for movie in movies
-            if movie["ID"] in movie_ids
-        ]
-
-    # Filter movies if have associated people matching people criteria.
-    if "PEOPLE" in criteria:
-        movie_ids = get_matching_people(
-            {**criteria["PEOPLE"], "MOVIE_ID": [movie["ID"]
-                                                for movie in movies]},
-            properties=["MOVIE_ID"]
-        )
-        movies = [
-            movie for movie in movies
-            if movie["ID"] in movie_ids
-        ]
-
-    return movies
-    # if len(return_properties) == 1:
-    #     return [movie[return_properties[0]] for movie in movies]
-
-    # return [{k: v for k, v in movie.items() if k in properties} for movie in movies]

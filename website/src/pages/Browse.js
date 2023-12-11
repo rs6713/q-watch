@@ -112,7 +112,6 @@ function Browse(){
     // criteria = getCriteriaFromSearchParams(searchParams);
     setNMatches(null);
     setMovies(null);
-    console.log('Triggered effect: ', sort, index, criteria)
     get_movies()
   }, [searchParams])
 

@@ -49,7 +49,7 @@ function DropDownFilter({filter, updateFilters, filters}){
     <div className={'DropDownContainer' + (dropdownActive? ' active': '')} onMouseLeave={()=>{setDropdownActive(false)}} >
       <div onClick={()=>{setDropdownActive(!dropdownActive)}}>{filter.placeholder}</div>
       <div className={'DropDownOptions' + (dropdownActive? ' active': '')}>
-        {filter.filters.sort((a, b) => processItem(a) > processItem(b) ? 1 : -1).map((f) => <div className={getItemClass(f)} onClick={()=>{selectItem(f)}}>
+        {filter.filters.sort((a, b) => processItem(a) > processItem(b) ? 1 : -1).map((f, idx) => <div className={getItemClass(f)} onClick={()=>{selectItem(f)}} key={`dropdown_${idx}`}>
           {processItem(f)}
         </div>)}
       </div>

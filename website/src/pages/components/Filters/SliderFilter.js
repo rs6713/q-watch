@@ -74,7 +74,6 @@ function SliderFilter({
           validIds.push(filterOption.ID)
         }
       }
-      console.log('Update Filters: ', validIds)
       updateFilters({[filter['id']]: {
         'TYPE': atLeast? 'EXCLUDE': 'INCLUDE',
         'VALUE': validIds

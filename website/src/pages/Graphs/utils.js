@@ -6,7 +6,7 @@ var resizeGraph = (setGraphDimensions) => {
   var throttled = false;
   // https://bencentra.com/code/2015/02/27/optimizing-window-resize.html
   function handleResize() {
-    console.log('Resizing')
+
     if (!throttled) {
       let graphContainer = document.getElementsByClassName('Graph')[0];
       let graphStyle = getComputedStyle(graphContainer);

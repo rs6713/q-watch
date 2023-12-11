@@ -456,8 +456,8 @@
       position: relative;
       top: 0.1em;
     }
-    p {
-      padding: 0em 1em 0em 1em;
+    > div {
+      padding: 1em;
       span {
         position: relative;
         cursor: pointer;
@@ -586,6 +586,20 @@
   #Browse #ControlPanel {
     #Categories {
       width: calc(100% - 10vw);
+    }
+  }
+
+  #Browse {
+    .movietile:hover {
+      transform: scale(1);
+      box-shadow: 0;
+    }
+
+    #ControlPanel {
+      margin-bottom: 6em;
+    }
+    #MovieList #BrowseResults {
+      padding: 0;
     }
   }
 }

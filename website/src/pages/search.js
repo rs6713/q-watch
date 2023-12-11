@@ -80,7 +80,6 @@ function getCriteriaFromSearchParams(searchParams, ignoreCols, onlyCols){
     ignoreCols - parameter keys to ignore, not keep in newCriteria
     onlyCols - if specified, only these parameter keys are kept in the newCriteria
   */
-  console.log('Getting criteria from search params')
   let newCriteria = {}
   ignoreCols = ignoreCols || [];
 
@@ -154,7 +153,6 @@ function createUpdateSearchParams(setSearchParams, searchParams){
      using setSearchParams
   */
   return function updateSearchParams(params){
-    console.log('New Filters: ', params)
 
     let newSearchParams = {};
     for(let [key, val] of searchParams.entries()){
@@ -215,7 +213,6 @@ function createUpdateSearchParams(setSearchParams, searchParams){
         }
       }
     }
-    console.log('New Search Params: ', newSearchParams)
     setSearchParams(newSearchParams)
   }
 }

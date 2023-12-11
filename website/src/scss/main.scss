@@ -827,6 +827,11 @@ h3.bubbletext {
 }
 
 @media (max-width: $WIDTH_TABLET) {
+  .bubbletext {
+    -webkit-text-stroke: 2px;
+    text-shadow: -5px 0 black, 0 4px black, 0px 0 black, 0 0px black;
+  }
+
   #Main.page #TitlePage #Title {
     h1 {
       font-size: calc($FONT_SIZE_TITLE * 1.5);
@@ -922,6 +927,8 @@ h3.bubbletext {
 @media (max-width: $WIDTH_MOBILE) {
   .bubbletext {
     font-size: 3em;
+    -webkit-text-stroke: 2px;
+    text-shadow: -5px 0 black, 0 4px black, 0px 0 black, 0 0px black;
   }
   h3.percent {
     font-size: 1.5em;
@@ -930,6 +937,10 @@ h3.bubbletext {
   h3.bubbletext {
     font-size: 3em;
     white-space: break-spaces;
+  }
+
+  #Featured .featuredTitle h2 {
+    font-size: 2em;
   }
 
   #Main.page #TitlePage #Title {
@@ -1044,5 +1055,12 @@ h3.bubbletext {
   }
   #Main .contentContainer > h2.bubbletext {
     max-width: none;
+  }
+
+  #Main #Understand h2 {
+    font-size: 3.5em;
+  }
+  h2.bubbletext {
+    font-size: 3.5em;
   }
 }

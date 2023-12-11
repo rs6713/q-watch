@@ -83,14 +83,12 @@ function Country(){
     // setCriteria(newCriteria);
     // setNMatches(null);
     // setMovies(null);
-    // console.log('Triggered effect: ',  criteria)
     // get_movies()
   }, [searchParams])
 
   useEffect(() => {
     setNMatches(null);
     setMovies(null);
-    console.log('Triggered effect: ',  criteria)
     get_movies()
   }, [criteria])
 

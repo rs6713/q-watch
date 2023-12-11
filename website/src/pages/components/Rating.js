@@ -142,6 +142,7 @@ function RatingDisplay({id, rating, numRating, movieTypes, votable}){
   const [newVote, updateNewVote] = useState(null);
 
   const totalRating = vote === originalVote ? rating : (rating * numRating + vote - (originalVote || 0)) / (numRating + (originalVote === null ? 1: 0));
+  const totalRatingCount = vote !== null && originalVote == null ? 1 + numRating : numRating;
 
   function updateRating(rating){
 
@@ -206,7 +207,7 @@ function RatingDisplay({id, rating, numRating, movieTypes, votable}){
       </div>
       <div>
         <div>
-          {numRating} Queer Rating{numRating > 1? 's':''}
+          {totalRatingCount} Queer Rating{totalRatingCount > 1? 's':''}
         </div>
       </div>
     </div>

@@ -30,7 +30,6 @@ function DisclaimersGoals(){
         }
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
-      console.log(data)
       setMovieCounts(data)
     })
   }, []);

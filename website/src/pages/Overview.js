@@ -73,7 +73,6 @@ function StateOfQueerCinema(){
         }
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
-      console.log(data)
       setMovieCounts(data)
     })
   }, []);
@@ -93,7 +92,6 @@ function StateOfQueerCinema(){
       ]
     })//this.state.filterCriteria
   }).then(res => res.json()).then(data => {
-    console.log(data["data"])
     setMovies(data["data"]);
     setMovieTotal(data["n_matches"]);
   })

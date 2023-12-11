@@ -77,7 +77,7 @@ function Rank(){
 
   const ascending = useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['ascending'])['ascending']|| false, [searchParams]);
   const ignoreZeros = useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['ignoreZeros'])['ignoreZeros'] || false, [searchParams]);
-  console.log('Ignore zeros: ', ignoreZeros)
+
   
   const [labels, setLabels] = useState(null);
   const [shareActive, setShareActive] = useState(false);
@@ -116,7 +116,7 @@ function Rank(){
         "properties": properties
       })
     }).then(res => res.json()).then(data => {
-      console.log(data['data'])
+
       setMovies(data["data"]);
       setNMatches(data["n_matches"]);
     })

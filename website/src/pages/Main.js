@@ -24,10 +24,6 @@ import {PercentDelta} from './components/Delta';
 import {groupDataAgg} from './data/utils.js' //, generateCombinations, getMovieValues
 import {formatLanguage} from '../utils';
 
-function gIcon(typ){
-  let Ic = getIcon([typ])
-  return <Ic />
-}
 
 const PHRASES = [
   "I will go down with this ship...(screams in Dido)",
@@ -115,19 +111,19 @@ function Main(){
   }, []);
 
   // Data Fetching Called once at mount/dismount
-  // useEffect(() => {
-  //   fetch(`/api/movie/featured`, {
-  //     method: 'GET',
-  //     headers: {
-  //       'cache-control': 'no-store',
-  //     }
-  //   }).then(res => res.json()).then(data => {
-  //     if(Object.keys(data).length > 0){
-  //       setRatingIcon(getIcon(data.TYPES))
-  //       setMovieFeatured(data);
-  //     }
-  //   })
-  // }, []);
+  useEffect(() => {
+    fetch(`/api/movie/featured`, {
+      method: 'GET',
+      headers: {
+        'cache-control': 'no-store',
+      }
+    }).then(res => res.json()).then(data => {
+      if(Object.keys(data).length > 0){
+        setRatingIcon(getIcon(data.TYPES))
+        setMovieFeatured(data);
+      }
+    })
+  }, []);
 
   //Data Fetching Called once at mount/dismount
   useEffect(() => {
@@ -243,8 +239,8 @@ function Main(){
     {movieFeatured.AGE["LABEL"]}&nbsp;&#9679;&nbsp;
     {formatLanguage(movieFeatured.LANGUAGE)}&nbsp;&#9679;&nbsp;
     {movieFeatured.COUNTRY}&nbsp;&#9679;&nbsp;
-    {movieFeatured.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}&#9679;&nbsp;
-    {movieFeatured.TYPES.map((typ) => gIcon(typ))}
+    {movieFeatured.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} key={genre.LABEL} />)}&#9679;&nbsp;
+    {movieFeatured.TYPES.map((typ) => getIcon([typ]))}
   </h3>
   <Bubbles items={movieFeatured.REPRESENTATIONS} />
   </div> : <></>;

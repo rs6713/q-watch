@@ -41,7 +41,7 @@ function MovieTile({movie}){
           <p> {movie.BIO}</p>
           <h4>
               <span>{movie.TYPES.map((typ) => gIcon(typ))}</span>
-              <span>{movie.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} />)}</span>
+              <span>{movie.GENRES.map((genre) => <Icon label={genre.LABEL} name={'genres/'+genre.ICON} key={genre.LABEL} />)}</span>
           </h4>
         </div>
         <span>{movie.YEAR}</span>

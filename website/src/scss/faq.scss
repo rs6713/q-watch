@@ -21,6 +21,7 @@
     // overflow-y: scroll;
     padding-left: 0em;
     padding-right: 0em;
+    padding-bottom: 2em;
 
     // -ms-overflow-style: none; /* IE and Edge */
     // scrollbar-width: none; /* Firefox */
@@ -44,7 +45,7 @@
         }
         margin-bottom: 0;
       }
-      div {
+      > div {
         max-height: 0em;
         overflow-y: hidden;
         transition-property: max-height;
@@ -52,22 +53,24 @@
         transition-timing-function: ease-out;
         margin: 0;
         box-sizing: border-box;
+
+        > div {
+          padding-top: 1em;
+        }
       }
-      div.active {
+      > div.active {
         max-height: 150px;
-      }
-      p {
-        padding-top: 1em;
       }
     }
   }
   > div:not(#MainMenu)::-webkit-scrollbar {
     display: none;
   }
+
   h2 {
+    margin-top: calc($FONT_SIZE_DEFAULT * 1.5);
     font-size: $FONT_SIZE_TITLE;
     background-color: white;
-    margin-top: 0;
     margin-bottom: 0;
     padding-top: 1em;
     padding-bottom: 0em;

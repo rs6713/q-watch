@@ -19,14 +19,14 @@ function Indexer({index, updateIndex, nIndexes}){
     <div className="PageIndexer">
       <div className={"ChangeIndex" + ((index===1)? ' inactive' : ' active')} onClick={()=>{changeIndex(index - 1)}}>Previous</div>
       <div className="SelectIndex">
-        <p>Page <span onClick={()=>{setSelectorActive(!selectorActive)}} title="Navigate to Page">{index}<Caret />
+        <div>Page <span onClick={()=>{setSelectorActive(!selectorActive)}} title="Navigate to Page">{index}<Caret />
         <div className={selectorActive? 'active': 'inactive'}>
           {[...Array(nIndexes).keys()].map(i => (
             <div key={i} onClick={()=>{changeIndex(i+1)}}>{i+1}</div>
           ))
         }
         </div>
-        </span> of {nIndexes}</p>
+        </span> of {nIndexes}</div>
         
       </div>
       <div className={"ChangeIndex" + ((index===nIndexes)? ' inactive' : ' active')} onClick={()=>{changeIndex(index + 1)}}>Next</div>

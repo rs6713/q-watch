@@ -86,17 +86,24 @@
     white-space: no-wrap;
     line-height: $FONT_SIZE_DEFAULT;
   }
-  .searchresult svg {
+  .searchresult svg,
+  .searchresult img {
     fill: $FONT_COLOR_SUB;
     position: relative;
     top: 1px;
     height: ($FONT_SIZE_DEFAULT - 3px);
   }
-  .searchresult:hover svg {
+  .searchresult img {
+    filter: invert(64%) sepia(14%) saturate(297%) hue-rotate(162deg)
+      brightness(90%) contrast(84%);
+  }
+  .searchresult:hover svg,
+  .searchresult:hover img {
     fill: $FONT_COLOR_DEFAULT;
   }
 
-  > svg {
+  > svg,
+  > img {
     height: $FONT_SIZE_MED;
     position: absolute;
     left: 1em;

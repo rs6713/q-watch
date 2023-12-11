@@ -217,8 +217,6 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
   React.useEffect(resizeGraph(setSVGdimensions), []);
 
   React.useEffect(() => {
-    console.log(BARSTEP, BARPADDING, MARGIN)
-    console.log(dataset, sort_ascending, grouping_vars, name_var, label_vars, value_var, summary_var)
 
     let hierarchy_data = createHierarchicalData(dataset, name_var, value_var, grouping_vars, label_vars)
     let root = d3.hierarchy(hierarchy_data).sum(d => d.value)
@@ -235,8 +233,6 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
       return longestChildren * (BARSTEP + BARPADDING) + MARGIN.bottom;
     })();
     height = Math.max(height + 1, SVGdimensions['height'] - MARGIN.top - fontSize);
-
-    console.log(height)
 
     let yAxis = g => g
     .attr("class", "y-axis")
@@ -261,7 +257,7 @@ const BarHierarchy = ({dataset, sort_ascending, grouping_vars, name_var, label_v
     
     // let width = container.clientWidth - paddingX;
     // var x = d3.scaleLinear().range([MARGIN.left, width - MARGIN.right])
-    console.log([MARGIN.left, SVGdimensions['width'] - MARGIN.right], MARGIN.right, SVGdimensions['width'])
+
     var x = d3.scaleLinear().range([MARGIN.left, Math.max(MARGIN.left + 1, SVGdimensions['width'] - MARGIN.right)])
     x.domain([0, Math.max(root.score)]);
 

@@ -154,3 +154,13 @@
     }
   }
 }
+
+@media (max-width: $WIDTH_MOBILE) {
+  .announcement_container .announcement {
+    width: 100%;
+    /* min-width: 100vw; */
+    box-sizing: border-box;
+    left: 0;
+    transform: translateY(-50%);
+  }
+}
