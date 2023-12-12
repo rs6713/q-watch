@@ -15,7 +15,7 @@
 /design
 
 # Local/Temporary Files
-/website/src/static/
+/website/src/static/movie-pictures
 /website/public/icons/
 .env
 .venv
