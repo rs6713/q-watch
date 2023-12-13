@@ -19,7 +19,7 @@ database.txt
 .vscode/
 .db_config.json
 *.pyc
-IMAGES/
+/IMAGES/
 chromedriver.exe
 chromedriver_old.exe
 production_local_setup.sh
