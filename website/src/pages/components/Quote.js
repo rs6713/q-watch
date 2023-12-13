@@ -7,8 +7,8 @@ function Quote({quote}){
   }
 
   return (
-    <div id="quote"> &#x1f60d;
-      <HTMLString html={'<p>' + quote + '</p>'}/>
+    <div id="quote">
+      <HTMLString html={quote}/>
     </div>
   )
 }

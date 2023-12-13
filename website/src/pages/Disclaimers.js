@@ -2,9 +2,20 @@ import React from 'react';
 import MainMenu from './components/MainMenu';
 import Footer from './components/Footer';
 
+// Images Required
+import queerfilm from '../static/images/queer_film.webp';
+import bfi_flare from '../static/images/bfi_flare.jpg';
+import lesbian_flag from '../static/images/lesbianflag.jpg';
+import autostraddle from '../static/images/autostraddle.png';
+import cinemagoer from '../static/images/cinemagoer.png';
+import pecadillo from '../static/images/pecadillo.png';
+import sesame from '../static/images/sesame_but_different.png';
+import teddy from '../static/images/logo_teddy.png';
+
+
 function ListItem({title, subtitle, text, img}){
   return <div className='listItem'>
-    {img && <img src={'/icons/' + img} />}
+    {img && <img src={img} />}
     <h2>{title}</h2>
     {subtitle && <h3>{subtitle}</h3>}
     <p>{text}</p>
@@ -26,17 +37,17 @@ function Disclaimers(){
         <ListItem
             title={<a target='_blank' href='https://queerfilmreviews.com/'>Queer Film Reviews</a>}
             subtitle='Queer Film Reviews'
-            img='queer_film.webp'
+            img={queerfilm}
             text="Michael is the real MVP, amassing 1000's of reviews of queer and gay-themed films, shorts, series, and more. A self-confessed cinephile he'll let you know which ones are worth watching – and which ones aren’t"
             />
           <ListItem
             title={<a target='_blank' href='https://whatson.bfi.org.uk/flare/Online/default.asp'>BFI Flare</a>}
             subtitle='London LGBTIQ+ Film Festival'
-            img='bfi_flare.jpg'
+            img={bfi_flare}
             text='BFI Flare not only documents so many diverse feature-length and short films, through the BFI Player, many can be watched for relatively low prices.'
             />
             <ListItem
-            img='lesbianflag.jpg'
+            img={lesbian_flag}
             title={<a target='_blank' href='https://docs.google.com/spreadsheets/d/1ceuNsDgm5M6q82zvw_Q-o6LGiZGNE_FglgGrJhvwmTo/'>Ultimate Lesbian Film List</a>}
             subtitle='Excel sheet of 100s Lesbian Movies'
             text='We stand on the shoulders of giants. This list was invaluable in identifying lesser known lesbian movies from times by-gone, recorded by a fellow devotee'
@@ -44,31 +55,31 @@ function Disclaimers(){
             <ListItem
             title='AutoStraddle'
             subtitle='Lesbian & Trans Centered Online Magazine'
-            img='autostraddle.png'
+            img={autostraddle}
             text='Autostraddle is a formerly independently owned online magazine and social network for lesbian, bisexual, and queer women, as well as non-binary people and trans people of all genders.'
             />
             <ListItem
             title='CinemaGoer'
             subtitle='IMDB Open-Source Scraper'
-            img='cinemagoer.png'
+            img={cinemagoer}
             text='Cinemagoer (previously known as IMDbPY) is a Python package for retrieving and managing the data of the IMDb movie database about movies and people.'
             />
             <ListItem
             title='Pecadillo on Demand'
             subtitle='LGBT Streaming'
-            img='pecadillo.png'
+            img={pecadillo}
             text='PeccadilloPOD is the online streaming home of award winning independent film publisher Peccadillo Pictures. Stream LGBTQ+ films and international cinemas.'
             />
             <ListItem
               title={<a href='https://sesamebutdifferent.com/blogs/chia-poppys-corner/ultimate-list-of-lesbian-movies-to-watch' target='_blank'>Sesame But Different</a>}
               subtitle='Lesbian Couple Run Blog, Art, Business'
-              img='sesame_but_different.png'
+              img={sesame}
               text='Starting as a lesbian slice-of-life comic, about their real life relationship, now they create unique one-of-a-kind LGBT greetings cards. They also took the time to create an Ultimate List of Lesbian Movies.'
             />
             <ListItem
               title={<a href='https://teddyaward.tv/en/' target='_blank'>Teddy Awards</a>}
               subtitle='International LGBT Film Award'
-              img='logo_teddy.png'
+              img={teddy}
               text='The Teddy Award is an Berlin International film award for films with LGBT topics, highlighting LGBT movies from a diverse range of cultural backgrounds.'
             />
         </div>

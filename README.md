@@ -6,6 +6,8 @@ What Queers Watch
 
 In the project directory, you can run:
 
+source .venv/Scripts/activate
+
 ### `npm start`
 
 Runs the app in the development mode.<br>

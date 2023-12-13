@@ -6,6 +6,8 @@ import Button from './Button';
 
 import {ReactComponent as Caret} from '../../static/icons/direction.svg'
 import {ReactComponent as Neutral} from '../../static/icons/neutral.svg'
+import Image from './Image'
+
 
 function Delta({number}){
   if(number == 0){
@@ -23,6 +25,7 @@ function Source({source}){
   const [voted, setVoted] = useState(
     localStorage.getItem(`movie_source_${source.ID}_vote_value`) || 0
   );
+
 
     useEffect(()=>{
       let personal_vote_id = localStorage.getItem(`movie_source_${source.ID}_vote_id`)
@@ -76,7 +79,8 @@ function Source({source}){
 
     return (
       <div className="source">
-        <img src={'/sources/' + source.IMAGE} aria-label={"Movie can be found at " + source.URL + (source.REGION? " (" + source.REGION + ")" : "" )}/>
+        {/* <img src={SourceImage} aria-label={"Movie can be found at " + source.URL + (source.REGION? " (" + source.REGION + ")" : "" )}/> */}
+        {Image(`../sources/${source.IMAGE}`, "Movie can be found at " + source.URL + (source.REGION? " (" + source.REGION + ")" : "" ))}
         <div className='description'>
           <h2>
             {source.LABEL}{source.REGION && ' ('+source.REGION + ')'}

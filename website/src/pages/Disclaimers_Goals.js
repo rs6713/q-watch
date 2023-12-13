@@ -2,14 +2,7 @@ import React, {useState, useEffect} from 'react';
 import MainMenu from './components/MainMenu';
 import Footer from './components/Footer';
 
-function ListItem({title, subtitle, text, img}){
-  return <div className='listItem'>
-    {img && <img src={'/icons/' + img} />}
-    <h2>{title}</h2>
-    {subtitle && <h3>{subtitle}</h3>}
-    <p>{text}</p>
-  </div>
-}
+import intersex from '../static/images/intersex.png'
 
 function DisclaimersGoals(){
 
@@ -51,7 +44,7 @@ function DisclaimersGoals(){
           With that being said, understand, while we may report on the relative representation of groups, <b>it is <u>not</u> our stance that proportional representation is the goal</b>. <br/><br/>The statistics we explore do not take into account the underlying presence of marginalised groups in the global or country specific regions. The goal as always is to make sure everyone can feel represented, see authentic stories of their lived experiences, cultural backgrounds, see characters who look like them, live like them, love like them. The argument for strictly proportional representation can hurt as much as it can help, for marginal groups so small in number that such a system would demand near to no media representation at all.
           </p>
           <div>
-          <img src='/icons/intersex.png' />
+          <img src={intersex} />
           <p> Some estimates of the rate of intersex births are as low as <b>0.02%–0.05%</b> but we make no such claim that an appropriate level of representation in our dataset would be <b>{movieCounts !== null ? Math.round(movieCounts['TOTAL'] * 0.01 * 0.05*100)/100 : '?'}</b> movies.</p>
           </div>
          </div>
