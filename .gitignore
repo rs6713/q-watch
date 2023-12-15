@@ -15,6 +15,7 @@
 /website/src/static/movie-pictures
 .env
 .venv
+.web_venv
 database.txt
 .vscode/
 .db_config.json
