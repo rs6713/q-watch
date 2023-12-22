@@ -964,8 +964,8 @@ def save_movie_source_vote() -> int:
 
 if __name__ == '__main__':
     # run app in debug mode on port 5000
-    print(os.environ.get('PRODUCTION', True),
-          int(os.environ.get('PORT', 8080)))
+    print('Production: ', os.environ.get('PRODUCTION', True),
+          ' PORT: ', int(os.environ.get('PORT', 8080)))
     app.run(
         debug=not os.environ.get('PRODUCTION', False),
         host='0.0.0.0', port=int(os.environ.get('PORT', 8080))
