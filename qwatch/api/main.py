@@ -8,8 +8,9 @@ import re
 import os
 from typing import Dict, List
 
-import coloredlogs
+
 from currency_converter import CurrencyConverter
+import coloredlogs
 from flask import Flask, request
 from markupsafe import escape
 import numpy as np
