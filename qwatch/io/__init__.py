@@ -109,7 +109,7 @@ def _create_engine():
         return sqlalchemy.create_engine(
             # 11.0'SQL+Server+Native+Client+11.0
             # 'mssql+pyodbc://localhost/Q-Watch?driver=ODBC+Driver+17+for+SQL+Server'
-            'postgresql://postgres:@localhost/Q-Watch',
+            f'postgresql://{os.environ["DB_USER"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}/{os.environ["DB_NAME"]}',
             # echo=True
             #://user:password@hostname/database_name
         )

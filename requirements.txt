@@ -13,3 +13,4 @@ Werkzeug==2.2.2
 python-dotenv==0.20.0
 Pillow
 psycopg2==2.9.9
+python-dotenv
