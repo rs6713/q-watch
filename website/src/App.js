@@ -17,6 +17,7 @@ import DisclaimersGoals from './pages/Disclaimers_Goals';
 import DisclaimersLabels from './pages/Disclaimers_Labels';
 import DisclaimersLimitations from './pages/Disclaimers_Limitations';
 import DisclaimersRecognition from './pages/Disclaimers_Recognition';
+import EmptyPage from './pages/EmptyPage';
 import './App.scss';
 
 
@@ -42,6 +43,7 @@ class App extends Component {
             <Route exact path="/disclaimers/labels" element={<DisclaimersLabels />} />
             <Route exact path="/disclaimers/limitations" element={<DisclaimersLimitations />} />
             <Route exact path="/disclaimers/goals" element={<DisclaimersGoals />} />
+            <Route exact path="/*" element={<EmptyPage />} />
           </Routes>
           {/* <Menu /> */}
         </Router>

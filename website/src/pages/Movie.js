@@ -9,7 +9,8 @@ import Opinion from './components/Opinion';
 import {formatRuntime} from '../utils.js';
 import Bubbles from './components/Bubbles';
 import Button from './components/Button';
-import ExpandableBubbles from './components/ExpandableBubbles'
+import ExpandableBubbles from './components/ExpandableBubbles';
+import Alert from './components/Alert';
 
 import Source from './components/Source';
 import styles from '../scss/defaults.scss';
@@ -51,6 +52,7 @@ function Movie(props){
   const path = window.location.href.split("/")
   const id = path[path.length-1];
 
+  const [alert, setAlert] = useState(null);
   const [movie, setMovie] = useState(null);
   const { pageHeight, pageWidth } = useWindowDimensions();
   const [showTrailer, setShowTrailer] = useState(false);
@@ -80,7 +82,13 @@ function Movie(props){
       }
     }).then(res => res.json()).then(data => {
       setMovie(data);
-    })
+    }).catch(err => {
+       console.log(err)
+       setAlert(
+         ['Whoops!', 'This movie does not appear to exist on our servers.']
+       )
+      }
+    )
   }, []);
 
   var content = <div id="MovieContainer">
@@ -92,6 +100,12 @@ function Movie(props){
     }
 
   var smallScreenWidth = parseInt(styles.WIDTH_SMALL_SCREEN)
+
+  if(alert !== null){
+    content = <div id='MovieContainer'>
+      <Alert header={alert[0]} subtitle={alert[1]}/>
+    </div>
+  }
 
   if(movie !== null){
     content = (<div id="MovieContainer">

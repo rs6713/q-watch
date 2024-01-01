@@ -17,6 +17,11 @@
     margin-right: $side_padding;
     width: calc(100% - 2 * $side_padding);
   }
+  #empty #main {
+    margin-left: $side_padding;
+    margin-right: $side_padding;
+    width: calc(100% - 2 * $side_padding);
+  }
   #Overview > div:not(#MainMenu):not(.footer) {
     margin-left: $side_padding;
     margin-right: $side_padding;

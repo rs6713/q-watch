@@ -206,7 +206,7 @@ function StateOfQueerCinema(){
             dataChoice='Country'
             value={movieCounts && getHighestXValueKeys(movieCounts['Country'], 5)}
             statement='Top Five'
-            substatement={movieCounts && `The majority of LGBTQIA+ movies take place in: ${getHighestXValueKeys(movieCounts['Country'], 5).join(', ')}.`}
+            substatement={movieCounts? `The majority of LGBTQIA+ movies take place in: ${getHighestXValueKeys(movieCounts['Country'], 5).join(', ')}.` : ''}
           />
           <PercentAbsolute
             dataset={movieCounts}
@@ -266,8 +266,8 @@ function StateOfQueerCinema(){
           />
           <Absolute
             value={movieCounts && getMaxValue(movieCounts['Year'])}
-            statement={movieCounts && ('Peak ' + getMaxValueKey(movieCounts['Year']))}
-            substatement={`Most Movies Released in any one Year`}
+            statement={movieCounts ? ('Peak ' + getMaxValueKey(movieCounts['Year'])) : 'Biggest Year'}
+            substatement={movieCounts ? `Most Movies Released in any one Year`: null}
           />
 
         </div>

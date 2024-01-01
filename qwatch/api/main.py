@@ -506,6 +506,7 @@ def get_matching_movies(criteria: Dict, properties: List[str] = None) -> List[in
                             ID=(source['VOTES'] or []),
                             return_properties=['VOTE', 'DATE', 'ID']
                         )[0]
+                        source['LGBT_RUN'] = int(source['LGBT_RUN'])
 
     if return_properties is None or "IMAGES" in return_properties:
         logger.info('Fetching movie images')

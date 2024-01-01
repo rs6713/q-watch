@@ -70,7 +70,7 @@ function PercentDelta({dataset, dataChoice, value1, value2, statement, substatem
       </div>
       <span>
         <div>{statement}</div>
-        {substatement && <div>{substatement}</div>}
+        {substatement ? <div>{substatement}</div>: <div></div>}
       </span>
     </h3>
   )
@@ -97,7 +97,7 @@ function PercentAbsolute({dataset, dataChoice, value, statement, substatement}){
       </div>
       <span>
         <div>{statement}</div>
-        {substatement && <div>{substatement}</div>}
+        {substatement ? <div>{substatement}</div>: <div></div>}
       </span>
     </h3>
   )
@@ -108,11 +108,12 @@ function Absolute({value, statement, substatement}){
   return (
     <h3 className='percent absolute'>
       <div>
-        <span>{value || '?'}</span>
+        {value==null && <Loader isLoading={value==null}/>}
+        {value !== null && <span>{value}</span>}
       </div>
       <span>
         <div>{statement}</div>
-        {substatement && <div>{substatement}</div>}
+        {substatement ? <div>{substatement}</div>: <div></div>}
       </span>
     </h3>
   )

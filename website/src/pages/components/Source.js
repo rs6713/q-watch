@@ -20,7 +20,7 @@ function Delta({number}){
 }
 
 function Source({source}){
-
+  console.log(source)
   const [votes, setVotes] = useState(0);
   const [voted, setVoted] = useState(
     localStorage.getItem(`movie_source_${source.ID}_vote_value`) || 0
@@ -84,7 +84,7 @@ function Source({source}){
         <div className='description'>
           <h2>
             {source.LABEL}{source.REGION && ' ('+source.REGION + ')'}
-            {source.LGBT_RUN && <span className='explainer'>
+            {Boolean(source.LGBT_RUN) && <span className='explainer'>
               <img src={Lgbt} alt='This OnDemand Streaming Service is LGBT run!'/>
               <span>This OnDemand Streaming Service is LGBT run!</span>
             </span>}
