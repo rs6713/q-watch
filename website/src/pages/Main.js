@@ -11,6 +11,7 @@ import ChartLine from './Graphs/ChartLine'
 import '../App.scss'
 import Lgbt from '../static/images/group-lgbt.png'
 import HTMLString from 'react-html-string';
+import Alert from './components/Alert';
 
 import {ReactComponent as Query} from '../static/icons/query.svg'
 import {ReactComponent as Graph} from '../static/icons/graph.svg'
@@ -24,6 +25,12 @@ import {PercentDelta} from './components/Delta';
 import {groupDataAgg} from './data/utils.js' //, generateCombinations, getMovieValues
 import {formatLanguage} from '../utils';
 
+import gif1 from '../static/images/backup_gifs/rafiki.gif';
+import gif2 from '../static/images/backup_gifs/ammonite.gif';
+import gif3 from '../static/images/backup_gifs/paris_is_burning.gif';
+import gif4 from '../static/images/backup_gifs/the_half_of_it.gif';
+
+const backupGifs = [gif1, gif2, gif3, gif4];
 
 const PHRASES = [
   "I will go down with this ship...(screams in Dido)",
@@ -77,6 +84,10 @@ function Main(){
   const [countCategory, setCountCategory] = useState('LGBTQIA+ Categories')
   const [scrollActive, setScrollActive] = useState(true);
   const [ratingIcon, setRatingIcon] = useState(null);
+
+  const backupGif = useMemo(() => {
+    return backupGifs[parseInt(Math.random() * backupGifs.length)]
+  })
 
   const welcomePhrase = useMemo(() => {
     var now = new Date();
@@ -134,11 +145,13 @@ function Main(){
       }
     }).then(res => res.json()).then(data => {
       setMovieGif(data);
+    }).catch(err => {
+      // From provided backup list
+      setMovieGif(-1);
     })
   }, []);
 
   useEffect(() => {
-    
 
     fetch('/api/movies/count', {
       method: 'POST',
@@ -164,14 +177,16 @@ function Main(){
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
       setMovieCounts(data)
+    }).catch(err => {
+      setMovieCounts(-1);
     })
-    
   }, []);
 
   var backgroundDiv = <div className="background"></div>
   if(movieGif !== null){
     backgroundDiv = <div className="background image">
-      {Image(movieGif.FILENAME, movieGif.CAPTION)}
+      {movieGif !== -1 && Image(movieGif.FILENAME, movieGif.CAPTION)}
+      {movieGif === -1 && <img src={backupGif} />}
     </div>
   }
 
@@ -181,8 +196,8 @@ function Main(){
 
 
 
-  let marqueeContent = <div>
-  {movieCounts && <PercentDelta 
+  let marqueeContent = movieCounts !== -1 ? <div>
+  {movieCounts  && <PercentDelta 
     dataset={movieCounts}
     dataChoice='Year'
     value2={[2022, 2021, 2020, 2019, 2018]}
@@ -230,7 +245,7 @@ function Main(){
     statement='3 Year Transgender'
     substatement='How many movies had transgender characters in 2020-22 compared to 2017-19?'
   />}
-  </div>
+  </div> : <></>
 
   let featuredTitle = movieFeatured !== null ? <div className='featuredTitle'>
   <h2>{movieFeatured.TITLE}</h2>
@@ -256,7 +271,7 @@ function Main(){
 
           <Search placeholder={welcomePhrase} />
         </div>
-        {movieGif !== null && 
+        {movieGif !== null && Object.keys(movieGif).indexOf('MOVIE_ID') !== -1 &&
           <div id="MovieInfo">
             <Link to={"/movies/" + movieGif.MOVIE_ID} >
               <h3>{movieGif.TITLE}</h3>
@@ -274,7 +289,7 @@ function Main(){
       <div className='contentContainer'>
       
       <div id='Welcome' className='block'>
-        <div>
+        <div style={movieCounts === -1? {'border-radius': 0} : {}}>
           <h2 className='bubbletext'>Find Yourself</h2>
           <p><b>Q-Watch was created with the goal of helping LGBTQIA+ persons, find the movies that not only fit their preferred genre, but has characters that look, live and love like them. </b><br/><br/>As always, we stand on the shoulders of giants; there is a plethora of hidden gems in our history, we hope to help you find stories new <b>and old</b> that satisfy your <span className='explainer'><b><i>quavings</i></b><span>queer cravings</span> </span>. </p>
         </div>
@@ -282,12 +297,12 @@ function Main(){
           <img src={Lgbt} alt="LGBT Group of people watching LGBT Movies" />
         </div>
       </div>
-      <div id='statsContainer'>
+      { movieCounts !== -1 && <div id='statsContainer'>
         <div>
           {/* aria-hidden="true" for screenreaders second time */}
         {marqueeContent}{marqueeContent}
         </div>
-      </div>
+      </div>}
       {movieFeatured && <h2 className='bubbletext'>Movie Of The Week</h2>}
       {movieFeatured && 
       <Link to={"/movies/"+movieFeatured.ID}>
@@ -315,22 +330,30 @@ function Main(){
       </Link>
       
       }
-      
-      <div className='leftblock' id='ControlPanelContainer'>
-        <div id="ControlPanel">
-          <Options name='Category' updateOption={setCountCategory} option={countCategory} options={COUNT_CATEGORIES} />
+      {movieCounts !== -1 &&
+        <div className='leftblock' id='ControlPanelContainer'>
+          <div id="ControlPanel">
+            <Options name='Category' updateOption={setCountCategory} option={countCategory} options={COUNT_CATEGORIES} />
+          </div>
         </div>
-      </div>
-      <div id='Understand' className='block'>
-        <div>
-          
-          <PieChart dataset={movieCounts} dataChoice={countCategory}/>
+      }
+      {
+        movieCounts === -1 && <div id='Understand' className='block'>
+          <Alert header='Whoops!' subtitle="It appears we can't access our data right now, but please feel free to explore our `Disclaimers` and `FAQ` sections." />
         </div>
-        <div>
-          {movieCounts !== null && <h2 className='bubbletext'>
-            <span><span className='bg'></span><Counter total={movieCounts['TOTAL']}/></span><br/>MOVIES AND COUNTING</h2>}
+      }
+      {movieCounts !== -1 && 
+        <div id='Understand' className='block'>
+          <div>
+            
+            <PieChart dataset={movieCounts} dataChoice={countCategory}/>
+          </div>
+          <div>
+            {movieCounts !== null && <h2 className='bubbletext'>
+              <span><span className='bg'></span><Counter total={movieCounts['TOTAL']}/></span><br/>MOVIES AND COUNTING</h2>}
+          </div>
         </div>
-      </div>
+      }
 
       <div className='centerblock' id='Analytics'>
         <div>

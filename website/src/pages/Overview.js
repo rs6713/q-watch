@@ -99,14 +99,14 @@ function StateOfQueerCinema(){
 
   let maxYear = movieCounts !== null ? Math.max(...Object.keys(movieCounts['Year'])) : -1
 
-  const countryBoxOffice = movies? groupDataAgg(movies, ['COUNTRY'], {
+  const countryBoxOffice = movies? {'Country': groupDataAgg(movies, ['COUNTRY'], {
     val:'BOX_OFFICE_USD',
     returnType:'dict'}
-  ): null;
-  const countryBudget = movies? groupDataAgg(movies, ['COUNTRY'], {
+  )}: null;
+  const countryBudget = movies? {'Country': groupDataAgg(movies, ['COUNTRY'], {
     val:'BUDGET_USD',
     returnType:'dict'
-  }): null;
+  })}: null;
   const tropePercent = movies? (Math.round((movies.map(m => m['TROPE_TRIGGERS'] == null ? 1: 0).reduce((a,b) => a+b, 0) / movies.length * 100))) : '?';
 
   let chartBarLimit = pageWidth < styles.WIDTH_MOBILE ? 10 : (pageWidth < styles.WIDTH_TABLET ? 20 : 30);
@@ -204,7 +204,7 @@ function StateOfQueerCinema(){
           <PercentAbsolute
             dataset={movieCounts}
             dataChoice='Country'
-            value={movieCounts && getHighestXValueKeys(movieCounts['Country'], 5)}
+            value={movieCounts ? getHighestXValueKeys(movieCounts['Country'], 5): movieCounts}
             statement='Top Five'
             substatement={movieCounts? `The majority of LGBTQIA+ movies take place in: ${getHighestXValueKeys(movieCounts['Country'], 5).join(', ')}.` : ''}
           />
@@ -216,14 +216,14 @@ function StateOfQueerCinema(){
             substatement={movieCounts && `The bottom 20/${Object.keys(movieCounts['Country']).length} countries (w/ 1+ movies) make up a fraction of the overall representation.`}
           />
           <PercentAbsolute
-            dataset={{'Country': countryBoxOffice}}
+            dataset={countryBoxOffice}
             dataChoice='Country'
             value={getHighestXValueKeys(countryBoxOffice, 5)}
             statement='Top Five $'
             substatement={movies && `The majority of LGBTQIA+ movies Box Office come from: ${getHighestXValueKeys(countryBoxOffice, 5).join(', ')}.`}
           />
           <PercentAbsolute
-            dataset={{'Country': countryBudget}}
+            dataset={countryBudget}
             dataChoice='Country'
             value={getHighestXValueKeys(countryBudget, 5)}
             statement='Top Five $'

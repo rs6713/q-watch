@@ -97,6 +97,10 @@ function Browse(){
         setMovies(data["data"]);
         setNIndexes(data["n_indexes"]);
         setNMatches(data["n_matches"]);
+      }).catch(err => {
+        setMovies(-1);
+        setNIndexes(-1);
+        setNMatches(-1);
       })
     }
   }
@@ -133,7 +137,7 @@ function Browse(){
       </div>
       <div id="MovieList">
         <MovieList movies={movies} />
-        {movies !== null && movies.length !== 0 && <div className='spacer'> </div>}
+        {movies !== null && movies !== -1 && movies.length !== 0 && <div className='spacer'> </div>}
         <Indexer nIndexes={nIndexes} updateIndex={(i)=>{updateSearchParams({'index': i})}} index={index} />
         <Footer />
       </div>

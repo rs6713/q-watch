@@ -9,6 +9,7 @@ import ChartCountry from './Graphs/ChartCountry';
 import MainMenu from './components/MainMenu';
 import Button from './components/Button';
 import Share from './components/Share';
+import Alert from './components/Alert';
 import {ReactComponent as ShareIcon} from '../static/icons/share.svg'
 
 import {
@@ -71,6 +72,8 @@ function Country(){
     }).then(res => res.json()).then(data => {
       setMovies(data["data"]);
       setNMatches(data["n_matches"]);
+    }).catch(err => {
+      setMovies(-1);
     })
   }
 
@@ -114,8 +117,14 @@ function Country(){
     
       <div className='Graph'>
         <Loader isLoading={movies === null} />
-        {movies !== null && 
+        {movies !== null && movies !== -1 &&
           <ChartCountry dataset={movies} value_var={searchParams.get('rank') || 'COUNT'} />
+        }
+        {
+          movies === -1 && <Alert 
+            header='Whoops'
+            subtitle='Apologies we have an error on our side preventing us from serving you this data.'
+          />
         }
       </div>
       <Footer />

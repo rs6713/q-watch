@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import Loader from './Loader';
 import MovieTile from './MovieTile';
-
+import Alert from './Alert';
 
 function MovieList({movies}){
 
@@ -10,6 +10,10 @@ function MovieList({movies}){
 
   if (movies === null){
     content = <div/>;
+  }else if(movies == -1){
+    content = <div>
+      <Alert header='Whoops!' subtitle='We were unable to fetch this movie list at the moment'/>
+    </div>
   }else if(movies.length === 0){
     content = <div className="Alert">
       We are sorry we could find no titles matching your search criteria.<br/>
@@ -23,7 +27,7 @@ function MovieList({movies}){
   }
 
   return (
-    <div id="BrowseResults" style={movies === null || movies.length===0 ?{'flex': '1 1'}: {}}>
+    <div id="BrowseResults" style={movies === null || movies === -1 || movies.length===0 ?{'flex': '1 1'}: {}}>
       <Loader isLoading={movies === null} />
       {content}
     </div>

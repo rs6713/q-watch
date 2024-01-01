@@ -11,6 +11,8 @@ import Switch from './components/Switch';
 import MainMenu from './components/MainMenu';
 import Button from './components/Button';
 import Share from './components/Share';
+import Alert from './components/Alert';
+import {labels} from './utils';
 
 import BarHierarchy from './Graphs/BarHierarchy';
 import {
@@ -79,20 +81,20 @@ function Rank(){
   const ignoreZeros = useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['ignoreZeros'])['ignoreZeros'] || false, [searchParams]);
 
   
-  const [labels, setLabels] = useState(null);
+  //const [labels, setLabels] = useState(null);
   const [shareActive, setShareActive] = useState(false);
 
-  const filteredMovies = movies && movies.filter(movie => (rank === 'COUNT') ||( movie[rank] !== 0) || (!ignoreZeros));
+  const filteredMovies = movies && movies !== -1 && movies.filter(movie => (rank === 'COUNT') ||( movie[rank] !== 0) || (!ignoreZeros));
   // useMemo(
   //   () => movies && movies.filter(movie => rank === 'COUNT' || movie[rank] !== 0 || !ignoreZeros),
   //   [ignoreZeros, rank, movies]
   // )
 
-  useEffect(() => {
-    fetch('/api/movie/labels').then(res => res.json()).then(data => {
-      setLabels(data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   fetch('/api/movie/labels').then(res => res.json()).then(data => {
+  //     setLabels(data);
+  //   });
+  // }, []);
 
 
 
@@ -119,6 +121,9 @@ function Rank(){
 
       setMovies(data["data"]);
       setNMatches(data["n_matches"]);
+    }).catch(err => {
+      setMovies(-1);
+      setNMatches(-1);
     })
   }
 
@@ -129,7 +134,7 @@ function Rank(){
       ['rank', 'summary', 'group', 'ascending', 'ignoreZeros']
     );
 
-    if(!deepEqual(criteria, newCriteria) || movies === null){
+    if(!deepEqual(criteria, newCriteria) || movies === null || movies == -1){
       setCriteria(newCriteria);
     }
   }, [searchParams])
@@ -201,7 +206,7 @@ function Rank(){
       
       <div className='Graph'>
         <Loader isLoading={movies === null} />
-        {movies !== null && 
+        {movies !== null && movies !== -1 &&
           <BarHierarchy
             dataset={filteredMovies}
             sort_ascending={ascending}
@@ -212,6 +217,7 @@ function Rank(){
             summary_var={summary}
           />
         }
+        {movies === -1 && <Alert header='Whoops!' subtitle="Sorry, we can't fetch this data right now."/>}
       </div>
       <Footer />
     </div>
