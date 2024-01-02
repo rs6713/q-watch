@@ -78,12 +78,12 @@ const COUNT_CATEGORIES = {
 }
 
 function Main(){
-  const [movieGif, setMovieGif] = useState(null);
-  const [movieFeatured, setMovieFeatured] = useState(null);
-  const [movieCounts, setMovieCounts] = useState(null);
+  const [movieGif, setMovieGif] = useState(undefined);
+  const [movieFeatured, setMovieFeatured] = useState(undefined);
+  const [movieCounts, setMovieCounts] = useState(undefined);
   const [countCategory, setCountCategory] = useState('LGBTQIA+ Categories')
   const [scrollActive, setScrollActive] = useState(true);
-  const [ratingIcon, setRatingIcon] = useState(null);
+  const [ratingIcon, setRatingIcon] = useState(undefined);
 
   const backupGif = useMemo(() => {
     return backupGifs[parseInt(Math.random() * backupGifs.length)]
@@ -98,28 +98,28 @@ function Main(){
     return PHRASES[day % PHRASES.length]
   }, [])
 
-  const [movies, setMovies] = useState(null);
-  useEffect(() => {
-      fetch('/api/movies', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'cache-control': 'no-store',
-        },
-        body: JSON.stringify({
-          "criteria": {},
-          'properties': [
-            'YEAR', 'RUNTIME', 'AGE', 'COUNTRY', 'LANGUAGE',
-            'BOX_OFFICE_USD', 'BUDGET_USD',
-            'TYPES', 'REPRESENTATIONS', 'TROPE_TRIGGERS', 'TAGS', 'INTENSITY',
-            'AVG_RATING'
-          ]
-        })//this.state.filterCriteria
-      }).then(res => res.json()).then(data => {
-        setMovies(data["data"]);
-      })
-  }, []);
+  // const [movies, setMovies] = useState(null);
+  // useEffect(() => {
+  //     fetch('/api/movies', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Accept': 'application/json',
+  //         'Content-Type': 'application/json',
+  //         'cache-control': 'no-store',
+  //       },
+  //       body: JSON.stringify({
+  //         "criteria": {},
+  //         'properties': [
+  //           'YEAR', 'RUNTIME', 'AGE', 'COUNTRY', 'LANGUAGE',
+  //           'BOX_OFFICE_USD', 'BUDGET_USD',
+  //           'TYPES', 'REPRESENTATIONS', 'TROPE_TRIGGERS', 'TAGS', 'INTENSITY',
+  //           'AVG_RATING'
+  //         ]
+  //       })//this.state.filterCriteria
+  //     }).then(res => res.json()).then(data => {
+  //       setMovies(data["data"]);
+  //     })
+  // }, []);
 
   // Data Fetching Called once at mount/dismount
   useEffect(() => {
@@ -133,6 +133,9 @@ function Main(){
         setRatingIcon(getIcon(data.TYPES))
         setMovieFeatured(data);
       }
+    }).catch(err => {
+      setMovieFeatured(null);
+      setRatingIcon(null);
     })
   }, []);
 
@@ -147,7 +150,7 @@ function Main(){
       setMovieGif(data);
     }).catch(err => {
       // From provided backup list
-      setMovieGif(-1);
+      setMovieGif(null);
     })
   }, []);
 
@@ -178,76 +181,71 @@ function Main(){
     }).then(res => res.json()).then(data => {
       setMovieCounts(data)
     }).catch(err => {
-      setMovieCounts(-1);
+      setMovieCounts(null);
     })
   }, []);
 
   var backgroundDiv = <div className="background"></div>
-  if(movieGif !== null){
+  if(movieGif !== undefined){
     backgroundDiv = <div className="background image">
-      {movieGif !== -1 && Image(movieGif.FILENAME, movieGif.CAPTION)}
-      {movieGif === -1 && <img src={backupGif} />}
+      {movieGif !== null && Image(movieGif.FILENAME, movieGif.CAPTION)}
+      {movieGif === null && <img src={backupGif} />}
     </div>
   }
 
 
-
-
-
-
-
-  let marqueeContent = movieCounts !== -1 ? <div>
-  {movieCounts  && <PercentDelta 
+  let marqueeContent =  <div>
+  <PercentDelta 
     dataset={movieCounts}
     dataChoice='Year'
     value2={[2022, 2021, 2020, 2019, 2018]}
     value1={[2017, 2016, 2015, 2014, 2013]}
     statement='5 Year LGBTQIA+'
     substatement='How many movies were released in 2018-22 compared to 2013-17?'
-  />}
-  {movieCounts && <PercentDelta 
+  />
+  <PercentDelta 
     dataset={movieCounts}
     dataChoice='Year'
     value2={2022}
     value1={2021}
     statement='2022 LGBTQIA+'
     substatement='How many movies were released in 2022 compared to 2021?'
-  />}
-  {movieCounts && <PercentDelta 
+  />
+   <PercentDelta 
     dataset={movieCounts}
     dataChoice='Representation_Year'
     value2={['QTIPOC, 2022', 'QTIPOC, 2021', 'QTIPOC, 2020']}
     value1={['QTIPOC, 2019', 'QTIPOC, 2018', 'QTIPOC, 2017']}
     statement='3 Year QTIPOC'
     substatement='How many movies had 1+ QTIPOC Characters in 2020-22 compared to 2017-19?'
-  />}
-  {movieCounts && <PercentDelta 
+  />
+  <PercentDelta 
     dataset={movieCounts}
     dataChoice='Representation_Year'
     value2={['Black Love, 2022', 'Black Love, 2021', 'Black Love, 2020', 'Black Love, 2019', 'Black Love, 2018']}
     value1={['Black Love, 2017', 'Black Love, 2016', 'Black Love, 2015', 'Black Love, 2014', 'Black Love, 2013']}
     statement='5 Year Black Love'
     substatement='How many movies centered Black Love in 2018-22 compared to 2013-17?'
-  />}
-  {movieCounts && <PercentDelta 
+  />
+  <PercentDelta 
     dataset={movieCounts}
     dataChoice='Representation_Year'
     value2={['Disability, 2022', 'Disability, 2021', 'Disability, 2020', 'Disability, 2019', 'Disability, 2018']}
     value1={['Disability, 2017', 'Disability, 2016', 'Disability, 2015', 'Disability, 2014', 'Disability, 2013']}
     statement='5 Year Disability'
     substatement='How many movies had characters with disabilities in 2018-22 compared to 2013-17?'
-  />}
-  {movieCounts && <PercentDelta 
+  />
+  <PercentDelta 
     dataset={movieCounts}
     dataChoice='Type_Year'
     value2={['Transgender, 2022', 'Transgender, 2021', 'Transgender, 2020']}
     value1={['Transgender, 2019', 'Transgender, 2018', 'Transgender, 2017']}
     statement='3 Year Transgender'
     substatement='How many movies had transgender characters in 2020-22 compared to 2017-19?'
-  />}
-  </div> : <></>
+  />
+  </div>// : <></>
 
-  let featuredTitle = movieFeatured !== null ? <div className='featuredTitle'>
+  let featuredTitle = movieFeatured ? <div className='featuredTitle'>
   <h2>{movieFeatured.TITLE}</h2>
   <h3>
     {formatRuntime(movieFeatured.RUNTIME)}&nbsp;&#9679;&nbsp;
@@ -271,7 +269,7 @@ function Main(){
 
           <Search placeholder={welcomePhrase} />
         </div>
-        {movieGif !== null && Object.keys(movieGif).indexOf('MOVIE_ID') !== -1 &&
+        {movieGif && Object.keys(movieGif).indexOf('MOVIE_ID') !== -1 &&
           <div id="MovieInfo">
             <Link to={"/movies/" + movieGif.MOVIE_ID} >
               <h3>{movieGif.TITLE}</h3>
@@ -289,7 +287,7 @@ function Main(){
       <div className='contentContainer'>
       
       <div id='Welcome' className='block'>
-        <div style={movieCounts === -1? {'border-radius': 0} : {}}>
+        <div style={movieCounts === null? {'border-radius': 0} : {}}>
           <h2 className='bubbletext'>Find Yourself</h2>
           <p><b>Q-Watch was created with the goal of helping LGBTQIA+ persons, find the movies that not only fit their preferred genre, but has characters that look, live and love like them. </b><br/><br/>As always, we stand on the shoulders of giants; there is a plethora of hidden gems in our history, we hope to help you find stories new <b>and old</b> that satisfy your <span className='explainer'><b><i>quavings</i></b><span>queer cravings</span> </span>. </p>
         </div>
@@ -297,7 +295,7 @@ function Main(){
           <img src={Lgbt} alt="LGBT Group of people watching LGBT Movies" />
         </div>
       </div>
-      { movieCounts !== -1 && <div id='statsContainer'>
+      {  <div id='statsContainer'> 
         <div>
           {/* aria-hidden="true" for screenreaders second time */}
         {marqueeContent}{marqueeContent}
@@ -330,7 +328,7 @@ function Main(){
       </Link>
       
       }
-      {movieCounts !== -1 &&
+      {movieCounts !== null &&
         <div className='leftblock' id='ControlPanelContainer'>
           <div id="ControlPanel">
             <Options name='Category' updateOption={setCountCategory} option={countCategory} options={COUNT_CATEGORIES} />
@@ -338,19 +336,24 @@ function Main(){
         </div>
       }
       {
-        movieCounts === -1 && <div id='Understand' className='block'>
+        movieCounts === null && <div id='Understand' className='block'>
           <Alert header='Whoops!' subtitle="It appears we can't access our data right now, but please feel free to explore our `Disclaimers` and `FAQ` sections." />
         </div>
       }
-      {movieCounts !== -1 && 
+      {movieCounts && 
         <div id='Understand' className='block'>
           <div>
-            
             <PieChart dataset={movieCounts} dataChoice={countCategory}/>
           </div>
           <div>
-            {movieCounts !== null && <h2 className='bubbletext'>
-              <span><span className='bg'></span><Counter total={movieCounts['TOTAL']}/></span><br/>MOVIES AND COUNTING</h2>}
+            <h2 className='bubbletext'>
+              <span>
+                <span className='bg'></span>
+                <Counter total={movieCounts['TOTAL']}/>
+              </span>
+              <br/>
+              MOVIES AND COUNTING
+            </h2>
           </div>
         </div>
       }

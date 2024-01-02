@@ -72,30 +72,17 @@ function Rank(){
   const summary = useMemo(() => searchParams.get('summary') && Object.values(SUMMARY_OPTIONS[(searchParams.get('rank')|| 'BOX_OFFICE_USD')]).indexOf(searchParams.get('summary')) !== -1 ?  searchParams.get('summary') : Object.values(SUMMARY_OPTIONS[searchParams.get('rank') || 'BOX_OFFICE_USD'])[0], [searchParams]);
 
   // Movie Results
-  const [movies, setMovies] = useState(null);
-  const [nMatches, setNMatches] = useState(null);
+  const [movies, setMovies] = useState(undefined);
+  const [nMatches, setNMatches] = useState(undefined);
   const label_var = useMemo(() => ['YEAR'], []);
   const group =  useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['group'])['group'] || ['TYPES'], [searchParams]);
 
   const ascending = useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['ascending'])['ascending']|| false, [searchParams]);
   const ignoreZeros = useMemo(() => getCriteriaFromSearchParams(searchParams, [], ['ignoreZeros'])['ignoreZeros'] || false, [searchParams]);
 
-  
-  //const [labels, setLabels] = useState(null);
   const [shareActive, setShareActive] = useState(false);
 
-  const filteredMovies = movies && movies !== -1 && movies.filter(movie => (rank === 'COUNT') ||( movie[rank] !== 0) || (!ignoreZeros));
-  // useMemo(
-  //   () => movies && movies.filter(movie => rank === 'COUNT' || movie[rank] !== 0 || !ignoreZeros),
-  //   [ignoreZeros, rank, movies]
-  // )
-
-  // useEffect(() => {
-  //   fetch('/api/movie/labels').then(res => res.json()).then(data => {
-  //     setLabels(data);
-  //   });
-  // }, []);
-
+  const filteredMovies = movies && movies.filter(movie => (rank === 'COUNT') ||( movie[rank] !== 0) || (!ignoreZeros));
 
 
   function get_movies(){
@@ -122,8 +109,8 @@ function Rank(){
       setMovies(data["data"]);
       setNMatches(data["n_matches"]);
     }).catch(err => {
-      setMovies(-1);
-      setNMatches(-1);
+      setMovies(null);
+      setNMatches(null);
     })
   }
 
@@ -134,7 +121,7 @@ function Rank(){
       ['rank', 'summary', 'group', 'ascending', 'ignoreZeros']
     );
 
-    if(!deepEqual(criteria, newCriteria) || movies === null || movies == -1){
+    if(!deepEqual(criteria, newCriteria) || movies === undefined){
       setCriteria(newCriteria);
     }
   }, [searchParams])
@@ -205,8 +192,8 @@ function Rank(){
       </div>
       
       <div className='Graph'>
-        <Loader isLoading={movies === null} />
-        {movies !== null && movies !== -1 &&
+        <Loader isLoading={movies === undefined} />
+        {movies &&
           <BarHierarchy
             dataset={filteredMovies}
             sort_ascending={ascending}
@@ -217,7 +204,7 @@ function Rank(){
             summary_var={summary}
           />
         }
-        {movies === -1 && <Alert header='Whoops!' subtitle="Sorry, we can't fetch this data right now."/>}
+        {movies === null && <Alert header='Whoops!' subtitle="Sorry, we can't fetch this data right now."/>}
       </div>
       <Footer />
     </div>

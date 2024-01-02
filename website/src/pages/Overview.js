@@ -44,9 +44,9 @@ function useWindowDimensions() {
 }
 
 function StateOfQueerCinema(){
-  const [movies, setMovies] = useState(null);
-  const [movieTotal, setMovieTotal] = useState(null);
-  const [movieCounts, setMovieCounts] = useState(null);
+  const [movies, setMovies] = useState(undefined);
+  const [movieTotal, setMovieTotal] = useState(undefined);
+  const [movieCounts, setMovieCounts] = useState(undefined);
 
   const { pageHeight, pageWidth } = useWindowDimensions();
 
@@ -74,6 +74,8 @@ function StateOfQueerCinema(){
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
       setMovieCounts(data)
+    }).catch(err => {
+      setMovieCounts(null);
     })
   }, []);
 
@@ -94,20 +96,24 @@ function StateOfQueerCinema(){
   }).then(res => res.json()).then(data => {
     setMovies(data["data"]);
     setMovieTotal(data["n_matches"]);
+  }).catch(err => {
+    setMovies(null);
+    setMovieTotal(null);
   })
 }, [])
 
-  let maxYear = movieCounts !== null ? Math.max(...Object.keys(movieCounts['Year'])) : -1
 
-  const countryBoxOffice = movies? {'Country': groupDataAgg(movies, ['COUNTRY'], {
+  let maxYear = movieCounts && Math.max(...Object.keys(movieCounts['Year']))
+
+  const countryBoxOffice = movies && {'Country': groupDataAgg(movies, ['COUNTRY'], {
     val:'BOX_OFFICE_USD',
     returnType:'dict'}
-  )}: null;
-  const countryBudget = movies? {'Country': groupDataAgg(movies, ['COUNTRY'], {
+  )};
+  const countryBudget = movies && {'Country': groupDataAgg(movies, ['COUNTRY'], {
     val:'BUDGET_USD',
     returnType:'dict'
-  })}: null;
-  const tropePercent = movies? (Math.round((movies.map(m => m['TROPE_TRIGGERS'] == null ? 1: 0).reduce((a,b) => a+b, 0) / movies.length * 100))) : '?';
+  })};
+  const tropePercent = movies && (Math.round((movies.map(m => m['TROPE_TRIGGERS'] == null ? 1: 0).reduce((a,b) => a+b, 0) / movies.length * 100)));
 
   let chartBarLimit = pageWidth < styles.WIDTH_MOBILE ? 10 : (pageWidth < styles.WIDTH_TABLET ? 20 : 30);
 

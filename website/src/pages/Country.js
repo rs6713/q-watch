@@ -16,6 +16,7 @@ import {
   getCriteriaFromSearchParams,
   createUpdateSearchParams,
 } from './search';
+import {labels} from './utils';
 
 
 import {ReactComponent as Filter} from '../static/icons/filter.svg'
@@ -38,7 +39,6 @@ function deepEqual(x, y) {
 
 function Country(){
 
-  const [labels, setLabels] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const updateSearchParams = createUpdateSearchParams(setSearchParams, searchParams);
   const [criteria, setCriteria] = useState({})
@@ -47,14 +47,8 @@ function Country(){
   
   const [filterActive, setFilterActive] = useState(false);
 
-  const [movies, setMovies] = useState(null);
-  const [nMatches, setNMatches] = useState(null);
-
-  useEffect(() => {
-    fetch('/api/movie/labels').then(res => res.json()).then(data => {
-      setLabels(data);
-    });
-  }, []);
+  const [movies, setMovies] = useState(undefined);
+  const [nMatches, setNMatches] = useState(undefined);
 
 
   function get_movies(){
@@ -73,14 +67,15 @@ function Country(){
       setMovies(data["data"]);
       setNMatches(data["n_matches"]);
     }).catch(err => {
-      setMovies(-1);
+      setMovies(null);
+      setNMatches(null);
     })
   }
 
   useEffect(() => {
     let newCriteria = getCriteriaFromSearchParams(searchParams, ['rank']);
 
-    if(!deepEqual(criteria, newCriteria) || movies === null){
+    if(!deepEqual(criteria, newCriteria) || movies === undefined){
       setCriteria(newCriteria);
     }
     // setCriteria(newCriteria);
@@ -90,8 +85,8 @@ function Country(){
   }, [searchParams])
 
   useEffect(() => {
-    setNMatches(null);
-    setMovies(null);
+    setNMatches(undefined);
+    setMovies(undefined);
     get_movies()
   }, [criteria])
 
@@ -116,12 +111,12 @@ function Country(){
       />}
     
       <div className='Graph'>
-        <Loader isLoading={movies === null} />
-        {movies !== null && movies !== -1 &&
+        <Loader isLoading={movies === undefined} />
+        {movies &&
           <ChartCountry dataset={movies} value_var={searchParams.get('rank') || 'COUNT'} />
         }
         {
-          movies === -1 && <Alert 
+          movies === null && <Alert 
             header='Whoops'
             subtitle='Apologies we have an error on our side preventing us from serving you this data.'
           />

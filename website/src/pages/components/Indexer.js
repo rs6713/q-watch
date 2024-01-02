@@ -4,7 +4,7 @@ import {ReactComponent as Caret} from '../../static/icons/caret.svg'
 function Indexer({index, updateIndex, nIndexes}){
   const [selectorActive, setSelectorActive] = useState(false);
 
-  if(nIndexes === null || nIndexes < 1){
+  if(nIndexes === null || nIndexes === undefined  || nIndexes < 1){
     return (<></>);
   }
 

@@ -37,6 +37,8 @@ function DisclaimersLabels(){
       })//this.state.filterCriteria
     }).then(res => res.json()).then(data => {
       setMovieCounts(data)
+    }).catch(err => {
+      setMovieCounts(null);
     })
   }, []);
 

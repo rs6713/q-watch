@@ -53,20 +53,29 @@ function calculatePercent(dataset, dataChoice, value){
 }
 
 function PercentDelta({dataset, dataChoice, value1, value2, statement, substatement}){
-  let percent = '?'
-  if(dataset !== null){
+  let percent = ''
+  var numPercent = '';
+  let symbol = <Neutral />
+  if(dataset !== null && dataset !== undefined){
     percent = calculatePercentChange(dataset, dataChoice, value1, value2);
+    if(percent < 0 || percent > 0){
+      symbol = <Caret />
+    }
+    numPercent = percent > 0 ? percent : percent * -1;
+  }else if (dataset===null){
+    numPercent = '?';
   }
 
-  let symbol = <Neutral />
-  if(percent < 0 || percent > 0){
-    symbol = <Caret />
-  }
+  
+
   return (
     <h3 className={'percent delta' + (percent < 0 ? ' down': percent == 0? '' : ' up')}>
       <div>
         {symbol}
-        <span>{percent > 0 ? percent : percent * -1}%</span>
+        <span>
+          {dataset === undefined && <Loader isLoading={dataset==undefined}/>}
+          {numPercent}%
+        </span>
       </div>
       <span>
         <div>{statement}</div>
@@ -77,9 +86,9 @@ function PercentDelta({dataset, dataChoice, value1, value2, statement, substatem
 }
 
 function PercentAbsolute({dataset, dataChoice, value, statement, substatement}){
-  let percent = '';
+  let percent = dataset === null ? '?' : '';
 
-  if(dataset !== null){
+  if(dataset !== null && dataset !== undefined){
     percent = calculatePercent(dataset, dataChoice, value);
     //percent = percent > 0 ? percent : percent * -1
   }
@@ -91,7 +100,7 @@ function PercentAbsolute({dataset, dataChoice, value, statement, substatement}){
     <h3 className='percent absolute'>
       <div>
         <span>
-          {dataset==null && <Loader isLoading={dataset==null}/>}
+          {dataset === undefined && <Loader isLoading={dataset==undefined}/>}
           {percent}%
         </span>
       </div>
@@ -108,8 +117,8 @@ function Absolute({value, statement, substatement}){
   return (
     <h3 className='percent absolute'>
       <div>
-        {value==null && <Loader isLoading={value==null}/>}
-        {value !== null && <span>{value}</span>}
+        {value === undefined && <Loader isLoading={true}/>}
+        {value !== undefined && <span>{value === null ? '?': value}</span>}
       </div>
       <span>
         <div>{statement}</div>

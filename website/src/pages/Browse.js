@@ -54,9 +54,9 @@ function Browse(){
   let index = parseInt(searchParams.get('index') || DEFAULT_PARAMS['INDEX']);
 
   //const [labels, setLabels] = useState(null);
-  const [movies, setMovies] = useState(null);
-  const [nIndexes, setNIndexes] = useState(null);
-  const [nMatches, setNMatches] = useState(null);
+  const [movies, setMovies] = useState(undefined);
+  const [nIndexes, setNIndexes] = useState(undefined);
+  const [nMatches, setNMatches] = useState(undefined);
 
   const [filterActive, setFilterActive] = useState(false);
   const [shareActive, setShareActive] = useState(false);
@@ -98,9 +98,9 @@ function Browse(){
         setNIndexes(data["n_indexes"]);
         setNMatches(data["n_matches"]);
       }).catch(err => {
-        setMovies(-1);
-        setNIndexes(-1);
-        setNMatches(-1);
+        setMovies(null);
+        setNIndexes(null);
+        setNMatches(null);
       })
     }
   }
@@ -114,8 +114,8 @@ function Browse(){
     // sort = searchParams.get('sort') || DEFAULT_PARAMS['SORT'];
     // index = parseInt(searchParams.get('index') || DEFAULT_PARAMS['INDEX']);
     // criteria = getCriteriaFromSearchParams(searchParams);
-    setNMatches(null);
-    setMovies(null);
+    setNMatches(undefined);
+    setMovies(undefined);
     get_movies()
   }, [searchParams])
 
@@ -137,7 +137,7 @@ function Browse(){
       </div>
       <div id="MovieList">
         <MovieList movies={movies} />
-        {movies !== null && movies !== -1 && movies.length !== 0 && <div className='spacer'> </div>}
+        {movies && movies.length !== 0 && <div className='spacer'> </div>}
         <Indexer nIndexes={nIndexes} updateIndex={(i)=>{updateSearchParams({'index': i})}} index={index} />
         <Footer />
       </div>

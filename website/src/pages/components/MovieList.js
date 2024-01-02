@@ -8,9 +8,9 @@ function MovieList({movies}){
 
   var content;
 
-  if (movies === null){
+  if (movies === undefined){
     content = <div/>;
-  }else if(movies == -1){
+  }else if(movies === null){
     content = <div>
       <Alert header='Whoops!' subtitle='We were unable to fetch this movie list at the moment'/>
     </div>
@@ -27,8 +27,8 @@ function MovieList({movies}){
   }
 
   return (
-    <div id="BrowseResults" style={movies === null || movies === -1 || movies.length===0 ?{'flex': '1 1'}: {}}>
-      <Loader isLoading={movies === null} />
+    <div id="BrowseResults" style={!movies || movies.length===0 ?{'flex': '1 1'}: {}}>
+      <Loader isLoading={movies === undefined} />
       {content}
     </div>
   )

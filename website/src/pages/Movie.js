@@ -83,7 +83,6 @@ function Movie(props){
     }).then(res => res.json()).then(data => {
       setMovie(data);
     }).catch(err => {
-       console.log(err)
        setAlert(
          ['Whoops!', 'This movie does not appear to exist on our servers.']
        )
