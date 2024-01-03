@@ -3,3 +3,9 @@
   to = "http://143.198.139.135/api/:splat"
   status = 200
   force = true # COMMENT: ensure that we always redirect
+
+# The following redirect is intended for use with most SPAs that handle routing internally.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
