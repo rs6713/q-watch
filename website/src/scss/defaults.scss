@@ -39,3 +39,9 @@ $WIDTH_LARGEST_SCREEN: 1500px;
   WIDTH_TABLET: $WIDTH_TABLET;
   WIDTH_MOBILE: $WIDTH_MOBILE;
 }
+
+@font-face {
+  font-family: "Cooper Std";
+  src: local("Cooper Std"),
+    url(../static/fonts/CooperBlack-Std.otf) format("opentype");
+}
