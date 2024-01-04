@@ -32,6 +32,14 @@ const baseConfig = {
     //   ]
     // },
     {
+      title: "Movie Genres",
+      id: "GENRES",
+      subtitle: "Find the Feels.",
+      type: "bubble",
+      filters:null,
+      switchType: 'switch',
+    },
+    {
       title: "Movie Types",
       id: "TYPES",
       subtitle: "Take you anywhere under the LGBTQIA2+ rainbow.",

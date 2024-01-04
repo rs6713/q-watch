@@ -9,7 +9,7 @@ $ACCENT_AFFIRM: rgb(183, 255, 183);
 $ACCENT_DENY: rgb(255, 183, 183);
 
 /* FONT_FAMILY */
-$FONT_HEADER_DEFAULT: "Futura FT";
+$FONT_HEADER_DEFAULT: "Futura PT";
 $FONT_LOGO: "Cooper Std";
 $FONT_SIZE_DEFAULT: 14px;
 $FONT_SIZE_MED: 20px;
@@ -45,3 +45,9 @@ $WIDTH_LARGEST_SCREEN: 1500px;
   src: local("Cooper Std"),
     url(../static/fonts/CooperBlack-Std.otf) format("opentype");
 }
+
+// @font-face {
+//   font-family: "Futura PT";
+//   src: local("Futura PT"),
+//     url(../static/fonts/FuturaCyrillicBook.ttf) format("opentype");
+// }

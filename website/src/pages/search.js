@@ -13,7 +13,8 @@ const DICT_FILTERS = [
   'AGE',
   'INTENSITY',
   'AVG_RATING',
-  'TAGS'
+  'TAGS',
+
 ]
 
 function generateCriteriaDescription(labels, criteria){

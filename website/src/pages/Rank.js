@@ -128,8 +128,8 @@ function Rank(){
 
   useEffect(() => {
 
-    setNMatches(null);
-    setMovies(null);
+    setNMatches(undefined);
+    setMovies(undefined);
     get_movies()
   }, [criteria])
 

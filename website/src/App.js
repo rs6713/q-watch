@@ -18,6 +18,7 @@ import DisclaimersLabels from './pages/Disclaimers_Labels';
 import DisclaimersLimitations from './pages/Disclaimers_Limitations';
 import DisclaimersRecognition from './pages/Disclaimers_Recognition';
 import EmptyPage from './pages/EmptyPage';
+import ScrollToTop from './pages/components/ScrollToTop';
 import './App.scss';
 
 
@@ -45,6 +46,7 @@ class App extends Component {
             <Route exact path="/disclaimers/goals" element={<DisclaimersGoals />} />
             <Route exact path="/*" element={<EmptyPage />} />
           </Routes>
+          <ScrollToTop />
           {/* <Menu /> */}
         </Router>
       </div>

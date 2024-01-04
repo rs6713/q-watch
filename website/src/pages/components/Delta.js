@@ -23,7 +23,7 @@ function calculatePercentChange(dataset, dataChoice, value1, value2){
       )/ (dataset[dataChoice][value1] || 0) * 100).toFixed(2)
     }
   }catch(err){
-    console.log(err)
+
   }
   return percentChange
 }
@@ -55,11 +55,13 @@ function calculatePercent(dataset, dataChoice, value){
 function PercentDelta({dataset, dataChoice, value1, value2, statement, substatement}){
   let percent = ''
   var numPercent = '';
-  let symbol = <Neutral />
+  let symbol = ''
   if(dataset !== null && dataset !== undefined){
     percent = calculatePercentChange(dataset, dataChoice, value1, value2);
     if(percent < 0 || percent > 0){
       symbol = <Caret />
+    }else{
+      symbol = <Neutral />
     }
     numPercent = percent > 0 ? percent : percent * -1;
   }else if (dataset===null){
@@ -74,7 +76,7 @@ function PercentDelta({dataset, dataChoice, value1, value2, statement, substatem
         {symbol}
         <span>
           {dataset === undefined && <Loader isLoading={dataset==undefined}/>}
-          {numPercent}%
+          {numPercent}{dataset !== undefined && '%'}
         </span>
       </div>
       <span>

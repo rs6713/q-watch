@@ -105,15 +105,16 @@ function StateOfQueerCinema(){
 
   let maxYear = movieCounts && Math.max(...Object.keys(movieCounts['Year']))
 
-  const countryBoxOffice = movies && {'Country': groupDataAgg(movies, ['COUNTRY'], {
+  const countryBoxOffice = movies !== null && movies !== undefined? groupDataAgg(movies, ['COUNTRY'], {
     val:'BOX_OFFICE_USD',
     returnType:'dict'}
-  )};
-  const countryBudget = movies && {'Country': groupDataAgg(movies, ['COUNTRY'], {
+  ): movies;
+  const countryBudget = movies && groupDataAgg(movies, ['COUNTRY'], {
     val:'BUDGET_USD',
     returnType:'dict'
-  })};
+  });
   const tropePercent = movies && (Math.round((movies.map(m => m['TROPE_TRIGGERS'] == null ? 1: 0).reduce((a,b) => a+b, 0) / movies.length * 100)));
+  console.log(countryBoxOffice)
 
   let chartBarLimit = pageWidth < styles.WIDTH_MOBILE ? 10 : (pageWidth < styles.WIDTH_TABLET ? 20 : 30);
 
@@ -222,14 +223,14 @@ function StateOfQueerCinema(){
             substatement={movieCounts && `The bottom 20/${Object.keys(movieCounts['Country']).length} countries (w/ 1+ movies) make up a fraction of the overall representation.`}
           />
           <PercentAbsolute
-            dataset={countryBoxOffice}
+            dataset={countryBoxOffice && {'Country': countryBoxOffice}}
             dataChoice='Country'
             value={getHighestXValueKeys(countryBoxOffice, 5)}
             statement='Top Five $'
             substatement={movies && `The majority of LGBTQIA+ movies Box Office come from: ${getHighestXValueKeys(countryBoxOffice, 5).join(', ')}.`}
           />
           <PercentAbsolute
-            dataset={countryBudget}
+            dataset={countryBudget && {'Country': countryBudget}}
             dataChoice='Country'
             value={getHighestXValueKeys(countryBudget, 5)}
             statement='Top Five $'

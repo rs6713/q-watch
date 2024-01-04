@@ -36,7 +36,7 @@ function Image(name, caption){
     
     // return <div style={{backgroundImage: image}} className={classname} alt={caption}/>
   } catch (error) {
-    console.log(`Image with name "${name}" does not exist`);
+
     return <img src={`${url}/default_pride.png`} alt={caption}  key={'default_pride'}/>
   }
 

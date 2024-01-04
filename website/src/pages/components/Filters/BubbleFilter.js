@@ -93,6 +93,13 @@ function BubbleFilter({filter, updateFilters, filters}){
         updateFilters({[filter['id']]: {'TYPE': 'EXCLUDE', 'VALUE': [...currentIds, itemId], ...req}})
       }
     }
+    if (filter['switchType'] === 'switch'){
+      if(filters[filter['id']] === itemId){
+        updateFilters({[filter['id']]: null})
+      }else{
+        updateFilters({[filter['id']]: itemId})
+      }
+    }
   }
 
   let onMessage = <div>I want a movie that matches <b>all</b> of these labels.</div>

@@ -23,6 +23,10 @@
   display: flex;
   flex-direction: column;
 
+  #Filters > div > div:first-child {
+    display: none;
+  }
+
   .spacer {
     flex: 1 1;
     width: 100%;
@@ -585,18 +589,21 @@
 
   #Browse #ControlPanel {
     #Categories {
-      width: calc(100% - 10vw);
+      display: none;
     }
   }
 
   #Browse {
+    #Filters > div > div:first-child {
+      display: block;
+    }
     .movietile:hover {
       transform: scale(1);
       box-shadow: 0;
     }
 
     #ControlPanel {
-      margin-bottom: 6em;
+      margin-bottom: 0em;
     }
     #MovieList #BrowseResults {
       padding: 0;
